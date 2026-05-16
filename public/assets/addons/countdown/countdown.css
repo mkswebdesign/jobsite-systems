@@ -1,0 +1,68 @@
+/*
+ * Countdown — drop-in tick-down to a target datetime.
+ *
+ * Theme-aware. Two surfaces: inline span (compact) and a "card" variant
+ * with discrete day/hour/minute/second cells.
+ *
+ * See /countdown/README.md.
+ */
+
+[data-aed-countdown] {
+  font-variant-numeric: tabular-nums;
+}
+
+.aed-cd-card {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.aed-cd-card[hidden] { display: none; }
+
+.aed-cd-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-width: 50px;
+  padding: 0.25rem 0.4rem;
+}
+.aed-cd-num {
+  font: 800 1.6rem/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #fafafa);
+}
+.aed-cd-label {
+  font: 700 0.62rem/1 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+}
+.aed-cd-sep {
+  align-self: center;
+  font-weight: 700;
+  color: var(--text-muted, #9a9aa2);
+  opacity: 0.5;
+}
+
+/* Compact / accent variant */
+.aed-cd-card[data-aed-cd-variant="accent"] {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent, #6B00FF) 14%, var(--bg-card, #18181b)), var(--bg-card, #18181b));
+  border-color: color-mix(in srgb, var(--accent, #6B00FF) 35%, var(--border, #27272a));
+}
+
+@media (max-width: 480px) {
+  .aed-cd-card { gap: 0.3rem; padding: 0.65rem 0.75rem; }
+  .aed-cd-cell { min-width: 42px; padding: 0.2rem 0.3rem; }
+  .aed-cd-num { font-size: 1.3rem; }
+  .aed-cd-label { font-size: 0.55rem; }
+}
+
+@media print {
+  .aed-cd-card { background: transparent !important; }
+}

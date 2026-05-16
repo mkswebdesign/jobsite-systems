@@ -1,0 +1,165 @@
+---
+interface Props {
+  field: any;
+}
+const { field: f } = Astro.props;
+---
+
+{f.type === 'radio-cards' && (
+  <div class="wizard-cards" role="radiogroup" aria-labelledby={`legend-${f.id}`}>
+    {f.options?.map((o: any) => (
+      <label class="wizard-card">
+        <input
+          type="radio"
+          name={f.name}
+          value={o.value}
+          required={f.required}
+          data-wizard-field={f.id}
+        />
+        <span class="wizard-card-inner">
+          <span class="wizard-card-tick" aria-hidden="true"></span>
+          <span class="wizard-card-body">
+            <span class="wizard-card-label">{o.label}</span>
+            {o.description && <span class="wizard-card-description">{o.description}</span>}
+          </span>
+        </span>
+      </label>
+    ))}
+  </div>
+)}
+
+{f.type === 'checkbox-grid' && (
+  <div class="wizard-cards wizard-cards--compact" role="group">
+    {f.options?.map((o: any) => (
+      <label class={'wizard-card wizard-card--compact' + (o.exclusive ? ' wizard-card--exclusive' : '')}>
+        <input
+          type="checkbox"
+          name={f.name}
+          value={o.value}
+          data-wizard-field={f.id}
+          data-wizard-exclusive={o.exclusive ? '' : undefined}
+        />
+        <span class="wizard-card-inner">
+          <span class="wizard-card-tick wizard-card-tick--square" aria-hidden="true"></span>
+          <span class="wizard-card-body">
+            <span class="wizard-card-label">{o.label}</span>
+            {o.description && <span class="wizard-card-description">{o.description}</span>}
+          </span>
+        </span>
+      </label>
+    ))}
+  </div>
+)}
+
+{(f.type === 'text' || f.type === 'email' || f.type === 'url' || f.type === 'tel') && (
+  <div class="form-group">
+    {f.label && <label for={f.id}>{f.label}{f.required && <span class="required-mark" aria-hidden="true">*</span>}</label>}
+    <input
+      type={f.type}
+      id={f.id}
+      name={f.name}
+      placeholder={f.placeholder}
+      required={f.required}
+      autocomplete={f.autocomplete ?? (f.type === 'email' ? 'email' : f.type === 'url' ? 'url' : f.type === 'tel' ? 'tel' : undefined)}
+      inputmode={f.inputmode ?? (f.type === 'email' ? 'email' : f.type === 'url' ? 'url' : f.type === 'tel' ? 'tel' : undefined)}
+      spellcheck={f.spellcheck ?? (f.type === 'email' || f.type === 'url' ? 'false' : undefined)}
+      autocapitalize={f.autocapitalize ?? (f.type === 'email' || f.type === 'url' ? 'off' : undefined)}
+      data-wizard-field={f.id}
+    />
+  </div>
+)}
+
+{f.type === 'textarea' && (
+  <div class="form-group">
+    {f.label && <label for={f.id}>{f.label}{f.required && <span class="required-mark" aria-hidden="true">*</span>}</label>}
+    <textarea
+      id={f.id}
+      name={f.name}
+      placeholder={f.placeholder}
+      required={f.required}
+      rows={f.rows ?? 6}
+      autocomplete={f.autocomplete}
+      data-wizard-field={f.id}
+    />
+  </div>
+)}
+
+{f.type === 'checkbox' && (
+  <div class="form-group form-group-checkbox">
+    <label class="checkbox-label" for={f.id}>
+      <input
+        type="checkbox"
+        id={f.id}
+        name={f.name}
+        value={f.value ?? 'yes'}
+        required={f.required}
+        data-wizard-field={f.id}
+      />
+      <span class="checkbox-text" set:html={f.label} />
+    </label>
+  </div>
+)}
+
+{f.type === 'file' && (
+  <div class="form-group form-group-file">
+    {f.label && <label for={f.id}>{f.label}{f.required && <span class="required-mark" aria-hidden="true">*</span>}</label>}
+    <label class="wizard-file" for={f.id}>
+      <input
+        type="file"
+        id={f.id}
+        name={f.name}
+        accept={f.accept}
+        required={f.required}
+        data-wizard-field={f.id}
+        data-wizard-max-size={f.maxSize}
+      />
+      <span class="wizard-file-cta">
+        <span class="wizard-file-icon" aria-hidden="true">+</span>
+        <span class="wizard-file-prompt">Choose file or drop here</span>
+      </span>
+      <span class="wizard-file-state" data-wizard-file-state>No file selected</span>
+    </label>
+    {f.helpText && <p class="wizard-file-help">{f.helpText}</p>}
+    <p class="wizard-file-error" data-wizard-file-error role="alert" aria-live="polite"></p>
+  </div>
+)}
+
+{f.type === 'human-check' && (
+  <div class="form-group form-group-human-check">
+    <div
+      class="wizard-human-check"
+      data-wizard-human-check
+      data-digits={f.digits ?? 4}
+    >
+      <div class="wizard-human-check-display">
+        <span class="wizard-human-check-eyebrow">Verification</span>
+        <span
+          class="wizard-human-check-number"
+          data-wizard-human-check-number
+          aria-label="Random verification number"
+        >----</span>
+      </div>
+      <div class="wizard-human-check-input">
+        <label for={f.id}>{f.label ?? 'Type the number above'}{f.required && <span class="required-mark" aria-hidden="true">*</span>}</label>
+        <input
+          type="text"
+          id={f.id}
+          name={f.name}
+          required={f.required}
+          inputmode="numeric"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength={(f.digits ?? 4) + 2}
+          pattern="[0-9]*"
+          data-wizard-field={f.id}
+          data-wizard-human-check-input
+        />
+        <input
+          type="hidden"
+          name={`${f.name}_expected`}
+          data-wizard-human-check-expected
+        />
+      </div>
+    </div>
+  </div>
+)}

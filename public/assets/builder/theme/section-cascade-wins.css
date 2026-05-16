@@ -1,0 +1,530 @@
+/**
+ * section-cascade-wins.css — “last mile” overrides after the Astro page bundle
+ * =============================================================================
+ *
+ * WHY THIS FILE EXISTS
+ * --------------------
+ * `section-overrides.css` loads *before* `/assets/_astro/privacy.*.css`. Many
+ * page rules use variant selectors (e.g. `[data-cta-variant=C] .final-cta-actions
+ * .btn-primary { background:#fff; color: var(--accent); }`). Inside a
+ * `data-sec-theme="primary"` band we intentionally set `--accent` to white on
+ * direct children (`> *`) so links read on purple. Those variant rules then
+ * resolve to **white label on white fill**.
+ *
+ * Rules in `section-overrides` that are wrapped in `:where(html…)` also lose
+ * specificity to those later bundle rules. This file loads **after** the
+ * privacy bundle so a small set of **high-specificity** fixes always win.
+ *
+ * WHEN TO EDIT
+ * ------------
+ * 1. After adding new section-variant CSS that uses `color: var(--accent)` or
+ *    `var(--accent-hover)` on a **filled light/white control** inside a
+ *    `[data-sec-theme="primary"]` subtree in **vibrant** site mode.
+ * 2. When QA reports invisible text on primary bands — grep the bundle for
+ *    `btn-primary` + `var(--accent)` and extend this file (or fix upstream so
+ *    the component uses a fixed ink color instead of `var(--accent)`).
+ *
+ * TOKEN DEPENDENCY
+ * ----------------
+ * `--_solid-cta-primary-fg` is defined on `[data-sec-theme="primary"]` in
+ * `section-overrides.css` (dark violet for type on white fills). Do not remove
+ * that variable when editing primary-band UI.
+ *
+ * CACHE / SHIPPING
+ * ----------------
+ * Linked from HTML as `?v=` — bump when this file changes. See also
+ * `README-section-cascade-wins.md` in this folder.
+ */
+
+/* --------------------------------------------------------------------------
+   Vibrant + primary band: solid white primary buttons must not use inherited
+   white --accent for label (beats [data-*-variant=…] *-actions .btn-primary).
+   -------------------------------------------------------------------------- */
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-primary,
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-primary:link,
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-primary:visited {
+  background: #ffffff;
+  color: var(--_solid-cta-primary-fg, #320858);
+  border-color: #ffffff;
+}
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-primary:hover,
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-primary:focus,
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-primary:active {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--_solid-cta-primary-fg, #320858);
+}
+
+/* Same cascade issue as .btn-primary: keep ghost secondary readable if a
+   future bundle rule ties border/text to var(--accent). Explicit #fff wins. */
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-secondary:hover,
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-secondary:focus,
+html[data-theme="vibrant"] [data-sec-theme="primary"] .btn-secondary:active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Rhythm-painted equivalents. Vibrant mode auto-paints every 3rd section
+   (position 3n) as primary via :nth-child(... of [data-section-type]). Those
+   sections carry NO data-sec-theme attr, so the rules above don't reach them
+   and a later page-bundle rule can re-tie .btn-primary text to var(--accent)
+   — which the `> *` rule has flipped to white. Mirror the protection here.
+   (Originally surfaced by /process/ final-cta button reading white-on-white.)
+   -------------------------------------------------------------------------- */
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-primary,
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-primary:link,
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-primary:visited {
+  background: #ffffff;
+  color: var(--_solid-cta-primary-fg, #320858);
+  border-color: #ffffff;
+}
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-primary:hover,
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-primary:focus,
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-primary:active {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--_solid-cta-primary-fg, #320858);
+}
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-secondary:hover,
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-secondary:focus,
+html[data-theme="vibrant"]
+  body > :nth-child(3n of [data-section-type]:not([data-section-type="footer"])):not([data-sec-theme]) .btn-secondary:active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile nav (open sheet): lean column, top-aligned — all pages w/ #navLinks
+   (main.js toggles .open on #navLinks; rolled out from home session notes).
+   -------------------------------------------------------------------------- */
+@media (max-width: 62rem) {
+  #navLinks.open {
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.15rem;
+    padding-top: max(0.85rem, env(safe-area-inset-top, 0px));
+    padding-left: max(0.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.5rem, env(safe-area-inset-right, 0px));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+    max-height: min(86vh, calc(100vh - var(--aed-nav-h, 4.5rem) - 0.75rem));
+    max-height: min(86dvh, calc(100dvh - var(--aed-nav-h, 4.5rem) - 0.75rem));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  #navLinks.open > a[href] {
+    width: 100%;
+    border-radius: 12px;
+    padding: 0.55rem 0.65rem;
+    column-gap: 0.55rem;
+  }
+  #navLinks.open .nav-link-label {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  #navLinks.open .nav-link-chev {
+    opacity: 0.45;
+    margin-left: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Hero QA guardrails — applies to ALL hero variants
+   Goal: consistent alignment, readable type scale, clean CTA wrapping on mobile.
+   -------------------------------------------------------------------------- */
+
+/* Critical: never show addon “Includes: …” line to visitors.
+   main.js populates #heroAedOn from <meta name="aed:*" data-hero>, which is
+   useful for authoring but should not leak into live UI. */
+#heroAedOn {
+  display: none !important;
+}
+body.aed-mode #heroAedOn.hero-aed-on {
+  display: block !important;
+}
+
+/* Headline + lead: prevent awkward wraps and runaway widths. */
+#hero.hero .hero-copy h1 {
+  text-wrap: balance;
+}
+#hero.hero .hero-lead {
+  text-wrap: pretty;
+  max-width: 48rem;
+}
+
+/* Audience tags: make them look intentional (pills), not body text. */
+#hero.hero .hero-meta-pills {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+#hero.hero .hero-meta-pills > span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--text-secondary);
+  font-weight: 650;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   Hero alignment pass (1/?) — Default + Split
+   Fix: text blocks visually drifting off-grid across hero styles.
+   -------------------------------------------------------------------------- */
+html:not([data-hero-variant]) #hero.hero .hero-copy,
+html[data-hero-variant="a"] #hero.hero .hero-copy,
+html[data-hero-variant="A"] #hero.hero .hero-copy,
+html[data-hero-variant="B"] #hero.hero .hero-copy {
+  text-align: left;
+}
+html:not([data-hero-variant]) #hero.hero .hero-badge,
+html[data-hero-variant="a"] #hero.hero .hero-badge,
+html[data-hero-variant="A"] #hero.hero .hero-badge,
+html[data-hero-variant="B"] #hero.hero .hero-badge {
+  margin-left: 0;
+  margin-right: 0;
+  align-self: flex-start;
+}
+html:not([data-hero-variant]) #hero.hero .hero-meta,
+html[data-hero-variant="a"] #hero.hero .hero-meta,
+html[data-hero-variant="A"] #hero.hero .hero-meta,
+html[data-hero-variant="B"] #hero.hero .hero-meta {
+  justify-content: flex-start;
+  text-align: left;
+}
+html:not([data-hero-variant]) #hero.hero .hero-actions,
+html[data-hero-variant="a"] #hero.hero .hero-actions,
+html[data-hero-variant="A"] #hero.hero .hero-actions,
+html[data-hero-variant="B"] #hero.hero .hero-actions {
+  justify-content: flex-start;
+}
+
+/* CTAs: always wrap gracefully; on small screens make them full-width. */
+#hero.hero .hero-actions {
+  flex-wrap: wrap;
+  row-gap: 0.65rem;
+  column-gap: 0.75rem;
+}
+@media (max-width: 40rem) {
+  #hero.hero .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #hero.hero .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Mobile safe-area + compact rhythm: avoid content hiding under notches. */
+@media (max-width: 40rem) {
+  #hero.hero {
+    padding-top: max(6.25rem, calc(env(safe-area-inset-top, 0px) + 5.75rem));
+  }
+}
+
+/* Variant-specific micro-fixes */
+
+/* Kinetic: ensure the intentional desktop break shows only when wide enough. */
+@media (max-width: 48rem) {
+  html[data-hero-variant="C"] #hero.hero h1 br.desktop-break {
+    display: none !important;
+  }
+}
+
+/* Default hero (A): keep long headlines from spilling on small screens. */
+@media (max-width: 40rem) {
+  html:not([data-hero-variant]),
+  html[data-hero-variant="a"],
+  html[data-hero-variant="A"] {
+    /* no-op selector group; next rules target #hero under it */
+  }
+  html:not([data-hero-variant]) #hero.hero .hero-copy h1,
+  html[data-hero-variant="a"] #hero.hero .hero-copy h1,
+  html[data-hero-variant="A"] #hero.hero .hero-copy h1 {
+    line-height: 1.02;
+  }
+}
+
+/* Split (B): improve small-screen spacing + keep copy readable. */
+@media (max-width: 56rem) {
+  html[data-hero-variant="B"] #hero.hero {
+    padding-top: 6.25rem;
+    padding-bottom: 3.75rem;
+  }
+  html[data-hero-variant="B"] #hero.hero .hero-lead {
+    max-width: 44rem;
+  }
+}
+
+/* Split (B): image card should not feel clipped at viewport edge. */
+@media (min-width: 56rem) {
+  html[data-hero-variant="B"] #hero.hero .hero-content {
+    padding-right: clamp(0.75rem, 2vw, 1.75rem);
+  }
+  /* Card is rendered via pseudo-element on .hero-content. Nudge it inward. */
+  html[data-hero-variant="B"] #hero.hero .hero-content::after {
+    margin-right: clamp(0.5rem, 1.5vw, 1.25rem);
+  }
+}
+
+/* Split (B): secondary CTA contrast guardrail on dark/photo backgrounds. */
+html[data-hero-variant="B"] #hero.hero .hero-actions .btn-secondary {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.40);
+  background: rgba(255, 255, 255, 0.06);
+}
+html[data-hero-variant="B"] #hero.hero .hero-actions .btn-secondary:hover,
+html[data-hero-variant="B"] #hero.hero .hero-actions .btn-secondary:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.60);
+}
+
+/* Kinetic (C): tighten type rhythm on small screens. */
+@media (max-width: 40rem) {
+  html[data-hero-variant="C"] #hero.hero h1 {
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+  }
+}
+
+/* Kinetic (C): restore audience tags + keep centered composition consistent. */
+html[data-hero-variant="C"] #hero.hero .hero-meta {
+  display: flex !important;
+  justify-content: center;
+}
+html[data-hero-variant="C"] #hero.hero .hero-actions {
+  justify-content: center;
+}
+
+/* Kinetic (C): enforce site font system (avoid any unintended serif drift). */
+html[data-hero-variant="C"] #hero.hero .hero-copy h1,
+html[data-hero-variant="C"] #hero.hero .hero-lead,
+html[data-hero-variant="C"] #hero.hero .hero-badge {
+  font-family: var(--font-family, ui-sans-serif, system-ui, sans-serif) !important;
+}
+
+/* Beam (D): keep the beam readable under dark/low-contrast displays. */
+html[data-hero-variant="D"] #hero.hero .hero-bg::after {
+  opacity: 1;
+}
+/* Beam: align the card/panel to the container grid, not “floating”. */
+@media (min-width: 56rem) {
+  html[data-hero-variant="D"] #hero.hero .hero-copy {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+}
+/* Beam: fix tight bottom padding inside the panel (CTAs too close to edge). */
+html[data-hero-variant="D"] #hero.hero .hero-copy > .hero-actions {
+  padding-bottom: 1.2rem;
+}
+
+/* Beam (D): add subtle right-side framing so the empty half feels intentional. */
+@media (min-width: 56rem) {
+  html[data-hero-variant="D"] #hero.hero .hero-content {
+    position: relative;
+  }
+  html[data-hero-variant="D"] #hero.hero .hero-content::after {
+    content: "";
+    position: absolute;
+    top: 10%;
+    right: -6%;
+    width: min(42vw, 560px);
+    height: min(52vh, 520px);
+    background:
+      radial-gradient(circle at 30% 40%, rgba(var(--accent-rgb), 0.22), transparent 62%),
+      radial-gradient(circle at 70% 65%, rgba(var(--accent-rgb), 0.12), transparent 60%);
+    filter: blur(28px);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+}
+
+/* Spotlight (E): prevent overly tall hero on short viewports + keep CTAs visible. */
+@media (max-height: 720px) {
+  html[data-hero-variant="E"] #hero.hero {
+    min-height: 84vh;
+    padding-top: 6.5rem;
+    padding-bottom: 3.75rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Hero vertical rhythm pass (2/?) — reduce dead space above headline
+   Targets: Default (A), Kinetic (C), Spotlight (E)
+   -------------------------------------------------------------------------- */
+
+/* Default (A/a): pull content up; keep hero impactful but not empty. */
+html:not([data-hero-variant]) #hero.hero,
+html[data-hero-variant="a"] #hero.hero,
+html[data-hero-variant="A"] #hero.hero {
+  min-height: 88vh;
+  padding-top: clamp(6rem, 10vh, 7.5rem);
+  padding-bottom: clamp(3.25rem, 6vh, 4.5rem);
+}
+@media (min-width: 56rem) {
+  html:not([data-hero-variant]) #hero.hero .hero-content,
+  html[data-hero-variant="a"] #hero.hero .hero-content,
+  html[data-hero-variant="A"] #hero.hero .hero-content {
+    /* Nudge the whole stack slightly upward without breaking centered layouts. */
+    padding-top: clamp(0rem, 2vh, 1.25rem);
+  }
+}
+
+/* Default (A/a): add a subtle “top anchor” so the hero doesn't feel empty above. */
+html:not([data-hero-variant]) #hero.hero .hero-copy,
+html[data-hero-variant="a"] #hero.hero .hero-copy,
+html[data-hero-variant="A"] #hero.hero .hero-copy {
+  position: relative;
+}
+html:not([data-hero-variant]) #hero.hero .hero-copy::before,
+html[data-hero-variant="a"] #hero.hero .hero-copy::before,
+html[data-hero-variant="A"] #hero.hero .hero-copy::before {
+  content: "";
+  position: absolute;
+  top: -0.9rem;
+  left: 0;
+  width: min(220px, 42vw);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.85), transparent);
+  opacity: 0.55;
+}
+@media (max-width: 40rem) {
+  html:not([data-hero-variant]) #hero.hero .hero-copy::before,
+  html[data-hero-variant="a"] #hero.hero .hero-copy::before,
+  html[data-hero-variant="A"] #hero.hero .hero-copy::before {
+    top: -0.65rem;
+    opacity: 0.48;
+  }
+}
+
+/* Kinetic (C): tighten badge→headline gap and reduce wasted top space. */
+html[data-hero-variant="C"] #hero.hero {
+  min-height: 86vh;
+  padding-top: clamp(6.25rem, 9vh, 7.25rem);
+  padding-bottom: clamp(3.25rem, 6vh, 4.25rem);
+}
+html[data-hero-variant="C"] #hero.hero .hero-badge {
+  margin-bottom: 1rem !important;
+}
+html[data-hero-variant="C"] #hero.hero .hero-copy h1 {
+  margin-bottom: 1.65rem;
+}
+
+/* Spotlight (E): center feels too low — pull it up and keep CTAs visible. */
+html[data-hero-variant="E"] #hero.hero {
+  min-height: 88vh;
+  padding-top: clamp(6.5rem, 10vh, 7.5rem);
+  padding-bottom: clamp(3.5rem, 7vh, 4.75rem);
+}
+
+/* Spotlight (E): tighten hierarchy so stray lines can't visually “float”. */
+html[data-hero-variant="E"] #hero.hero .hero-copy {
+  text-align: center;
+  max-width: 52rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+html[data-hero-variant="E"] #hero.hero .hero-meta {
+  justify-content: center;
+}
+html[data-hero-variant="E"] #hero.hero .hero-actions {
+  justify-content: center;
+}
+html[data-hero-variant="E"] #hero.hero .hero-badge {
+  margin-left: auto;
+  margin-right: auto;
+}
+html[data-hero-variant="E"] #hero.hero .hero-lead {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Spotlight (E): ensure ghost/secondary CTA stays visible on bright hotspots. */
+html[data-hero-variant="E"] #hero.hero .hero-actions .btn-secondary {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+html[data-hero-variant="E"] #hero.hero .hero-actions .btn-secondary:hover,
+html[data-hero-variant="E"] #hero.hero .hero-actions .btn-secondary:focus {
+  background: rgba(0, 0, 0, 0.26);
+  border-color: rgba(255, 255, 255, 0.62);
+}
+
+/* Terminal (F): avoid super-long monospace lines and keep the cursor aligned. */
+html[data-hero-variant="F"] #hero.hero .hero-copy {
+  max-width: 56rem;
+}
+@media (max-width: 40rem) {
+  html[data-hero-variant="F"] #hero.hero .hero-copy h1 {
+    line-height: 1.18;
+  }
+}
+/* Terminal: align card to grid (avoid off-center feel). */
+@media (min-width: 56rem) {
+  html[data-hero-variant="F"] #hero.hero .hero-copy {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+}
+/* Terminal: fix secondary CTA contrast inside dark card. */
+html[data-hero-variant="F"] #hero.hero .hero-actions .btn-secondary {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.38) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+html[data-hero-variant="F"] #hero.hero .hero-actions .btn-secondary:hover,
+html[data-hero-variant="F"] #hero.hero .hero-actions .btn-secondary:focus {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.58) !important;
+}
+
+/* Trust row: allow wrapping on narrow widths (prevents overflow/clipping). */
+@media (max-width: 40rem) {
+  #hero.hero .hero-trust {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    max-width: none;
+  }
+  #hero.hero .hero-trust li {
+    padding: 0;
+    border-right: 0;
+  }
+}
+
+/* Split (B): when stacked on smaller screens, keep spacing tight and readable. */
+@media (max-width: 56rem) {
+  html[data-hero-variant="B"] #hero.hero .hero-trust {
+    margin-top: 1.5rem;
+    padding-top: 1.1rem;
+  }
+}

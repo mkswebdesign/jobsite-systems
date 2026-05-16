@@ -1,0 +1,20 @@
+{
+  "name": "cookie-cleaner",
+  "assets": {
+    "css": [],
+    "js":  ["cookie-cleaner.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-cookie-cleaner",
+        "description": "List of cookie name patterns (regex strings) to delete when the user denies a category. Runs on aed:consent:change, aed:consent:ready, and on a 30s polling interval.",
+        "required": true,
+        "fields": {
+          "always":     { "type": "string[]", "default": [], "description": "Patterns deleted unconditionally on every check (e.g. legacy cookies you no longer want)." },
+          "categories": { "type": "object",   "default": {}, "description": "Map of consent category id → array of patterns deleted when that category is denied. Example: { analytics: ['^_ga', '^_gid'], marketing: ['^_fbp'] }." }
+        }
+      }
+    ]
+  }
+}

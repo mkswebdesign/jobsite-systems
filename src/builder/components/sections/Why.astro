@@ -1,0 +1,121 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import Icon from '../Icon.astro';
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  cards: Array<{
+    iconKey: string;
+    title: string;
+    body: string;
+    cta?: { label: string; href: string };
+  }>;
+  variant?: string;
+}
+
+const { sectionLabel, heading, subtext, cards, variant } = Astro.props;
+const variantKey = typeof variant === 'string' && /^[a-zA-Z]$/.test(variant) ? variant : null;
+---
+
+<section
+  class="section why"
+  id="why"
+  data-section-type="why"
+  data-section-label="Why us"
+  data-section-variants="a:Default,B:Flat,C:Dense,D:Alternating,E:Slider,F:Hairline,G:Aurora"
+  {...(variantKey ? { 'data-why-variant': variantKey } : {})}
+>
+  <div class="container">
+    <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+    <div class="why-slider-viewport">
+      <div class="why-grid stagger-container reveal">
+        {cards.map(c => (
+          <div class="why-card stagger-item">
+            <div class="why-icon"><Icon name={c.iconKey} /></div>
+            <h3>{c.title}</h3>
+            <p>{c.body}</p>
+            {c.cta && (
+              <a class="why-card__cta" href={c.cta.href}>
+                <span class="why-card__cta-label">{c.cta.label}</span>
+                <span class="why-card__cta-arrow" aria-hidden="true">→</span>
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    // Variant E = slow-scroll marquee. Clone the card list so the
+    // CSS animation (0 → -50%) lands on identical content and the
+    // seam is invisible. Keyed off the live data-why-variant on
+    // <html>; re-runs if the editor swaps variants in-session.
+    const setupSlider = () => {
+      const active = document.documentElement.getAttribute('data-why-variant') === 'E';
+      const grid = document.querySelector<HTMLElement>('.why-grid');
+      if (!grid) return;
+      if (!active) {
+        grid.querySelectorAll<HTMLElement>('[data-why-clone]').forEach(n => n.remove());
+        return;
+      }
+      if (grid.querySelector('[data-why-clone]')) return;
+      const originals = Array.from(grid.children) as HTMLElement[];
+      if (originals.length < 2) return;
+      originals.forEach(card => {
+        const clone = card.cloneNode(true) as HTMLElement;
+        clone.setAttribute('data-why-clone', '1');
+        clone.setAttribute('aria-hidden', 'true');
+        grid.appendChild(clone);
+      });
+    };
+    setupSlider();
+    new MutationObserver(setupSlider).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-why-variant'],
+    });
+
+    const cards = document.querySelectorAll<HTMLElement>('.why-card');
+    if (!cards.length) return;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (reduce || coarse) return;
+
+    const MAX_TILT = 6;
+    let pending: { card: HTMLElement; nx: number; ny: number } | null = null;
+    let rafId: number | null = null;
+
+    const flush = () => {
+      rafId = null;
+      if (!pending) return;
+      const { card, nx, ny } = pending;
+      pending = null;
+      card.style.setProperty('--mx', (nx * 100).toFixed(2) + '%');
+      card.style.setProperty('--my', (ny * 100).toFixed(2) + '%');
+      const tx = (nx - 0.5) * 2;
+      const ty = (ny - 0.5) * 2;
+      card.style.setProperty('--tilt-x', (tx * MAX_TILT).toFixed(2) + 'deg');
+      card.style.setProperty('--tilt-y', (-ty * MAX_TILT).toFixed(2) + 'deg');
+    };
+
+    cards.forEach((card) => {
+      card.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        const rect = card.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const nx = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const ny = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+        pending = { card, nx, ny };
+        if (rafId === null) rafId = requestAnimationFrame(flush);
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--tilt-x', '0deg');
+        card.style.setProperty('--tilt-y', '0deg');
+      });
+    });
+  })();
+</script>

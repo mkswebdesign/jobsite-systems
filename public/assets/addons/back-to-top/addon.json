@@ -1,0 +1,25 @@
+{
+  "name": "back-to-top",
+  "assets": {
+    "css": ["back-to-top.css"],
+    "js":  ["back-to-top.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:back-to-top",
+        "default": "on",
+        "required": true,
+        "description": "Master switch. Set content to 'on'/'true'/'1' to enable. Per-page opt-out: set data-aed-back-to-top='off' on the <html> element.",
+        "attrs": {
+          "data-threshold": { "type": "number", "default": 600,     "description": "Scroll pixels before the button appears." },
+          "data-position":  { "type": "string", "default": "left",  "enum": ["left", "right"], "description": "Edge the button anchors to." },
+          "data-offset-x":  { "type": "string",                      "description": "CSS length, e.g. '1.5rem' — distance from the chosen edge." },
+          "data-offset-y":  { "type": "string",                      "description": "CSS length — distance from the bottom of the viewport." },
+          "data-size":      { "type": "string",                      "description": "Button diameter in px (string for CSS use)." },
+          "data-style":     { "type": "string", "default": "circle","enum": ["circle", "square", "pill"], "description": "Button shape." }
+        }
+      }
+    ]
+  }
+}

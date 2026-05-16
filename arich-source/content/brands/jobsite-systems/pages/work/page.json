@@ -1,0 +1,37 @@
+{
+  "slug": "work",
+  "path": "/work/",
+  "breadcrumbLabel": "Work",
+  "seo": {
+    "title": "Work — Jobsite Systems",
+    "description": "Trade-business websites we've built and launched — examples coming soon as we onboard our first cohort of trade businesses.",
+    "canonical": "https://jobsite.systems/work/"
+  },
+  "header": {
+    "heading": "Trade-Business Websites — real examples you can walk through",
+    "lead": "Two sample builds you can click through end-to-end (a solo plumber and a multi-trade home-services company), plus the slot for the next real client launch."
+  },
+  "demoBuildsBanner": {
+    "label": "About these examples",
+    "body": "These are demonstration builds we created to show our system end-to-end. Real client sites from our pilot cohort are coming online starting June 2026."
+  },
+  "dividers": [
+    { "after": "header", "color": "primary" }
+  ],
+  "grid": {
+    "workSlugs": ["cedar-mill-plumbing", "apex-home-services", "more-coming"],
+    "layout": "static"
+  },
+  "emptyState": {
+    "heading": "Examples coming soon",
+    "body": "We're onboarding our first cohort of trade businesses now. Live examples will appear here as sites ship — expect the first one soon.",
+    "ctaLabel": "Be the First",
+    "ctaHref": "/start/"
+  },
+  "cta": {
+    "heading": "Want your site here next?",
+    "body": "We're onboarding a small group of trade businesses for launch. Twenty-minute call, honest answer.",
+    "label": "Start Your Site",
+    "href": "/start/"
+  }
+}

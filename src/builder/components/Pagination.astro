@@ -1,0 +1,51 @@
+---
+/**
+ * Pagination — prev/next + numbered pager.
+ * Props: currentPage, totalPages, baseUrl (e.g. "/archive" or "/category/politics").
+ * Page 1 renders at <baseUrl>/, pages 2+ render at <baseUrl>/page/<n>/.
+ * Hidden entirely when totalPages <= 1.
+ */
+interface Props { currentPage: number; totalPages: number; baseUrl: string; }
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+function urlFor(n: number): string {
+  const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  return n === 1 ? `${base}/` : `${base}/page/${n}/`;
+}
+
+/* Build a page list with ellipses: 1, 2, 3, …, last when far apart. */
+function buildPager(cur: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const out: (number | '…')[] = [1];
+  if (cur > 3) out.push('…');
+  for (let n = Math.max(2, cur - 1); n <= Math.min(total - 1, cur + 1); n++) out.push(n);
+  if (cur < total - 2) out.push('…');
+  out.push(total);
+  return out;
+}
+
+const pages = buildPager(currentPage, totalPages);
+const prev = currentPage > 1 ? urlFor(currentPage - 1) : null;
+const next = currentPage < totalPages ? urlFor(currentPage + 1) : null;
+---
+{totalPages > 1 && (
+  <nav class="pagination" aria-label="Pagination">
+    {prev
+      ? <a class="pagination__prev" href={prev} rel="prev">← Newer</a>
+      : <span class="pagination__prev pagination__prev--disabled" aria-hidden="true">← Newer</span>}
+    <ol class="pagination__pages">
+      {pages.map((p) => (
+        <li>
+          {p === '…'
+            ? <span class="pagination__gap" aria-hidden="true">…</span>
+            : p === currentPage
+              ? <span class="pagination__current" aria-current="page">{p}</span>
+              : <a href={urlFor(p)}>{p}</a>}
+        </li>
+      ))}
+    </ol>
+    {next
+      ? <a class="pagination__next" href={next} rel="next">Older →</a>
+      : <span class="pagination__next pagination__next--disabled" aria-hidden="true">Older →</span>}
+  </nav>
+)}

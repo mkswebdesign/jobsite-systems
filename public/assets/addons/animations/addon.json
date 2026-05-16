@@ -1,0 +1,56 @@
+{
+  "name": "animations",
+  "assets": {
+    "css": ["animations.css"],
+    "js":  ["animations.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:animations",
+        "default": "on",
+        "required": true,
+        "description": "Master switch + site-wide animation defaults. Set content to 'on'/'true'/'1' to enable the addon, 'off' to disable entirely. The attrs below split into three groups — (1) global on/off toggles for each animation family, (2) element-animation defaults (scroll-reveal), (3) page-transition defaults (body fade-in + route-change fade). Each attr flows into CSS variables on <html> at page load; per-element data-aed-* attrs always override the site-wide defaults.",
+        "attrs": {
+          "data-element-animations":   { "type": "boolean", "default": true,                                                                                                          "description": "Global on/off for scroll-reveal element animations (fade/zoom on scroll). When false, elements appear immediately with no entrance animation. Overrides every other element-anim attr." },
+          "data-page-transitions":     { "type": "boolean", "default": true,                                                                                                          "description": "Global on/off for site-wide page transitions — body fade-in on load + the .page-transition overlay used on route changes. When false, pages pop in instantly." },
+          "data-auto-scope":           { "type": "string",                                                                                                                            "description": "CSS selector for elements to auto-promote (no per-element opt-in needed)." },
+          "data-auto-effect":          { "type": "string",  "default": "fade-up", "enum": ["fade-in", "fade-up", "fade-down", "fade-left", "fade-right", "zoom-in", "zoom-out"],       "description": "Animation effect applied to auto-scoped elements." },
+          "data-auto-stagger":         { "type": "string",                                                                                                                            "description": "CSS selector for parents whose children should auto-stagger (separate from data-auto-scope)." },
+          "data-auto-stagger-ms":      { "type": "number",  "default": 80,   "min": 0,    "max": 1000,                                                                                "description": "Milliseconds between staggered children. Site-wide default; per-parent data-aed-stagger overrides." },
+          "data-default-duration-ms":  { "type": "number",  "default": 700,  "min": 0,    "max": 3000,                                                                                "description": "Default element-animation transition duration in ms. Writes --aed-anim-duration on <html>; per-element data-aed-duration overrides." },
+          "data-default-easing":       { "type": "string",  "default": "cubic-bezier(0.4, 0, 0.2, 1)",                                                                                "description": "Default element-animation CSS timing-function. Writes --aed-anim-ease on <html>." },
+          "data-translate-distance":   { "type": "string",  "default": "24px",                                                                                                        "description": "Distance fade-up/down/left/right elements travel before settling (CSS length). Writes --aed-anim-distance on <html>." },
+          "data-zoom-scale":           { "type": "number",  "default": 0.94, "min": 0.5,  "max": 1.5,                                                                                 "description": "Starting scale for zoom-in (zoom-out uses its inverse). Writes --aed-anim-zoom on <html>." },
+          "data-threshold":            { "type": "number",  "default": 0.15, "min": 0,    "max": 1,                                                                                   "description": "IntersectionObserver threshold (0–1). How far into view an element must scroll before firing." },
+          "data-respect-reduced-motion": { "type": "boolean", "default": true,                                                                                                        "description": "When prefers-reduced-motion: reduce is set, skip animations and show elements immediately." },
+          "data-replay-default":       { "type": "boolean", "default": false,                                                                                                         "description": "Site-wide default for whether animations replay on every re-entry. Per-element data-aed-replay overrides." },
+          "data-disabled-pages":       { "type": "string",                                                                                                                            "description": "Comma-separated list of pathnames where the entire addon is disabled (e.g. '/admin/,/login/'). Case-sensitive prefix match — '/admin/' disables '/admin/users/' too." },
+          "data-page-transition-duration-ms": { "type": "number", "default": 500, "min": 0, "max": 2000,                                                                              "description": "Page-transition duration in ms. Writes --page-transition-duration on <html>. Applies to body fade-in on load + the .page-transition overlay used on route changes." },
+          "data-page-transition-easing": { "type": "string", "default": "cubic-bezier(0.4, 0, 0.2, 1)",                                                                               "description": "Page-transition CSS timing-function. Writes --page-transition-easing on <html>." },
+          "data-body-fade-in-ms":      { "type": "number",  "default": 500,  "min": 0,    "max": 2000,                                                                                "description": "Body fade-in duration in ms. Writes --body-fade-in-duration on <html>; 0 = no fade on initial page paint." }
+        }
+      }
+    ],
+    "data": [
+      {
+        "selector": "[data-aed-delay], [data-aed-duration], [data-aed-replay], [data-aed-stagger]",
+        "description": "Per-element fine-grained tuning. Apply to elements that already opt in (or are inside an auto-scoped container). These always win over the site-wide defaults above.",
+        "fields": {
+          "data-aed-delay":            { "type": "number",  "description": "Delay before this element animates, in ms." },
+          "data-aed-duration":         { "type": "number",  "description": "Animation duration in ms (overrides data-default-duration-ms)." },
+          "data-aed-replay":           { "type": "boolean", "description": "Replay each time the element re-enters the viewport (overrides data-replay-default)." },
+          "data-aed-stagger":          { "type": "number",  "description": "On a parent element: ms between staggered child animations (overrides data-auto-stagger-ms)." },
+          "data-aed-stagger-children": { "type": "boolean", "description": "Apply staggering to direct children." }
+        }
+      },
+      {
+        "selector": "html",
+        "description": "Per-page kill switch — disable animations on a single page without touching the global config.",
+        "fields": {
+          "data-aed-animations":       { "type": "string", "enum": ["off"], "description": "Set on <html> for any page where animations should be skipped entirely." }
+        }
+      }
+    ]
+  }
+}

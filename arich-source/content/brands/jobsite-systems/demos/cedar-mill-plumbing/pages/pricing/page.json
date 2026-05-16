@@ -1,0 +1,135 @@
+{
+  "slug": "pricing",
+  "path": "/pricing/",
+  "breadcrumbLabel": "Pricing",
+  "seo": {
+    "title": "Pricing — Cedar Mill Plumbing",
+    "description": "Flat-rate pricing on common plumbing service calls and free written estimates on projects $500+. Drain cleaning $189, water heater install from $1,650, leak detection $189, hydro jetting $499–$799.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/pricing/"
+  },
+  "header": {
+    "sectionLabel": "Pricing",
+    "heading": "Flat-rate on common calls.\nFree written estimate on bigger projects.",
+    "lead": "No diagnostic fees, no surprise add-ons, no commission upsell. Common service calls are flat-rate — same price whether the job takes ten minutes or an hour. Projects over $500 get a free written estimate before any work starts, and the number on that quote matches the number on the final invoice."
+  },
+  "billing": {
+    "default": "monthly",
+    "discount": 0,
+    "savePill": "",
+    "monthlyLabel": "Common Service Calls",
+    "yearlyLabel": "",
+    "monthlyNote": "flat rate, all-in",
+    "yearlyNote": ""
+  },
+  "tierGroups": {
+    "defaultId": "service",
+    "toggleLabel": "Job type",
+    "groups": [
+      {
+        "id": "service",
+        "label": "Common Jobs",
+        "blurb": "Flat rates on the calls I run all week. Bigger projects (water heater swap, repipe, slab leak) get a free written estimate — see the next section.",
+        "tiers": [
+          {
+            "id": "drain",
+            "name": "Drain Cleaning",
+            "price": "$189",
+            "priceSuffix": "flat",
+            "description": "Branch drains — kitchen, bath, laundry — cleared with a cable. Same price whether it takes ten minutes or an hour. Mainline clearing through an accessible cleanout: $289 flat, includes a quick scope.",
+            "ctaLabel": "Book a Service Call",
+            "ctaHref": "/demo/cedar-mill-plumbing/contact/",
+            "ctaVariant": "secondary",
+            "featured": false,
+            "features": [
+              { "name": "Branch drain (kitchen, bath, laundry) — $189", "included": true },
+              { "name": "Mainline clearing through cleanout — $289", "included": true },
+              { "name": "Camera scope after the line is open", "included": true },
+              { "name": "Drop cloths down, cleaned-up worksite", "included": true },
+              { "name": "Photo report and written invoice", "included": true },
+              { "name": "Hydro jetting (if grease/roots) — quoted separately", "included": false }
+            ]
+          },
+          {
+            "id": "water-heater",
+            "name": "Water Heater Install",
+            "price": "$1,650",
+            "priceSuffix": "from",
+            "description": "Standard 50-gallon gas tank, code-correct, with new T&P valve, drip pan, expansion tank if required, and haul-off of the old unit. Electric 50-gal $1,890. Tankless conversion $4,800–$6,400 with a free written estimate.",
+            "ctaLabel": "Request an Estimate",
+            "ctaHref": "/demo/cedar-mill-plumbing/contact/",
+            "ctaVariant": "primary",
+            "featured": true,
+            "badge": "Most Common",
+            "features": [
+              { "name": "50-gal gas tank installed — $1,650", "included": true },
+              { "name": "50-gal electric tank installed — $1,890", "included": true },
+              { "name": "Permit pulled where required, included", "included": true },
+              { "name": "Old unit hauled off, no separate fee", "included": true },
+              { "name": "1-year workmanship warranty + manufacturer pass-through", "included": true },
+              { "name": "Tankless conversion — $4,800–$6,400, free estimate", "included": false },
+              { "name": "Same-day failure swap when truck has stock — +$150", "included": false }
+            ]
+          },
+          {
+            "id": "leak",
+            "name": "Leak Detection",
+            "price": "$189",
+            "priceSuffix": "flat",
+            "description": "Full diagnostic visit: meter test, pressure isolation, acoustic listening, infrared on suspect walls, moisture mapping, and a written report with photos. Credited toward repair if you have me do the work.",
+            "ctaLabel": "Book a Service Call",
+            "ctaHref": "/demo/cedar-mill-plumbing/contact/",
+            "ctaVariant": "secondary",
+            "featured": false,
+            "features": [
+              { "name": "Full diagnostic visit — $189 flat", "included": true },
+              { "name": "Acoustic, infrared, moisture mapping", "included": true },
+              { "name": "Written report with photos", "included": true },
+              { "name": "Credited toward repair if hired", "included": true },
+              { "name": "Repair work quoted separately", "included": true },
+              { "name": "Slab leak repair — $1,400–$3,800, free estimate", "included": false }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "oneOff": {
+    "heading": "Bigger projects — free written estimate.",
+    "body": "Anything over $500 in scope gets a free estimate visit. Whole-house repipe ($7,500–$14,500), tankless conversion ($4,800–$6,400), slab leak repair ($1,400–$3,800), cleanout install ($650–$1,200), hydro jetting ($499–$799 by line length). The estimate visit takes about 30 minutes. Written quote in your email by end of business that day, often faster. <a href=\"/demo/cedar-mill-plumbing/faq/\">More on the FAQ →</a>",
+    "ctaLabel": "Request an Estimate",
+    "ctaHref": "/demo/cedar-mill-plumbing/contact/"
+  },
+  "faq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Pricing Questions",
+    "faqs": [
+      {
+        "question": "Is there a diagnostic or trip fee on top of the repair?",
+        "answer": "No. Flat-rate on common service calls means the rate covers everything — the trip, the diagnosis, and the repair. The only add-on is the after-hours fee ($125) on evenings, overnights, weekends, and holidays."
+      },
+      {
+        "question": "What if the job turns out to be bigger than expected?",
+        "answer": "If something behind the wall changes the scope, I stop, walk you through what I found, and we agree on a revised number in writing before any additional work starts. No \"already too far in\" pressure tactics."
+      },
+      {
+        "question": "Do you take payment plans?",
+        "answer": "For projects over $5,000 I accept a 30% deposit at scheduling with the balance on completion. For very large repipes I'm willing to break the balance into two payments. I don't run financing or third-party loan products — keeps things simple."
+      },
+      {
+        "question": "What does the warranty actually cover?",
+        "answer": "Workmanship — if a joint I made fails or a fixture I installed leaks, I come back and fix it free. 1 year on standard work, 5 years on whole-house repipes. Parts are covered under the manufacturer's warranty (typically 6-12 years on water heaters, 25 years on PEX, lifetime on most quality fixtures); I file the claim if a covered part fails."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Have questions about whether the job needs an estimate or a flat-rate call?",
+    "body": "Easiest way is to call (503) 555-0149 or send a contact form with a few sentences about what's going on. I'll tell you straight whether it's a service call or worth an estimate visit.",
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

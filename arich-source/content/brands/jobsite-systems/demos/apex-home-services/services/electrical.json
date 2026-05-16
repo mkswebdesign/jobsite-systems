@@ -1,0 +1,35 @@
+{
+  "slug": "electrical",
+  "order": 2,
+  "number": "02",
+  "iconKey": "check-circle",
+  "heroImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Electrician working on a residential breaker panel",
+  "title": "Electrical",
+  "headline": "Outlets, panels, lighting,\nand EV chargers.",
+  "shortDescription": "Outlets, switches, ceiling fans, lighting, sub-panels, full panel upgrades, and Level 2 EV charger installs — all done by our licensed electrician with permits pulled where required.",
+  "lead": "We run a full residential electrical service inside the company. Our licensed electrician (KS electrical contractor license #E-19842) leads every electrical job and signs off on the work before the crew leaves. Small jobs are flat-rate — outlet adds, ceiling fans, simple light installs — so you know the price before we start. Larger work like panel upgrades and EV chargers is quoted on-site after a free walkthrough, with permits pulled and inspected through the city or county where required.",
+  "seo": {
+    "title": "Electrical — Apex Home Services · Kansas City Metro",
+    "description": "Licensed residential electrician in the Kansas City metro. Outlets, fans, lighting, panel upgrades, and EV charger installs. Flat-rate small jobs and free on-site quotes for bigger work.",
+    "schemaName": "Residential Electrical Services",
+    "schemaDescription": "Residential electrical services including outlets, switches, ceiling fan installation, lighting, sub-panels, panel upgrades, and Level 2 EV charger installation, performed under a licensed Kansas electrical contractor."
+  },
+  "sections": [
+    { "type": "list", "variant": "showcase", "heading": "Common electrical jobs", "intro": "A representative list — small jobs are flat-rate; bigger work is quoted on-site.", "items": [
+      { "label": "Outlets and switches", "body": "Add, replace, or relocate outlets and switches. GFCI and AFCI swaps for kitchen, bath, and bedroom code compliance. Flat-rate $185 for a standard outlet add on existing circuit" },
+      { "label": "Ceiling fans and fixtures", "body": "Ceiling fan installs, light fixture swaps, recessed can lighting, and under-cabinet lighting. Flat-rate $295 for a standard fan install on existing fixture box" },
+      { "label": "Panel work", "body": "Full panel replacements, sub-panels for additions or finished basements, breaker swaps, and load-balancing for high-draw appliances. Permitted and inspected" },
+      { "label": "EV charger installs", "body": "Level 2 EV charger installations — most homes need a 240V circuit pulled from the panel to the garage or driveway. Free on-site quote; typical install ranges $750–$1,800 depending on panel distance and load" },
+      { "label": "Generator and transfer switches", "body": "Manual transfer switch installs for portable generators; whole-home generator coordination with our partner installer" },
+      { "label": "Code corrections and inspections", "body": "Buyer's-inspection electrical fixes, knob-and-tube assessments, and aluminum wiring remediation in older KC-area homes" }
+    ]},
+    { "type": "feature", "theme": "white", "heading": "How an electrical job goes", "body": "Small jobs are flat-rate; bigger work follows the same arc.", "items": [
+      "Phone call or web request — describe what you need, send photos of the panel and the location if you can",
+      "Flat-rate quote on the phone for standard outlets, fans, and small lighting work",
+      "Free on-site walkthrough for panel work, EV chargers, or anything that needs a permit",
+      "Licensed electrician on every job, written quote before work starts, permits pulled and inspections coordinated"
+    ]}
+  ],
+  "cta": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" }
+}

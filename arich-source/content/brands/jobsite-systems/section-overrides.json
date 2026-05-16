@@ -1,0 +1,449 @@
+{
+  "/about/": [
+    {
+      "type": "about-hero",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "about-philosophy",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "content-section",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "content-section",
+      "index": 1,
+      "theme": "light"
+    },
+    {
+      "type": "capabilities",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "cta",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "design-break",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/": [
+    {
+      "type": "about-split",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Built by one team that only works on trade-business websites."
+    },
+    {
+      "type": "capabilities",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Everything included."
+    },
+    {
+      "type": "content-section",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "cta",
+      "index": 0,
+      "theme": "secondary"
+    },
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Common Questions"
+    },
+    {
+      "type": "partnership",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Everything Your Site Needs"
+    },
+    {
+      "type": "photo-gallery",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "process",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Simple process.\nReliable result."
+    },
+    {
+      "type": "services",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Everything a trade business needs. Nothing it doesn't."
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "dark",
+      "sectionHeading": "What owners and\noperators have to say."
+    },
+    {
+      "type": "versus-block",
+      "index": 0,
+      "theme": "light",
+      "sectionHeading": "Built for the business. Not for the admin panel."
+    },
+    {
+      "type": "why",
+      "index": 0,
+      "theme": "dark"
+    }
+  ],
+  "/services/": [
+    {
+      "type": "cta",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "services-showcase",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/services/*": [
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "service-section",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "service-section",
+      "index": 1,
+      "theme": "primary"
+    },
+    {
+      "type": "service-section",
+      "index": 2,
+      "theme": "dark"
+    },
+    {
+      "type": "service-section",
+      "index": 3,
+      "theme": "light"
+    }
+  ],
+  "/faq/": [
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/process/": [
+    {
+      "type": "cta",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "process-timeline",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/pricing/": [
+    {
+      "type": "cta",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "pricing",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "pricing-compare",
+      "index": 0,
+      "theme": "dark"
+    },
+    {
+      "type": "pricing-oneoff",
+      "index": 0,
+      "theme": "primary"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/contact/": [
+    {
+      "type": "contact-form",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "primary"
+    }
+  ],
+  "/contact/success/": [
+    {
+      "type": "next-steps",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/start/": [
+    {
+      "type": "start-wizard",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/start/success/": [
+    {
+      "type": "next-steps",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/work/": [
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "work-carousel",
+      "index": 0,
+      "theme": "light"
+    }
+  ],
+  "/demo/summit-direct-care/": [
+    {
+      "type": "capabilities",
+      "index": 0,
+      "theme": "light",
+      "disabled": "on"
+    },
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "hero",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "partnership",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "photo-gallery",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "why",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "why",
+      "index": 1,
+      "theme": "light"
+    }
+  ],
+  "/demo/meridian-surgical-group/": [
+    {
+      "type": "capabilities",
+      "index": 0,
+      "theme": "light",
+      "disabled": "on"
+    },
+    {
+      "type": "cta",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "partnership",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "photo-gallery",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light",
+      "accent": "#fafafa"
+    },
+    {
+      "type": "why",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "why",
+      "index": 1,
+      "theme": "light"
+    }
+  ],
+  "/demo/cedar-mill-plumbing/": [
+    {
+      "type": "capabilities",
+      "index": 0,
+      "theme": "light",
+      "disabled": "on"
+    },
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "hero",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "partnership",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "photo-gallery",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "why",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "why",
+      "index": 1,
+      "theme": "light"
+    }
+  ],
+  "/demo/apex-home-services/": [
+    {
+      "type": "capabilities",
+      "index": 0,
+      "theme": "light",
+      "disabled": "on"
+    },
+    {
+      "type": "faq",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "partnership",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "photo-gallery",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "testimonials",
+      "index": 0,
+      "theme": "primary"
+    },
+    {
+      "type": "why",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "why",
+      "index": 1,
+      "theme": "light"
+    }
+  ],
+  "/work/*": [
+    {
+      "type": "work-hero",
+      "index": 0,
+      "theme": "light"
+    },
+    {
+      "type": "work-section",
+      "index": 1,
+      "theme": "primary"
+    },
+    {
+      "type": "work-section",
+      "index": 3,
+      "theme": "primary"
+    },
+    {
+      "type": "work-section",
+      "index": 4,
+      "theme": "light"
+    },
+    {
+      "type": "work-section",
+      "index": 5,
+      "theme": "primary"
+    }
+  ]
+}

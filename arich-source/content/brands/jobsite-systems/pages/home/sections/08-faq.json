@@ -1,0 +1,16 @@
+{
+  "type": "faq",
+  "sectionLabel": "FAQ",
+  "heading": "Common Questions",
+  "faqIds": [
+    "homepage-launch-time",
+    "homepage-whats-included",
+    "homepage-maintenance",
+    "homepage-own-domain",
+    "homepage-existing-site",
+    "homepage-cancellation",
+    "homepage-content-changes",
+    "homepage-pricing-details"
+  ],
+  "openIds": ["homepage-cancellation"]
+}

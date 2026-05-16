@@ -1,0 +1,539 @@
+---
+import { brand } from '../../lib/brand';
+import Cta from '../Cta.astro';
+
+interface Props {
+  /** DOM id on the section element. Defaults to "hero" — matches the
+   *  global "Skip to content" / scrollspy convention. Override when a
+   *  page renders MORE THAN ONE hero (e.g. demo pages stacking sample
+   *  hero variants); duplicate ids fail HTML validation and break
+   *  hash-anchor scrolling. */
+  id?: string;
+  badge?: string;
+  badgeHref?: string;
+  headline: string;
+  headlineAccent?: string;
+  lead: string;
+  metaLabel?: string;
+  metaParts?: string[];
+  ctaPrimary?: { label: string; href: string };
+  ctaSecondary?: { label: string; href: string };
+  /** Optional array of background image URLs to slowly cycle behind the hero. */
+  backgroundImages?: string[];
+  /** Seconds each image stays fully visible before crossfading (default 8). */
+  backgroundImageInterval?: number;
+  /** Marketing trust strip shown under the CTAs on Split (B) / Default variants.
+   *  Each entry is rendered "value — label" (e.g. "~2 weeks — Launch time"). */
+  trustMetrics?: { value: string; label: string }[];
+  /** When true, render the trust strip as a continuously-scrolling marquee
+   *  (chips duplicated for a seamless loop). Visual styling lives in the
+   *  brand stylesheet — opt-in per brand. */
+  trustMarquee?: boolean;
+  /** Small field-report caption overlayed on the variant-B image panel.
+   *  Omitted → no caption shown. */
+  imageCaption?: string;
+  /** Per-slide labels rendered in the variant-E Spotlight slider's caption pill.
+   *  One entry per `backgroundImages` item. Falls back to `imageCaption`. */
+  slideCaptions?: string[];
+  /** Editorial corner mark for variant E (e.g. "— BRAND — EST. 2014"). */
+  editorialMark?: string;
+  /** Per-instance variant pin. Component emits `data-hero-variant` on the
+   *  section element when set; existing bare `[data-hero-variant=X]` rules
+   *  in sections.css are dual-form (match either html-broadcast or per-instance). */
+  variant?: string;
+}
+
+const {
+  id = 'hero',
+  badge,
+  badgeHref,
+  headline,
+  headlineAccent,
+  lead,
+  metaLabel,
+  metaParts,
+  ctaPrimary,
+  ctaSecondary,
+  backgroundImages,
+  backgroundImageInterval = 8,
+  trustMetrics,
+  trustMarquee,
+  imageCaption,
+  slideCaptions,
+  editorialMark,
+  variant,
+} = Astro.props;
+const variantKey = typeof variant === 'string' && /^[a-zA-Z]$/.test(variant) ? variant : null;
+
+const slides = (backgroundImages ?? []).filter(Boolean);
+const slideStep = Math.max(4, backgroundImageInterval);
+const slideTotal = Math.max(1, slides.length) * slideStep;
+
+/* First slide doubles as the split-view image for variant B. Exposed via
+ * a CSS custom property so the variant CSS can reference it without knowing
+ * the brand; if no slides exist, the variant falls back to a gradient panel. */
+const splitImage = slides[0] ?? brand.assets.heroBackgroundImage ?? null;
+
+const headshot = brand.assets.headshot ?? brand.owner.headshot;
+
+// Prefer explicit metaParts when provided; otherwise split the legacy middle-dot string.
+const pills = metaParts && metaParts.length
+  ? metaParts
+  : (metaLabel ? metaLabel.split(/\s*[·•]\s*/).filter(Boolean) : []);
+
+const isSpotlight = variantKey === 'E';
+
+/* Variant-E editorial corner mark. Use the explicit `editorialMark` prop when
+ * provided; otherwise synthesize "— BRAND — EST. YYYY" from brand.name and the
+ * first "Since YYYY" pattern found in metaParts. Empty string disables it. */
+const yearFromMeta = (() => {
+  if (editorialMark != null) return null;
+  const all = (metaParts && metaParts.length ? metaParts : []).join(' · ');
+  const m = /\b(?:since|est\.?)\s+(\d{4})\b/i.exec(all);
+  return m ? m[1] : null;
+})();
+const resolvedEditorialMark = editorialMark != null
+  ? editorialMark
+  : `— ${brand.name.toUpperCase()}${yearFromMeta ? ` — EST. ${yearFromMeta}` : ''} —`;
+
+const totalSlides = slides.length;
+const slideTotalLabel = String(totalSlides).padStart(2, '0');
+/* Per-slide caption resolver: explicit `slideCaptions[i]` wins, falls back to
+ * `imageCaption` so a single string still drives every slide's pill. */
+const captionAt = (i: number): string => {
+  if (slideCaptions && slideCaptions[i]) return slideCaptions[i];
+  return imageCaption ?? '';
+};
+const firstStat = trustMetrics && trustMetrics[0];
+---
+
+<header
+  class="hero"
+  id={id}
+  data-aed-cursor-spotlight
+  style={`--aed-cs-size:520px;--aed-cs-opacity:0.14${splitImage ? `;--hero-split-image:url('${splitImage}')` : ''}`}
+  data-section-type="hero"
+  data-section-label="Hero"
+  data-section-variants="a:Default,B:Split,C:Kinetic,E:Spotlight,F:Terminal,G:Stage,H:Pulse"
+  {...(variantKey ? { 'data-hero-variant': variantKey } : {})}
+>
+  <div class="hero-bg hero-bg-enhanced" data-hero-bg>
+    {slides.length > 0 && (
+      <div class="hero-slides" aria-hidden="true" style={`--hero-slides-total:${slideTotal}s`}>
+        {slides.map((src, i) => (
+          <div
+            class="hero-slide"
+            style={`background-image:url('${src}');--hero-slide-delay:${(i - slides.length) * slideStep}s`}
+          />
+        ))}
+      </div>
+    )}
+    <div class="hero-gradient"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-aurora" aria-hidden="true">
+      <span class="hero-orb hero-orb-1" data-hero-parallax="0.04"></span>
+      <span class="hero-orb hero-orb-2" data-hero-parallax="0.07"></span>
+      <span class="hero-orb hero-orb-3" data-hero-parallax="0.055"></span>
+      <span class="hero-orb hero-orb-4" data-hero-parallax="0.085"></span>
+    </div>
+    <svg class="hero-network" aria-hidden="true" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="heroLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="var(--accent)" stop-opacity="0"></stop>
+          <stop offset="50%" stop-color="var(--accent)" stop-opacity="0.45"></stop>
+          <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+      <g class="hero-network-lines">
+        <line x1="180" y1="160" x2="520" y2="300" />
+        <line x1="520" y1="300" x2="880" y2="200" />
+        <line x1="880" y1="200" x2="1040" y2="480" />
+        <line x1="1040" y1="480" x2="720" y2="620" />
+        <line x1="720" y1="620" x2="320" y2="540" />
+        <line x1="320" y1="540" x2="180" y2="160" />
+        <line x1="520" y1="300" x2="720" y2="620" />
+      </g>
+      <g class="hero-network-nodes">
+        <circle cx="180" cy="160" r="3" />
+        <circle cx="520" cy="300" r="4" />
+        <circle cx="880" cy="200" r="3" />
+        <circle cx="1040" cy="480" r="4" />
+        <circle cx="720" cy="620" r="3" />
+        <circle cx="320" cy="540" r="4" />
+      </g>
+    </svg>
+  </div>
+  <div class="container hero-content">
+    {isSpotlight && (
+      <>
+        <div class="hero-e-rule" aria-hidden="true">
+          <span class="hero-e-rule-line"></span>
+          <span class="hero-e-rule-text">{resolvedEditorialMark}</span>
+        </div>
+        {totalSlides > 1 && (
+          <div class="hero-e-counter" aria-hidden="true">
+            <span class="hero-e-counter-active" data-hero-e-counter>01</span>
+            <span class="hero-e-counter-sep"> / </span>
+            <span class="hero-e-counter-total">{slideTotalLabel}</span>
+          </div>
+        )}
+        <div class="hero-e-grid">
+          <div class="hero-e-copy">
+            {badge && (
+              badgeHref ? (
+                <a href={badgeHref} class="hero-badge hero-reveal-1">
+                  <span class="hero-badge-dot"></span>
+                  {badge}
+                </a>
+              ) : (
+                <div class="hero-badge hero-reveal-1">
+                  <span class="hero-badge-dot"></span>
+                  {badge}
+                </div>
+              )
+            )}
+            <h1 class="hero-reveal-2">
+              {headline}{headlineAccent && <><br class="desktop-break" /><span class="accent">{headlineAccent}</span></>}
+            </h1>
+            <p class="hero-lead hero-reveal-3">{lead}</p>
+            {pills.length > 0 && (
+              <div class="hero-meta hero-reveal-4">
+                {headshot && <img src={headshot} alt={brand.owner.name} class="scale-reveal" />}
+                <span class="hero-meta-pills">
+                  {pills.map(part => <span>{part}</span>)}
+                </span>
+              </div>
+            )}
+            {(ctaPrimary || ctaSecondary) && (
+              <div class="hero-actions hero-reveal-5">
+                <Cta cta={ctaPrimary} variant="primary" />
+                <Cta cta={ctaSecondary} variant="secondary" />
+              </div>
+            )}
+          </div>
+          {slides.length > 0 && (
+            <div class="hero-e-slider-wrap hero-reveal-5">
+              {firstStat && (
+                <div class="hero-e-stat" aria-hidden="true">
+                  <span class="hero-e-stat-value">{firstStat.value}</span>
+                  <span class="hero-e-stat-label">{firstStat.label}</span>
+                </div>
+              )}
+              <div
+                class="hero-e-slider"
+                data-hero-e-slider
+                data-hero-e-captions={JSON.stringify(slides.map((_, i) => captionAt(i)))}
+                style={`--hero-e-count:${totalSlides};--hero-e-interval:${slideStep}s`}
+              >
+                {totalSlides > 1 && (
+                  <div class="hero-e-progress" role="presentation">
+                    {slides.map((_, i) => (
+                      <span class={`hero-e-progress-pill${i === 0 ? ' is-active' : ''}`} data-hero-e-pill={i}>
+                        <span class="hero-e-progress-pill-fill"></span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div class="hero-e-slides">
+                  {slides.map((src, i) => (
+                    <div
+                      class={`hero-e-slide${i === 0 ? ' is-active' : ''}`}
+                      data-hero-e-slide={i}
+                      style={`background-image:url('${src}')`}
+                      aria-hidden="true"
+                    ></div>
+                  ))}
+                </div>
+                <div class="hero-e-spotlight" aria-hidden="true"></div>
+                <div class="hero-e-edge" aria-hidden="true"></div>
+                {(slideCaptions?.length || imageCaption) && (
+                  <div class="hero-e-caption" aria-hidden="true">
+                    <span class="hero-e-caption-dot"></span>
+                    <span class="hero-e-caption-text" data-hero-e-caption>{captionAt(0)}</span>
+                  </div>
+                )}
+                {totalSlides > 1 && (
+                  <div class="hero-e-arrows">
+                    <button type="button" class="hero-e-arrow" data-hero-e-dir="prev" aria-label="Previous slide">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6 9 12l6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button type="button" class="hero-e-arrow" data-hero-e-dir="next" aria-label="Next slide">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+        {trustMetrics && trustMetrics.length > 0 && (
+          trustMarquee ? (
+            <div class="hero-trust-marquee hero-trust-marquee--spotlight hero-reveal-5" aria-label="At a glance" role="region">
+              <ul class="hero-trust hero-trust--marquee" data-trust-marquee>
+                {trustMetrics.map((m) => (
+                  <li>
+                    <span class="hero-trust-value">{m.value}</span>
+                    <span class="hero-trust-label">{m.label}</span>
+                  </li>
+                ))}
+                {trustMetrics.map((m) => (
+                  <li aria-hidden="true">
+                    <span class="hero-trust-value">{m.value}</span>
+                    <span class="hero-trust-label">{m.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null
+        )}
+      </>
+    )}
+    {!isSpotlight && (
+      <>
+    {/* Copy column wrapper — lets variant B use a reliable 2-column grid
+       (`.hero-copy` + `::after` image card) without percentage paddings that
+       resolve against the viewport instead of the 1200px container. Variants
+       A/C/D/E/F ignore the wrapper; it behaves as a transparent block. */}
+    <div class="hero-copy">
+      {badge && (
+        badgeHref ? (
+          <a href={badgeHref} class="hero-badge hero-reveal-1">
+            <span class="hero-badge-dot"></span>
+            {badge}
+          </a>
+        ) : (
+          <div class="hero-badge hero-reveal-1">
+            <span class="hero-badge-dot"></span>
+            {badge}
+          </div>
+        )
+      )}
+      <h1 class="hero-reveal-2">
+        {headline}{headlineAccent && <><br class="desktop-break" /><span class="accent">{headlineAccent}</span></>}
+      </h1>
+      <p class="hero-lead hero-reveal-3">{lead}</p>
+      {pills.length > 0 && (
+        <div class="hero-meta hero-reveal-4">
+          {headshot && <img src={headshot} alt={brand.owner.name} class="scale-reveal" />}
+          <span class="hero-meta-pills">
+            {pills.map(part => <span>{part}</span>)}
+          </span>
+        </div>
+      )}
+      {(ctaPrimary || ctaSecondary) && (
+        <div class="hero-actions hero-reveal-5">
+          <Cta cta={ctaPrimary} variant="primary" />
+          <Cta cta={ctaSecondary} variant="secondary" />
+        </div>
+      )}
+      {trustMetrics && trustMetrics.length > 0 && (
+        trustMarquee ? (
+          <div class="hero-trust-marquee hero-reveal-5" aria-label="At a glance" role="region">
+            <ul class="hero-trust hero-trust--marquee" data-trust-marquee>
+              {trustMetrics.map((m) => (
+                <li>
+                  <span class="hero-trust-value">{m.value}</span>
+                  <span class="hero-trust-label">{m.label}</span>
+                </li>
+              ))}
+              {trustMetrics.map((m) => (
+                <li aria-hidden="true">
+                  <span class="hero-trust-value">{m.value}</span>
+                  <span class="hero-trust-label">{m.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <ul class="hero-trust hero-reveal-5" aria-label="At a glance">
+            {trustMetrics.map((m) => (
+              <li>
+                <span class="hero-trust-value">{m.value}</span>
+                <span class="hero-trust-label">{m.label}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      )}
+    </div>
+    {imageCaption && (
+      <p class="hero-image-caption" aria-hidden="true">
+        <span class="hero-image-caption-dot"></span>
+        {imageCaption}
+      </p>
+    )}
+    {slides.length > 0 && (
+      <div class="hero-split-slides" aria-hidden="true" style={`--hero-split-slides-total:${slideTotal}s`}>
+        {slides.map((src, i) => (
+          <div
+            class="hero-split-slide"
+            style={`background-image:url('${src}');--hero-split-slide-delay:${(i - slides.length) * slideStep}s`}
+          />
+        ))}
+      </div>
+    )}
+      </>
+    )}
+  </div>
+</header>
+
+<script>
+  (function() {
+    const bg = document.querySelector<HTMLElement>('[data-hero-bg]');
+    if (!bg) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const layers = Array.from(bg.querySelectorAll<HTMLElement>('[data-hero-parallax]'));
+    const strengths = layers.map((el) => parseFloat(el.dataset.heroParallax || '0'));
+    const hero = bg.parentElement as HTMLElement | null;
+    if (!hero) return;
+
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+    let rafId: number | null = null;
+
+    const loop = () => {
+      currentX += (targetX - currentX) * 0.08;
+      currentY += (targetY - currentY) * 0.08;
+      layers.forEach((el, i) => {
+        const s = strengths[i];
+        el.style.transform = `translate3d(${currentX * s}px, ${currentY * s}px, 0)`;
+      });
+      if (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
+        rafId = requestAnimationFrame(loop);
+      } else {
+        rafId = null;
+      }
+    };
+
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      targetX = (e.clientX - r.left - r.width / 2);
+      targetY = (e.clientY - r.top - r.height / 2);
+      if (rafId === null) rafId = requestAnimationFrame(loop);
+    });
+
+    hero.addEventListener('pointerleave', () => {
+      targetX = 0;
+      targetY = 0;
+      if (rafId === null) rafId = requestAnimationFrame(loop);
+    });
+  })();
+</script>
+
+<script>
+  /* Variant E (Spotlight) — slider autoplay + arrow controls + cursor-tracked
+     spotlight. All scoped to `[data-hero-e-slider]`; if the page renders
+     multiple Spotlight heroes, each gets its own controller. Vanilla, no
+     framework dependencies, gates on prefers-reduced-motion for the autoplay
+     + Ken-Burns scale, but keeps arrow controls + caption/counter sync alive. */
+  (function() {
+    const sliders = Array.from(document.querySelectorAll<HTMLElement>('[data-hero-e-slider]'));
+    if (!sliders.length) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    sliders.forEach((slider) => {
+      const slides = Array.from(slider.querySelectorAll<HTMLElement>('[data-hero-e-slide]'));
+      const pills = Array.from(slider.querySelectorAll<HTMLElement>('[data-hero-e-pill]'));
+      const captionEl = slider.querySelector<HTMLElement>('[data-hero-e-caption]');
+      const heroEl = slider.closest<HTMLElement>('header.hero');
+      const counterEl = heroEl ? heroEl.querySelector<HTMLElement>('[data-hero-e-counter]') : null;
+      const arrows = Array.from(slider.querySelectorAll<HTMLButtonElement>('[data-hero-e-dir]'));
+      const total = slides.length;
+      if (!total) return;
+
+      // Pull per-slide captions captured in the SSR'd caption element via a
+      // dataset map written below — but simplest: stash the array on the
+      // slider via a data-attr at SSR time. Fall back to reading from
+      // adjacent caption-text on init (one caption shown initially).
+      // Captions: read the original SSR caption text, then fetch full set
+      // from the slider's `data-captions` if present, else single-string fallback.
+      let captions: string[] = [];
+      const captionsAttr = slider.getAttribute('data-hero-e-captions');
+      if (captionsAttr) {
+        try { captions = JSON.parse(captionsAttr) as string[]; } catch (_) { captions = []; }
+      }
+      if (captions.length < total && captionEl && captionEl.textContent) {
+        const init = captionEl.textContent.trim();
+        captions = Array.from({ length: total }, (_, i) => captions[i] || init);
+      }
+
+      let active = 0;
+      let timer: number | null = null;
+      const intervalRaw = slider.style.getPropertyValue('--hero-e-interval');
+      const intervalMs = (() => {
+        const n = parseFloat(intervalRaw);
+        return Number.isFinite(n) && n > 0 ? n * 1000 : 5000;
+      })();
+
+      const setActive = (next: number) => {
+        const idx = ((next % total) + total) % total;
+        if (idx === active) return;
+        slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+        pills.forEach((p, i) => p.classList.toggle('is-active', i === idx));
+        if (captionEl && captions[idx] != null) captionEl.textContent = captions[idx];
+        if (counterEl) counterEl.textContent = String(idx + 1).padStart(2, '0');
+        active = idx;
+      };
+
+      const stop = () => {
+        if (timer !== null) {
+          window.clearInterval(timer);
+          timer = null;
+        }
+      };
+      const start = () => {
+        if (reduced) return;
+        if (total < 2) return;
+        stop();
+        timer = window.setInterval(() => setActive(active + 1), intervalMs);
+        // Restart pill fill animation by toggling a class
+        pills.forEach((p, i) => {
+          p.classList.toggle('is-active', i === active);
+        });
+      };
+
+      arrows.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const dir = btn.getAttribute('data-hero-e-dir') === 'prev' ? -1 : 1;
+          setActive(active + dir);
+          start();
+        });
+      });
+
+      // Cursor spotlight tracking — only on fine-pointer devices. The radial
+      // light element listens on the SLIDER frame so it stays scoped (not
+      // page-wide). Touch/coarse-pointer keeps the light at center.
+      if (fineHover) {
+        const onMove = (e: PointerEvent) => {
+          const r = slider.getBoundingClientRect();
+          const x = ((e.clientX - r.left) / r.width) * 100;
+          const y = ((e.clientY - r.top) / r.height) * 100;
+          slider.style.setProperty('--hero-e-spot-x', `${x}%`);
+          slider.style.setProperty('--hero-e-spot-y', `${y}%`);
+        };
+        const onLeave = () => {
+          slider.style.setProperty('--hero-e-spot-x', '50%');
+          slider.style.setProperty('--hero-e-spot-y', '50%');
+        };
+        slider.addEventListener('pointermove', onMove);
+        slider.addEventListener('pointerleave', onLeave);
+      }
+
+      // Pause autoplay when offscreen (cheap intersection observer)
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) start();
+            else stop();
+          }
+        }, { threshold: 0.1 });
+        io.observe(slider);
+      } else {
+        start();
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,18 @@
+{
+  "name": "text-gradient",
+  "assets": {
+    "css": ["text-gradient.css"],
+    "js": []
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-gradient]",
+        "description": "Marker for elements that should render their text as a brand-color gradient. Pure CSS — no JS. Pulls from --accent / --accent-hover so it's automatically theme-aware.",
+        "fields": {
+          "data-aed-gradient": { "type": "string", "enum": ["", "static", "shimmer", "sweep"], "description": "Variant. Empty / 'static' = flat gradient. 'shimmer' = subtle drift animation. 'sweep' = animates on hover (good for links/buttons)." }
+        }
+      }
+    ]
+  }
+}

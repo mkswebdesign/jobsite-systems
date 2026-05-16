@@ -1,0 +1,79 @@
+/*
+ * Sidenav Collapse — drop-in collapsible nav groups for sidebar nav.
+ *
+ * Pure CSS for the visual; JS only handles the open/close state +
+ * persistence per group. Theme-aware. See /sidenav-collapse/README.md.
+ */
+
+[data-aed-sidenav] {
+  display: block;
+  font-size: 0.88rem;
+}
+
+[data-aed-sidenav] details.aed-sn-group {
+  border-bottom: 1px solid var(--border, #27272a);
+}
+[data-aed-sidenav] details.aed-sn-group:last-of-type { border-bottom: 0; }
+
+[data-aed-sidenav] details.aed-sn-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 0.7rem;
+  cursor: pointer;
+  list-style: none;
+  font: 700 0.7rem ui-monospace, Menlo, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+  user-select: none;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+[data-aed-sidenav] details.aed-sn-group > summary:hover {
+  color: var(--text-primary, #fafafa);
+  background: var(--bg-secondary, #111113);
+}
+[data-aed-sidenav] details.aed-sn-group > summary::-webkit-details-marker { display: none; }
+[data-aed-sidenav] details.aed-sn-group > summary::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.18s ease;
+  flex: 0 0 auto;
+}
+[data-aed-sidenav] details.aed-sn-group[open] > summary::after { transform: rotate(-135deg); }
+
+[data-aed-sidenav] .aed-sn-list {
+  list-style: none;
+  margin: 0.15rem 0 0.6rem;
+  padding: 0;
+}
+[data-aed-sidenav] .aed-sn-list > li > a {
+  display: block;
+  padding: 0.4rem 0.7rem 0.4rem 1.4rem;
+  color: var(--text-secondary, #a1a1aa);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  margin-left: -0.7rem;
+  font-size: 0.86rem;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+[data-aed-sidenav] .aed-sn-list > li > a:hover {
+  color: var(--text-primary, #fafafa);
+  background: var(--bg-secondary, #111113);
+}
+[data-aed-sidenav] .aed-sn-list > li > a.is-active {
+  color: var(--accent, #6B00FF);
+  border-left-color: var(--accent, #6B00FF);
+  background: color-mix(in srgb, var(--accent, #6B00FF) 8%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-sidenav] details.aed-sn-group > summary::after { transition: none; }
+}

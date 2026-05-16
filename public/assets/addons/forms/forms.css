@@ -1,0 +1,122 @@
+/*
+ * Forms — drop-in submission handler.
+ *
+ * Minimal styles for the success / error states the addon swaps in.
+ * Your form's own field/button styles are unchanged. See README.
+ */
+
+/* -- In-flight indicator ---------------------------------------------- */
+form[data-aed-form][data-aed-state="submitting"] {
+  opacity: 0.65;
+  pointer-events: none;
+}
+form[data-aed-form] [data-aed-submit-spinner] {
+  display: none;
+  width: 14px;
+  height: 14px;
+  margin-left: 0.5rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: aed-spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+form[data-aed-form][data-aed-state="submitting"] [data-aed-submit-spinner] {
+  display: inline-block;
+}
+@keyframes aed-spin { to { transform: rotate(360deg); } }
+
+/* -- Error banner (above the form) ----------------------------------- */
+.aed-form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  margin: 0 0 1rem;
+  background: color-mix(in srgb, #ef4444 10%, var(--bg-card, #18181b));
+  color: var(--text-primary, #fafafa);
+  border: 1px solid color-mix(in srgb, #ef4444 35%, var(--border, #27272a));
+  border-radius: 10px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.aed-form-error[hidden] { display: none; }
+.aed-form-error svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: #ef4444;
+  margin-top: 0.1rem;
+}
+.aed-form-error-text { flex: 1; }
+.aed-form-error-text strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--text-primary, #fafafa);
+  font-weight: 700;
+}
+
+/* -- Success card (replaces the form) -------------------------------- */
+.aed-form-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+  padding: 2.5rem 1.5rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid color-mix(in srgb, var(--accent, #6B00FF) 32%, var(--border, #27272a));
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 16px 36px -16px rgba(var(--accent-rgb, 107, 0, 255), 0.25);
+  animation: aed-form-success-in 0.32s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes aed-form-success-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aed-form-success-icon {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent, #6B00FF) 14%, transparent);
+  color: var(--accent, #6B00FF);
+  border-radius: 50%;
+  margin-bottom: 0.35rem;
+}
+.aed-form-success-icon svg { width: 28px; height: 28px; }
+.aed-form-success-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary, #fafafa);
+}
+.aed-form-success-body {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.aed-form-success-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Honeypot — hide visually, keep accessible to bots that scan the DOM */
+.aed-form-honeypot {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px; height: 1px;
+  opacity: 0; pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-form-success { animation: none; }
+  form[data-aed-form] [data-aed-submit-spinner] { animation: none; }
+}

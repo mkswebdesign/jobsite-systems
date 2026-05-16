@@ -1,0 +1,62 @@
+/*
+ * Expandable — drop-in line-clamp truncation with toggle.
+ *
+ * Marker attribute: data-aed-expand-after="N" — number of lines.
+ * Click "Read more" to expand, "Read less" to collapse.
+ *
+ * See /expandable/README.md.
+ */
+
+[data-aed-expand-after] {
+  position: relative;
+  --aed-exp-fade: linear-gradient(180deg, transparent, var(--bg-primary, #0a0a0b));
+}
+
+.aed-exp-content {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.aed-exp-content.is-collapsed {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--aed-exp-lines, 4);
+  overflow: hidden;
+  /* fade-out at the bottom edge */
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent);
+  mask-image: linear-gradient(180deg, #000 70%, transparent);
+}
+
+.aed-exp-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent, #6B00FF);
+  cursor: pointer;
+  text-decoration: none;
+}
+.aed-exp-toggle:hover { color: var(--accent-hover, var(--accent, #6B00FF)); }
+.aed-exp-toggle::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.18s ease;
+  display: inline-block;
+}
+.aed-exp-toggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
+
+@media print {
+  .aed-exp-content { -webkit-line-clamp: unset !important; -webkit-mask-image: none !important; mask-image: none !important; display: block !important; }
+  .aed-exp-toggle { display: none !important; }
+}

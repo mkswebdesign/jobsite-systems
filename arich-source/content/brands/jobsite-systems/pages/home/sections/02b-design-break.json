@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "On purpose",
+  "heading": "We say no to plugins.\nHere's why.",
+  "subtext": "Most trade-business sites we inherit are running ten to twenty plugins. Each one is a tradeoff between features today and downtime later — or a hacked site later. Downtime always wins, often right when a homeowner is trying to reach you.",
+  "backgroundImage": "https://images.pexels.com/photos/4910020/pexels-photo-4910020.jpeg?auto=compress&cs=tinysrgb&w=1920",
+  "cta": { "label": "How we build", "href": "/process/" }
+}

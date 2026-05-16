@@ -1,0 +1,18 @@
+{
+  "name": "skeleton",
+  "assets": {
+    "css": ["skeleton.css"],
+    "js": []
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-skeleton]",
+        "description": "Marker attribute. Put on any element to replace its content with a shimmering placeholder. Remove or set to 'off' when real content is ready.",
+        "fields": {
+          "data-aed-skeleton":         { "type": "string", "enum": ["", "block", "line", "circle", "text", "off"], "description": "Variant. Empty / 'block' = rectangular default. 'line' / 'circle' = preset shapes. 'text' = multi-line paragraph. 'off' = disabled (keep the attr for easy toggling)." }
+        }
+      }
+    ]
+  }
+}

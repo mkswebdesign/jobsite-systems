@@ -1,0 +1,114 @@
+/*
+ * Timeline — drop-in vertical timeline.
+ *
+ * Hydrates <ol data-aed-timeline> with a left rail, dot markers, and
+ * a date column for each <li data-when="...">.
+ *
+ * See /timeline/README.md.
+ */
+
+[data-aed-timeline] {
+  list-style: none;
+  margin: 1.5rem 0;
+  padding: 0;
+  position: relative;
+}
+
+[data-aed-timeline] > li {
+  position: relative;
+  padding: 0 0 1.5rem 2.6rem;
+  margin: 0;
+  border-left: 2px solid var(--border, #27272a);
+  margin-left: 0.4rem;
+}
+[data-aed-timeline] > li:last-child {
+  border-left-color: transparent;
+  padding-bottom: 0;
+}
+
+.aed-tl-dot {
+  position: absolute;
+  left: -0.55rem;
+  top: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--bg-primary, #0a0a0b);
+  border: 2px solid var(--accent, #6B00FF);
+  box-shadow: 0 0 0 4px var(--bg-primary, #0a0a0b);
+}
+[data-aed-timeline] > li[data-aed-tl-state="done"] .aed-tl-dot {
+  background: var(--accent, #6B00FF);
+}
+[data-aed-timeline] > li[data-aed-tl-state="muted"] .aed-tl-dot {
+  border-color: var(--text-muted, #9a9aa2);
+}
+[data-aed-timeline] > li[data-aed-tl-state="alert"] .aed-tl-dot {
+  border-color: #f59e0b;
+  background: #f59e0b;
+}
+
+.aed-tl-when {
+  display: block;
+  font: 700 0.7rem/1 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+  margin-bottom: 0.3rem;
+}
+
+.aed-tl-body { color: var(--text-primary, #fafafa); line-height: 1.55; }
+.aed-tl-body > :first-child { margin-top: 0; }
+.aed-tl-body > :last-child  { margin-bottom: 0; }
+
+/* Two-column variant: dates in left rail */
+[data-aed-timeline][data-aed-variant="two-col"] > li {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  padding-left: 8rem;
+  border-left: 0;
+  margin-left: 0;
+}
+[data-aed-timeline][data-aed-variant="two-col"] > li::before {
+  content: '';
+  position: absolute;
+  left: 7.4rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border, #27272a);
+}
+[data-aed-timeline][data-aed-variant="two-col"] > li:last-child::before { background: transparent; }
+[data-aed-timeline][data-aed-variant="two-col"] .aed-tl-when {
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  width: 6rem;
+  text-align: right;
+  margin: 0;
+}
+[data-aed-timeline][data-aed-variant="two-col"] .aed-tl-dot {
+  left: 7rem;
+  top: 0.25rem;
+}
+
+@media (max-width: 560px) {
+  [data-aed-timeline][data-aed-variant="two-col"] > li {
+    grid-template-columns: 1fr;
+    padding-left: 2.6rem;
+  }
+  [data-aed-timeline][data-aed-variant="two-col"] > li::before { display: none; }
+  [data-aed-timeline][data-aed-variant="two-col"] > li {
+    border-left: 2px solid var(--border, #27272a);
+    margin-left: 0.4rem;
+  }
+  [data-aed-timeline][data-aed-variant="two-col"] .aed-tl-when {
+    position: static;
+    text-align: left;
+    width: auto;
+  }
+  [data-aed-timeline][data-aed-variant="two-col"] .aed-tl-dot {
+    left: -0.55rem;
+  }
+}

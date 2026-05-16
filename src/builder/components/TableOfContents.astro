@@ -1,0 +1,26 @@
+---
+/**
+ * TableOfContents — sticky right-rail TOC on desktop, collapsible <details> on mobile.
+ * Props: headings — the structured array from Astro 5's render() — already
+ * shaped as { depth, slug, text }. We filter to depth 2/3 only.
+ * Hidden entirely if there are no h2/h3 headings.
+ */
+interface Heading { depth: number; slug: string; text: string; }
+interface Props { headings: Heading[]; }
+const { headings } = Astro.props;
+const items = (headings ?? []).filter((h) => h.depth === 2 || h.depth === 3);
+---
+{items.length > 0 && (
+  <aside class="toc" aria-label="Table of contents">
+    <details class="toc__mobile" open>
+      <summary>Contents</summary>
+      <ol class="toc__list">
+        {items.map((h) => (
+          <li class={`toc__item toc__item--depth-${h.depth}`}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ol>
+    </details>
+  </aside>
+)}

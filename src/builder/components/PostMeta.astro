@@ -1,0 +1,40 @@
+---
+/**
+ * PostMeta — date / author / reading time / category row for the article header.
+ * Props: post, authorName?, categoryName?.
+ * Renders <time datetime>, optional updated, author, reading time, category link.
+ */
+import type { Post } from '../lib/posts';
+import { computeReadingTime } from '../lib/posts';
+interface Props { post: Post; authorName?: string; authorId?: string; categoryName?: string; }
+const { post, authorName, authorId, categoryName } = Astro.props;
+const d = post.data;
+const dateStr = d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const updatedStr = d.updated && +d.updated !== +d.date
+  ? d.updated.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  : null;
+const reading = computeReadingTime(post.body ?? '');
+---
+<div class="post-meta">
+  <a class="post-meta__category" href={`/category/${d.category}/`} data-category={d.category}>
+    {categoryName ?? d.category}
+  </a>
+  <span class="post-meta__sep" aria-hidden="true">·</span>
+  <time class="post-meta__date" datetime={d.date.toISOString()}>{dateStr}</time>
+  {updatedStr && (
+    <>
+      <span class="post-meta__sep" aria-hidden="true">·</span>
+      <span class="post-meta__updated">Updated {updatedStr}</span>
+    </>
+  )}
+  {authorName && (
+    <>
+      <span class="post-meta__sep" aria-hidden="true">·</span>
+      {authorId
+        ? <a class="post-meta__author" href={`/author/${authorId}/`}>By {authorName}</a>
+        : <span class="post-meta__author">By {authorName}</span>}
+    </>
+  )}
+  <span class="post-meta__sep" aria-hidden="true">·</span>
+  <span class="post-meta__reading">{reading}</span>
+</div>

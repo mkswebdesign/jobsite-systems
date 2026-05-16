@@ -1,0 +1,37 @@
+[
+  {
+    "id": "homeowner-tom-r",
+    "quote": "Mike showed up when he said he would, gave me a flat number before he started, and the bill at the end matched the quote — to the dollar. After three other plumbers ghosted me on the estimate, that alone was worth calling him.",
+    "authorName": "Tom R.",
+    "authorRole": "Homeowner, Cedar Mill",
+    "featured": true
+  },
+  {
+    "id": "rachel-s",
+    "quote": "We had a slab leak under the kitchen and were dreading the demo. Mike found the line in about twenty minutes with his acoustic gear and rerouted it through the attic instead of jackhammering the floor. Clean work, photos before he closed it up, no upsell.",
+    "authorName": "Rachel S.",
+    "authorRole": "Homeowner, Bethany",
+    "featured": true
+  },
+  {
+    "id": "property-manager-monica-l",
+    "quote": "I manage a dozen rentals across NW Portland and Cedar Mill Plumbing has been my first call for three years. Same plumber every visit, fair pricing, and he photographs every job so I have documentation. He's saved me from a couple of bad situations on weekends.",
+    "authorName": "Monica L.",
+    "authorRole": "Property Manager, Westover Heights",
+    "featured": true
+  },
+  {
+    "id": "homeowner-anna-k",
+    "quote": "Got three quotes for a tankless conversion. Mike's was in the middle on price, but he was the only one who walked the gas line, looked at the venting path, and pointed out we'd need a regulator upgrade — which the others would've discovered mid-job and added to the invoice. Hired him on the spot.",
+    "authorName": "Anna K.",
+    "authorRole": "Homeowner, Beaverton",
+    "featured": true
+  },
+  {
+    "id": "homeowner-marcus-j",
+    "quote": "Burst pipe at 10:30 on a Saturday night in February. Mike answered the phone, was at the house in forty minutes, had the line capped and the water back on by midnight. Permanent repair Monday morning. He charged the after-hours fee on the invoice and nothing else weird.",
+    "authorName": "Marcus J.",
+    "authorRole": "Homeowner, Hillsboro",
+    "featured": false
+  }
+]

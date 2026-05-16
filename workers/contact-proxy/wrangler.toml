@@ -1,0 +1,21 @@
+name = "contact-proxy"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+account_id = "abc2e08f091d2b12727a40e33f742b07"
+
+# Secrets set via: wrangler secret put EMAILIT_API_KEY
+# After domains are live, bind a custom route here, e.g.:
+# routes = [{ pattern = "contact.arich.design/submit", custom_domain = true }]
+
+# Scheduled cron triggers — invoke the worker's scheduled() handler.
+# Two cadences:
+#   - every 6h dry-run: catches worker / brand-config / validation breakage
+#     fast and cheaply (no Emailit calls, no email noise).
+#   - weekly real-send: proves end-to-end Emailit + DKIM + delivery still work
+#     (catches what dry-run can't — domain unverification, DKIM rotation, etc).
+# Both schedules use UTC. event.cron in scheduled() distinguishes them.
+[triggers]
+crons = [
+  "0 */6 * * *",   # every 6 hours: dry-run smoke
+  "0 13 * * 1",    # Mondays 13:00 UTC (≈ 9 AM EDT / 6 AM PDT): real-send smoke
+]

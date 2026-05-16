@@ -1,0 +1,23 @@
+{
+  "name": "marquee",
+  "assets": {
+    "css": ["marquee.css"],
+    "js":  ["marquee.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-marquee]",
+        "description": "Per-container infinite-scroll marquee. Children are duplicated to seamlessly loop.",
+        "fields": {
+          "data-aed-marquee":         { "type": "boolean", "required": true, "description": "Opt-in marker (presence of the attribute hydrates the container)." },
+          "data-aed-direction":       { "type": "string",  "default": "left", "enum": ["left", "right"], "description": "Scroll direction." },
+          "data-aed-speed":           { "type": "number",  "default": 40,    "description": "Seconds for one full loop. Lower = faster." },
+          "data-aed-gap":             { "type": "string",  "default": "2.5rem","description": "CSS length between repeated items." },
+          "data-aed-variant":         { "type": "string",  "enum": ["", "logos"], "description": "Preset styling. 'logos' applies the logo-row treatment." },
+          "data-aed-pause-on-hover":  { "type": "boolean", "default": false, "description": "Pause the animation while the cursor is over the container." }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "services",
+  "path": "/services/",
+  "breadcrumbLabel": "Services",
+  "seo": {
+    "title": "Services — Websites for Trade Businesses | Jobsite Systems",
+    "description": "A complete trade-business website plus everything around it: estimate-request forms, local SEO, before-and-after galleries, managed hosting, and content updates.",
+    "canonical": "https://jobsite.systems/services/"
+  },
+  "header": {
+    "heading": "Everything Your Business Site Needs",
+    "lead": "One package covers the whole thing — website, hosting, security, estimate-request forms, and local SEO — so you don't have to stitch it together yourself."
+  },
+  "dividers": [
+    { "after": "header", "color": "primary" }
+  ],
+  "grid": {
+    "serviceSlugs": [
+      "starter-site",
+      "lead-forms",
+      "local-seo",
+      "photo-galleries",
+      "hosting-care",
+      "email-management"
+    ]
+  },
+  "gridVariant": "featured",
+  "featuredSlug": "starter-site",
+  "cta": {
+    "heading": "Not sure what you need?",
+    "body": "Most trade businesses want the same core setup. Tell us about your business and we'll confirm what's a fit.",
+    "label": "Start a Conversation",
+    "href": "/contact/"
+  },
+  "_TODO_serviceSpecificTestimonials": "P3 #22 — generic testimonials block dropped. NEXT: collect a per-service quote (one per service card) — e.g. an SEO win for local-seo, an estimate-form story for lead-forms, a phone-photo/gallery story for photo-galleries. Inline next to each service card on the services page. Until those are gathered, this page runs without a testimonials section."
+}

@@ -1,0 +1,625 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import SectionHeading from '../builder/components/SectionHeading.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import FinalCta from '../builder/components/sections/FinalCta.astro';
+import DesignBreak from '../builder/components/sections/DesignBreak.astro';
+import ContentSection from '../builder/components/sections/ContentSection.astro';
+import PhotoGallery from '../builder/components/sections/PhotoGallery.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+import InitialsAvatar from '../builder/components/InitialsAvatar.astro';
+
+// Soft-fail when the brand has no `pages/team` entry. The page still
+// compiles to dist/team/index.html as an empty shell; scripts/prune-dist.mjs
+// drops the route post-build for those brands. Mirrors /best/, /location/,
+// /demo/ — keeps `npm run ship` green for sibling brands without a team.
+const entry = await getEntry('pages', 'team');
+const d: any = entry?.data;
+
+const tgVariantRaw = d?.teamGrid?.variant;
+const tgVariantPin = (typeof tgVariantRaw === 'string' && /^[A-D]$/i.test(tgVariantRaw))
+  ? tgVariantRaw.toUpperCase()
+  : null;
+
+/* Person JSON-LD per team member — emitted as a single ItemList graph so
+ * search engines can attribute the people to the kennel. Skipped when
+ * teamGrid is empty (sibling brands with no team) or when only TODO
+ * placeholder data is present. Headshots fall through to the brand URL +
+ * member.headshot when set; null members ride on the InitialsAvatar
+ * fallback so we don't claim a fake image as a real headshot. */
+import { brand as _b } from '../builder/lib/brand';
+const _members: any[] = Array.isArray(d?.teamGrid?.members) ? d.teamGrid.members : [];
+const teamLd = _members.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: _members.map((m: any, i: number) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Person',
+      name: m.name,
+      jobTitle: m.role,
+      description: m.bio,
+      ...(m.headshot ? { image: m.headshot } : {}),
+      worksFor: {
+        '@type': 'Organization',
+        name: _b.name,
+        url: _b.url,
+      },
+      knowsAbout: Array.isArray(m.specialties) ? m.specialties : undefined,
+    },
+  })),
+} : null;
+---
+
+{d && (
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Team' }]}
+    heading={d.header.heading}
+    lead={d.header.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {d.teamGrid && Array.isArray(d.teamGrid.members) && d.teamGrid.members.length > 0 && (
+    <section
+      class="team-grid"
+      data-section-type="team-grid"
+      data-section-label="Team grid"
+      data-section-variants="A:Default,B:Compact,C:Editorial"
+      data-team-grid-variant={tgVariantPin}
+    >
+      <div class="container">
+        <SectionHeading
+          label={d.teamGrid.sectionLabel}
+          heading={d.teamGrid.heading}
+          subtext={d.teamGrid.subtext}
+        />
+        <div class="team-grid__list">
+          {d.teamGrid.members.map((m: any, i: number) => {
+            const dialogId = `team-modal-${i}`;
+            const headingId = `${dialogId}-heading`;
+            return (
+              <article class="team-grid__card">
+                <button
+                  type="button"
+                  class="team-grid__trigger"
+                  aria-haspopup="dialog"
+                  aria-controls={dialogId}
+                  data-team-modal-trigger={dialogId}
+                >
+                  <span class="team-grid__photo">
+                    {m.headshot
+                      ? <img src={m.headshot} alt="" loading="lazy" decoding="async" width="640" height="640" data-aed-lightbox="off" />
+                      : <InitialsAvatar name={m.name} size={220} />}
+                  </span>
+                  <span class="team-grid__body">
+                    <span class="team-grid__name">{m.name}</span>
+                    {m.role && <span class="team-grid__role">{m.role}</span>}
+                    <span class="team-grid__readmore" aria-hidden="true">
+                      Read profile <span class="team-grid__readmore-arrow">→</span>
+                    </span>
+                  </span>
+                  <span class="team-grid__sr">Open profile for {m.name}</span>
+                </button>
+                <dialog
+                  class="team-modal"
+                  id={dialogId}
+                  aria-labelledby={headingId}
+                  data-team-modal
+                >
+                  <form method="dialog" class="team-modal__close-form">
+                    <button type="submit" class="team-modal__close" aria-label={`Close profile for ${m.name}`}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                      </svg>
+                    </button>
+                  </form>
+                  <div class="team-modal__inner">
+                    <div class="team-modal__photo">
+                      {m.headshot
+                        ? <img src={m.headshot} alt={m.name} loading="lazy" decoding="async" width="800" height="800" data-aed-lightbox="off" />
+                        : <InitialsAvatar name={m.name} size={320} />}
+                    </div>
+                    <div class="team-modal__body">
+                      {m.role && <p class="team-modal__role">{m.role}</p>}
+                      <h3 class="team-modal__name" id={headingId}>{m.name}</h3>
+                      {m.bio && <p class="team-modal__bio">{m.bio}</p>}
+                      {Array.isArray(m.specialties) && m.specialties.length > 0 && (
+                        <>
+                          <p class="team-modal__specialties-label">What {m.name.split(' ')[0]} handles</p>
+                          <ul class="team-modal__specialties">
+                            {m.specialties.map((s: string) => <li>{s}</li>)}
+                          </ul>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </dialog>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="teamGrid" />
+
+  {d.whyFamilyRun && d.whyFamilyRun.heading && d.whyFamilyRun.body && (
+    <ContentSection
+      sectionLabel={d.whyFamilyRun.sectionLabel}
+      heading={d.whyFamilyRun.heading}
+      body={d.whyFamilyRun.body}
+      cta={d.whyFamilyRun.cta}
+      variant={d.whyFamilyRun.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="whyFamilyRun" />
+
+  {d.designBreak && d.designBreak.cta && (
+    <DesignBreak
+      sectionLabel={d.designBreak.sectionLabel}
+      heading={d.designBreak.heading}
+      headingHtml={d.designBreak.headingHtml}
+      subtext={d.designBreak.subtext}
+      backgroundImage={d.designBreak.backgroundImage}
+      cta={d.designBreak.cta}
+      secondaryCta={d.designBreak.secondaryCta}
+      stats={d.designBreak.stats}
+      variant={d.designBreak.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="designBreak" />
+
+  {d.contentSection && d.contentSection.heading && d.contentSection.body && (
+    <ContentSection
+      sectionLabel={d.contentSection.sectionLabel}
+      heading={d.contentSection.heading}
+      body={d.contentSection.body}
+      cta={d.contentSection.cta}
+      variant={d.contentSection.variant}
+      indexNum={d.contentSection.indexNum}
+      comparison={d.contentSection.comparison}
+      statementTag={d.contentSection.statementTag}
+      railMeta={d.contentSection.railMeta}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="contentSection" />
+
+  {d.photoGallery && Array.isArray(d.photoGallery.images) && d.photoGallery.images.length >= 2 && (
+    <PhotoGallery
+      sectionLabel={d.photoGallery.sectionLabel}
+      heading={d.photoGallery.heading}
+      subtext={d.photoGallery.subtext}
+      images={d.photoGallery.images}
+      cta={d.photoGallery.cta}
+      variant={d.photoGallery.variant}
+      perPage={d.photoGallery.perPage}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="photoGallery" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="testimonials" />
+
+  {d.cta && d.cta.ctaPrimary && (
+    <FinalCta
+      heading={d.cta.heading}
+      body={d.cta.body ?? ''}
+      ctaPrimary={d.cta.ctaPrimary}
+      ctaSecondary={d.cta.ctaSecondary}
+      headshot={d.cta.headshot ?? null}
+    />
+  )}
+
+  {teamLd && (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(teamLd)}></script>
+  )}
+</Base>
+)}
+
+<script>
+  // Team modal — wires every <button data-team-modal-trigger="<dialogId>">
+  // to the matching <dialog data-team-modal id="<dialogId>">. Uses native
+  // <dialog>.showModal() which gives focus trap + ESC-to-close + ::backdrop
+  // for free. Backdrop click closes (the dialog element only fills the inner
+  // box; clicks on ::backdrop land on the dialog itself, so we close when
+  // the click target IS the dialog rather than its descendant).
+  (function () {
+    const triggers = document.querySelectorAll<HTMLButtonElement>('[data-team-modal-trigger]');
+    if (!triggers.length) return;
+
+    triggers.forEach((trigger) => {
+      const id = trigger.getAttribute('data-team-modal-trigger');
+      if (!id) return;
+      const dialog = document.getElementById(id) as HTMLDialogElement | null;
+      if (!dialog || typeof dialog.showModal !== 'function') return;
+
+      trigger.addEventListener('click', () => {
+        dialog.showModal();
+        // Lock background scroll on the body. Native <dialog> already inerts
+        // the rest of the page for focus, but iOS Safari still rubber-bands
+        // the body underneath the modal without this.
+        document.documentElement.style.overflow = 'hidden';
+      });
+
+      // Backdrop click — close when the click is on the dialog itself
+      // (the ::backdrop pseudo). Inner content has its own click target.
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) {
+          dialog.close();
+        }
+      });
+
+      dialog.addEventListener('close', () => {
+        document.documentElement.style.overflow = '';
+        // Return focus to the trigger that opened the dialog.
+        trigger.focus();
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Team grid — bespoke section, mirrors location-details' inline pattern.
+     A=3-col cards (default), B=tighter 3-col, C=stacked editorial rows.
+     Each card is a single <button> trigger that opens a per-member dialog
+     (full bio + specialties move into the modal so the grid stays scannable). */
+  .team-grid { padding: 4rem 0; }
+  .team-grid__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 980px) {
+    .team-grid__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .team-grid__list { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  /* The <article> is just the layout slot — the whole interior is a button. */
+  .team-grid__card { display: contents; }
+
+  .team-grid__trigger {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+  }
+  .team-grid__trigger:hover {
+    border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+    box-shadow: 0 18px 40px -22px rgba(0,0,0,0.18), 0 6px 18px -8px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+  }
+  .team-grid__trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .team-grid__trigger:hover .team-grid__readmore-arrow {
+    transform: translateX(4px);
+  }
+
+  .team-grid__photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-card));
+  }
+  .team-grid__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms ease;
+  }
+  .team-grid__trigger:hover .team-grid__photo img {
+    transform: scale(1.04);
+  }
+
+  .team-grid__body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1.5rem 1.75rem;
+  }
+  .team-grid__name {
+    display: block;
+    margin: 0 0 0.25rem;
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .team-grid__role {
+    display: block;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent-text, var(--accent));
+  }
+  .team-grid__readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-text, var(--accent));
+  }
+  .team-grid__readmore-arrow {
+    display: inline-block;
+    transition: transform 220ms ease;
+  }
+  .team-grid__sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+  }
+
+  /* B = Compact: tighter padding + smaller photo. */
+  [data-team-grid-variant="B"] .team-grid__list { gap: 1.25rem; }
+  [data-team-grid-variant="B"] .team-grid__photo { aspect-ratio: 1 / 1; }
+  [data-team-grid-variant="B"] .team-grid__body { padding: 1.15rem 1.15rem 1.25rem; }
+
+  /* C = Editorial: full-width rows with photo left, copy right. */
+  [data-team-grid-variant="C"] .team-grid__list {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  [data-team-grid-variant="C"] .team-grid__trigger {
+    flex-direction: row;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    overflow: visible;
+    padding-top: 2.5rem;
+  }
+  [data-team-grid-variant="C"] .team-grid__trigger:hover {
+    transform: none;
+    border-top-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+    box-shadow: none;
+  }
+  [data-team-grid-variant="C"] .team-grid__photo {
+    flex: 0 0 320px;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    align-self: flex-start;
+  }
+  [data-team-grid-variant="C"] .team-grid__body {
+    flex: 1 1 auto;
+    padding: 0.25rem 0 0 2.25rem;
+  }
+  [data-team-grid-variant="C"] .team-grid__name { font-size: clamp(1.5rem, 3vw, 2rem); }
+  @media (max-width: 720px) {
+    [data-team-grid-variant="C"] .team-grid__trigger { flex-direction: column; }
+    [data-team-grid-variant="C"] .team-grid__photo { flex: 0 0 auto; max-width: 240px; }
+    [data-team-grid-variant="C"] .team-grid__body { padding: 1.25rem 0 0; }
+  }
+
+  /* ---- Team modal (per-member dialog) ----
+     Uses native <dialog>.showModal() so we get focus trap + ESC-to-close +
+     ::backdrop for free. Backdrop click handled in the inline script.
+     Centering: base.css line 2 (`*, *::before, *::after { margin: 0 }`)
+     wipes the UA stylesheet's `margin: auto` on <dialog>, which is what
+     normally centers a modal dialog. We restore it here, plus belt-and-
+     suspenders inset:0 + position:fixed so the dialog is centered in the
+     viewport on every browser regardless of any other reset rules. */
+  .team-modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: var(--text-primary);
+    width: min(880px, calc(100vw - 2rem));
+    height: max-content;
+    max-height: calc(100dvh - 2rem);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45), 0 12px 28px -10px rgba(0,0,0,0.25);
+    /* Hidden by default — native <dialog> handles open/close visibility. */
+  }
+  .team-modal::backdrop {
+    background: rgba(8, 16, 12, 0.62);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .team-modal[open] {
+    animation: team-modal-pop 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .team-modal[open]::backdrop {
+    animation: team-modal-fade 220ms ease;
+  }
+  @keyframes team-modal-pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes team-modal-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .team-modal[open],
+    .team-modal[open]::backdrop { animation: none; }
+    .team-grid__trigger:hover { transform: none; }
+    .team-grid__trigger:hover .team-grid__photo img { transform: none; }
+  }
+
+  .team-modal__close-form {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    margin: 0;
+    z-index: 2;
+  }
+  .team-modal__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+    background: rgba(8, 16, 12, 0.55);
+    color: #fff;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+  .team-modal__close:hover {
+    background: rgba(8, 16, 12, 0.72);
+    border-color: rgba(255, 255, 255, 0.45);
+    transform: scale(1.06);
+  }
+  .team-modal__close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .team-modal__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    background: var(--bg-card);
+    max-height: calc(100dvh - 2rem);
+    overflow: hidden;
+  }
+  .team-modal__photo {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg-card));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .team-modal__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .team-modal__body {
+    padding: 2.25rem 2.5rem 2.5rem;
+    overflow-y: auto;
+    max-height: calc(100dvh - 2rem);
+  }
+  .team-modal__role {
+    margin: 0 0 0.6rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--accent-text, var(--accent));
+  }
+  .team-modal__name {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.6rem, 3vw, 2.15rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+  .team-modal__bio {
+    margin: 0 0 1.75rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+  .team-modal__specialties-label {
+    margin: 0 0 0.85rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .team-modal__specialties {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .team-modal__specialties li {
+    position: relative;
+    padding: 0.1rem 0 0.1rem 1.65rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .team-modal__specialties li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .team-modal__specialties li::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 0.85rem;
+    width: 4px;
+    height: 8px;
+    border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(45deg);
+  }
+
+  @media (max-width: 720px) {
+    .team-modal {
+      width: calc(100vw - 1rem);
+      max-height: calc(100dvh - 1rem);
+      border-radius: 14px;
+    }
+    .team-modal__inner {
+      grid-template-columns: 1fr;
+      max-height: calc(100dvh - 1rem);
+    }
+    .team-modal__photo {
+      aspect-ratio: 16 / 10;
+      max-height: 38vh;
+    }
+    .team-modal__body {
+      padding: 1.5rem 1.5rem 1.75rem;
+      max-height: none;
+    }
+  }
+</style>

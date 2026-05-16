@@ -1,0 +1,30 @@
+---
+/**
+ * Cta — shared `.btn` button primitive.
+ *
+ * Renders the canonical `<a class="btn btn-{variant}">{label}</a>` markup
+ * used by Hero / FinalCta / SiteCta / ProcessSteps. Accepts the same
+ * `{ label, href }` object the section JSON already carries, so callers
+ * can pass `cta={ctaPrimary}` directly without unpacking.
+ *
+ * Safety: returns nothing (Astro renders `null`) when href OR label is
+ * missing — prevents the `<a href={undefined}>{undefined}</a>` markup
+ * that would otherwise appear if a section's CTA prop is partial.
+ *
+ * Brand-styling: leans on the global `.btn` / `.btn-primary` /
+ * `.btn-secondary` token system in builder/styles. No brand-specific
+ * markup or class lives here.
+ */
+export interface Props {
+  cta?: { label?: string; href?: string } | null;
+  variant?: 'primary' | 'secondary';
+  /** Extra class appended after `btn btn-{variant}` (e.g. `partnership-cta`). */
+  class?: string;
+}
+
+const { cta, variant = 'primary', class: extraClass } = Astro.props;
+const label = cta?.label;
+const href = cta?.href;
+const cls = ['btn', `btn-${variant}`, extraClass].filter(Boolean).join(' ');
+---
+{href && label && <a href={href} class={cls}>{label}</a>}

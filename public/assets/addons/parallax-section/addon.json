@@ -1,0 +1,19 @@
+{
+  "name": "parallax-section",
+  "assets": {
+    "css": ["parallax-section.css"],
+    "js":  ["parallax-section.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-parallax]",
+        "description": "Per-section background parallax. Writes a `--aed-parallax-y` CSS variable on scroll that the section's CSS can use to translate its background. Respects prefers-reduced-motion.",
+        "fields": {
+          "data-aed-parallax":     { "type": "number", "default": 0.4, "description": "Scroll-to-translate ratio (0–1). 0 = no movement, 1 = moves at scroll speed." },
+          "data-aed-parallax-max": { "type": "number", "default": 120, "description": "Maximum translation in pixels (clamps the effect on long sections)." }
+        }
+      }
+    ]
+  }
+}

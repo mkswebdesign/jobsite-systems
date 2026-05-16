@@ -1,0 +1,13 @@
+{
+  "type": "aboutSplit",
+  "sectionLabel": "Behind Jobsite Systems",
+  "heading": "Built by one team that only works on trade-business websites.",
+  "body": [
+    "Most web shops are general-purpose. They build a site for a plumber on Monday and a coffee shop on Tuesday, and the work shows it. Jobsite Systems doesn't. We design for one field, in one shape — practical, credible, and quietly maintained — so the owner can stay on the truck instead of in an admin panel.",
+    "Every decision in the platform reflects how a real trade business runs: homeowners searching for help at 9pm when something's leaking, owners triaging estimate requests between jobs, the trust signals customers actually look for before they pick up the phone. The site is shaped around those realities — license numbers, insurance, real before-and-after photos — not against them."
+  ],
+  "image": "https://images.pexels.com/photos/9784238/pexels-photo-9784238.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "imageAlt": "Crew working on a residential jobsite in soft natural light",
+  "cta": { "label": "More about how we work", "href": "/about/" },
+  "variant": "A"
+}

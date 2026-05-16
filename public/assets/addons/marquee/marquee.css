@@ -1,0 +1,79 @@
+/*
+ * Marquee — drop-in scrolling row.
+ *
+ * CSS-driven infinite scroll for any [data-aed-marquee] container.
+ * The JS clones children to fill the visible row so the animation
+ * loops seamlessly.
+ *
+ * See /marquee/README.md.
+ */
+
+[data-aed-marquee] {
+  --aed-mq-speed: 40s;
+  --aed-mq-gap: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.aed-mq-track {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--aed-mq-gap);
+  padding-right: var(--aed-mq-gap);
+  align-items: center;
+  animation: aed-mq-scroll var(--aed-mq-speed) linear infinite;
+  will-change: transform;
+}
+
+[data-aed-marquee][data-aed-direction="right"] .aed-mq-track {
+  animation-direction: reverse;
+}
+
+[data-aed-marquee][data-aed-pause-on-hover]:hover .aed-mq-track {
+  animation-play-state: paused;
+}
+
+@keyframes aed-mq-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - (var(--aed-mq-gap) / 2))); }
+}
+
+/* Items: nice defaults for either text or images, override at will */
+.aed-mq-track > * {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 0.9rem;
+}
+
+[data-aed-marquee][data-aed-variant="logos"] .aed-mq-track > * {
+  height: 32px;
+  opacity: 0.7;
+  transition: opacity 0.18s ease;
+}
+[data-aed-marquee][data-aed-variant="logos"] .aed-mq-track > *:hover {
+  opacity: 1;
+}
+[data-aed-marquee][data-aed-variant="logos"] .aed-mq-track img {
+  height: 100%;
+  width: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-mq-track { animation: none; }
+  [data-aed-marquee] {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+}
+
+@media print {
+  [data-aed-marquee] { mask-image: none; -webkit-mask-image: none; }
+  .aed-mq-track { animation: none; }
+}

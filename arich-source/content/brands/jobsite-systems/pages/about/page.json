@@ -1,0 +1,217 @@
+{
+  "slug": "about",
+  "path": "/about/",
+  "breadcrumbLabel": "About",
+  "variants": {
+    "design-break": "A",
+    "capabilities": "B",
+    "content-section": "A",
+    "testimonials": "a"
+  },
+  "dividers": [
+    { "after": "header", "color": "primary" },
+    { "after": "intro", "color": "primary" },
+    { "after": "whyStatic", "color": "primary" },
+    { "after": "philosophy", "color": "primary" },
+    { "after": "designBreak", "color": "primary" },
+    { "after": "contentSection", "color": "primary" },
+    { "after": "capabilities", "color": "primary" }
+  ],
+  "seo": {
+    "title": "About — Jobsite Systems",
+    "description": "Jobsite Systems is a productized web service for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors. Practical, low-maintenance websites — built once, built right.",
+    "canonical": "https://jobsite.systems/about/"
+  },
+  "header": {
+    "heading": "Built for Trade Businesses",
+    "lead": "Productized websites for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors — designed, built, and maintained so the owner can stay on the job."
+  },
+  "founder": {
+    "_TODO": "Populate name + bio + headshot to make this render. about.astro shows the block only when `bio` is a non-empty string. See TODO.md.",
+    "eyebrow": "Founder",
+    "name": "",
+    "role": "",
+    "bio": "",
+    "headshot": ""
+  },
+  "intro": {
+    "headshot": "https://images.pexels.com/photos/7190862/pexels-photo-7190862.jpeg?q=80&w=1200&auto=format&fit=crop",
+    "heading": "A website shouldn't be another thing you have to manage between jobs.",
+    "paragraphs": [
+      "Jobsite Systems is a focused, branded initiative: simple, working websites for trade businesses that need a solid web presence without the ongoing hassle of a traditional WordPress site.",
+      "Most owners we talk to have either no website, a DIY site that never quite worked, or a WordPress build that hasn't been updated in years and is now a liability. None of those options bring in estimate requests reliably.",
+      "We designed a better middle: a practical, mobile-first trade-business site built on simple, solid hosting — fast, secure, and genuinely low-maintenance. No plugin updates, no security scares the week before busy season.",
+      "The package covers everything a homeowner or property manager actually looks for — what you do, where you work, your license and insurance, what work looks like when you're done, and an easy way to request an estimate — and we handle the ongoing care so your site stays online and accurate year after year."
+    ],
+    "stats": [
+      {
+        "value": "~2 wks",
+        "label": "From Call to Live"
+      },
+      {
+        "value": "0",
+        "label": "Plugins to Update"
+      },
+      {
+        "value": "24/7",
+        "label": "Uptime Monitoring"
+      },
+      {
+        "value": "1/click",
+        "label": "Quick Updates"
+      },
+      {
+        "value": "First cohort",
+        "label": "Onboarding now"
+      }
+    ]
+  },
+  "whyStatic": {
+    "type": "contentSection",
+    "sectionLabel": "Why static",
+    "heading": "We stopped building on WordPress for a reason.",
+    "body": "Reformatted into bodyBlocks below — `body` retained as a fallback summary for the editor's text-edit flow.",
+    "bodyBlocks": [
+      {
+        "subhead": "The old way",
+        "paragraphs": [
+          "For most of two decades we shipped sites the way the rest of the industry did — WordPress, plugins, themes, a CMS perched between the trade-business owner and their own pages. It worked, until it didn't.",
+          "The calls always landed at the worst time: a plugin update broke the contact form, a security advisory needed triage that morning, the host pushed a PHP version and half the site fell over. The owner hadn't touched anything. The stack had moved out from under them."
+        ]
+      },
+      {
+        "subhead": "What kept breaking",
+        "paragraphs": [
+          "Every one of those calls was a reminder that we were charging trade businesses to maintain a problem we'd built for them. A WordPress site isn't really one thing — it's twenty third-party codebases held together with cron jobs and a quarterly maintenance plan.",
+          "The longer it runs, the more ways there are for hackers to break in, and the less anyone wants to touch it. Eventually it just sits there looking older every year, until someone has to throw it out and start over."
+        ],
+        "pullQuote": "Every plugin is also one more vendor that could touch your customer-facing surface."
+      },
+      {
+        "subhead": "What we do now",
+        "paragraphs": [
+          "A small set of static files. No database, no admin panel, no plugin tray. Served from a CDN that quietly does its job whether anyone is paying attention or not. The first site went live on a Tuesday, and a year later we hadn't touched it. No security patches. No version chasing. Nothing to babysit.",
+          "It isn't fancier than WordPress, and it isn't trying to be — it's smaller, simpler, and built around the parts of a website a homeowner actually needs. What you do. Where you work. License and insurance. Real photos of finished work. A way to request an estimate. Everything else was overhead, and we stopped charging trade businesses to carry it."
+        ]
+      }
+    ],
+    "variant": "C"
+  },
+  "philosophy": {
+    "sectionLabel": "Philosophy",
+    "heading": "How we build.",
+    "lede": "We build the smallest site that does the job — and we keep it that way. Four ideas guide every decision, in this order.",
+    "featuredSummary": "Homeowners want to know what you do, where you work, and how to reach out.",
+    "meta": "Four principles · One process",
+    "cta": { "label": "See the full process →", "href": "/process/" },
+    "variant": "C",
+    "cards": [
+      {
+        "title": "Simple beats clever.",
+        "body": "We design around those answers — not around trendy patterns that distract from the job. If a section doesn't help a customer decide to pick up the phone, it doesn't belong on the page."
+      },
+      {
+        "title": "Boring is an asset.",
+        "body": "A website that quietly does its job for three years straight is worth more than one that wows for a week and then needs babysitting. Boring tech runs longer — and for a trade business, boring is the safest posture against a hacked site."
+      },
+      {
+        "title": "Low maintenance, on purpose.",
+        "body": "No plugins, no admin panel to forget the password to, no PHP upgrades. The site is built once and served fast — updates flow through us, not through a CMS."
+      },
+      {
+        "title": "Direct support.",
+        "body": "Need a crew member added, a service area changed, or a new before-and-after photo published? One email, handled. No tickets, no account managers."
+      }
+    ]
+  },
+  "designBreak": {
+    "type": "designBreak",
+    "sectionLabel": "The quiet promise",
+    "heading": "Less site to babysit. More time on the job.",
+    "headingHtml": "Less site to babysit. <em>More time on the job.</em>",
+    "subtext": "If how we build matches how you run your business, the rest is a short conversation.",
+    "cta": { "label": "Start a Conversation", "href": "/contact/" },
+    "secondaryCta": { "label": "See the process", "href": "/process/" },
+    "stats": [
+      { "value": "2 wks", "label": "Kickoff to live" },
+      { "value": "0",     "label": "Plugins, ever" },
+      { "value": "<1s",   "label": "Mobile load" },
+      { "value": "100%",  "label": "Uptime guaranteed" }
+    ],
+    "variant": "K"
+  },
+  "contentSection": {
+    "type": "contentSection",
+    "sectionLabel": "Built to bring in work",
+    "indexNum": "02",
+    "heading": "A site that pays for itself in *one job*.",
+    "body": "You spend evenings between jobs answering estimate requests — not chasing a web designer. We hand you a site that ranks in your service area, turns visits into estimate requests, and never asks you to log in.",
+    "statementTag": "Built once. Earning quietly.",
+    "comparison": {
+      "left": {
+        "tag": "The agency route",
+        "num": "14",
+        "unit": "wks",
+        "items": [
+          "Discovery decks",
+          "Endless revisions",
+          "Monthly retainers",
+          "Hidden hosting fees"
+        ]
+      },
+      "right": {
+        "tag": "With Jobsite Systems",
+        "num": "14",
+        "unit": "days",
+        "items": [
+          "Flat monthly price",
+          "Real photos of your work",
+          "Estimate requests by month two",
+          "No surprise invoices"
+        ],
+        "accent": true
+      }
+    },
+    "railMeta": "From $129/mo · No setup fees · Cancel anytime",
+    "cta": {
+      "label": "See what's included",
+      "href": "/pricing/"
+    },
+    "variant": "E"
+  },
+  "aboutCompare": {
+    "_TODO": "P3 #16 — Side-by-side comparison strengthening the 'pays for itself in one job' framing. Pulls together the agency-route timeline / pricing / responsibilities versus the productized one. Pull-quote is the styled callout the spec asked for ('Built once. Earning quietly.').",
+    "eyebrow": "Side by side",
+    "heading": "Two paths from problem to live site.",
+    "subtext": "Same goal — a working website that brings in estimate requests. Two very different ways to get there.",
+    "leftLabel": "The Agency Route",
+    "rightLabel": "With Jobsite Systems",
+    "rows": [
+      { "dimension": "Discovery", "left": "2–4 weeks of meetings, briefs, mood-boards", "right": "One 20-minute intro call" },
+      { "dimension": "Design rounds", "left": "3–5 rounds, each billed", "right": "One round, included" },
+      { "dimension": "Hosting", "left": "Separate vendor + monthly invoice", "right": "Included — managed end-to-end" },
+      { "dimension": "Pricing model", "left": "$5,000+ upfront then $$ for changes", "right": "Flat monthly, all-in" },
+      { "dimension": "Estimate requests", "left": "Form plugin you maintain", "right": "Form goes straight to your inbox" },
+      { "dimension": "Total time", "left": "14 weeks", "right": "14 days" }
+    ],
+    "pullQuote": "Built once. Earning quietly."
+  },
+  "capabilities": {
+    "sectionLabel": "Capabilities",
+    "heading": "What's included.",
+    "useSkillsCarousel": true
+  },
+  "cta": {
+    "heading": "Not ready to commit? That's fine — let's just talk.",
+    "body": "We'll listen, answer questions, and tell you honestly whether this is the right fit for your business.",
+    "ctaPrimary": {
+      "label": "Start a Conversation",
+      "href": "/contact/"
+    },
+    "ctaSecondary": {
+      "label": "Back to Home",
+      "href": "/"
+    }
+  },
+  "_TODO_testimonialsRemoved": "P3 #22 — testimonials block dropped from About. Page is about the founders' story, not customer voices; testimonials live on Home + targeted single quote on Pricing."
+}

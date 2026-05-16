@@ -1,0 +1,1012 @@
+---
+/**
+ * Onboarding intake — hidden from indexing, shareable by direct link.
+ *
+ * Mirrors /start/ structurally (same wizard primitives, same script, same
+ * progress UI, same contact-proxy submission flow). Differs in four ways:
+ *   - 14-step intake form vs. /start/'s 6-step pre-sale wizard
+ *   - Final step (14) is a strategic plan picker that pulls grouped pricing
+ *     tiers from pricing.json and renders Multi-Page / Single-Page as
+ *     visually-separated sections with featured-tier emphasis. Custom
+ *     `type: "plan-picker"` field bypasses the standard WizardField.
+ *   - <meta robots> noindex via Base.astro `indexable={false}`
+ *   - Sibling brands without an `onboard` page entry render an empty doc
+ *     instead of throwing, so adding this brand-specific route doesn't
+ *     break gomks/arich/best-futbol/swift-digest builds
+ *
+ * Also requires:
+ *   - sitemap.xml.ts EXCLUDED_PAGE_PATHS includes /onboard/ and /onboard/success/
+ *   - robots.txt.ts has Disallow: /onboard/
+ */
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import WizardField from '../builder/components/WizardField.astro';
+
+const entry = await getEntry('pages', 'onboard');
+const d: any = entry?.data;
+
+const pricingEntry = entry ? ((await getEntry('pages', 'pricing')) ?? null) : null;
+function pricingTierOptions() {
+  const pricingData = pricingEntry?.data as any;
+  const groups = pricingData?.tierGroups?.groups ?? [];
+  const billing = pricingData?.billing ?? null;
+  const yearlyDefault = billing?.default === 'yearly';
+  const discount = typeof billing?.discount === 'number' ? billing.discount : 0;
+  const discountedPrice = (raw: string) => {
+    if (!yearlyDefault || !discount) return raw;
+    if (typeof raw !== 'string') return raw;
+    const m = /(\d+(?:\.\d+)?)/.exec(raw);
+    if (!m) return raw;
+    const monthly = parseFloat(m[1]);
+    const yearly = Math.round(monthly * (1 - discount));
+    return raw.replace(m[0], String(yearly));
+  };
+  const out: Array<{ value: string; label: string; description?: string }> = [];
+  for (const g of groups) {
+    const groupLabel = String(g.label ?? g.id ?? '')
+      .replace(/\s*Website\s*$/i, '')
+      .trim();
+    for (const t of g.tiers ?? []) {
+      if (!t?.id) continue;
+      const price = t.price ? `${discountedPrice(t.price)}${t.priceSuffix ?? ''}` : '';
+      out.push({
+        value: String(t.id),
+        label: [groupLabel, t.name].filter(Boolean).join(' — ') + (price ? ` — ${price}` : ''),
+        description: t.description,
+      });
+    }
+  }
+  return out;
+}
+
+function expandFieldOptions(field: any) {
+  if (!field || field.source !== 'pricing-tiers') return field;
+  const dynamic = pricingTierOptions();
+  const extras = Array.isArray(field.extraOptions) ? field.extraOptions : [];
+  return {
+    ...field,
+    options: [...dynamic, ...extras],
+  };
+}
+
+/* Grouped tier picker (step 14). Returns the same pricing.json structure but
+ * with discount-applied prices and only-included features pre-filtered, so
+ * the template just renders. Returns null when no pricing entry exists,
+ * which the picker handles by hiding the section entirely. */
+function buildPricingGroups() {
+  const pricingData = pricingEntry?.data as any;
+  if (!pricingData) return null;
+  const groups = pricingData?.tierGroups?.groups ?? [];
+  const billing = pricingData?.billing ?? null;
+  const yearlyDefault = billing?.default === 'yearly';
+  const discount = typeof billing?.discount === 'number' ? billing.discount : 0;
+  const discountedPrice = (raw: string) => {
+    if (!yearlyDefault || !discount) return raw;
+    if (typeof raw !== 'string') return raw;
+    const m = /(\d+(?:\.\d+)?)/.exec(raw);
+    if (!m) return raw;
+    const monthly = parseFloat(m[1]);
+    const yearly = Math.round(monthly * (1 - discount));
+    return raw.replace(m[0], String(yearly));
+  };
+  return {
+    yearlyDefault,
+    savePill: String(billing?.savePill ?? ''),
+    groups: groups.map((g: any) => ({
+      id: String(g.id),
+      label: String(g.label ?? ''),
+      blurb: String(g.blurb ?? ''),
+      tiers: (g.tiers ?? []).map((t: any) => ({
+        id: String(t.id),
+        name: String(t.name ?? ''),
+        price: t.price ? discountedPrice(t.price) : '',
+        priceSuffix: String(t.priceSuffix ?? ''),
+        yearlyTotal: String(t.yearlyTotal ?? ''),
+        description: String(t.description ?? ''),
+        roiNote: String(t.roiNote ?? ''),
+        featured: Boolean(t.featured),
+        badge: String(t.badge ?? ''),
+        includedFeatures: (t.features ?? [])
+          .filter((feat: any) => feat?.included)
+          .map((feat: any) => String(feat.name)),
+      })),
+    })),
+  };
+}
+const pricingGroups = buildPricingGroups();
+
+const steps = entry
+  ? ((d.form?.steps ?? []) as any[]).map((step: any) => ({
+      ...step,
+      fields: (step.fields ?? []).map(expandFieldOptions),
+    }))
+  : [];
+
+function fieldsByRow(fields: any[]) {
+  const rows = new Map<number, any[]>();
+  for (const f of fields ?? []) {
+    const r = f.row ?? 0;
+    if (!rows.has(r)) rows.set(r, []);
+    rows.get(r)!.push(f);
+  }
+  return [...rows.entries()].sort((a, b) => a[0] - b[0]).map(([, fs]) => fs);
+}
+---
+
+{entry && (
+  <Base
+    title={d.seo.title}
+    description={d.seo.description}
+    canonical={d.seo.canonical}
+    variants={d.variants}
+    skipTarget="#main"
+    indexable={false}
+  >
+    <PageHeader
+      crumbs={[{ label: d.breadcrumbLabel ?? 'Onboarding' }]}
+      sectionLabel={d.header?.sectionLabel}
+      heading={d.header?.heading ?? 'Onboarding'}
+      lead={d.header?.lead}
+    />
+
+    <section
+      class="section start-wizard-section"
+      data-section-type="start-wizard"
+      data-section-label="Onboarding wizard"
+      data-section-variants="A:Default,B:Minimal,C:Featured"
+    >
+      <div class="container">
+        <div class="start-wizard" data-total-steps={steps.length}>
+
+          <div class="wizard-progress" aria-hidden="false">
+            <div class="wizard-progress-meta">
+              <span class="wizard-progress-step">Step <span id="wizardCurrent">1</span> of {steps.length}</span>
+              <span class="wizard-progress-title" id="wizardStepTitle">{steps[0]?.title}</span>
+            </div>
+            <div class="wizard-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax={steps.length} aria-valuenow="1">
+              <div class="wizard-progress-fill" id="wizardProgressFill" style={`width:${(1 / steps.length) * 100}%`}></div>
+            </div>
+          </div>
+
+          <form id="startForm" action={d.form.action} method={d.form.method ?? 'POST'} enctype="multipart/form-data" novalidate>
+            {d.form.subject && <input type="hidden" name="_subject" value={d.form.subject} />}
+            {/* contact-proxy worker (workers/contact-proxy/src/index.ts) requires
+             * `name`, `email`, `message`, `terms`. The 14-step intake doesn't have
+             * a single "message" field — fields carry the data — so a static
+             * sentinel satisfies the check. The full payload still goes through
+             * (the worker emails every form entry). */}
+            <input type="hidden" name="message" value="Onboarding intake — see field-by-field details below." />
+            <input type="hidden" name="brand" value={import.meta.env.PUBLIC_BRAND} />
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
+
+            {steps.map((step: any, i: number) => (
+              <fieldset
+                class={`wizard-step${i === 0 ? ' is-active' : ''}`}
+                data-step-index={i}
+                data-step-id={step.id}
+                data-step-title={step.title}
+                aria-hidden={i === 0 ? 'false' : 'true'}
+              >
+                <div class="wizard-step-header">
+                  {step.eyebrow && <span class="wizard-step-eyebrow">{step.eyebrow}</span>}
+                  <h2 class="wizard-step-title">{step.title}</h2>
+                  {step.description && <p class="wizard-step-description">{step.description}</p>}
+                </div>
+
+                <div class="wizard-step-fields">
+                  {(() => {
+                    const standardFieldTypes = new Set(['text', 'email', 'url', 'tel']);
+                    const standardFields = step.fields.filter((f: any) => standardFieldTypes.has(f.type));
+                    const otherFields = step.fields.filter((f: any) => !standardFieldTypes.has(f.type));
+                    const rows = fieldsByRow(standardFields);
+                    return (
+                      <>
+                        {rows.map((row: any[]) => (
+                          row.length > 1 ? (
+                            <div class="form-row">
+                              {row.map((f: any) => <WizardField field={f} />)}
+                            </div>
+                          ) : (
+                            row.map((f: any) => <WizardField field={f} />)
+                          )
+                        ))}
+                        {otherFields.map((f: any) => (
+                          f.type === 'plan-picker' && pricingGroups ? (
+                            <div class="plan-picker" role="radiogroup" aria-label="Pick a plan">
+                              {pricingGroups.groups.map((g: any) => (
+                                <div class="plan-group" data-group-id={g.id}>
+                                  <header class="plan-group-header">
+                                    <span class="plan-group-eyebrow">{g.label}</span>
+                                    {g.blurb && <p class="plan-group-blurb">{g.blurb}</p>}
+                                  </header>
+                                  <div class="plan-grid">
+                                    {g.tiers.map((t: any) => (
+                                      <label class={`plan-card${t.featured ? ' is-featured' : ''}`}>
+                                        <input
+                                          type="radio"
+                                          name={f.name}
+                                          value={t.id}
+                                          required={f.required}
+                                          data-wizard-field={f.id}
+                                        />
+                                        <span class="plan-card-inner">
+                                          {t.featured && t.badge && <span class="plan-card-badge">{t.badge}</span>}
+                                          <span class="plan-card-name">{t.name}</span>
+                                          {t.price && (
+                                            <span class="plan-card-price-row">
+                                              <span class="plan-card-price">{t.price}</span>
+                                              {t.priceSuffix && <span class="plan-card-suffix">{t.priceSuffix}</span>}
+                                            </span>
+                                          )}
+                                          {t.yearlyTotal && <span class="plan-card-yearly">{t.yearlyTotal}</span>}
+                                          {t.description && <span class="plan-card-description">{t.description}</span>}
+                                          {t.includedFeatures.length > 0 && (
+                                            <ul class="plan-card-features">
+                                              {t.includedFeatures.map((feat: string) => <li>{feat}</li>)}
+                                            </ul>
+                                          )}
+                                          {t.roiNote && <span class="plan-card-roi">{t.roiNote}</span>}
+                                          <span class="plan-card-tick" aria-hidden="true"></span>
+                                        </span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                              {Array.isArray(f.extras) && f.extras.length > 0 && (
+                                <div class="plan-other">
+                                  <header class="plan-group-header plan-group-header--minor">
+                                    <span class="plan-group-eyebrow">Other Options</span>
+                                  </header>
+                                  <div class="plan-other-grid">
+                                    {f.extras.map((x: any) => (
+                                      <label class="plan-card plan-card--minor">
+                                        <input
+                                          type="radio"
+                                          name={f.name}
+                                          value={x.value}
+                                          required={f.required}
+                                          data-wizard-field={f.id}
+                                        />
+                                        <span class="plan-card-inner">
+                                          <span class="plan-card-name">{x.label}</span>
+                                          {x.tagline && <span class="plan-card-tagline">{x.tagline}</span>}
+                                          {x.description && <span class="plan-card-description">{x.description}</span>}
+                                          <span class="plan-card-tick" aria-hidden="true"></span>
+                                        </span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {pricingGroups.yearlyDefault && pricingGroups.savePill && (
+                                <p class="plan-picker-footnote">
+                                  Prices show yearly billing. <strong>{pricingGroups.savePill}</strong> vs. monthly. <a href="/pricing/" target="_blank" rel="noopener">See full pricing details →</a>
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <WizardField field={f} />
+                          )
+                        ))}
+                      </>
+                    );
+                  })()}
+                </div>
+              </fieldset>
+            ))}
+
+            <div class="wizard-nav">
+              <button type="button" class="btn btn-secondary wizard-back" id="wizardBack" disabled>
+                <span class="arrow" aria-hidden="true">&larr;</span>
+                Back
+              </button>
+              <button type="button" class="btn btn-primary wizard-next" id="wizardNext">
+                Continue
+                <span class="arrow" aria-hidden="true">&rarr;</span>
+              </button>
+              <button type="submit" class="btn btn-primary wizard-submit" id="wizardSubmit" hidden>
+                {d.form.submitLabel ?? 'Submit'}
+              </button>
+            </div>
+
+            <p class="wizard-error-hint" id="wizardErrorHint" role="alert" aria-live="polite"></p>
+          </form>
+
+          <div class="form-status" id="startFormSuccess">
+            <strong>Thanks!</strong> {d.form.successMessage}
+          </div>
+          <div class="form-status" id="startFormError">
+            <strong>Something went wrong.</strong> {d.form.errorMessage}
+          </div>
+
+          <p class="wizard-footnote">
+            Prefer to send a quick note instead? <a href="/contact/">Use the simple contact form.</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </Base>
+
+  <script is:inline define:vars={{ storageKey: `onboard-wizard:${d.slug}`, errorFallback: d.form?.errorMessage, successUrl: '/onboard/success/' }}>
+  (function(){
+    const form = document.getElementById('startForm');
+    if (!form) return;
+
+    const wizard = document.querySelector('.start-wizard');
+    const steps = Array.from(form.querySelectorAll('.wizard-step'));
+    if (!wizard || !steps.length) return;
+
+    const totalSteps = steps.length;
+    const backBtn = document.getElementById('wizardBack');
+    const nextBtn = document.getElementById('wizardNext');
+    const submitBtn = document.getElementById('wizardSubmit');
+    const currentEl = document.getElementById('wizardCurrent');
+    const titleEl = document.getElementById('wizardStepTitle');
+    const fillEl = document.getElementById('wizardProgressFill');
+    const trackEl = wizard.querySelector('.wizard-progress-track');
+    const errorHint = document.getElementById('wizardErrorHint');
+    const successEl = document.getElementById('startFormSuccess');
+    const errorEl = document.getElementById('startFormError');
+
+    let current = 0;
+
+    function saveState(){
+      try {
+        const data = {};
+        form.querySelectorAll('input, textarea, select').forEach(el => {
+          if (!el.name || el.name.startsWith('_')) return;
+          /* Skip file inputs — browsers block reading or restoring file
+           * input values for security, and the human-check expected/input
+           * pair is regenerated on every page load so caching it
+           * sessionStorage would just leave a stale value sitting around. */
+          if (el.type === 'file') return;
+          if (el.dataset.wizardHumanCheckInput !== undefined) return;
+          if (el.dataset.wizardHumanCheckExpected !== undefined) return;
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            if (el.checked) {
+              if (el.type === 'checkbox' && data[el.name] && !Array.isArray(data[el.name])) {
+                data[el.name] = [data[el.name]];
+              }
+              if (Array.isArray(data[el.name])) data[el.name].push(el.value);
+              else data[el.name] = el.value;
+            }
+          } else {
+            if (el.value) data[el.name] = el.value;
+          }
+        });
+        data.__step = current;
+        sessionStorage.setItem(storageKey, JSON.stringify(data));
+      } catch(e) {}
+    }
+
+    function restoreState(){
+      try {
+        const raw = sessionStorage.getItem(storageKey);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        Object.keys(data).forEach(key => {
+          if (key === '__step') return;
+          const value = data[key];
+          const fields = form.querySelectorAll(`[name="${CSS.escape(key)}"]`);
+          fields.forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+              if (Array.isArray(value)) {
+                if (value.includes(el.value)) el.checked = true;
+              } else if (el.value === value) {
+                el.checked = true;
+              }
+            } else {
+              el.value = value;
+            }
+          });
+        });
+        if (typeof data.__step === 'number' && data.__step >= 0 && data.__step < totalSteps) {
+          goToStep(data.__step, { smooth: false });
+        }
+      } catch(e) {}
+    }
+
+    function updateNavState(){
+      backBtn.disabled = current === 0;
+      const isLast = current === totalSteps - 1;
+      nextBtn.hidden = isLast;
+      submitBtn.hidden = !isLast;
+    }
+
+    function updateProgress(){
+      const pct = ((current + 1) / totalSteps) * 100;
+      fillEl.style.width = pct + '%';
+      currentEl.textContent = String(current + 1);
+      titleEl.textContent = steps[current].dataset.stepTitle || '';
+      if (trackEl) trackEl.setAttribute('aria-valuenow', String(current + 1));
+    }
+
+    function goToStep(index, opts){
+      opts = opts || {};
+      if (index < 0 || index >= totalSteps) return;
+      steps.forEach((s, i) => {
+        s.classList.toggle('is-active', i === index);
+        s.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+      });
+      current = index;
+      updateNavState();
+      updateProgress();
+      errorHint.textContent = '';
+      if (opts.smooth !== false) {
+        wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const firstField = steps[index].querySelector('input, textarea, select');
+      if (firstField && opts.focus !== false) {
+        setTimeout(() => firstField.focus({ preventScroll: true }), 250);
+      }
+    }
+
+    function validateStep(index){
+      const step = steps[index];
+      const fields = Array.from(step.querySelectorAll('input, textarea, select'));
+      let firstInvalid = null;
+      let customError = '';
+      const radioGroups = new Set();
+      for (const f of fields) {
+        if (!f.required) continue;
+        if (f.type === 'radio' || f.type === 'checkbox') {
+          if (!f.name) continue;
+          if (radioGroups.has(f.name)) continue;
+          radioGroups.add(f.name);
+          const group = step.querySelectorAll(`[name="${CSS.escape(f.name)}"]`);
+          const anyChecked = Array.from(group).some(g => g.checked);
+          if (!anyChecked) {
+            if (!firstInvalid) firstInvalid = f;
+          }
+        } else {
+          if (!f.value || !f.checkValidity()) {
+            if (!firstInvalid) firstInvalid = f;
+          } else if (f.dataset.wizardHumanCheckInput !== undefined) {
+            /* Human-check field: typed value must match the random number
+             * displayed on the card. Expected value is stored in a paired
+             * hidden input (data-wizard-human-check-expected) generated at
+             * page load so server-side can also re-verify if desired. */
+            const expectedEl = step.querySelector('[data-wizard-human-check-expected]');
+            if (expectedEl && f.value.trim() !== expectedEl.value.trim()) {
+              if (!firstInvalid) {
+                firstInvalid = f;
+                customError = "That number doesn't match. Try again.";
+              }
+            }
+          }
+        }
+      }
+      if (firstInvalid) {
+        errorHint.textContent = customError ||
+          (firstInvalid.validationMessage && firstInvalid.value
+            ? firstInvalid.validationMessage
+            : 'Please complete the required field(s) before continuing.');
+        firstInvalid.focus({ preventScroll: false });
+        step.classList.add('wizard-step--invalid');
+        setTimeout(() => step.classList.remove('wizard-step--invalid'), 600);
+        return false;
+      }
+      errorHint.textContent = '';
+      return true;
+    }
+
+    /* Generate a random N-digit verification number for each human-check
+     * widget on the page. Stores the expected answer in a paired hidden
+     * input so the worker (or future server-side check) can re-verify. */
+    function initHumanChecks(){
+      const checks = form.querySelectorAll('[data-wizard-human-check]');
+      checks.forEach((check) => {
+        const digits = parseInt(check.dataset.digits || '4', 10);
+        const min = Math.pow(10, digits - 1);
+        const max = Math.pow(10, digits) - 1;
+        const num = Math.floor(min + Math.random() * (max - min + 1));
+        const numStr = String(num);
+        const display = check.querySelector('[data-wizard-human-check-number]');
+        const expected = check.querySelector('[data-wizard-human-check-expected]');
+        if (display) display.textContent = numStr;
+        if (expected) expected.value = numStr;
+      });
+    }
+
+    function formatFileSize(bytes){
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+      return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    }
+    function acceptMatches(file, acceptList){
+      if (!acceptList.length) return true;
+      return acceptList.some((pattern) => {
+        if (pattern.endsWith('/*')) return file.type.startsWith(pattern.slice(0, -1));
+        if (pattern.startsWith('.')) return file.name.toLowerCase().endsWith(pattern.toLowerCase());
+        return file.type === pattern;
+      });
+    }
+    function describeAccepts(acceptList){
+      return acceptList
+        .map((a) => a.includes('/') ? a.split('/').pop().toUpperCase() : a.replace(/^\./, '').toUpperCase())
+        .filter((s, i, all) => all.indexOf(s) === i)
+        .join(', ');
+    }
+
+    /* File input UX: validate size + type on selection, surface the
+     * filename and size when valid, surface inline errors when not.
+     * The worker (workers/contact-proxy/src/index.ts) re-validates as
+     * defense-in-depth. */
+    function initFileInputs(){
+      const fileInputs = form.querySelectorAll('input[type="file"]');
+      fileInputs.forEach((input) => {
+        const group = input.closest('.form-group');
+        if (!group) return;
+        const stateEl = group.querySelector('[data-wizard-file-state]');
+        const errorEl = group.querySelector('[data-wizard-file-error]');
+        const maxSize = parseInt(input.dataset.wizardMaxSize || '0', 10);
+        const accept = (input.accept || '').split(',').map((s) => s.trim()).filter(Boolean);
+
+        const reset = () => {
+          if (stateEl) {
+            stateEl.textContent = 'No file selected';
+            stateEl.classList.remove('has-file');
+          }
+        };
+        const fail = (msg) => {
+          if (errorEl) errorEl.textContent = msg;
+          input.value = '';
+          group.classList.add('has-error');
+          reset();
+        };
+
+        input.addEventListener('change', () => {
+          if (errorEl) errorEl.textContent = '';
+          group.classList.remove('has-error');
+          const file = input.files && input.files[0];
+          if (!file) { reset(); return; }
+          if (maxSize && file.size > maxSize) {
+            return fail(`File too large (${formatFileSize(file.size)}). Max ${formatFileSize(maxSize)}.`);
+          }
+          if (accept.length > 0 && !acceptMatches(file, accept)) {
+            return fail(`Unsupported file type. Use ${describeAccepts(accept)}.`);
+          }
+          if (stateEl) {
+            stateEl.textContent = `${file.name} · ${formatFileSize(file.size)}`;
+            stateEl.classList.add('has-file');
+          }
+        });
+      });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (!validateStep(current)) return;
+      saveState();
+      goToStep(current + 1);
+    });
+
+    backBtn.addEventListener('click', () => {
+      saveState();
+      goToStep(current - 1);
+    });
+
+    form.addEventListener('input', saveState);
+    form.addEventListener('change', saveState);
+
+    /* Exclusive options in checkbox-grid groups: an option marked
+     * data-wizard-exclusive (authored via `exclusive: true` in the step
+     * JSON) acts as an opt-out / "skip this step" pick. */
+    form.addEventListener('change', (e) => {
+      const el = e.target;
+      if (!(el instanceof HTMLInputElement) || el.type !== 'checkbox') return;
+      if (!el.name || !el.checked) return;
+      const group = form.querySelectorAll('input[type="checkbox"][name="' + CSS.escape(el.name) + '"]');
+      if (group.length < 2) return;
+      const isExclusive = el.hasAttribute('data-wizard-exclusive');
+      group.forEach((other) => {
+        if (other === el) return;
+        const otherExclusive = other.hasAttribute('data-wizard-exclusive');
+        if (isExclusive || otherExclusive) {
+          if (other.checked) other.checked = false;
+        }
+      });
+    });
+
+    form.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'textarea') return;
+      e.preventDefault();
+      if (current < totalSteps - 1) {
+        if (!validateStep(current)) return;
+        saveState();
+        goToStep(current + 1);
+      } else {
+        submitBtn.click();
+      }
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      for (let i = 0; i <= current; i++) {
+        if (!validateStep(i)) {
+          goToStep(i);
+          return;
+        }
+      }
+      submitBtn.disabled = true;
+      submitBtn.setAttribute('aria-busy', 'true');
+      const origLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Sending…';
+      successEl.className = 'form-status';
+      errorEl.className = 'form-status';
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+        .then(r => {
+          if (!r.ok) throw new Error('fail');
+          if (window.plausible) window.plausible('Onboard Submit');
+          sessionStorage.removeItem(storageKey);
+          window.location.assign(successUrl);
+        })
+        .catch(() => {
+          errorEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.removeAttribute('aria-busy');
+          submitBtn.textContent = origLabel;
+        });
+    });
+
+    initHumanChecks();
+    initFileInputs();
+    restoreState();
+    updateNavState();
+    updateProgress();
+  })();
+  </script>
+)}
+
+<style is:global>
+  /* Plan picker — onboard.astro step 14 only.
+   * Visually groups Multi-Page vs Single-Page tiers, emphasizes the
+   * featured tier with accent border + badge, and renders extras
+   * (One-Time Build / Not Sure Yet) as visually-quieter minor cards.
+   * Loaded only on /onboard/, so token-driven and theme-aware via
+   * the same custom props the rest of the site uses. */
+
+  .plan-picker { display: flex; flex-direction: column; gap: 2.25rem }
+  .plan-picker-footnote {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .plan-picker-footnote a { color: var(--accent); text-decoration: none }
+  .plan-picker-footnote a:hover { text-decoration: underline }
+
+  .plan-group { display: flex; flex-direction: column; gap: 1rem }
+  .plan-group-header { display: flex; flex-direction: column; gap: 0.4rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border) }
+  .plan-group-header--minor { border-bottom-color: transparent; padding-bottom: 0 }
+  .plan-group-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .plan-group-blurb {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    max-width: 720px;
+  }
+
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.85rem;
+    align-items: stretch;
+  }
+
+  .plan-card { position: relative; cursor: pointer; display: block }
+  .plan-card input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+  }
+  .plan-card-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem 1.15rem 3.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    height: 100%;
+    transition: border-color var(--transition), background var(--transition), transform var(--transition), box-shadow var(--transition);
+  }
+  .plan-card:hover .plan-card-inner { border-color: var(--border-light); transform: translateY(-2px) }
+  .plan-card input:focus-visible + .plan-card-inner {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
+  }
+  .plan-card input:checked + .plan-card-inner {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), rgba(var(--accent-rgb), 0.02));
+    box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 12px 32px -16px rgba(var(--accent-rgb), 0.35);
+  }
+
+  .plan-card.is-featured .plan-card-inner {
+    border-color: rgba(var(--accent-rgb), 0.55);
+    box-shadow: 0 8px 28px -18px rgba(var(--accent-rgb), 0.5);
+  }
+  .plan-card.is-featured:hover .plan-card-inner { border-color: var(--accent) }
+
+  .plan-card-badge {
+    align-self: flex-start;
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--accent);
+    padding: 0.32rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.15rem;
+  }
+
+  .plan-card-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+  .plan-card-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
+    margin: 0.1rem 0 0;
+  }
+  .plan-card-price {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .plan-card-suffix {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .plan-card-yearly {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .plan-card-description {
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+  .plan-card-tagline {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .plan-card-features {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .plan-card-features li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+  .plan-card-features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(45deg);
+  }
+  .plan-card-roi {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--text-muted);
+    border-top: 1px dashed var(--border);
+    padding-top: 0.6rem;
+  }
+
+  /* Tick indicator pinned to bottom-right of each card */
+  .plan-card-tick {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-light);
+    background: var(--bg-secondary);
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .plan-card:hover .plan-card-tick { border-color: var(--accent) }
+  .plan-card input:checked + .plan-card-inner .plan-card-tick {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .plan-card input:checked + .plan-card-inner .plan-card-tick::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  /* Other Options block — quieter visual treatment for the two extras */
+  .plan-other { display: flex; flex-direction: column; gap: 1rem; padding-top: 0.5rem }
+  .plan-other-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.85rem;
+  }
+  .plan-card--minor .plan-card-inner {
+    padding: 1.05rem 1.15rem 3rem;
+    background: var(--bg-secondary);
+  }
+  .plan-card--minor .plan-card-name { font-size: 1rem }
+
+  @media (max-width: 720px) {
+    .plan-grid { grid-template-columns: 1fr }
+    .plan-other-grid { grid-template-columns: 1fr }
+    .plan-card-inner { padding-bottom: 3rem }
+  }
+
+  /* File input — onboard.astro step 11 logo upload.
+   * Wraps the native input in a clickable card that surfaces the chosen
+   * filename + size on selection, and an inline error when validation
+   * fails (size cap exceeded or unsupported MIME type). */
+  .form-group-file > label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary); font-size: 0.9375rem }
+  .wizard-file {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1rem 1.15rem;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .wizard-file:hover { border-color: var(--accent); background: rgba(var(--accent-rgb), 0.03) }
+  .wizard-file input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .wizard-file-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .wizard-file-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--accent);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .wizard-file-state {
+    margin-left: auto;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    text-align: right;
+    word-break: break-word;
+    max-width: 60%;
+  }
+  .wizard-file-state.has-file { color: var(--accent); font-weight: 600 }
+  .wizard-file-help {
+    margin: 0.5rem 0 0;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .wizard-file-error {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    color: #c33;
+    line-height: 1.4;
+    min-height: 0;
+  }
+  .wizard-file-error:empty { margin: 0 }
+  .form-group-file.has-error .wizard-file { border-color: #c33; background: rgba(204, 51, 51, 0.04) }
+
+  /* Human-check — step 14 random-number CAPTCHA / bot deterrent.
+   * A 4-digit number is generated client-side on page load, displayed
+   * prominently, and stored in a paired hidden input. The user retypes
+   * the number to confirm. validateStep checks the typed value matches. */
+  .wizard-human-check {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+  }
+  .wizard-human-check-display {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    min-width: 160px;
+  }
+  .wizard-human-check-eyebrow {
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .wizard-human-check-number {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--text-primary);
+    line-height: 1;
+    user-select: none;
+  }
+  .wizard-human-check-input {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 200px;
+  }
+  .wizard-human-check-input label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .wizard-human-check-input input[type="text"] {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 1.125rem;
+    letter-spacing: 0.1em;
+    width: 100%;
+  }
+</style>

@@ -1,0 +1,757 @@
+---
+import { getEntry } from 'astro:content';
+import { brand } from '../builder/lib/brand';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import FAQ from '../builder/components/sections/FAQ.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import SiteCta from '../builder/components/sections/SiteCta.astro';
+import TrustBand from '../builder/components/sections/TrustBand.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+
+const entry = await getEntry('pages', 'pricing');
+/* Pass 4: when this brand has no pricing page (e.g. swift-digest after
+ * legacy retirement), render a meta-refresh stub to /. build-redirects
+ * overwrites this with the canonical 301 stub afterward. */
+if (!entry) {
+  return new Response(
+    `<!doctype html><meta charset="utf-8"><title>Redirecting…</title><meta http-equiv="refresh" content="0; url=/"><meta name="robots" content="noindex"><body><p>Redirecting to <a href="/">/</a>…</p></body>`,
+    { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+  );
+}
+const d: any = entry.data;
+
+/* Per-tier Product/Offer JSON-LD. Emits one Product per tier, each with two
+ * Offers (monthly + yearly). Yearly price is the annualized total derived
+ * from monthly * (1 - discount) * 12, matching the visible /yr total on
+ * the page. Skipped when the page has no tierGroups (legacy single-plan
+ * pricing keeps the org/service schema from Base.astro). */
+const _baseUrl = brand.url.replace(/\/$/, '');
+const _orgRef = { '@id': brand.url + '#organization' };
+const _discount = typeof d.billing?.discount === 'number' ? d.billing.discount : 0.30;
+const tierProducts: any[] = [];
+if (d.tierGroups?.groups?.length) {
+  for (const g of d.tierGroups.groups) {
+    for (const t of (g.tiers ?? [])) {
+      if (!t.id) continue;
+      const m = /(\d+(?:\.\d+)?)/.exec(t.price || '');
+      if (!m) continue;
+      const monthlyPrice = parseFloat(m[1]);
+      if (!Number.isFinite(monthlyPrice) || monthlyPrice <= 0) continue;
+      const yearlyMonthly = Math.round(monthlyPrice * (1 - _discount));
+      const yearlyTotal = yearlyMonthly * 12;
+      const includedFeatures = (t.features ?? [])
+        .filter((f: any) => typeof f === 'string' || f?.included !== false)
+        .map((f: any) => typeof f === 'string' ? f : f?.name)
+        .filter(Boolean);
+      tierProducts.push({
+        '@type': 'Product',
+        '@id': `${_baseUrl}/pricing/#tier-${t.id}`,
+        name: `${brand.name} — ${g.label ? g.label + ' ' : ''}${t.name}`,
+        description: t.description || undefined,
+        category: g.label || undefined,
+        brand: _orgRef,
+        additionalProperty: includedFeatures.length
+          ? includedFeatures.map((f: string) => ({ '@type': 'PropertyValue', name: 'Included feature', value: f }))
+          : undefined,
+        offers: [
+          {
+            '@type': 'Offer',
+            url: `${_baseUrl}/pricing/${t.id}/monthly/`,
+            priceCurrency: 'USD',
+            price: monthlyPrice.toString(),
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: monthlyPrice.toString(),
+              priceCurrency: 'USD',
+              billingDuration: 'P1M',
+              unitText: 'per month',
+            },
+            availability: 'https://schema.org/InStock',
+            category: 'Monthly subscription',
+            seller: _orgRef,
+          },
+          {
+            '@type': 'Offer',
+            url: `${_baseUrl}/pricing/${t.id}/yearly/`,
+            priceCurrency: 'USD',
+            price: yearlyTotal.toString(),
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: yearlyTotal.toString(),
+              priceCurrency: 'USD',
+              billingDuration: 'P1Y',
+              unitText: 'per year',
+            },
+            availability: 'https://schema.org/InStock',
+            category: 'Yearly subscription',
+            seller: _orgRef,
+          },
+        ],
+      });
+    }
+  }
+}
+const pricingSchemaLd = tierProducts.length
+  ? { '@context': 'https://schema.org', '@graph': tierProducts }
+  : null;
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  {pricingSchemaLd && (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(pricingSchemaLd)}></script>
+  )}
+  {d.billing?.storageKey && (
+    <script is:inline set:html={`
+      (function(){
+        try {
+          var k = ${JSON.stringify(d.billing.storageKey)};
+          var v = sessionStorage.getItem(k);
+          if (v === 'yearly' || v === 'monthly') {
+            document.documentElement.setAttribute('data-billing', v);
+          }
+        } catch (_) {}
+      })();
+    `}></script>
+  )}
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Pricing' }]}
+    sectionLabel={d.header?.sectionLabel}
+    heading={d.header?.heading ?? 'Pricing'}
+    lead={d.header?.lead}
+  />
+
+  <TrustBand />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  <div class="container pricing-print-row" data-screen-only>
+    <span data-print-button data-print-button-label="Print or save as PDF"></span>
+  </div>
+
+  <div class="container" style="max-width:520px;margin:0 auto 1.25rem">
+    <div data-aed-availability></div>
+  </div>
+
+  {(() => {
+    // Shape support:
+    //   - tierGroups: { defaultId, toggleLabel?, groups: [{ id, label, blurb?, tiers[] }] }
+    //     Renders a segmented toggle + one card grid per group, JS swaps which grid is visible.
+    //   - tiers: legacy flat array — wrapped into a single "default" group so downstream
+    //     rendering uses the same code path.
+    const groups: any[] = d.tierGroups?.groups?.length
+      ? d.tierGroups.groups
+      : (d.tiers?.length ? [{ id: 'default', label: null, tiers: d.tiers }] : []);
+    const defaultGroupId = d.tierGroups?.defaultId || groups[0]?.id;
+    const toggleLabel = d.tierGroups?.toggleLabel || 'Site style';
+    const multiGroup = groups.length > 1;
+
+    if (!groups.length) return null;
+
+    // Optional billing-cycle toggle. Opt-in via d.billing; when present the
+    // template renders a second segmented control that swaps each card's
+    // displayed price between its stated monthly rate and an annualized /mo
+    // derived by `monthly * (1 - discount)`.
+    const billing = d.billing ? {
+      default: d.billing.default === 'monthly' ? 'monthly' : 'yearly',
+      discount: typeof d.billing.discount === 'number' ? d.billing.discount : 0.30,
+      savePill: d.billing.savePill || `Save ${Math.round((typeof d.billing.discount === 'number' ? d.billing.discount : 0.30) * 100)}%`,
+      monthlyLabel: d.billing.monthlyLabel || 'Monthly',
+      yearlyLabel: d.billing.yearlyLabel || 'Yearly',
+      monthlyNote: d.billing.monthlyNote || 'billed monthly',
+      yearlyNote: d.billing.yearlyNote || 'billed annually',
+    } : null;
+
+    const yearlyPriceFor = (price: string) => {
+      if (!billing || typeof price !== 'string') return price;
+      const m = /(\d+(?:\.\d+)?)/.exec(price);
+      if (!m) return price;
+      const monthly = parseFloat(m[1]);
+      const yearly = Math.round(monthly * (1 - billing.discount));
+      return price.replace(m[0], String(yearly));
+    };
+
+    // Feature-spotlight promo: decorates feature rows whose name matches
+    // `featureMatch` (case-insensitive substring) with a branded chip and an
+    // optional banner. Two modes:
+    //   - countdown (default): pass `endsAt` ISO; renders "ends in N days"
+    //     and self-hides past the deadline.
+    //   - permanent: pass `permanent: true`; chip stays on indefinitely with
+    //     no countdown markup or `data-promo-ends-at` emitted — useful when
+    //     the feature is a permanent inclusion, not a limited offer.
+    // Opt-in via pricing.json `promo`; absent promo is a no-op.
+    const promoPermanent = !!d.promo?.permanent;
+    const promo = d.promo && d.promo.featureMatch && (promoPermanent || d.promo.endsAt) ? {
+      featureMatch: String(d.promo.featureMatch).toLowerCase(),
+      endsAt: promoPermanent ? null : d.promo.endsAt,
+      permanent: promoPermanent,
+      chipLabel: d.promo.chipLabel || 'FREE',
+      chipSuffix: d.promo.chipSuffix || 'ends in',
+      bannerLabel: d.promo.bannerLabel || 'Limited-time offer',
+      bannerMessage: d.promo.bannerMessage || '',
+      forceIncluded: d.promo.forceIncluded !== false,
+    } : null;
+    const hideExcludedFeatures = !!d.hideExcludedFeatures;
+    const featureMatchesPromo = (name: string) =>
+      !!promo && typeof name === 'string' && name.toLowerCase().includes(promo.featureMatch);
+    const initialDaysRemaining = promo && promo.endsAt ? Math.max(0, Math.ceil((new Date(promo.endsAt).getTime() - Date.now()) / 86400000)) : 0;
+    const hasPromoFeatureInGroup = (g: any) =>
+      !!promo && Array.isArray(g?.tiers) && g.tiers.some((t: any) => Array.isArray(t?.features) && t.features.some((f: any) => featureMatchesPromo(typeof f === 'string' ? f : f?.name)));
+
+    // Per-page layout switches for the pricing audit (TASK 6, 2026-05-05).
+    // Defaults preserve the prior layout (anchor above, toggle floating).
+    const priceAnchorPosition = (d as any).priceAnchorPosition === 'below' ? 'below' : 'above';
+    const billingTogglePosition = (d as any).billingTogglePosition === 'centered-above' ? 'centered-above' : 'float-rail';
+    const showBillingToggle = (variant: 'centered-above' | 'float-rail') => billing && billingTogglePosition === variant;
+    return (
+      <section
+        class="section pricing-section pricing-section--tiers"
+        data-section-type="pricing"
+        data-section-label="Pricing tiers"
+        data-section-variants="A:Default,B:Minimal,C:Featured,D:Editorial,E:Bold"
+      >
+        <div class="container">
+          {d.priceAnchor && priceAnchorPosition === 'above' && (
+            <p class="pricing-anchor reveal" data-reveal-delay="20">{d.priceAnchor}</p>
+          )}
+          {showBillingToggle('centered-above') && (
+            <div class="pricing-toggle-wrap pricing-toggle-wrap--centered reveal" data-reveal-delay="10">
+              <div class="pricing-toggle pricing-toggle--billing" role="tablist" aria-label="Billing cycle" data-billing-toggle data-pricing-billing-storage={d.billing?.storageKey || undefined}>
+                <button
+                  type="button"
+                  role="tab"
+                  class={'pricing-toggle-btn' + (billing!.default === 'yearly' ? ' is-active' : '')}
+                  data-billing-option="yearly"
+                  aria-selected={billing!.default === 'yearly' ? 'true' : 'false'}
+                  tabindex={billing!.default === 'yearly' ? 0 : -1}
+                >
+                  <span class="pricing-toggle-label">{billing!.yearlyLabel}</span>
+                  <span class="pricing-toggle-save">{billing!.savePill}</span>
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  class={'pricing-toggle-btn' + (billing!.default === 'monthly' ? ' is-active' : '')}
+                  data-billing-option="monthly"
+                  aria-selected={billing!.default === 'monthly' ? 'true' : 'false'}
+                  tabindex={billing!.default === 'monthly' ? 0 : -1}
+                >
+                  <span class="pricing-toggle-label">{billing!.monthlyLabel}</span>
+                </button>
+              </div>
+            </div>
+          )}
+          {multiGroup && (
+            <div class="pricing-toggle-wrap reveal">
+              <div class="pricing-toggle pricing-toggle--style" role="tablist" aria-label={toggleLabel} data-pricing-toggle>
+                {groups.map((g: any) => (
+                  <button
+                    type="button"
+                    role="tab"
+                    id={`pricing-tab-${g.id}`}
+                    class={'pricing-toggle-btn' + (g.id === defaultGroupId ? ' is-active' : '')}
+                    data-pricing-group={g.id}
+                    aria-selected={g.id === defaultGroupId ? 'true' : 'false'}
+                    aria-controls={`pricing-panel-${g.id}`}
+                    tabindex={g.id === defaultGroupId ? 0 : -1}
+                  >
+                    {g.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {groups.map((g: any) => (
+            <div
+              id={`pricing-panel-${g.id}`}
+              class={'pricing-group' + (g.id === defaultGroupId ? ' is-active' : '')}
+              data-pricing-group-panel={g.id}
+              role={multiGroup ? 'tabpanel' : undefined}
+              aria-labelledby={multiGroup ? `pricing-tab-${g.id}` : undefined}
+              hidden={multiGroup && g.id !== defaultGroupId}
+            >
+              {promo && hasPromoFeatureInGroup(g) && (
+                <div class="pricing-promo-banner-row">
+                  <div
+                    class={'pricing-promo-banner reveal' + (promo.permanent ? ' pricing-promo-banner--permanent' : '')}
+                    data-reveal-delay="60"
+                    data-promo-banner
+                    data-promo-permanent={promo.permanent ? '' : undefined}
+                    data-promo-ends-at={promo.permanent ? undefined : promo.endsAt}
+                    data-promo-message={promo.permanent ? undefined : promo.bannerMessage}
+                  >
+                    <span class="pricing-promo-banner-dot" aria-hidden="true"></span>
+                    <span class="pricing-promo-banner-label">{promo.bannerLabel}</span>
+                    <span class="pricing-promo-banner-text" data-promo-banner-text>
+                      {promo.permanent
+                        ? promo.bannerMessage
+                        : promo.bannerMessage
+                            .replace('{days}', String(initialDaysRemaining))
+                            .replace('{dayNoun}', initialDaysRemaining === 1 ? 'day' : 'days')}
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div class="pricing-grid">
+                {g.tiers.map((t: any, i: number) => {
+                  const monthlyPrice = t.price;
+                  const yearlyPrice = billing ? yearlyPriceFor(t.price) : t.price;
+                  const showYearly = billing?.default === 'yearly';
+                  const defaultPrice = billing ? (showYearly ? yearlyPrice : monthlyPrice) : t.price;
+                  const defaultNote = billing ? (showYearly ? billing.yearlyNote : billing.monthlyNote) : null;
+                  return (
+                  <div
+                    class={'pricing-card' + (t.featured ? ' featured' : '') + ' reveal'}
+                    data-reveal-delay={i * 100}
+                    id={t.id ? `tier-${t.id}` : undefined}
+                  >
+                    {t.badge && <div class="pricing-badge">{t.badge}</div>}
+                    <div class="pricing-tier">{t.name}</div>
+                    <div class="pricing-price">
+                      {billing && (
+                        <span class="pricing-price-was" data-pricing-was hidden={!showYearly}>{monthlyPrice}</span>
+                      )}
+                      <span
+                        class="pricing-price-now"
+                        data-pricing-now
+                        data-price-monthly={billing ? monthlyPrice : undefined}
+                        data-price-yearly={billing ? yearlyPrice : undefined}
+                      >{defaultPrice}</span>
+                      {t.priceSuffix && <span class="pricing-price-suffix">{t.priceSuffix}</span>}
+                    </div>
+                    {billing && (
+                      <div class="pricing-save-pill" data-pricing-save hidden={!showYearly}>{billing.savePill}</div>
+                    )}
+                    {billing && (
+                      <div
+                        class="pricing-billed-note"
+                        data-pricing-billed
+                        data-note-monthly={billing.monthlyNote}
+                        data-note-yearly={billing.yearlyNote}
+                      >{defaultNote}</div>
+                    )}
+                    {billing && t.yearlyTotal && (
+                      <div class="pricing-yearly-total" data-pricing-yearly-total hidden={!showYearly}>{t.yearlyTotal}</div>
+                    )}
+                    {t.description && <p class="pricing-desc">{t.description}</p>}
+                    {t.roiNote && (
+                      <p class="pricing-roi-note">{t.roiNote}</p>
+                    )}
+                    {t.features && (
+                      <div class="pricing-features">
+                        {t.features.map((f: any) => {
+                          const name = typeof f === 'string' ? f : f?.name;
+                          // Default included=true so legacy string[] shapes render as checks.
+                          const rawIncluded = typeof f === 'string' ? true : f?.included !== false;
+                          const isPromo = featureMatchesPromo(name);
+                          // Promo can force an excluded row to render as included for the duration of the offer.
+                          const included = isPromo && promo?.forceIncluded ? true : rawIncluded;
+                          // Opt-in skip of unincluded rows so cards don't drag a long
+                          // grayed-out tail. Page-level `hideExcludedFeatures: true`
+                          // pairs with per-tier `upsellHint` (rendered below).
+                          if (hideExcludedFeatures && !included) return null;
+                          return (
+                            <div class={'pricing-feature' + (included ? '' : ' pricing-feature--excluded') + (isPromo ? ' pricing-feature--promo' : '')}>
+                              {included ? (
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                              ) : (
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                              )}
+                              <span class="pricing-feature-name">{name}</span>
+                              {isPromo && promo && (
+                                <span
+                                  class={'pricing-feature-promo' + (promo.permanent ? ' pricing-feature-promo--permanent' : '')}
+                                  data-promo-chip
+                                  data-promo-permanent={promo.permanent ? '' : undefined}
+                                  data-promo-ends-at={promo.permanent ? undefined : promo.endsAt}
+                                  data-promo-suffix={promo.permanent ? undefined : promo.chipSuffix}
+                                >
+                                  <span class="pricing-feature-promo-label">{promo.chipLabel}</span>
+                                  {!promo.permanent && (
+                                    <>
+                                      <span class="pricing-feature-promo-sep" aria-hidden="true">·</span>
+                                      <span class="pricing-feature-promo-countdown" data-promo-countdown>
+                                        {promo.chipSuffix} {initialDaysRemaining}{initialDaysRemaining === 1 ? 'd' : 'd'}
+                                      </span>
+                                    </>
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {t.upsellHint && (
+                      <p class="pricing-upsell" set:html={t.upsellHint} />
+                    )}
+                    {billing && t.id ? (
+                      <a
+                        href={`/pricing/${t.id}/${billing.default}/`}
+                        class={[
+                          'btn',
+                          'btn-' + (t.ctaVariant === 'primary' ? 'primary' : 'secondary'),
+                          'plausible-event-name=Pricing+CTA',
+                          `plausible-event-tier=${t.id}`,
+                          `plausible-event-style=${g.id}`,
+                          `plausible-event-cycle=${billing.default}`,
+                          t.featured ? 'plausible-event-featured=true' : 'plausible-event-featured=false',
+                        ].join(' ')}
+                        data-pricing-cta
+                        data-cta-monthly={`/pricing/${t.id}/monthly/`}
+                        data-cta-yearly={`/pricing/${t.id}/yearly/`}
+                      >{t.ctaLabel}</a>
+                    ) : (
+                      <a
+                        href={t.ctaHref}
+                        class={[
+                          'btn',
+                          'btn-' + (t.ctaVariant === 'primary' ? 'primary' : 'secondary'),
+                          'plausible-event-name=Pricing+CTA',
+                          t.id ? `plausible-event-tier=${t.id}` : '',
+                          g.id ? `plausible-event-style=${g.id}` : '',
+                          t.featured ? 'plausible-event-featured=true' : 'plausible-event-featured=false',
+                        ].filter(Boolean).join(' ')}
+                      >{t.ctaLabel}</a>
+                    )}
+                    {t.upgradeNote && (
+                      <p class="pricing-upgrade-note">{t.upgradeNote}</p>
+                    )}
+                  </div>
+                  );
+                })}
+              </div>
+              {g.blurb && <p class="pricing-group-blurb pricing-group-blurb--below reveal" data-reveal-delay="80">{g.blurb}</p>}
+            </div>
+          ))}
+          {d.priceAnchor && priceAnchorPosition === 'below' && (
+            <p class="pricing-anchor pricing-anchor--below reveal" data-reveal-delay="80">{d.priceAnchor}</p>
+          )}
+        </div>
+
+        {showBillingToggle('float-rail') && (
+          <div class="pricing-float-rail" aria-hidden="false">
+          <div class="pricing-toggle-wrap pricing-toggle-wrap--float">
+            <span class="pricing-toggle-floatlabel">Billing</span>
+            <div class="pricing-toggle pricing-toggle--billing" role="tablist" aria-label="Billing cycle" data-billing-toggle data-pricing-billing-storage={d.billing?.storageKey || undefined}>
+              <button
+                type="button"
+                role="tab"
+                class={'pricing-toggle-btn' + (billing.default === 'yearly' ? ' is-active' : '')}
+                data-billing-option="yearly"
+                aria-selected={billing.default === 'yearly' ? 'true' : 'false'}
+                tabindex={billing.default === 'yearly' ? 0 : -1}
+              >
+                <span class="pricing-toggle-label">{billing.yearlyLabel}</span>
+                <span class="pricing-toggle-save">{billing.savePill}</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                class={'pricing-toggle-btn' + (billing.default === 'monthly' ? ' is-active' : '')}
+                data-billing-option="monthly"
+                aria-selected={billing.default === 'monthly' ? 'true' : 'false'}
+                tabindex={billing.default === 'monthly' ? 0 : -1}
+              >
+                <span class="pricing-toggle-label">{billing.monthlyLabel}</span>
+              </button>
+            </div>
+          </div>
+          </div>
+        )}
+
+        {(multiGroup || billing || promo) && (
+          <script is:inline set:html={`
+            (function(){
+              // Site-style toggle (Multi-Page Brochure / Single Page).
+              var root = document.querySelector('[data-pricing-toggle]');
+              if (root) {
+                var tabs = Array.prototype.slice.call(root.querySelectorAll('[data-pricing-group]'));
+                var panels = Array.prototype.slice.call(document.querySelectorAll('[data-pricing-group-panel]'));
+                var activate = function(id, focus) {
+                  tabs.forEach(function(t){
+                    var m = t.getAttribute('data-pricing-group') === id;
+                    t.classList.toggle('is-active', m);
+                    t.setAttribute('aria-selected', m ? 'true' : 'false');
+                    t.setAttribute('tabindex', m ? '0' : '-1');
+                    if (m && focus) t.focus();
+                  });
+                  panels.forEach(function(p){
+                    var m = p.getAttribute('data-pricing-group-panel') === id;
+                    var wasActive = p.classList.contains('is-active');
+                    p.classList.toggle('is-active', m);
+                    if (m) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
+                    // Trigger one-shot entrance animation only on a real
+                    // change of state (becoming active from inactive). The
+                    // CSS keyframe is gated on the .pricing-group--just-switched
+                    // class so initial paint doesn't flash.
+                    if (m && !wasActive) {
+                      p.classList.remove('pricing-group--just-switched');
+                      // Force reflow so re-adding the class restarts the keyframe.
+                      void p.offsetWidth;
+                      p.classList.add('pricing-group--just-switched');
+                    }
+                  });
+                };
+                tabs.forEach(function(t, i){
+                  t.addEventListener('click', function(){ activate(t.getAttribute('data-pricing-group'), false); });
+                  t.addEventListener('keydown', function(e){
+                    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                    e.preventDefault();
+                    var dir = e.key === 'ArrowRight' ? 1 : -1;
+                    var next = tabs[(i + dir + tabs.length) % tabs.length];
+                    activate(next.getAttribute('data-pricing-group'), true);
+                  });
+                });
+                // Deep-link support: the nav mega menu sends users here with
+                // ?type=<group-id> (e.g. ?type=single / ?type=brochure). On
+                // load, preselect the matching group if the id resolves to a
+                // real panel — silently ignored otherwise.
+                try {
+                  var urlType = new URLSearchParams(window.location.search).get('type');
+                  if (urlType && /^[a-z0-9][a-z0-9-]{0,31}$/.test(urlType)) {
+                    var matched = panels.some(function(p){ return p.getAttribute('data-pricing-group-panel') === urlType; });
+                    if (matched) activate(urlType, false);
+                  }
+                } catch (_) {}
+              }
+
+              // Billing-cycle toggle (Yearly / Monthly). Yearly is the
+              // perception-anchor default: cards render the annualized /mo
+              // with the higher true-monthly price struck through and a
+              // "Save 30%" pill visible. Tapping Monthly swaps the displayed
+              // price to the stated per-month rate and hides the savings UI.
+              //
+              // Per-brand persistence: pages can opt in by setting
+              // data-pricing-billing-storage on the toggle root. The chosen
+              // cycle survives intra-session navigation; the pre-paint script
+              // in the document head (if present) reads the same key and
+              // sets data-billing early to avoid wrong-cycle FOUC.
+              var bRoot = document.querySelector('[data-billing-toggle]');
+              if (bRoot) {
+                var storageKey = bRoot.getAttribute('data-pricing-billing-storage') || '';
+                var bTabs = Array.prototype.slice.call(bRoot.querySelectorAll('[data-billing-option]'));
+                var setBilling = function(cycle, focus) {
+                  document.documentElement.setAttribute('data-billing', cycle);
+                  bTabs.forEach(function(t){
+                    var m = t.getAttribute('data-billing-option') === cycle;
+                    t.classList.toggle('is-active', m);
+                    t.setAttribute('aria-selected', m ? 'true' : 'false');
+                    t.setAttribute('tabindex', m ? '0' : '-1');
+                    if (m && focus) t.focus();
+                  });
+                  var nows = document.querySelectorAll('[data-pricing-now]');
+                  for (var i = 0; i < nows.length; i++) {
+                    var n = nows[i];
+                    var p = cycle === 'yearly' ? n.getAttribute('data-price-yearly') : n.getAttribute('data-price-monthly');
+                    if (p) n.textContent = p;
+                  }
+                  var wases = document.querySelectorAll('[data-pricing-was]');
+                  for (var j = 0; j < wases.length; j++) {
+                    if (cycle === 'yearly') wases[j].removeAttribute('hidden');
+                    else wases[j].setAttribute('hidden', '');
+                  }
+                  var saves = document.querySelectorAll('[data-pricing-save]');
+                  for (var k = 0; k < saves.length; k++) {
+                    if (cycle === 'yearly') saves[k].removeAttribute('hidden');
+                    else saves[k].setAttribute('hidden', '');
+                  }
+                  var totals = document.querySelectorAll('[data-pricing-yearly-total]');
+                  for (var yt = 0; yt < totals.length; yt++) {
+                    if (cycle === 'yearly') totals[yt].removeAttribute('hidden');
+                    else totals[yt].setAttribute('hidden', '');
+                  }
+                  var notes = document.querySelectorAll('[data-pricing-billed]');
+                  for (var m2 = 0; m2 < notes.length; m2++) {
+                    var nt = notes[m2];
+                    var text = cycle === 'yearly' ? nt.getAttribute('data-note-yearly') : nt.getAttribute('data-note-monthly');
+                    if (text) nt.textContent = text;
+                  }
+                  var ctas = document.querySelectorAll('[data-pricing-cta]');
+                  for (var c = 0; c < ctas.length; c++) {
+                    var href = cycle === 'yearly' ? ctas[c].getAttribute('data-cta-yearly') : ctas[c].getAttribute('data-cta-monthly');
+                    if (href) ctas[c].setAttribute('href', href);
+                    // Keep the plausible-event-cycle class in sync with the active cycle
+                    // so tagged-events sees the cycle the user actually clicked through on.
+                    var cls = ctas[c].className || '';
+                    if (cls.indexOf('plausible-event-cycle=') !== -1) {
+                      ctas[c].className = cls.replace(/plausible-event-cycle=\w+/, 'plausible-event-cycle=' + cycle);
+                    }
+                  }
+                  if (storageKey) {
+                    try { sessionStorage.setItem(storageKey, cycle); } catch (_) {}
+                  }
+                };
+                var initial = bRoot.querySelector('.is-active');
+                if (initial) document.documentElement.setAttribute('data-billing', initial.getAttribute('data-billing-option'));
+                // Restore prior session choice (if any). Run before binding so
+                // the initial paint already reflects the stored cycle.
+                if (storageKey) {
+                  try {
+                    var stored = sessionStorage.getItem(storageKey);
+                    if (stored === 'yearly' || stored === 'monthly') {
+                      var cur = (initial && initial.getAttribute('data-billing-option')) || null;
+                      if (stored !== cur) setBilling(stored, false);
+                    }
+                  } catch (_) {}
+                }
+                bTabs.forEach(function(t, i){
+                  t.addEventListener('click', function(){ setBilling(t.getAttribute('data-billing-option'), false); });
+                  t.addEventListener('keydown', function(e){
+                    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                    e.preventDefault();
+                    var dir = e.key === 'ArrowRight' ? 1 : -1;
+                    var next = bTabs[(i + dir + bTabs.length) % bTabs.length];
+                    setBilling(next.getAttribute('data-billing-option'), true);
+                  });
+                });
+              }
+
+              // Promo countdown: recompute days-remaining client-side so a
+              // cached or CDN-served HTML doesn't lock in a stale "ends in N"
+              // across a day rollover. Hides promo UI once the end date passes.
+              // Permanent-mode promos (data-promo-permanent attr) skip both
+              // the countdown text and the deadline-hide path entirely.
+              var chips = document.querySelectorAll('[data-promo-chip]');
+              var banners = document.querySelectorAll('[data-promo-banner]');
+              var daysUntil = function(iso) {
+                var t = new Date(iso).getTime();
+                if (isNaN(t)) return 0;
+                return Math.max(0, Math.ceil((t - Date.now()) / 86400000));
+              };
+              for (var pi = 0; pi < chips.length; pi++) {
+                var chip = chips[pi];
+                if (chip.hasAttribute('data-promo-permanent')) continue;
+                var endsAt = chip.getAttribute('data-promo-ends-at');
+                var suffix = chip.getAttribute('data-promo-suffix') || 'ends in';
+                var days = daysUntil(endsAt);
+                if (days <= 0) {
+                  chip.setAttribute('hidden', '');
+                  continue;
+                }
+                var cd = chip.querySelector('[data-promo-countdown]');
+                if (cd) cd.textContent = suffix + ' ' + days + 'd';
+              }
+              for (var bi = 0; bi < banners.length; bi++) {
+                var banner = banners[bi];
+                if (banner.hasAttribute('data-promo-permanent')) continue;
+                var bEnd = banner.getAttribute('data-promo-ends-at');
+                var tmpl = banner.getAttribute('data-promo-message') || '';
+                var bDays = daysUntil(bEnd);
+                if (bDays <= 0) {
+                  banner.setAttribute('hidden', '');
+                  continue;
+                }
+                var bText = banner.querySelector('[data-promo-banner-text]');
+                if (bText && tmpl) {
+                  bText.textContent = tmpl
+                    .replace('{days}', String(bDays))
+                    .replace('{dayNoun}', bDays === 1 ? 'day' : 'days');
+                }
+              }
+
+              // Upsell hint: clicking an in-card "See <next-tier> →" link
+              // smooth-scrolls to the target tier's card and pulses it once
+              // so the user can see what would change. Card markup must
+              // carry id="tier-<tier-id>" (set above) and the link must
+              // carry [data-pricing-upsell] + a hash href.
+              var upsellLinks = document.querySelectorAll('[data-pricing-upsell]');
+              var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              for (var ui = 0; ui < upsellLinks.length; ui++) {
+                upsellLinks[ui].addEventListener('click', function(e) {
+                  var href = this.getAttribute('href') || '';
+                  if (href.charAt(0) !== '#') return;
+                  var target = document.getElementById(href.slice(1));
+                  if (!target) return;
+                  e.preventDefault();
+                  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+                  target.setAttribute('data-pricing-highlight', '');
+                  setTimeout(function(){ target.removeAttribute('data-pricing-highlight'); }, 1500);
+                });
+              }
+
+            })();
+          `}></script>
+        )}
+      </section>
+    );
+  })()}
+
+  <DividerSlot dividers={d.dividers} after="pricing" />
+
+  {d.oneOff && (
+    <section
+      class="section pricing-section pricing-section--oneoff"
+      data-section-type="pricing-oneoff"
+      data-section-label="One-time build"
+      data-section-variants="A:Default,B:Card"
+    >
+      <div class="container">
+        <div class="pricing-oneoff-inner">
+          <h2 class="reveal pricing-oneoff-heading">{d.oneOff.heading}</h2>
+          <p class="reveal pricing-oneoff-body" data-reveal-delay="100" set:html={d.oneOff.body} />
+          {d.oneOff.ctaLabel && (
+            <a href={d.oneOff.ctaHref} class="btn btn-secondary reveal pricing-oneoff-cta" data-reveal-delay="200">{d.oneOff.ctaLabel}</a>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {d.comparison && (
+    <section
+      class="section pricing-section pricing-section--compare"
+      id="compare"
+      data-section-type="pricing-compare"
+      data-section-label="Compare"
+      data-section-variants="A:Default,B:Minimal"
+    >
+      <div class="container">
+        {d.comparison.sectionLabel && <div class="section-label reveal">{d.comparison.sectionLabel}</div>}
+        {d.comparison.heading && <h2 class="reveal" data-reveal-delay="80" style="text-align:center;max-width:720px;margin:0 auto 1rem">{d.comparison.heading}</h2>}
+        {d.comparison.subtext && <p class="reveal" data-reveal-delay="160" style="text-align:center;max-width:640px;margin:0 auto 2.5rem;color:var(--text-secondary)">{d.comparison.subtext}</p>}
+        <div class="reveal" data-reveal-delay="240" style="overflow-x:auto">
+          <div data-aed-compare data-aed-compare-source={d.comparison.sourceId ?? 'aed-compare-pricing'}></div>
+        </div>
+        {d.comparison.afterNote && (
+          <p class="pricing-compare-afternote reveal" data-reveal-delay="320" set:html={d.comparison.afterNote} />
+        )}
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="compare" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+
+  {d.faq && (
+    <div style="background:var(--bg-secondary)">
+      <FAQ
+        sectionLabel={d.faq.sectionLabel}
+        heading={d.faq.heading}
+        subtext={d.faq.subtext}
+        faqIds={d.faq.faqIds}
+        groupIds={d.faq.groupIds}
+      />
+    </div>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="faq" />
+
+  {d.cta && (
+    <SiteCta
+      heading={d.cta.heading}
+      body={d.cta.body}
+      label={d.cta.label}
+      href={d.cta.href}
+    />
+  )}
+</Base>

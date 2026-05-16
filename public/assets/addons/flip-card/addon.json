@@ -1,0 +1,28 @@
+{
+  "name": "flip-card",
+  "assets": {
+    "css": ["flip-card.css"],
+    "js":  ["flip-card.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-flip]",
+        "description": "Per-element 3D flip card. The container should have two child face elements marked with data-aed-flip-front / data-aed-flip-back.",
+        "fields": {
+          "data-aed-flip":         { "type": "boolean", "required": true, "description": "Opt-in marker on the card container." },
+          "data-aed-flip-trigger": { "type": "string",  "default": "hover", "enum": ["hover", "click"], "description": "How the flip is triggered." },
+          "data-aed-flip-axis":    { "type": "string",  "default": "y",   "enum": ["x", "y"], "description": "Rotation axis. 'y' = horizontal flip; 'x' = vertical flip." }
+        }
+      },
+      {
+        "selector": "[data-aed-flip-front], [data-aed-flip-back]",
+        "description": "Marker attributes on the two child faces inside a flip card.",
+        "fields": {
+          "data-aed-flip-front": { "type": "boolean", "description": "Marks the front-facing element." },
+          "data-aed-flip-back":  { "type": "boolean", "description": "Marks the back-facing element." }
+        }
+      }
+    ]
+  }
+}

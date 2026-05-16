@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "About Mike",
+  "heading": "Eighteen years in the trade.\nSix on his own.",
+  "subtext": "Mike Hollister — licensed Oregon plumber, Oregon CCB # (placeholder), bonded and insured. Twelve years working for two of the bigger Westside plumbing outfits before starting Cedar Mill Plumbing in 2020 — because the right way to run a plumbing job is the way he wanted to run his.",
+  "backgroundImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+  "cta": { "label": "Read his story", "href": "/demo/cedar-mill-plumbing/about/" }
+}

@@ -1,0 +1,45 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../builder/layouts/Base.astro';
+import Breadcrumbs from '../../builder/components/Breadcrumbs.astro';
+import AuthorCard from '../../builder/components/AuthorCard.astro';
+import ArchiveList from '../../builder/components/ArchiveList.astro';
+import { brand } from '../../builder/lib/brand';
+import { getAllAuthors, getPostsByAuthor } from '../../builder/lib/posts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const authors = await getAllAuthors();
+  return authors.map((author) => ({ params: { id: author.data.id }, props: { author } }));
+};
+
+const { author } = Astro.props as any;
+const a = author.data;
+const posts = await getPostsByAuthor(a.id);
+
+const title = `${a.name} — ${brand.name}`;
+const description = a.bio ?? `Articles by ${a.name} on ${brand.name}.`;
+---
+<Base title={title} description={description} skipTarget="#main">
+  <main id="main" class="container author-page">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Authors' },
+      { label: a.name },
+    ]} />
+    <AuthorCard author={author} variant="page" />
+    <header
+      class="author-page__archive-head"
+      data-section-type="author-archive-head"
+      data-section-label="Author archive header"
+      data-section-variants="A:Default,B:Compact"
+    >
+      <h2 class="author-page__heading">Articles by {a.name}</h2>
+    </header>
+    <ArchiveList
+      posts={posts}
+      page={1}
+      totalPages={1}
+      baseUrl={`/author/${a.id}`}
+    />
+  </main>
+</Base>

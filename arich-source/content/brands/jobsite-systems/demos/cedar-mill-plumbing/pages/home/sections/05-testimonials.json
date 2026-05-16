@@ -1,0 +1,13 @@
+{
+  "type": "testimonials",
+  "sectionLabel": "What customers say",
+  "heading": "From homeowners and\nproperty managers across the Westside.",
+  "subtext": "Real quotes from real jobs — a mix of one-time service calls and long-running property-management relationships. More on Google (60+ reviews, 4.9 average).",
+  "variant": "carousel",
+  "testimonialIds": [
+    "homeowner-tom-r",
+    "rachel-s",
+    "property-manager-monica-l",
+    "homeowner-anna-k"
+  ]
+}

@@ -1,0 +1,31 @@
+---
+/**
+ * CategoryIndex — grid of category cards on /category/.
+ * Props: categories[] (with data.id/name/slug/description/color), counts (Map<id, count>).
+ * Each card links to /category/<slug>/ with name, description, post count, color accent.
+ */
+import type { Category } from '../lib/posts';
+interface Props { categories: Category[]; counts: Map<string, number>; }
+const { categories, counts } = Astro.props;
+---
+<div
+  class="category-index"
+  data-section-type="category-index"
+  data-section-label="Category index"
+  data-section-variants="A:Cards,B:List"
+>
+  <ul class="category-index__grid">
+    {categories.map((c) => {
+      const count = counts.get(c.data.id) ?? 0;
+      return (
+        <li class="category-index__item" data-category={c.data.id}>
+          <a class="category-index__card" href={`/category/${c.data.slug}/`} style={c.data.color ? `--cat-accent: ${c.data.color}` : undefined}>
+            <h3 class="category-index__name">{c.data.name}</h3>
+            <p class="category-index__desc">{c.data.description}</p>
+            <span class="category-index__count">{count} {count === 1 ? 'article' : 'articles'}</span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</div>

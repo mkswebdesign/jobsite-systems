@@ -1,0 +1,24 @@
+{
+  "name": "range-slider",
+  "assets": {
+    "css": ["range-slider.css"],
+    "js":  ["range-slider.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "input[type='range'][data-aed-range]",
+        "description": "Polished range input. Adds a value badge that follows the thumb, optional min/max footer, and a `--aed-range-pct` CSS variable for fill styling.",
+        "fields": {
+          "data-aed-range":          { "type": "boolean","required": true,           "description": "Opt-in marker." },
+          "data-aed-range-prefix":   { "type": "string",                              "description": "String prepended to the badge value (e.g. '$')." },
+          "data-aed-range-suffix":   { "type": "string",                              "description": "String appended to the badge value (e.g. '%', ' hrs')." },
+          "data-aed-range-decimals": { "type": "number", "default": 0,               "description": "Decimal places shown in the badge." },
+          "data-aed-range-format":   { "type": "string", "enum": ["thousands"],      "description": "Apply the thousands-separator formatter." },
+          "data-aed-range-no-badge": { "type": "boolean","default": false,           "description": "Hide the value badge entirely." },
+          "data-aed-range-foot":     { "type": "boolean","default": false,           "description": "Render a small min/max footer beneath the slider." }
+        }
+      }
+    ]
+  }
+}

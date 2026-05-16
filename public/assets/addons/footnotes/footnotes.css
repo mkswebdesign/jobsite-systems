@@ -1,0 +1,78 @@
+/*
+ * Footnotes — drop-in markdown-style footnote linker.
+ *
+ * Connects <sup data-aed-fn="N"> markers to <li id="fn-N"> entries
+ * inside <ol data-aed-footnotes>. Adds hover popups + back-references.
+ *
+ * See /footnotes/README.md.
+ */
+
+sup[data-aed-fn] {
+  font-size: 0.7em;
+  line-height: 0;
+  vertical-align: super;
+  margin-left: 0.1em;
+}
+sup[data-aed-fn] a {
+  display: inline-block;
+  padding: 0 0.2em;
+  border-radius: 3px;
+  color: var(--accent, #6B00FF);
+  text-decoration: none;
+  font-weight: 700;
+}
+sup[data-aed-fn] a:hover,
+sup[data-aed-fn] a:focus-visible {
+  background: color-mix(in srgb, var(--accent, #6B00FF) 14%, transparent);
+}
+
+/* Footnote list */
+[data-aed-footnotes] {
+  margin: 2.5rem 0 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-secondary, #111113);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  list-style: decimal inside;
+  counter-reset: aed-fn;
+}
+[data-aed-footnotes] > li {
+  margin: 0.4rem 0;
+  padding-left: 0.25rem;
+  scroll-margin-top: calc(var(--aed-announcement-h, 0px) + var(--aed-nav-h, 80px) + 16px);
+}
+[data-aed-footnotes] > li:target {
+  background: color-mix(in srgb, var(--accent, #6B00FF) 12%, transparent);
+  border-radius: 6px;
+}
+.aed-fn-back {
+  margin-left: 0.4em;
+  color: var(--text-muted, #9a9aa2);
+  text-decoration: none;
+  font-size: 0.85em;
+}
+.aed-fn-back:hover { color: var(--accent, #6B00FF); }
+
+/* Hover popup */
+.aed-fn-popup {
+  position: absolute;
+  z-index: 100;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.45);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.aed-fn-popup.is-open { opacity: 1; }
+
+@media print {
+  .aed-fn-popup { display: none !important; }
+}

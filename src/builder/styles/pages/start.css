@@ -1,0 +1,145 @@
+/* ============================================
+   Start wizard (multi-step project intake form)
+   ============================================ */
+
+.start-wizard-section { padding-top: 3rem }
+.start-wizard { max-width: 820px; margin: 0 auto }
+
+/* Progress bar */
+.wizard-progress { margin-bottom: 2.5rem }
+.wizard-progress-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.65rem }
+.wizard-progress-step { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent) }
+.wizard-progress-title { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary) }
+.wizard-progress-track { position: relative; width: 100%; height: 4px; background: var(--border); border-radius: 999px; overflow: hidden }
+.wizard-progress-fill { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); border-radius: 999px; transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1) }
+
+/* Step container */
+.start-wizard form { padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); position: relative }
+.wizard-step { border: 0; padding: 0; margin: 0; display: none; animation: wizardStepIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both }
+.wizard-step.is-active { display: block }
+@keyframes wizardStepIn {
+  from { opacity: 0; transform: translateY(8px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+.wizard-step--invalid { animation: wizardShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both }
+@keyframes wizardShake {
+  10%, 90% { transform: translateX(-1px) }
+  20%, 80% { transform: translateX(2px) }
+  30%, 50%, 70% { transform: translateX(-4px) }
+  40%, 60% { transform: translateX(4px) }
+}
+
+.wizard-step-header { margin-bottom: 2rem }
+.wizard-step-eyebrow { display: inline-block; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem }
+.wizard-step-title { font-size: clamp(1.5rem, 3vw, 1.875rem); color: var(--text-primary); margin-bottom: 0.65rem; line-height: 1.2; letter-spacing: -0.015em }
+.wizard-step-description { font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.6; margin: 0; max-width: 620px }
+
+.wizard-step-fields { display: flex; flex-direction: column; gap: 1.25rem }
+
+/* Radio + checkbox card grid */
+.wizard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem }
+.wizard-cards--compact { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) }
+
+.wizard-card { position: relative; cursor: pointer }
+.wizard-card input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0 }
+.wizard-card-inner {
+  display: flex;
+  gap: 0.85rem;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  transition: border-color var(--transition), background var(--transition), transform var(--transition), box-shadow var(--transition);
+  height: 100%;
+  align-items: flex-start;
+}
+.wizard-card:hover .wizard-card-inner { border-color: var(--border-light); transform: translateY(-1px) }
+.wizard-card input:focus-visible + .wizard-card-inner { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2) }
+.wizard-card input:checked + .wizard-card-inner {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), rgba(var(--accent-rgb), 0.02));
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 8px 24px -12px rgba(var(--accent-rgb), 0.3);
+}
+
+.wizard-card-tick {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 0.15rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-light);
+  background: var(--bg-secondary);
+  position: relative;
+  transition: border-color var(--transition), background var(--transition);
+}
+.wizard-card-tick--square { border-radius: 5px }
+.wizard-card:hover .wizard-card-tick { border-color: var(--accent) }
+.wizard-card input:checked + .wizard-card-inner .wizard-card-tick {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.wizard-card input:checked + .wizard-card-inner .wizard-card-tick::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.wizard-card input[type="checkbox"]:checked + .wizard-card-inner .wizard-card-tick--square::after {
+  top: 44%;
+}
+
+.wizard-card-body { display: flex; flex-direction: column; gap: 0.2rem; flex: 1; min-width: 0 }
+.wizard-card-label { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); line-height: 1.35 }
+.wizard-card-description { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5 }
+
+.wizard-card--compact .wizard-card-inner { padding: 0.85rem 1rem }
+.wizard-card--compact .wizard-card-label { font-size: 0.875rem }
+
+/* Required marker on text labels */
+.required-mark { color: var(--accent); margin-left: 0.2rem; font-weight: 700 }
+
+/* Nav buttons */
+.wizard-nav {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.wizard-back { order: 1 }
+.wizard-next, .wizard-submit { order: 2; margin-left: auto }
+.wizard-nav .btn[hidden] { display: none }
+.wizard-back:disabled { opacity: 0; pointer-events: none }
+.wizard-next .arrow, .wizard-back .arrow { display: inline-block; transition: transform var(--transition) }
+.wizard-next:hover .arrow { transform: translateX(3px) }
+.wizard-back:hover .arrow { transform: translateX(-3px) }
+
+/* Inline error hint */
+.wizard-error-hint { margin: 1rem 0 0; font-size: 0.875rem; color: #ef4444; min-height: 1.25rem }
+.wizard-error-hint:empty { display: none }
+
+/* Status messages */
+.start-wizard .form-status { margin-top: 2rem }
+
+/* Footnote */
+.wizard-footnote { margin-top: 1.75rem; text-align: center; font-size: 0.875rem; color: var(--text-muted) }
+.wizard-footnote a { color: var(--accent); font-weight: 500 }
+.wizard-footnote a:hover { color: var(--accent-hover); text-decoration: underline }
+
+/* Responsive */
+@media (max-width: 720px) {
+  .start-wizard form { padding: 1.75rem 1.5rem }
+  .wizard-cards { grid-template-columns: 1fr }
+  .wizard-progress-meta { flex-direction: column; gap: 0.35rem; align-items: flex-start }
+  .wizard-nav { gap: 0.75rem }
+  .wizard-next, .wizard-submit { width: 100%; margin-left: 0; justify-content: center }
+  .wizard-back { width: 100% }
+  .wizard-back:disabled { display: none }
+}

@@ -1,0 +1,51 @@
+{
+  "slug": "drain-cleaning",
+  "order": 1,
+  "number": "01",
+  "iconKey": "monitor",
+  "heroImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Plumber clearing a kitchen drain line with a hand auger",
+  "title": "Drain Cleaning, Hydro Jetting & Sewer Scopes",
+  "headline": "A clog cleared right.\nNot a band-aid.",
+  "shortDescription": "Kitchen, bath, and laundry drains, mainline backups, hydro jetting for grease and root intrusion, plus camera-scope inspections so you actually see what was wrong.",
+  "lead": "Most drain calls in Cedar Mill homes come down to one of three things: hair and soap in a bathroom branch, kitchen lines glazed with grease, or a mainline that's been slowly losing ground to root intrusion. I clear the line, then I scope it so we both know what caused it. If a snake will hold the line for another year or two, I'll tell you. If the joint is broken and we're going to be back in six months, I'll tell you that too. No upselling, no scare-quotes on the invoice.",
+  "seo": {
+    "title": "Drain Cleaning & Hydro Jetting — Cedar Mill Plumbing · Portland, OR",
+    "description": "Drain cleaning, hydro jetting, and sewer-scope inspections in Cedar Mill, Bethany, Beaverton, and NW Portland. Flat-rate pricing, licensed Oregon plumber, 18 years experience.",
+    "schemaName": "Drain Cleaning Service",
+    "schemaDescription": "Residential drain cleaning, mainline clearing, hydro jetting, and camera-scope sewer inspections."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "variant": "showcase",
+      "heading": "What's covered",
+      "intro": "Real flat rates on common service calls. Bigger jobs get a free written estimate.",
+      "items": [
+        { "label": "Branch drains — $189 flat", "body": "Kitchen, bath, laundry — clear the line, run water, confirm flow. Same price whether it takes ten minutes or an hour" },
+        { "label": "Mainline clearing — $289 flat", "body": "Through an accessible cleanout. Includes a quick camera scope after the line is open so we know what we cleared" },
+        { "label": "Hydro jetting — $499–$799", "body": "For grease-glazed kitchen lines and root-intruded mainlines a cable can't fully clean. Price by line length and access" },
+        { "label": "Camera-scope inspection — $249", "body": "Standalone scope of a sewer or drain line — common before a home purchase, after recurring backups, or for a second opinion" },
+        { "label": "Cleanout install — $650–$1,200", "body": "If your home doesn't have a usable mainline cleanout, I'll install one. Saves money on every future service call" },
+        { "label": "After-hours dispatch", "body": "Standard rates plus a $125 after-hours fee for evenings, weekends, and holidays — see Emergency Service for the full picture" }
+      ]
+    },
+    {
+      "type": "feature",
+      "theme": "white",
+      "heading": "How a typical drain call goes",
+      "body": "Same path most of the time — show up, diagnose, clear, scope, leave it cleaner than I found it.",
+      "items": [
+        "On the phone — describe the symptom (slow, gurgling, fully backed up) so I bring the right gear in the truck",
+        "On site — verify the issue, lay drop cloths, set up the auger or jetter at the cleanout",
+        "Clear the line — cable for hair and basic clogs, jetter for grease or root intrusion",
+        "Scope it — camera goes in after the line's open. You see the same screen I see",
+        "Photos and a written invoice before I leave. If the line needs further work (broken pipe, belly, root repair), you get a separate written estimate"
+      ]
+    }
+  ],
+  "cta": {
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  }
+}

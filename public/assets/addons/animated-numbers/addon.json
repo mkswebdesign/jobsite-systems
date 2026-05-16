@@ -1,0 +1,36 @@
+{
+  "name": "animated-numbers",
+  "assets": {
+    "css": ["animated-numbers.css"],
+    "js":  ["animated-numbers.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:animated-numbers",
+        "default": "on",
+        "description": "Optional. Activates auto-promotion of plain numbers within `data-auto-scope` so they animate without per-element markup.",
+        "attrs": {
+          "data-auto-scope":       { "type": "string",                   "description": "CSS selector identifying elements to auto-promote (e.g. '.hero-stats .stat-number')." },
+          "data-default-duration": { "type": "string", "default": "1500","description": "Fallback animation duration in ms applied to auto-promoted elements." }
+        }
+      }
+    ],
+    "data": [
+      {
+        "selector": "[data-aed-count-to]",
+        "description": "Per-element controls. The element's text is replaced with the animating value when it scrolls into view.",
+        "fields": {
+          "data-aed-count-to":        { "type": "number",  "required": true,  "description": "Target value to count to." },
+          "data-aed-count-from":      { "type": "number",  "default": 0,      "description": "Starting value." },
+          "data-aed-count-decimals":  { "type": "number",                     "description": "Decimal places. Inferred from `count-to` if omitted." },
+          "data-aed-count-separator": { "type": "string",                     "description": "Thousands separator (e.g. ','). Auto-inferred from existing element text." },
+          "data-aed-count-prefix":    { "type": "string",                     "description": "String prepended to the value (e.g. '$'). Auto-inferred." },
+          "data-aed-count-suffix":    { "type": "string",                     "description": "String appended (e.g. '%', '+'). Auto-inferred." },
+          "data-aed-count-duration":  { "type": "number",  "default": 1500,   "description": "Animation duration in ms." },
+          "data-aed-count-replay":    { "type": "boolean", "default": false,  "description": "Replay the animation every time the element re-enters the viewport." }
+        }
+      }
+    ]
+  }
+}

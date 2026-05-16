@@ -1,0 +1,32 @@
+---
+// DividerSlot — renders 0..n bordered Dividers staged for a specific
+// section boundary on a non-compositional page (pricing, about,
+// etc. — pages whose page.json uses named keys instead of a
+// sections[] discriminated union).
+//
+// The page template places one <DividerSlot after="<sectionType>" />
+// after each section close; the helper filters page.json's
+// `dividers` array for matching entries and renders them. Empty
+// arrays / missing field are no-ops.
+
+import Divider from './sections/Divider.astro';
+
+interface DividerEntry {
+  after: string;
+  color?: 'dark' | 'light' | 'primary' | 'secondary';
+}
+
+interface Props {
+  dividers?: DividerEntry[] | null;
+  after: string;
+}
+
+const { dividers, after } = Astro.props as Props;
+const matches = Array.isArray(dividers)
+  ? dividers.filter((d) => d && d.after === after)
+  : [];
+---
+
+{matches.map((d) => (
+  <Divider color={d.color} />
+))}

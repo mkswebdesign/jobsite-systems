@@ -1,0 +1,40 @@
+{
+  "name": "arich-astro",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "node scripts/run-build.mjs --check",
+    "build:fast": "node scripts/run-build.mjs",
+    "validate-brand": "node scripts/validate-brand.mjs",
+    "audit-sections": "node scripts/audit-sections.mjs",
+    "audit-variants": "node scripts/audit-variants.mjs",
+    "audit-reduced-motion": "node scripts/audit-reduced-motion.mjs",
+    "audit-theme-vibrant-scope": "node scripts/audit-theme-vibrant-scope.mjs",
+    "audit-divider-slots": "node scripts/audit-divider-slots.mjs",
+    "smoke": "node scripts/smoke-check.mjs",
+    "export-page": "node scripts/export-page.mjs",
+    "validate-bundle": "node scripts/validate-bundle.mjs",
+    "import-page": "node scripts/import-page.mjs",
+    "preview": "astro preview",
+    "deploy": "node scripts/deploy.mjs",
+    "ship": "node scripts/ship.mjs",
+    "scaffold-brand": "node scripts/scaffold-brand.mjs",
+    "lint-brand": "node scripts/brand-lint.mjs",
+    "gen-assets": "node scripts/generate-brand-assets.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.18",
+    "astro": "^5.1.0",
+    "minisearch": "^7.2.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/node": "^25.6.0",
+    "gray-matter": "^4.0.3",
+    "typescript": "^5.7.2"
+  }
+}

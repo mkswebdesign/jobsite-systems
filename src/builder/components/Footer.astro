@@ -1,0 +1,819 @@
+---
+import { brand, site } from '../lib/brand';
+import BrandMark from './BrandMark.astro';
+
+const ext = site.footer.extended ?? {};
+const consentEnabled = site.addons?.consent?.enabled === true;
+
+const year = brand.copyrightYear ?? new Date().getFullYear();
+const partner = site.footer.partner;
+
+// Parse the copyright template into a typed segment array. Replaces the
+// older invisible-control-char marker dance — OWNER / PARTNER
+// in the source string consistently fought agent-driven Edit operations
+// (the literal 6-char escape sequence renders as control chars at runtime
+// but the editor sees the source text). Typed segments are stable: each
+// has a  and downstream code branches on it without splitting strings.
+type CopySegment =
+  | { kind: 'text'; value: string }
+  | { kind: 'owner' }
+  | { kind: 'partner' };
+
+function parseCopyrightTemplate(
+  template: string,
+  vars: { year: number | string; brandName: string },
+): CopySegment[] {
+  const re = /{(year|brandName|ownerName|partnerName)}/g;
+  const out: CopySegment[] = [];
+  let lastIdx = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(template)) !== null) {
+    if (m.index > lastIdx) out.push({ kind: 'text', value: template.slice(lastIdx, m.index) });
+    if (m[1] === 'year') out.push({ kind: 'text', value: String(vars.year) });
+    else if (m[1] === 'brandName') out.push({ kind: 'text', value: vars.brandName });
+    else if (m[1] === 'ownerName') out.push({ kind: 'owner' });
+    else if (m[1] === 'partnerName') out.push({ kind: 'partner' });
+    lastIdx = m.index + m[0].length;
+  }
+  if (lastIdx < template.length) out.push({ kind: 'text', value: template.slice(lastIdx) });
+  // Coalesce adjacent text + drop empties.
+  const out2: CopySegment[] = [];
+  for (const seg of out) {
+    if (seg.kind === 'text' && !seg.value) continue;
+    const last = out2[out2.length - 1];
+    if (seg.kind === 'text' && last && last.kind === 'text') last.value += seg.value;
+    else out2.push(seg);
+  }
+  return out2;
+}
+
+const allCopySegments = parseCopyrightTemplate(
+  site.footer.copyrightTemplate,
+  { year, brandName: brand.name },
+);
+
+// When partner is null, drop partner segments AND collapse the surrounding
+// 'Powered by ' / ', a ' connective text so we don't render dangling glue.
+const partneredSegments: CopySegment[] = [];
+if (partner) {
+  partneredSegments.push(...allCopySegments);
+} else {
+  for (let i = 0; i < allCopySegments.length; i++) {
+    const seg = allCopySegments[i];
+    if (seg.kind === 'partner') {
+      const prev = partneredSegments[partneredSegments.length - 1];
+      if (prev && prev.kind === 'text') prev.value = prev.value.replace(/\s*Powered by\s*$/, '');
+      const nxt = allCopySegments[i + 1];
+      if (nxt && nxt.kind === 'text') nxt.value = nxt.value.replace(/^\s*,\s*a\s*/, ' ');
+      continue;
+    }
+    partneredSegments.push(seg);
+  }
+}
+
+// Split at ' Powered by ' so the credit line reads on its own row.
+const POWERED_BY_DELIM = ' Powered by ';
+const preSegments: CopySegment[] = [];
+const poweredBySegments: CopySegment[] = [];
+{
+  let crossed = false;
+  for (const seg of partneredSegments) {
+    if (!crossed && seg.kind === 'text' && seg.value.indexOf(POWERED_BY_DELIM) >= 0) {
+      const i = seg.value.indexOf(POWERED_BY_DELIM);
+      if (i > 0) preSegments.push({ kind: 'text', value: seg.value.slice(0, i) });
+      const tail = seg.value.slice(i + POWERED_BY_DELIM.length);
+      poweredBySegments.push({ kind: 'text', value: 'Powered by ' + tail });
+      crossed = true;
+    } else if (crossed) {
+      poweredBySegments.push(seg);
+    } else {
+      preSegments.push(seg);
+    }
+  }
+}
+const hasPoweredBy = poweredBySegments.length > 0;
+
+// Derive a default sitemap column from primary nav if none is configured.
+const sitemapLinks = ext.columns?.find(c => /site ?map|explore|browse/i.test(c.heading))?.links
+  ?? site.nav.primary.map(n => ({ label: n.label, href: n.href }));
+
+// Contact column defaults
+const contactLinks: Array<{ label: string; href: string; external?: boolean }> = [];
+if (brand.contact.email) contactLinks.push({ label: brand.contact.email, href: `mailto:${brand.contact.email}` });
+if (brand.contact.phone) contactLinks.push({ label: brand.contact.phone, href: `tel:${brand.contact.phone.replace(/[^+\d]/g, '')}` });
+const contactCol = ext.columns?.find(c => /contact|reach/i.test(c.heading));
+
+// Forms column — optional intake/onboarding/support links. Rendered
+// between Contact and Social when site.json defines a column whose
+// heading matches /forms|intake/i. Left empty otherwise so other brands'
+// footers stay unchanged.
+const formsCol = ext.columns?.find(c => /forms|intake/i.test(c.heading));
+
+// Social column defaults
+const socialDefaults: Array<{ label: string; href: string; external?: boolean }> = [];
+if (brand.social.linkedin) socialDefaults.push({ label: 'LinkedIn', href: brand.social.linkedin, external: true });
+if (brand.social.twitter) socialDefaults.push({ label: 'X / Twitter', href: brand.social.twitter, external: true });
+if (brand.social.github) socialDefaults.push({ label: 'GitHub', href: brand.social.github, external: true });
+if (brand.social.instagram) socialDefaults.push({ label: 'Instagram', href: brand.social.instagram, external: true });
+const socialCol = ext.columns?.find(c => /social|elsewhere|follow/i.test(c.heading));
+
+const legalLinks = ext.legal ?? [];
+
+const prefix = brand.nameParts?.prefix ?? brand.name;
+const accent = brand.nameParts?.accent ?? '';
+---
+
+<footer
+  class="site-footer"
+  data-section-type="footer"
+  data-section-label="Footer"
+  data-section-variants="A:Default,B:Marquee,C:Compact,D:Beacon,E:Mosaic,F:Ledger"
+>
+  <div class="container">
+    <div class="site-footer-top">
+      <div class="site-footer-brand">
+        <a href="/" class="nav-logo">
+          <BrandMark size={40} class="nav-logo-mark" />
+          <span class="nav-logo-text">{prefix} {accent && <span>{accent}</span>}</span>
+        </a>
+        {ext.tagline && <p class="site-footer-tagline">{ext.tagline}</p>}
+        {ext.location && (
+          <p class="site-footer-meta">
+            <span class="site-footer-meta-label">Based in</span>
+            {ext.location}
+          </p>
+        )}
+        {ext.responseHours && (
+          <p class="site-footer-meta">
+            <span class="site-footer-meta-label">Response time</span>
+            {ext.responseHours}
+          </p>
+        )}
+      </div>
+
+      <div class="site-footer-col">
+        <h4>Explore</h4>
+        <ul>
+          {sitemapLinks.map(link => <li><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div class="site-footer-col">
+        <h4>{contactCol?.heading ?? 'Contact'}</h4>
+        <ul>
+          {(contactCol?.links ?? contactLinks).map(link => (
+            <li>
+              <a href={link.href} {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                {link.label}
+                {link.external && (
+                  <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {formsCol && formsCol.links.length > 0 && (
+        <div class="site-footer-col">
+          <h4>{formsCol.heading}</h4>
+          <ul>
+            {formsCol.links.map(link => (
+              <li>
+                <a href={link.href} {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                  {link.label}
+                  {link.external && (
+                    <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(socialCol?.links.length ?? socialDefaults.length) > 0 && (
+        <div class="site-footer-col">
+          <h4>{socialCol?.heading ?? 'Elsewhere'}</h4>
+          <ul>
+            {(socialCol?.links ?? socialDefaults).map(link => (
+              <li>
+                <a href={link.href} {...(link.external !== false ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                  {link.label}
+                  {link.external !== false && (
+                    <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+
+    <div class="site-footer-bottom">
+      <div class="site-footer-credit">
+      <p>
+        {preSegments.map(seg => {
+          if (seg.kind === 'owner') return (
+            <a href={`${site.footer.ownerLink.replace(/\/$/, '')}/#footsies`} target="_blank" rel="noopener noreferrer" class="site-footer-credit-link">
+              {brand.owner.name}
+              <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+            </a>
+          );
+          if (seg.kind === 'partner' && partner) return (
+            <a href={`${partner.link.replace(/\/$/, '')}/#footsies`} target="_blank" rel="noopener noreferrer" class="site-footer-credit-link">
+              {partner.name}
+              <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+            </a>
+          );
+          if (seg.kind === 'text') return seg.value;
+          return null;
+        })}
+      </p>
+      {hasPoweredBy && (
+        <p class="site-footer-powered-by">
+          {poweredBySegments.map(seg => {
+            if (seg.kind === 'owner') return (
+              <a href={`${site.footer.ownerLink.replace(/\/$/, '')}/#footsies`} target="_blank" rel="noopener noreferrer" class="site-footer-credit-link site-footer-credit-link--owner">
+                <img src="/assets/mkswebdesign/mks-mark.svg" alt="" width="14" height="14" class="site-footer-mks-mark" aria-hidden="true" />
+                <strong>{brand.owner.name}</strong>
+                <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+              </a>
+            );
+            if (seg.kind === 'partner' && partner) return (
+              <a href={`${partner.link.replace(/\/$/, '')}/#footsies`} target="_blank" rel="noopener noreferrer" class="site-footer-credit-link site-footer-credit-link--partner">
+                <strong>{partner.name}</strong>
+                <svg class="external-link-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 3h7v7M13 3L6 10M5 6H3v7h7v-2"/></svg>
+              </a>
+            );
+            if (seg.kind === 'text') return seg.value;
+            return null;
+          })}
+        </p>
+      )}
+      </div>
+      {legalLinks.length > 0 && (
+        <div class="site-footer-legal">
+          {legalLinks.map(l => <a href={l.href}>{l.label}</a>)}
+          {consentEnabled && <a href="#" data-consent-open>Cookie preferences</a>}
+          <a href="?edit=1" class="site-footer-edit-link" data-footer-edit hidden>Edit</a>
+        </div>
+      )}
+    </div>
+  </div>
+</footer>
+
+<style is:global>
+  /* ============================================================
+   * Footer B — "Marquee"
+   * Brand statement — oversized logo top, columns centered below.
+   * Uses existing markup; pure CSS reflow.
+   * ============================================================ */
+  [data-footer-variant="B"] .site-footer {
+    padding: 7rem 0 2.25rem;
+    background: var(--bg-primary);
+    border-top: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  }
+  [data-footer-variant="B"] .site-footer::before {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 70%, transparent), transparent);
+    height: 2px;
+  }
+  [data-footer-variant="B"] .site-footer-top {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4rem 2.5rem;
+    margin-bottom: 3.5rem;
+    align-items: start;
+  }
+  [data-footer-variant="B"] .site-footer-brand {
+    grid-column: 1 / -1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  [data-footer-variant="B"] .site-footer-brand .nav-logo {
+    font-size: clamp(3.5rem, 14vw, 11rem);
+    font-weight: 900;
+    letter-spacing: -.045em;
+    line-height: .92;
+    margin: 0 0 1.75rem;
+    background: linear-gradient(180deg, var(--text-primary) 0%, color-mix(in srgb, var(--text-primary) 35%, transparent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  [data-footer-variant="B"] .site-footer-brand .nav-logo span { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+  [data-footer-variant="B"] .site-footer-tagline {
+    max-width: 52ch;
+    margin: 0 auto 1.25rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+  [data-footer-variant="B"] .site-footer-meta {
+    text-align: center;
+    margin-top: .75rem;
+  }
+  [data-footer-variant="B"] .site-footer-col { text-align: center; }
+  [data-footer-variant="B"] .site-footer-col h4 {
+    font-size: .68rem;
+    letter-spacing: .28em;
+    color: var(--text-muted);
+    padding-bottom: .9rem;
+    margin-bottom: 1rem;
+  }
+  [data-footer-variant="B"] .site-footer-col h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    opacity: .9;
+  }
+  [data-footer-variant="B"] .site-footer-col ul {
+    align-items: center;
+    gap: .85rem;
+  }
+  [data-footer-variant="B"] .site-footer-col a {
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  [data-footer-variant="B"] .site-footer-col a:hover { transform: translateY(-1px); }
+  [data-footer-variant="B"] .site-footer-bottom {
+    border-top: 1px solid var(--border);
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+    gap: 1.25rem;
+  }
+  @media (max-width: 768px) {
+    [data-footer-variant="B"] .site-footer { padding: 4.5rem 0 1.75rem; }
+    [data-footer-variant="B"] .site-footer-top {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* ============================================================
+   * Footer C — "Compact"
+   * Single-row condensed strip. Hides headings, inlines link
+   * lists. Minimal vertical real-estate, full info preserved.
+   * ============================================================ */
+  [data-footer-variant="C"] .site-footer {
+    padding: 1.25rem 0 1.1rem;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+  }
+  [data-footer-variant="C"] .site-footer::before { display: none; }
+  [data-footer-variant="C"] .site-footer-top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .85rem 1.75rem;
+    margin-bottom: 0;
+  }
+  [data-footer-variant="C"] .site-footer-brand {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+  }
+  [data-footer-variant="C"] .site-footer-brand .nav-logo {
+    font-size: .98rem;
+    margin: 0;
+    display: inline-block;
+  }
+  [data-footer-variant="C"] .site-footer-tagline,
+  [data-footer-variant="C"] .site-footer-meta { display: none; }
+  [data-footer-variant="C"] .site-footer-col { flex: 0 0 auto; }
+  [data-footer-variant="C"] .site-footer-col h4 {
+    display: inline-block;
+    font-size: .62rem;
+    padding: 0;
+    margin: 0 .5rem 0 0;
+    color: var(--text-muted);
+    vertical-align: middle;
+    letter-spacing: .22em;
+  }
+  [data-footer-variant="C"] .site-footer-col h4::after { display: none; }
+  [data-footer-variant="C"] .site-footer-col ul {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    align-items: center;
+    vertical-align: middle;
+  }
+  [data-footer-variant="C"] .site-footer-col a {
+    font-size: .82rem;
+    padding: .15rem 0;
+  }
+  [data-footer-variant="C"] .site-footer-col a:hover { transform: none; text-decoration: underline; text-underline-offset: 3px; }
+  [data-footer-variant="C"] .site-footer-bottom {
+    border-top: 1px solid var(--border);
+    margin-top: .9rem;
+    padding-top: .8rem;
+  }
+  [data-footer-variant="C"] .site-footer-bottom p { font-size: .75rem; }
+  [data-footer-variant="C"] .site-footer-legal a { font-size: .75rem; }
+  @media (max-width: 768px) {
+    [data-footer-variant="C"] .site-footer-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .75rem;
+    }
+    [data-footer-variant="C"] .site-footer-col h4 { margin-right: .35rem; }
+  }
+
+  /* ============================================================
+   * Footer D — "Beacon"
+   * Conversion-first. Promotes the Contact column into the
+   * right-hand hero — email link is huge, follow-up link becomes
+   * a primary CTA pill. Explore + Elsewhere collapse to inline
+   * strips below. Uses :nth-child positions of the existing cols.
+   * ============================================================ */
+  [data-footer-variant="D"] .site-footer { padding: 5.5rem 0 2.25rem; }
+  [data-footer-variant="D"] .site-footer-top {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 3rem 4rem;
+    align-items: start;
+    margin-bottom: 2.5rem;
+  }
+  [data-footer-variant="D"] .site-footer-brand { grid-column: 1; grid-row: 1; }
+  [data-footer-variant="D"] .site-footer-brand .nav-logo { font-size: 1.6rem; }
+  [data-footer-variant="D"] .site-footer-brand .site-footer-tagline { font-size: 1rem; max-width: 38ch; line-height: 1.65; }
+
+  /* Contact column = right-hand hero */
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) {
+    grid-column: 2; grid-row: 1;
+    padding: 1.75rem 1.85rem;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--bg-card)) 0%, var(--bg-card) 100%);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+    border-radius: 18px;
+    box-shadow: 0 18px 44px -22px rgba(var(--accent-rgb), .35);
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) h4 {
+    font-size: .68rem;
+    letter-spacing: .28em;
+    color: var(--accent);
+    margin-bottom: 1.1rem;
+    padding-bottom: .55rem;
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) h4::after { width: 28px; opacity: .9; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) ul { gap: 1.1rem; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) ul li:first-child a {
+    font-size: clamp(1.4rem, 3.6vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: var(--text-primary);
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) ul li:first-child a:hover { color: var(--accent); transform: none; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) ul li:nth-child(n+2) a {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .7rem 1.25rem;
+    background: var(--accent);
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    box-shadow: 0 8px 20px -6px rgba(var(--accent-rgb), .55);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(3) ul li:nth-child(n+2) a:hover {
+    transform: translateY(-2px);
+    background: var(--accent-hover, var(--accent));
+    color: #ffffff;
+    box-shadow: 0 12px 28px -8px rgba(var(--accent-rgb), .65);
+  }
+
+  /* Explore + Elsewhere — inline strips below */
+  [data-footer-variant="D"] .site-footer-col:nth-child(2),
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: .35rem 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(2) { grid-row: 2; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) { grid-row: 3; padding-top: .75rem; border-top: 0; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(2) h4,
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) h4 {
+    font-size: .62rem;
+    margin: 0 1rem 0 0;
+    padding: 0;
+    color: var(--text-muted);
+    letter-spacing: .22em;
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(2) h4::after,
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) h4::after { display: none; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(2) ul,
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+    align-items: center;
+  }
+  [data-footer-variant="D"] .site-footer-col:nth-child(2) a,
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) a { font-size: .85rem; padding: .15rem 0; }
+  [data-footer-variant="D"] .site-footer-col:nth-child(2) a:hover,
+  [data-footer-variant="D"] .site-footer-col:nth-child(4) a:hover { transform: none; text-decoration: underline; text-underline-offset: 4px; }
+
+  @media (max-width: 768px) {
+    [data-footer-variant="D"] .site-footer-top { grid-template-columns: 1fr; gap: 1.75rem; }
+    [data-footer-variant="D"] .site-footer-brand,
+    [data-footer-variant="D"] .site-footer-col { grid-column: 1; grid-row: auto; }
+    [data-footer-variant="D"] .site-footer-col:nth-child(3) { padding: 1.25rem 1.35rem; }
+    [data-footer-variant="D"] .site-footer-col:nth-child(2),
+    [data-footer-variant="D"] .site-footer-col:nth-child(4) { padding-top: 1rem; }
+  }
+
+  /* ============================================================
+   * Footer E — "Mosaic"
+   * Bento-card layout. Each region is a tile with subtle border
+   * and rounded corners. The brand tile spans the left column
+   * with a soft accent gradient. Asymmetric, modern.
+   * ============================================================ */
+  [data-footer-variant="E"] .site-footer { padding: 4.5rem 0 2rem; background: var(--bg-primary); }
+  [data-footer-variant="E"] .site-footer::before {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 50%, transparent), transparent);
+  }
+  [data-footer-variant="E"] .site-footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-auto-rows: minmax(0, auto);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  [data-footer-variant="E"] .site-footer-top > * {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1.5rem 1.65rem;
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  [data-footer-variant="E"] .site-footer-top > *:hover {
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+    transform: translateY(-1px);
+    box-shadow: 0 12px 32px -16px rgba(var(--accent-rgb), .25);
+  }
+  [data-footer-variant="E"] .site-footer-brand {
+    grid-column: 1; grid-row: 1 / 3;
+    background:
+      radial-gradient(ellipse 80% 50% at 0% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+      var(--bg-card);
+    border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
+  }
+  [data-footer-variant="E"] .site-footer-brand .nav-logo { font-size: 1.4rem; margin-bottom: 1rem; }
+  /* Explore tile spans top-right two cells */
+  [data-footer-variant="E"] .site-footer-col:nth-child(2) { grid-column: 2 / 4; grid-row: 1; }
+  [data-footer-variant="E"] .site-footer-col:nth-child(2) ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: .55rem 1.25rem;
+  }
+  [data-footer-variant="E"] .site-footer-col:nth-child(3) { grid-column: 2; grid-row: 2; }
+  [data-footer-variant="E"] .site-footer-col:nth-child(4) { grid-column: 3; grid-row: 2; }
+  [data-footer-variant="E"] .site-footer-col h4 {
+    font-size: .65rem;
+    letter-spacing: .26em;
+    color: var(--text-muted);
+    padding-bottom: .55rem;
+    margin-bottom: .9rem;
+  }
+  [data-footer-variant="E"] .site-footer-col h4::after { width: 20px; opacity: .85; }
+  @media (max-width: 900px) {
+    [data-footer-variant="E"] .site-footer-top { grid-template-columns: 1fr 1fr; }
+    [data-footer-variant="E"] .site-footer-brand { grid-column: 1 / -1; grid-row: 1; }
+    [data-footer-variant="E"] .site-footer-col:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+    [data-footer-variant="E"] .site-footer-col:nth-child(3) { grid-column: 1; grid-row: 3; }
+    [data-footer-variant="E"] .site-footer-col:nth-child(4) { grid-column: 2; grid-row: 3; }
+  }
+  @media (max-width: 560px) {
+    [data-footer-variant="E"] .site-footer-top { grid-template-columns: 1fr; }
+    [data-footer-variant="E"] .site-footer-top > * { grid-column: 1 !important; grid-row: auto !important; }
+  }
+
+  /* ============================================================
+   * Footer F — "Ledger"
+   * Editorial colophon. Brand column gets a tall vertical accent
+   * rule like a hanging-file tab; each link column is led by a
+   * tabular counter chip (01 / 02 / 03). Dotted leader bullets
+   * grow on hover, small-caps legal rail, no gradient paint —
+   * accent shows up as structural rules and counter digits only.
+   * Replaces the previous "Horizon" gradient banner.
+   * ============================================================ */
+  [data-footer-variant="F"] .site-footer {
+    padding: 4.5rem 0 1.75rem;
+    background: var(--bg-secondary);
+    border-top: 0;
+    position: relative;
+  }
+  [data-footer-variant="F"] .site-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--accent);
+    opacity: 1;
+    transform: none;
+  }
+  [data-footer-variant="F"] .site-footer-top {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+    gap: 2.75rem 3rem;
+    margin-bottom: 2.5rem;
+    align-items: start;
+    counter-reset: ledger-col;
+    position: relative;
+  }
+  /* Brand: vertical accent rule on its left edge */
+  [data-footer-variant="F"] .site-footer-brand {
+    padding-left: 1.4rem;
+    border-left: 3px solid var(--accent);
+  }
+  [data-footer-variant="F"] .site-footer-brand .nav-logo {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 1.05rem;
+  }
+  [data-footer-variant="F"] .site-footer-brand .nav-logo span { color: var(--accent); }
+  [data-footer-variant="F"] .site-footer-tagline {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 36ch;
+    margin: 0 0 1.4rem;
+  }
+  [data-footer-variant="F"] .site-footer-meta {
+    font-size: .82rem;
+    margin: 0 0 .4rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: baseline;
+    gap: .55rem;
+    flex-wrap: wrap;
+  }
+  [data-footer-variant="F"] .site-footer-meta-label {
+    font-size: .6rem;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Columns + counter chip headers */
+  [data-footer-variant="F"] .site-footer-col { counter-increment: ledger-col; }
+  [data-footer-variant="F"] .site-footer-col h4 {
+    font-size: .68rem;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+    padding: 0 0 .65rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: .65rem;
+    font-weight: 700;
+  }
+  [data-footer-variant="F"] .site-footer-col h4::before {
+    content: counter(ledger-col, decimal-leading-zero);
+    font-size: .82rem;
+    letter-spacing: .02em;
+    color: var(--accent);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  [data-footer-variant="F"] .site-footer-col h4::after { display: none; }
+  [data-footer-variant="F"] .site-footer-col ul {
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  [data-footer-variant="F"] .site-footer-col li {
+    position: relative;
+    padding-left: 1rem;
+  }
+  [data-footer-variant="F"] .site-footer-col li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: .7em;
+    width: 5px;
+    height: 1px;
+    background: color-mix(in srgb, var(--text-muted) 55%, transparent);
+    transition: background .18s ease, width .18s ease;
+  }
+  [data-footer-variant="F"] .site-footer-col li:hover::before {
+    background: var(--accent);
+    width: 10px;
+  }
+  [data-footer-variant="F"] .site-footer-col a {
+    font-size: .92rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    transition: color .18s ease;
+    padding: 0;
+  }
+  [data-footer-variant="F"] .site-footer-col a:hover {
+    color: var(--text-primary);
+    transform: none;
+  }
+  [data-footer-variant="F"] .site-footer-col .external-link-glyph { opacity: .45; }
+  [data-footer-variant="F"] .site-footer-col a:hover .external-link-glyph { opacity: .9; }
+
+  /* Bottom rail */
+  [data-footer-variant="F"] .site-footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .85rem 1.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+  [data-footer-variant="F"] .site-footer-bottom p {
+    font-size: .82rem;
+    color: var(--text-muted);
+    margin: 0;
+    flex: 1 1 320px;
+    letter-spacing: .01em;
+  }
+  [data-footer-variant="F"] .site-footer-credit-link {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color .18s ease, text-decoration-color .18s ease;
+  }
+  [data-footer-variant="F"] .site-footer-credit-link:hover {
+    color: var(--text-primary);
+    text-decoration-color: var(--accent);
+  }
+  [data-footer-variant="F"] .site-footer-legal {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 1.1rem;
+    margin-left: auto;
+  }
+  [data-footer-variant="F"] .site-footer-legal a {
+    font-size: .68rem;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    transition: color .18s ease;
+  }
+  [data-footer-variant="F"] .site-footer-legal a:hover { color: var(--accent); }
+  [data-footer-variant="F"] .site-footer .external-link-glyph { opacity: .55; }
+
+  /* Light theme: paler surface, slightly thicker accent rail */
+  :root[data-theme="light"][data-footer-variant="F"] .site-footer::before { height: 5px; }
+
+  @media (max-width: 1024px) {
+    [data-footer-variant="F"] .site-footer-top {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.25rem;
+    }
+    [data-footer-variant="F"] .site-footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    [data-footer-variant="F"] .site-footer-top {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+    [data-footer-variant="F"] .site-footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    [data-footer-variant="F"] .site-footer-legal { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-footer-variant="F"] .site-footer-col li::before,
+    [data-footer-variant="F"] .site-footer-col a,
+    [data-footer-variant="F"] .site-footer-credit-link,
+    [data-footer-variant="F"] .site-footer-legal a { transition: none; }
+  }
+</style>

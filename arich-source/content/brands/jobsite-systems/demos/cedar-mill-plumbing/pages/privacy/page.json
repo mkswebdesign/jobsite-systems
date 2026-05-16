@@ -1,0 +1,89 @@
+{
+  "slug": "privacy",
+  "path": "/privacy/",
+  "breadcrumbLabel": "Privacy Policy",
+  "seo": {
+    "title": "Privacy Policy — Cedar Mill Plumbing",
+    "description": "How cedarmillplumbing.example handles information from website forms and service calls.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/privacy/"
+  },
+  "header": {
+    "heading": "Website Privacy Policy",
+    "lead": "What this site collects, why, and how it's handled. The customer-plumber relationship itself runs on standard service-business rules — invoices, photos of the work, and receipts kept for tax and warranty purposes."
+  },
+  "lastUpdated": "April 2026",
+  "body": [
+    {
+      "heading": "1. Scope",
+      "paragraphs": [
+        "This policy covers website use only — what happens when you visit cedarmillplumbing.example or submit the contact / service-request forms. Once you book a job, standard service-business records apply: an invoice, photos of the work for warranty documentation, and a copy of the written estimate when applicable."
+      ]
+    },
+    {
+      "heading": "2. Information collected via website forms",
+      "paragraphs": [
+        "When you submit a service request, the form collects:"
+      ],
+      "items": [
+        "Your name and email (required), phone (optional), and the urgency level you selected.",
+        "The neighborhood or zip code where the work will happen.",
+        "What kind of job you're inquiring about — drain, water heater, leak, etc.",
+        "How you heard about Cedar Mill Plumbing if you choose to share it.",
+        "Acknowledgment of these terms."
+      ]
+    },
+    {
+      "heading": "3. Photos taken on the job",
+      "paragraphs": [
+        "Plumbing work is photographed for warranty, documentation, and (with your permission) marketing. Photos taken on a jobsite are kept on file for at least the duration of the workmanship warranty. We don't post identifying photos of your house without permission, and we never publish addresses or last names. If you'd rather not have any work-in-progress photo used in any portfolio, just say so on the first visit."
+      ]
+    },
+    {
+      "heading": "4. How information is used",
+      "paragraphs": [
+        "Form submissions are used only to:"
+      ],
+      "items": [
+        "Respond to your request and schedule a service call or estimate visit.",
+        "Confirm whether the job is inside the service area before we book it.",
+        "Maintain a brief inquiry record for follow-up and warranty purposes."
+      ]
+    },
+    {
+      "heading": "5. Service providers",
+      "paragraphs": [
+        "Form submissions are processed via a Cloudflare Worker (validation only, not stored) and delivered as email. The resulting email is stored in standard business email infrastructure. Invoice and payment processing run through standard small-business tools (QuickBooks-style ledger, Stripe-style payment links). We don't sell or share customer information with anyone outside the shop."
+      ]
+    },
+    {
+      "heading": "6. Analytics",
+      "paragraphs": [
+        "This site uses anonymized, aggregate analytics — page views, referrer, country. No tracking cookies, no advertising pixels, no cross-site tracking, no personal identifiers."
+      ]
+    },
+    {
+      "heading": "7. Your rights",
+      "paragraphs": [
+        "You may request access to or deletion of any information you've submitted via the website. Email hello@cedarmillplumbing.example. We'll keep job records (invoice, photos, materials) as long as the workmanship warranty runs, then archive them per standard small-business document-retention practice."
+      ]
+    },
+    {
+      "heading": "8. Children",
+      "paragraphs": [
+        "This website is not directed at children. The contact form is intended for adult homeowners or property managers."
+      ]
+    },
+    {
+      "heading": "9. Updates",
+      "paragraphs": [
+        "This policy may be updated occasionally. The \"last updated\" date at the top reflects the most recent revision."
+      ]
+    },
+    {
+      "heading": "10. Contact",
+      "paragraphs": [
+        "Questions? Email hello@cedarmillplumbing.example or call (503) 555-0149."
+      ]
+    }
+  ]
+}

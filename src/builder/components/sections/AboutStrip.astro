@@ -1,0 +1,23 @@
+---
+/**
+ * AboutStrip (Pass 4) — short centered or two-column section near the homepage foot.
+ */
+interface Props {
+  heading: string;
+  body: string;
+  cta?: { label: string; href: string };
+}
+const { heading, body, cta } = Astro.props;
+---
+<section
+  class="section about-strip"
+  data-section-type="about-strip"
+  data-section-label="About strip"
+  data-section-variants="A:Default"
+>
+  <div class="container">
+    <h2 class="about-strip__heading">{heading}</h2>
+    <p class="about-strip__body">{body}</p>
+    {cta && <a class="about-strip__cta" href={cta.href}>{cta.label} →</a>}
+  </div>
+</section>

@@ -1,0 +1,39 @@
+{
+  "slug": "home",
+  "path": "/",
+  "variants": {
+    "process": "C",
+    "testimonials": "a",
+    "content-section": "C",
+    "photo-gallery": "B",
+    "photo-slider": "D",
+    "design-break": "B",
+    "why": "a",
+    "cta": "C"
+  },
+  "seo": {
+    "title": "Cedar Mill Plumbing — Mike Hollister · Portland, OR",
+    "description": "Solo licensed plumber serving Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland. Drains, water heaters, repipe, leak detection, and 24/7 emergency dispatch. 18 years experience.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/"
+  },
+  "sections": [
+    "sections/01a-hero-2.json",
+    "sections/01c-photo-gallery.json",
+    "sections/02-services.json",
+    { "type": "divider", "color": "primary" },
+    "sections/02b-design-break.json",
+    { "type": "divider", "color": "primary" },
+    "sections/03-why.json",
+    "sections/04-capabilities.json",
+    { "type": "divider", "color": "primary" },
+    "sections/04b-design-break.json",
+    { "type": "divider", "color": "primary" },
+    "sections/05-testimonials.json",
+    "sections/07-partnership.json",
+    { "type": "divider", "color": "primary" },
+    "sections/10-design-break.json",
+    { "type": "divider", "color": "primary" },
+    "sections/08-faq.json",
+    "sections/09-final-cta.json"
+  ]
+}

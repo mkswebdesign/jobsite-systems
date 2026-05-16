@@ -1,0 +1,34 @@
+{
+  "slug": "services",
+  "path": "/services/",
+  "breadcrumbLabel": "Services",
+  "seo": {
+    "title": "Services — Apex Home Services",
+    "description": "Handyman, electrical, light remodel, and exterior services across the Kansas City metro. Licensed, bonded, insured. Written quotes before any work starts.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/services/"
+  },
+  "header": {
+    "heading": "Our Services",
+    "lead": "Four trades under one shop. Eight crew members, four trucks, one number to call. Each trade is staffed by crew members who specialize in it — and led by an owner who's still on every estimate."
+  },
+  "grid": {
+    "serviceSlugs": [
+      "handyman-services",
+      "electrical",
+      "light-remodel",
+      "exterior-services"
+    ]
+  },
+  "gridVariant": "image",
+  "cta": {
+    "heading": "Not sure which trade fits?",
+    "body": "That's exactly what the request form is for. Tell us what's going on and we'll route you to the right crew member — even if it's not at our shop.",
+    "label": "Get a Quote",
+    "href": "/demo/apex-home-services/contact/"
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

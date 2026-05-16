@@ -1,0 +1,36 @@
+{
+  "type": "hero",
+  "id": "hero-2",
+  "variant": "G",
+  "badge": "Booking now — Cedar Mill, Bethany, Beaverton, Hillsboro & NW Portland",
+  "badgeHref": "/demo/cedar-mill-plumbing/contact/",
+  "headline": "A licensed plumber",
+  "headlineAccent": "who actually answers the phone.",
+  "lead": "Cedar Mill Plumbing is a one-truck shop run by Mike Hollister — 18 years in the trade, 6 years on his own. Drains, water heaters, repipe, leak detection, and 24/7 emergency calls inside the Westside service area. Flat-rate pricing on common service calls, free written estimates on bigger projects, photos at completion. No call center, no high-pressure upsell.",
+  "metaParts": [
+    "Cedar Mill Plumbing",
+    "Mike Hollister",
+    "Portland, OR"
+  ],
+  "ctaPrimary": {
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  },
+  "ctaSecondary": {
+    "label": "What I Do",
+    "href": "#services"
+  },
+  "backgroundImages": [
+    "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "https://images.pexels.com/photos/4910020/pexels-photo-4910020.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "https://images.pexels.com/photos/29226620/pexels-photo-29226620.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "https://images.pexels.com/photos/35290675/pexels-photo-35290675.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop"
+  ],
+  "backgroundImageInterval": 9,
+  "imageCaption": "On the truck, on the job, and on time",
+  "trustMetrics": [
+    { "value": "18 yrs", "label": "In the trade" },
+    { "value": "60+", "label": "Google reviews — 4.9 average" },
+    { "value": "$189", "label": "Flat-rate drain cleaning" }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "slug": "privacy",
+  "path": "/privacy/",
+  "breadcrumbLabel": "Privacy Policy",
+  "seo": {
+    "title": "Privacy Policy — Jobsite Systems",
+    "description": "How jobsite.systems collects, uses, and protects information when you submit an inquiry or visit the site.",
+    "canonical": "https://jobsite.systems/privacy/"
+  },
+  "header": {
+    "heading": "Privacy Policy",
+    "lead": "What the site collects, why, and how it's handled. No dark patterns, no selling of data."
+  },
+  "lastUpdated": "April 2026",
+  "body": [
+    {
+      "heading": "1. What this policy covers",
+      "paragraphs": [
+        "This policy describes what information jobsite.systems collects when you visit the site or submit the contact form, how it's used, and your rights regarding that information."
+      ]
+    },
+    {
+      "heading": "2. Information collected",
+      "paragraphs": [
+        "Two categories of data are collected:"
+      ],
+      "items": [
+        "Inquiry form submissions — name, email, business name, project type, service area, message, and your acknowledgment of these terms.",
+        "Anonymized site analytics — aggregate visit data (page views, referrer, country). No cookies, no personal identifiers, no cross-site tracking."
+      ]
+    },
+    {
+      "heading": "3. How information is used",
+      "paragraphs": [
+        "Information you submit is used only to:"
+      ],
+      "items": [
+        "Respond to your inquiry and evaluate fit for a potential engagement.",
+        "Follow up about a potential or active project.",
+        "Aggregate analytics to improve the site."
+      ]
+    },
+    {
+      "heading": "4. What your information is never used for",
+      "paragraphs": [
+        "Your information is never sold, never shared with advertisers, and never used for mass marketing. There are no lead-gen email sequences or drip campaigns."
+      ]
+    },
+    {
+      "heading": "5. Service providers",
+      "paragraphs": [
+        "A few third-party services are involved in operating the site:"
+      ],
+      "items": [
+        "Cloudflare Workers — receives the form submission, validates it, and hands it to the email provider. Nothing is stored; the request is only in memory for the duration of the POST.",
+        "Emailit — transactional email delivery for form submissions. Their privacy policy governs that hand-off.",
+        "Standard business email — used to store and respond to messages from the contact form."
+      ]
+    },
+    {
+      "heading": "6. Retention",
+      "paragraphs": [
+        "Inquiry emails are retained in our inbox and archive as long as they're useful for business records or an ongoing client relationship. You can request deletion at any time."
+      ]
+    },
+    {
+      "heading": "7. Your rights",
+      "paragraphs": [
+        "You may request access to, correction of, or deletion of any personal information related to your inquiry. Email hello@jobsite.systems and we will action the request within a reasonable timeframe."
+      ]
+    },
+    {
+      "heading": "8. Cookies and tracking",
+      "paragraphs": [
+        "This site does not use tracking cookies or third-party advertising pixels. Local storage is used only for minor site preferences."
+      ]
+    },
+    {
+      "heading": "9. Security",
+      "paragraphs": [
+        "Reasonable technical and organizational measures are in place to protect submitted information, but no online transmission or storage is 100% secure."
+      ]
+    },
+    {
+      "heading": "10. Children",
+      "paragraphs": [
+        "This site is not directed at children under 13, and no information is knowingly collected from them."
+      ]
+    },
+    {
+      "heading": "11. Changes to this policy",
+      "paragraphs": [
+        "This policy may be updated occasionally. The \"last updated\" date at the top reflects the most recent revision."
+      ]
+    },
+    {
+      "heading": "12. Contact",
+      "paragraphs": [
+        "For privacy questions or data requests, email hello@jobsite.systems."
+      ]
+    }
+  ]
+}

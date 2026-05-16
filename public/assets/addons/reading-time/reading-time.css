@@ -1,0 +1,22 @@
+/*
+ * Reading Time — drop-in word-count → "5 min read" stamp.
+ *
+ * Theme-aware, minimal styling — works wherever you place the marker.
+ *
+ * See /reading-time/README.md.
+ */
+
+[data-aed-reading-time] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font: 600 0.78rem/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.005em;
+  color: var(--text-muted, #9a9aa2);
+  font-variant-numeric: tabular-nums;
+}
+[data-aed-reading-time] svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.85;
+}

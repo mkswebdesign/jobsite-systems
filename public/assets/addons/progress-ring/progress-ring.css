@@ -1,0 +1,48 @@
+/*
+ * Progress Ring — drop-in SVG circular percent.
+ *
+ * Pure SVG, theme-aware via brand --accent. See /progress-ring/README.md.
+ */
+
+[data-aed-ring] {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  line-height: 0;
+}
+[data-aed-ring] svg {
+  display: block;
+  overflow: visible;
+}
+
+.aed-pr-track {
+  fill: none;
+  stroke: var(--border, #27272a);
+}
+.aed-pr-fill {
+  fill: none;
+  stroke: var(--accent, #6B00FF);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aed-pr-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 0.95rem ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  color: var(--text-primary, #fafafa);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+[data-aed-ring][data-aed-trend="up"]   .aed-pr-fill { stroke: #10b981; }
+[data-aed-ring][data-aed-trend="down"] .aed-pr-fill { stroke: #ef4444; }
+[data-aed-ring][data-aed-trend="warn"] .aed-pr-fill { stroke: #f59e0b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-pr-fill { transition: none; }
+}

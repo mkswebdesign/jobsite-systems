@@ -1,0 +1,65 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  cardTitle: string;
+  cardLead: string;
+  benefits: string[];
+  benefitsLabel?: string;
+  ctaLabel: string;
+  ctaHref: string;
+  note?: string;
+}
+
+const {
+  sectionLabel,
+  heading,
+  subtext,
+  cardTitle,
+  cardLead,
+  benefits,
+  benefitsLabel = "What's included",
+  ctaLabel,
+  ctaHref,
+  note,
+} = Astro.props;
+---
+
+<section
+  class="section partnership partnership-bg"
+  id="partnership"
+  data-section-type="partnership"
+  data-section-label="Partnership"
+  data-section-variants="A:Default,B:Minimal,C:Featured"
+>
+  <div class="container">
+    <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} centered />
+
+    <div class="partnership-panel scale-reveal">
+      <div class="partnership-main">
+        <span class="partnership-eyebrow">Partnership</span>
+        <h3 class="partnership-title">{cardTitle}</h3>
+        <p class="partnership-lead">{cardLead}</p>
+        <a href={ctaHref} class="btn btn-primary partnership-cta">{ctaLabel}</a>
+        {note && <p class="partnership-note">{note}</p>}
+      </div>
+
+      <div class="partnership-benefits">
+        <span class="partnership-benefits-label">{benefitsLabel}</span>
+        <ul class="partnership-list">
+          {benefits.map(b => (
+            <li>
+              <span class="partnership-check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

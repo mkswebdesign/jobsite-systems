@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "How quotes work",
+  "heading": "From phone call\nto written quote.",
+  "subtext": "Phone-quotes for handyman work and small electrical we can price from photos. Free in-home estimates for remodels and bigger electrical work. Either way you have a written number before any work starts — and the price is the price unless we hit something hidden in the walls and tell you immediately.",
+  "backgroundImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+  "cta": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "demo-modal",
+  "assets": {
+    "css": ["demo-modal.css"],
+    "js":  ["demo-modal.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-demo-modal-config",
+        "description": "Click-intercept modal for /demo/<slug>/* pages. When a visitor on a demo page clicks a button or link that targets another page WITHIN the same demo, this modal opens first — explaining that the site is illustrative and surfacing real pricing / contact CTAs. After dismiss, the original navigation proceeds.",
+        "required": true,
+        "fields": {
+          "eyebrow":         { "type": "string", "default": "Heads up — this is a demo",                                       "description": "Tiny pill label above the heading." },
+          "heading":         { "type": "string", "required": true,                                                              "description": "Modal headline. Keep under ~50 chars." },
+          "body":            { "type": "string", "required": true,                                                              "description": "1-2 sentence explanation of what the visitor is seeing." },
+          "pricingCta":      { "type": "object", "required": true,                                                              "description": "{ label, href } — primary CTA, typically pointing at the brand's real /pricing/ page." },
+          "contactCta":      { "type": "object",                                                                                "description": "Optional second CTA. { label, href }." },
+          "continueLabel":   { "type": "string", "default": "Continue to the demo page",                                        "description": "Label for the link that lets the visitor proceed to the originally-clicked demo page." },
+          "interceptOncePerSession": { "type": "boolean", "default": false,                                                     "description": "Default false — every demo-page click opens the modal so the disclosure stays consistent across the visit. Set true to show once per demo per browser session and let subsequent clicks navigate freely." }
+        }
+      }
+    ]
+  }
+}

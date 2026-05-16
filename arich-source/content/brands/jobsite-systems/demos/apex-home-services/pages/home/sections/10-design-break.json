@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "About Apex",
+  "heading": "Founded in 2014,\nstill family-owned.",
+  "subtext": "Apex started as one truck doing handyman work — Dave Reichert solo, then his brother Tim. Eleven years later we're four trucks, eight crew, and four trades. Still family-owned. The owners are still on every estimate walkthrough and they're still who you talk to when something goes sideways.",
+  "backgroundImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+  "cta": { "label": "Read our story", "href": "/demo/apex-home-services/about/" }
+}

@@ -1,0 +1,145 @@
+/*
+ * TOC — drop-in auto-generated table of contents.
+ *
+ * Reads <h2>/<h3>/<h4> from a scope, renders a navigable list inside
+ * any <aside data-aed-toc> placeholder. Highlights the current section
+ * via IntersectionObserver.
+ *
+ * Three positioning modes (data-aed-toc-position):
+ *   top      — default; renders inline where the placeholder sits
+ *   sticky   — same place but position: sticky to nav offset
+ *   floating — fixed in right margin (desktop only)
+ *
+ * See /toc/README.md.
+ */
+
+.aed-toc {
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.aed-toc[hidden] { display: none; }
+
+.aed-toc-title {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+}
+
+.aed-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.aed-toc-item a {
+  display: block;
+  padding: 0.32rem 0.55rem;
+  color: var(--text-secondary, #a1a1aa);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  margin-left: -0.55rem;
+}
+.aed-toc-item a:hover {
+  color: var(--text-primary, #fafafa);
+  border-left-color: color-mix(in srgb, var(--accent, #6B00FF) 50%, transparent);
+}
+.aed-toc-item.is-active > a {
+  color: var(--accent, #6B00FF);
+  border-left-color: var(--accent, #6B00FF);
+  background: color-mix(in srgb, var(--accent, #6B00FF) 8%, transparent);
+}
+
+/* Indent by level */
+.aed-toc-item[data-aed-level="3"] a { padding-left: 1.4rem; }
+.aed-toc-item[data-aed-level="4"] a { padding-left: 2.2rem; font-size: 0.82em; opacity: 0.9; }
+
+/* -- Sticky positioning ---------------------------------------------- */
+.aed-toc[data-aed-toc-position="sticky"] {
+  position: sticky;
+  top: calc(var(--aed-announcement-h, 0px) + var(--aed-nav-h, 80px) + 16px);
+  align-self: start;
+  max-height: calc(100vh - var(--aed-nav-h, 80px) - 48px);
+  overflow-y: auto;
+}
+
+/* -- Floating (desktop right margin) -------------------------------- */
+@media (min-width: 1280px) {
+  .aed-toc[data-aed-toc-position="floating"] {
+    position: fixed;
+    top: calc(var(--aed-announcement-h, 0px) + var(--aed-nav-h, 80px) + 24px);
+    right: max(1.5rem, calc((100vw - 1200px) / 2 - 280px));
+    width: 240px;
+    z-index: 50;
+    max-height: calc(100vh - var(--aed-nav-h, 80px) - 48px);
+    overflow-y: auto;
+  }
+}
+@media (max-width: 1279px) {
+  .aed-toc[data-aed-toc-position="floating"] {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: auto;
+  }
+}
+
+/* -- Mobile collapse pattern ---------------------------------------- */
+.aed-toc-toggle {
+  display: none;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+  padding: 0.25rem 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.aed-toc-toggle::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.18s ease;
+  display: inline-block;
+}
+.aed-toc.is-collapsed .aed-toc-toggle::after { transform: rotate(-45deg) translateY(2px); }
+.aed-toc.is-collapsed .aed-toc-list { display: none; }
+
+@media (max-width: 720px) {
+  .aed-toc { padding: 0.85rem 1rem; }
+  .aed-toc-title { display: none; }
+  .aed-toc-toggle { display: flex; }
+  .aed-toc-list { margin-top: 0.55rem; }
+}
+
+@media print {
+  .aed-toc { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-toc-item a,
+  .aed-toc-toggle::after { transition: none; }
+}

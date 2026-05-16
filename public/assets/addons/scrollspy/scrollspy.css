@@ -1,0 +1,14 @@
+/*
+ * Scrollspy — drop-in active-link tracker for nav menus.
+ *
+ * Almost no CSS — the addon just toggles `is-active` on the matching
+ * link. Style `.is-active` (or your custom active-class) however you
+ * want in your own CSS.
+ *
+ * See /scrollspy/README.md.
+ */
+
+/* Sensible default styling for the active link — override at will */
+[data-aed-scrollspy] a.is-active {
+  color: var(--accent, #6B00FF);
+}

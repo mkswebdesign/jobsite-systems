@@ -1,0 +1,23 @@
+{
+  "name": "copy-quote",
+  "assets": {
+    "css": ["copy-quote.css"],
+    "js":  ["copy-quote.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:copy-quote",
+        "default": "auto",
+        "description": "Master switch. When enabled, selecting text within `data-scope` reveals a tooltip that copies the quote with attribution.",
+        "enum": ["auto", "on", "true", "1"],
+        "attrs": {
+          "data-scope":    { "type": "string", "default": "article, main",                                 "description": "CSS selector containing selectable text." },
+          "data-min":      { "type": "number", "default": 20,                                              "description": "Minimum selection length (chars) before the copy tooltip appears." },
+          "data-template": { "type": "string", "default": "\"{text}\" — {brand}, {url}",                   "description": "Format string. Placeholders: {text}, {brand}, {url}, {title}." },
+          "data-touch":    { "type": "string", "default": "on", "enum": ["on", "off"],                     "description": "Whether the tooltip surfaces on touch devices." }
+        }
+      }
+    ]
+  }
+}

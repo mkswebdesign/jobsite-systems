@@ -1,0 +1,109 @@
+/*
+ * Back to Top — drop-in scroll-to-top button.
+ *
+ * Side, offset, size, and shape are all configurable via meta attrs:
+ *   data-position="left|right"  (class toggle)
+ *   data-offset-x / data-offset-y  (--aed-btt-offset-x/y)
+ *   data-size                      (--aed-btt-size, px)
+ *   data-style="circle|square|pill"  (class toggle)
+ *
+ * See /back-to-top/README.md.
+ */
+
+.aed-btt {
+  --aed-btt-offset-x: 1.5rem;
+  --aed-btt-offset-y: 1.5rem;
+  --aed-btt-size: 44px;
+  --aed-btt-radius: 50%;
+  position: fixed;
+  bottom: var(--aed-btt-offset-y);
+  z-index: 7600; /* above social-proof, below contact-fab panel + consent */
+  width: var(--aed-btt-size);
+  height: var(--aed-btt-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card, #18181b);
+  color: var(--text-secondary, #a1a1aa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: var(--aed-btt-radius);
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.95);
+  transition:
+    opacity 0.2s ease,
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* Side placement */
+.aed-btt-left  { left: var(--aed-btt-offset-x); }
+.aed-btt-right { right: var(--aed-btt-offset-x); }
+
+/* Shape variants */
+.aed-btt-circle { --aed-btt-radius: 50%; }
+.aed-btt-square { --aed-btt-radius: 8px; }
+.aed-btt-pill   {
+  --aed-btt-radius: 999px;
+  width: auto;
+  padding: 0 0.9rem;
+  min-width: var(--aed-btt-size);
+}
+.aed-btt-pill::after {
+  content: "Top";
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-left: 0.35rem;
+}
+
+.aed-btt.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+.aed-btt:hover {
+  color: var(--accent, #6B00FF);
+  border-color: var(--accent, #6B00FF);
+  background: color-mix(in srgb, var(--accent, #6B00FF) 8%, var(--bg-card, #18181b));
+}
+.aed-btt svg { width: calc(var(--aed-btt-size) * 0.41); height: calc(var(--aed-btt-size) * 0.41); }
+
+/* Slide up out of the way of the consent banner */
+body:has(.consent-banner.is-open) .aed-btt,
+body:has(.consent-banner.is-open) .aed-btt.is-visible {
+  transform: translateY(-86px);
+}
+
+/* Hide on mobile if the lead-bar is active (full-width strip would overlap) */
+@media (max-width: 640px) {
+  body.aed-leadbar-active .aed-btt { display: none !important; }
+  .aed-btt {
+    --aed-btt-offset-x: 1rem;
+    --aed-btt-offset-y: 1rem;
+    --aed-btt-size: 40px;
+  }
+}
+
+/* Hide on mobile if social-proof toast is at the same edge */
+@media (max-width: 640px) {
+  body:has(.aed-sp-toast.is-open) .aed-btt,
+  body:has(.aed-sp-toast.is-open) .aed-btt.is-visible {
+    transform: translateY(-72px);
+  }
+}
+
+@media print {
+  .aed-btt { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-btt { transition: opacity 0.18s ease; transform: none !important; }
+  body:has(.consent-banner.is-open) .aed-btt,
+  body:has(.consent-banner.is-open) .aed-btt.is-visible { transform: none !important; }
+}

@@ -1,0 +1,134 @@
+/*
+ * Range Slider — drop-in styled <input type="range">.
+ *
+ * Theme-aware. Cross-browser track + thumb styling, optional live
+ * value badge that floats above the thumb.
+ *
+ * See /range-slider/README.md.
+ */
+
+.aed-range-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 360px;
+  font-variant-numeric: tabular-nums;
+}
+
+.aed-range-row {
+  position: relative;
+  padding-top: 1.6rem;
+}
+
+input[type="range"][data-aed-range] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+  --aed-range-pct: 0;
+}
+
+/* WebKit track + fill */
+input[type="range"][data-aed-range]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right,
+    var(--accent, #6B00FF) 0%,
+    var(--accent, #6B00FF) calc(var(--aed-range-pct) * 1%),
+    var(--border, #27272a) calc(var(--aed-range-pct) * 1%),
+    var(--border, #27272a) 100%);
+}
+input[type="range"][data-aed-range]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  margin-top: -6px;
+  background: #ffffff;
+  border: 2px solid var(--accent, #6B00FF);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px -2px rgba(var(--accent-rgb, 107, 0, 255), 0.5);
+  cursor: grab;
+  transition: transform 0.15s ease;
+}
+input[type="range"][data-aed-range]:active::-webkit-slider-thumb { transform: scale(1.12); cursor: grabbing; }
+
+/* Firefox */
+input[type="range"][data-aed-range]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border, #27272a);
+}
+input[type="range"][data-aed-range]::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent, #6B00FF);
+}
+input[type="range"][data-aed-range]::-moz-range-thumb {
+  width: 18px; height: 18px;
+  background: #ffffff;
+  border: 2px solid var(--accent, #6B00FF);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px -2px rgba(var(--accent-rgb, 107, 0, 255), 0.5);
+  cursor: grab;
+}
+input[type="range"][data-aed-range]:active::-moz-range-thumb { transform: scale(1.12); cursor: grabbing; }
+
+input[type="range"][data-aed-range]:focus { outline: none; }
+input[type="range"][data-aed-range]:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent, #6B00FF) 28%, transparent);
+}
+input[type="range"][data-aed-range]:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent, #6B00FF) 28%, transparent);
+}
+
+/* Live value badge */
+.aed-range-badge {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  padding: 0.2rem 0.55rem;
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.aed-range-badge::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 6px; height: 6px;
+  background: var(--bg-card, #18181b);
+  border-right: 1px solid var(--border, #27272a);
+  border-bottom: 1px solid var(--border, #27272a);
+}
+
+/* Min/max footer */
+.aed-range-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted, #9a9aa2);
+  letter-spacing: 0.04em;
+}
+
+@media print {
+  input[type="range"][data-aed-range] { display: none; }
+  .aed-range-badge::after { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  input[type="range"][data-aed-range]::-webkit-slider-thumb,
+  input[type="range"][data-aed-range]::-moz-range-thumb { transition: none; }
+}

@@ -1,0 +1,36 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../../builder/layouts/Base.astro';
+import PageHeader from '../../builder/components/PageHeader.astro';
+import NextSteps from '../../builder/components/sections/NextSteps.astro';
+import { brand } from '../../builder/lib/brand';
+
+/* Reads optional `successPage` overrides from the brand's pages/start/page.json
+ * so brands like a kennel can re-skin the post-submit screen ("Puppy inquiry
+ * received." instead of "Your site details are in.") without forking this
+ * template. Falls back to the agency-template English so other brands render
+ * unchanged. */
+const startEntry = await getEntry('pages', 'start');
+const sp: any = (startEntry?.data as any)?.successPage ?? {};
+const parentBreadcrumb: { label: string; href: string } = sp.parentBreadcrumb ?? { label: 'Start Your Site', href: '/start/' };
+const childBreadcrumb: string = sp.childBreadcrumb ?? 'Received';
+const sectionLabel: string = sp.sectionLabel ?? 'Got it.';
+const heading: string = sp.heading ?? 'Your site details are in.';
+const lead: string = sp.lead ?? "Thanks! We'll read through everything you shared and reply within one business day — a real, considered response, not an auto-reply.";
+const titleSuffix: string = sp.titleSuffix ?? 'Site Details Received';
+const seo = {
+  title: `${titleSuffix} — ${brand.name}`,
+  description: sp.metaDescription ?? "Thanks for sharing your details. We'll review everything and reply within one business day.",
+};
+---
+
+<Base title={seo.title} description={seo.description} skipTarget="#main" indexable={false}>
+  <PageHeader
+    crumbs={[parentBreadcrumb, { label: childBreadcrumb }]}
+    sectionLabel={sectionLabel}
+    heading={heading}
+    lead={lead}
+  />
+
+  <NextSteps tightTop={false} />
+</Base>

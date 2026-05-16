@@ -1,0 +1,161 @@
+{
+  "slug": "starter-site",
+  "variants": {
+    "faq": "D",
+    "service-section": "A"
+  },
+  "order": 1,
+  "number": "01",
+  "iconKey": "layout-grid",
+  "flagship": true,
+  "flagshipBadge": "Flagship",
+  "inclusionLabel": "The product",
+  "heroImage": "https://images.pexels.com/photos/12644994/pexels-photo-12644994.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "heroImageAlt": "Crew at work on a residential remodel — the kind of jobsite this website is built to reflect",
+  "title": "Complete Trade-Business Website",
+  "headline": "A Complete Site\nfor Your Business.",
+  "shortDescription": "The full productized trade-business website — about, services, licensed-and-insured trust signals, service area, and contact. Mobile-first, practical by design, and built to last.",
+  "showcaseLead": "The full productized trade-business website — about, services, licensed-and-insured trust signals, service area, and contact. Mobile-first, practical by design, and built to last. Everything on the right is included.",
+  "showcaseBullets": [
+    "Up to 12 service / trade pages, written for you",
+    "Per-crew bio pages for multi-crew shops",
+    "Unlimited content edits — same-day turnaround",
+    "Performance-tuned (90+ Lighthouse out of the box)",
+    "One monthly invoice. One team to call."
+  ],
+  "lead": "The core offering. A complete trade-business website — about, services, licensed-and-insured trust signals, service area, and a contact page — designed and launched in about two weeks. Built on simple, solid hosting so it stays fast and secure without babysitting.",
+  "pricingCallout": "Sites from $129/mo · See full pricing →",
+  "anchorNav": [
+    { "label": "Overview", "href": "#main" },
+    { "label": "What You Get", "href": "#what-you-get" },
+    { "label": "Why Productized", "href": "#why-productized" },
+    { "label": "Who It's For", "href": "#who-its-for" },
+    { "label": "Process", "href": "#process" },
+    { "label": "Pricing", "href": "/pricing/" },
+    { "label": "FAQ", "href": "#faq" }
+  ],
+  "inlineTestimonial": {
+    "id": "kyle-m",
+    "placeAfter": 1
+  },
+  "seo": {
+    "title": "Complete Trade-Business Website",
+    "description": "Full productized website for trade businesses — about, services, licensed-and-insured trust signals, service area, and contact. Mobile-first, practical by design, and built to last.",
+    "schemaName": "Complete Trade-Business Website",
+    "schemaDescription": "A done-for-you website for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors including design, build, hosting, and local SEO basics."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "id": "what-you-get",
+      "variant": "showcase",
+      "heading": "What You Get",
+      "intro": "A complete website with every page homeowners actually look for — no bloat, no extras you don't need.",
+      "items": [
+        { "label": "Home page", "body": "Clear sense of what you do, where you work, and an obvious way to request an estimate" },
+        { "label": "Service / trade pages", "body": "One page per service line (or a combined services page) — what you do and how you work" },
+        { "label": "About / how we work page", "body": "Your story, your years on the tools, your stance — why a homeowner should trust you" },
+        { "label": "Licensed & insured trust page", "body": "Clear, honest information — license numbers, insurance, BBB rating, manufacturer certifications, trade-specific credentials" },
+        { "label": "Before-and-after / jobsite gallery", "body": "Photos of you, your crew, your trucks, and your finished work, organized so visitors can scroll easily" },
+        { "label": "Estimate-request form", "body": "A short, mobile-friendly form that emails you directly — structured for trade work (job address, what's broken, urgency); with privacy + terms pages included" }
+      ]
+    },
+    {
+      "type": "feature",
+      "id": "why-productized",
+      "theme": "white",
+      "heading": "Productized, Not Patched Together",
+      "body": "Yes, this is built from a system — that's the point. One-off custom builds run five figures and months of meetings. DIY builders hand you a blank canvas and walk away. This is the middle: a productized trade-business website, refined for this field, populated with your business, and launched in about two weeks.",
+      "items": [
+        "A system tuned for trade businesses — not a blank builder, not a from-scratch custom build",
+        "Done-for-you setup — you send your license info and how you work; we handle the build",
+        "Trade-specific sections baked in — services, trades, licensed-and-insured trust signals, service area, estimate-request forms",
+        "Tuned for search and AI answer engines — structured for Google to read, ready for ChatGPT-style search engines",
+        "Owned content and portable domain — no platform lock-in, move it anytime"
+      ]
+    },
+    {
+      "type": "list",
+      "id": "who-its-for",
+      "heading": "Who This Is For",
+      "intro": "Most of the trade-business owners we work with fit one of these profiles — which one sounds like you?",
+      "variant": "grid",
+      "cols": 2,
+      "items": [
+        {
+          "label": "No website yet",
+          "body": "You've been running on Angi, HomeAdvisor, and word-of-mouth, and you're ready for a real site without becoming your own web admin.",
+          "iconKey": "home"
+        },
+        {
+          "label": "Solo, leveling up",
+          "body": "Phones are ringing or about to be, and you want a professional site that matches the depth of your work.",
+          "iconKey": "user"
+        },
+        {
+          "label": "DIY site that stalled",
+          "body": "You started a Wix or Squarespace site between jobs, and it never quite got finished or updated.",
+          "iconKey": "layers"
+        },
+        {
+          "label": "Old WordPress, breaking",
+          "body": "The site works until it doesn't — plugin updates, PHP warnings, and a login you haven't touched in a year. Done with that — and done with the attack surface it carries.",
+          "iconKey": "shield"
+        }
+      ]
+    },
+    {
+      "type": "process",
+      "id": "process",
+      "heading": "How We Build It",
+      "steps": [
+        { "title": "Intro Call", "body": "A short call to understand your services, trades, and what you want the site to do." },
+        { "title": "Content Handoff", "body": "You send your license info, services, service area, and basics. We give you a checklist so nothing gets missed." },
+        { "title": "Build", "body": "We design and build your site on a staging link — usually 1–2 weeks." },
+        { "title": "Review", "body": "One round of revisions included. Tweaks to wording, photos, and sections." },
+        { "title": "Launch", "body": "Domain, SSL, analytics, and registration with Google and the AI answer engines — then it's live." }
+      ]
+    }
+  ],
+  "serviceFaq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions about a Complete Site",
+    "faqs": [
+      {
+        "question": "How long until a Complete Site is live?",
+        "answer": "About two weeks from content handoff to launch. Most delay comes from waiting on photos and a service list — once we have those, the build itself is fast."
+      },
+      {
+        "question": "What content do I need to provide?",
+        "answer": "An owner bio, your services and trades, your service area, license and insurance info, a portrait or jobsite photo, and basic contact info. We give you a checklist on the intro call so nothing is missed."
+      },
+      {
+        "question": "Do I own the site and the domain?",
+        "answer": "You own your content, photos, logo, and domain — your domain stays in your own registrar account. The template system and build infrastructure stay ours, which is how pricing stays simple. If you ever leave, you keep the content and the domain."
+      },
+      {
+        "question": "How much custom design is in scope?",
+        "answer": "Your colors, your photos, your voice, your services — the design system is shaped around your brand. Pixel-by-pixel custom layouts are not in scope (that's a separate one-time build — see the pricing page for current options)."
+      },
+      {
+        "question": "Can I move from an old WordPress site?",
+        "answer": "Often, yes. We audit what you have first. On most jobs we rebuild faster than we'd patch — and the new site has none of the WordPress maintenance debt or plugin attack surface."
+      },
+      {
+        "question": "What if I want changes after launch?",
+        "answer": "Email us. Small content changes (new crew member, updated service-area, new before-and-after photos) are handled same-week on Complete and Growth plans — no admin login required."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Ready for a website that stays out of your way?",
+    "body": "Tell us about your business. We'll walk you through exactly what your site would include.",
+    "label": "Start Your Site",
+    "href": "/contact/",
+    "actions": [
+      { "label": "Start Your Site", "href": "/contact/", "variant": "primary" },
+      { "label": "See Pricing", "href": "/pricing/", "variant": "secondary" },
+      { "label": "See Examples", "href": "/work/", "variant": "tertiary" }
+    ]
+  }
+}

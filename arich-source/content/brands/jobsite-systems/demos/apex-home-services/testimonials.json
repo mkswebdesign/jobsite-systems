@@ -1,0 +1,37 @@
+[
+  {
+    "id": "dr-david-h",
+    "quote": "Apex did a kitchen refresh for us last spring — new cabinets, quartz counters, backsplash, full lighting. The same supervisor was on-site every morning for three weeks and the daily clean-up was unreal. End-of-job walkthrough caught two small things and they came back the next day to fix them.",
+    "authorName": "David H.",
+    "authorRole": "Homeowner, Overland Park",
+    "featured": true
+  },
+  {
+    "id": "lauren-w",
+    "quote": "I manage 14 single-family rentals across Lenexa and Shawnee. Apex is on speed-dial for everything from drywall and door work to ceiling fan swaps between tenants. Written quotes every time, photos at the end of every job, and they bill clean — I can hand the invoice straight to the owner without re-keying anything.",
+    "authorName": "Lauren W.",
+    "authorRole": "Property Manager, KC Metro Rentals",
+    "featured": true
+  },
+  {
+    "id": "dr-priya-m",
+    "quote": "We had two other electricians ghost us on an EV charger install before we called Apex. Dave came out the next morning, walked the panel and the garage run, and emailed a written quote that afternoon. Permit pulled, inspected, and signed off in under two weeks.",
+    "authorName": "Priya M.",
+    "authorRole": "Homeowner, Leawood",
+    "featured": true
+  },
+  {
+    "id": "marcus-j-apex",
+    "quote": "I've worked with a lot of small contractors over the years and Apex is the first one I've used where the operations actually work. They text when the crew is on the way, they send photos at the end of every visit, and the invoice arrives the same day. They run their small business better than companies five times their size.",
+    "authorName": "Marcus J.",
+    "authorRole": "Homeowner, Olathe",
+    "featured": true
+  },
+  {
+    "id": "anna-l-apex",
+    "quote": "Basement finish-out, $42k, eight weeks start to finish. They told us up front they don't do major plumbing and routed us to a partner for the bathroom rough-in — which was honest and saved us a headache. Crew was clean, kid-friendly, and the basement looks like it was always meant to be there.",
+    "authorName": "Anna L.",
+    "authorRole": "Homeowner, Shawnee",
+    "featured": false
+  }
+]

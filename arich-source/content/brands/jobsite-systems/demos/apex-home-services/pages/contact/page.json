@@ -1,0 +1,114 @@
+{
+  "slug": "contact",
+  "path": "/contact/",
+  "breadcrumbLabel": "Contact",
+  "seo": {
+    "title": "Contact — Apex Home Services",
+    "description": "Get a quote from Apex Home Services. Lenexa, KS — serving the Kansas City metro. Licensed, bonded, insured. Same business day reply.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/contact/"
+  },
+  "header": {
+    "sectionLabel": "Get a quote",
+    "heading": "Tell us what you need.\nWe'll phone-quote or book an estimate.",
+    "lead": "Send a short request and the office will read it, phone-quote what we can from photos, and book a free in-home estimate for anything bigger. Same business day reply during weekday hours. Photos help us price faster — drag them into the form or text them to (913) 555-0177."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New quote request from Apex Home Services",
+    "steps": [
+      {
+        "id": "you",
+        "label": "Hello",
+        "title": "Introduce yourself",
+        "subtitle": "Just the basics so we know who we're talking to."
+      },
+      {
+        "id": "looking-for",
+        "label": "Trade",
+        "title": "What kind of work?",
+        "subtitle": "Helps us route you to the right crew member."
+      },
+      {
+        "id": "logistics",
+        "label": "Practical",
+        "title": "Where and when",
+        "subtitle": "Service area and rough timing so we can plan the dispatch."
+      },
+      {
+        "id": "confirm",
+        "label": "Review",
+        "title": "Ready to send?",
+        "subtitle": "Quick once-over."
+      }
+    ],
+    "fields": [
+      { "id": "name", "name": "name", "label": "Your Name", "type": "text", "placeholder": "First and last name", "required": true, "step": "you", "row": 1 },
+      { "id": "email", "name": "email", "label": "Email Address", "type": "email", "placeholder": "you@example.com", "required": true, "step": "you", "row": 1 },
+      { "id": "phone", "name": "phone", "label": "Phone (for scheduling)", "type": "tel", "placeholder": "(913) 555-0177", "required": true, "step": "you", "row": 2 },
+      { "id": "customer_type", "name": "customer_type", "label": "Who's the work for?", "type": "radio-cards", "required": true, "step": "you", "row": 3, "options": [
+        { "value": "self", "label": "My home", "description": "I'm the homeowner." },
+        { "value": "spouse-family", "label": "Family member's home", "description": "I'm helping a parent or family member coordinate." },
+        { "value": "rental", "label": "Rental property", "description": "I own or manage rental property in the metro." },
+        { "value": "other", "label": "Something else", "description": "Tell us in the details step." }
+      ]},
+      { "id": "trade", "name": "trade", "label": "Which trade fits best?", "type": "select", "required": true, "step": "looking-for", "row": 1, "options": [
+        { "value": "", "label": "Pick the closest fit…", "disabled": true, "selected": true },
+        { "value": "handyman-services", "label": "Handyman (drywall, doors, fixtures, mounting)" },
+        { "value": "electrical", "label": "Electrical (outlets, fans, panel work, EV chargers)" },
+        { "value": "light-remodel", "label": "Light remodel (kitchen, bath, basement)" },
+        { "value": "exterior-services", "label": "Exterior (deck, fence, gutters, siding repair)" },
+        { "value": "not-sure", "label": "Not sure yet" },
+        { "value": "other", "label": "Something else" }
+      ]},
+      { "id": "reason", "name": "reason", "label": "What needs doing?", "type": "textarea", "placeholder": "Brief description of the job. The more specific the better — and feel free to text photos to (913) 555-0177 after submitting if it'll help us phone-quote.", "required": false, "step": "looking-for", "row": 2 },
+      { "id": "city", "name": "city", "label": "City / area", "type": "select", "required": true, "step": "logistics", "row": 1, "options": [
+        { "value": "", "label": "Pick the closest…", "disabled": true, "selected": true },
+        { "value": "kansas-city-ks", "label": "Kansas City, KS" },
+        { "value": "kansas-city-mo", "label": "Kansas City, MO" },
+        { "value": "overland-park", "label": "Overland Park" },
+        { "value": "lenexa", "label": "Lenexa" },
+        { "value": "shawnee", "label": "Shawnee" },
+        { "value": "leawood", "label": "Leawood" },
+        { "value": "olathe", "label": "Olathe" },
+        { "value": "other-metro", "label": "Other KC metro suburb" },
+        { "value": "outside", "label": "Outside the metro — let's see if it works" }
+      ]},
+      { "id": "timing", "name": "timing", "label": "Timing", "type": "radio-cards", "required": true, "step": "logistics", "row": 2, "options": [
+        { "value": "asap", "label": "As soon as you can", "description": "Urgent — leak, broken door, exposed wire, etc." },
+        { "value": "1-2-weeks", "label": "Next week or two", "description": "Standard handyman / electrical scheduling window." },
+        { "value": "month-plus", "label": "Within the next month or two", "description": "Remodel projects typically 4–8 weeks out." },
+        { "value": "planning", "label": "Just planning", "description": "Pricing the job — no rush." }
+      ]},
+      { "id": "schedule", "name": "schedule", "label": "Best days / times for an in-home estimate (optional)", "type": "textarea", "placeholder": "If you want a free in-home estimate, mention which days / times work — mornings, evenings after work, weekends.", "required": false, "step": "logistics", "row": 3 },
+      { "id": "message", "name": "message", "label": "Anything else? (optional)", "type": "textarea", "placeholder": "Anything for the office — gate codes, dogs to know about, parking notes, second-opinion details.", "required": false, "step": "logistics", "row": 4 },
+      { "id": "terms", "name": "terms", "type": "checkbox", "label": "I understand this form is for requesting a quote, not for ordering work or making a binding commitment. Pricing is finalized only on a written quote. I agree to the <a href=\"/terms/\">Terms</a> and <a href=\"/privacy/\">Privacy Policy</a>.", "value": "accepted", "required": true, "step": "confirm", "row": 1 }
+    ],
+    "submitLabel": "Submit",
+    "nextLabel": "Continue",
+    "backLabel": "Back",
+    "successMessage": "Got it — your request is in. The office will read it and reply the same business day with a phone-quote or a window for a free in-home estimate.",
+    "errorMessage": "Something went wrong. Please try again or call us directly at (913) 555-0177."
+  },
+  "sidebar": {
+    "infoCards": [
+      { "iconKey": "envelope", "title": "Phone or text", "body": "Same number for calls and texts. Photos welcome — they help us phone-quote.", "prominent": true, "link": { "label": "(913) 555-0177", "href": "tel:+19135550177" } },
+      { "iconKey": "clock", "title": "Response Time", "body": "Same business day reply during Mon–Sat 7a–6p. Most handyman work books 1–2 weeks out; remodels 4–8 weeks." },
+      { "iconKey": "rocket", "title": "Real emergency?", "body": "If it's a fire, gas leak, active flooding, or a downed live wire, please call 911 first. Once you're safe, call us at (913) 555-0177 and we'll coordinate the repair." }
+    ],
+    "expect": {
+      "heading": "What to expect",
+      "items": [
+        "A real reply from the office, not an auto-responder",
+        "Phone-quote for small jobs we can price from your description and photos",
+        "Free in-home estimate scheduled for remodels and bigger electrical work",
+        "If we're not the right crew, an honest referral to a partner"
+      ]
+    }
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

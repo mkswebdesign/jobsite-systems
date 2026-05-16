@@ -1,0 +1,26 @@
+{
+  "name": "sidenav-collapse",
+  "assets": {
+    "css": ["sidenav-collapse.css"],
+    "js":  ["sidenav-collapse.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "nav[data-aed-sidenav]",
+        "description": "Container nav element. Collapsible groups inside the nav are <details> with `data-aed-sn-group` ids. Open/closed state persists in localStorage; the group containing the active link is auto-opened (matches by URL prefix, longest wins).",
+        "fields": {
+          "data-aed-sidenav":     { "type": "boolean","required": true,         "description": "Opt-in marker on the <nav>." },
+          "data-aed-sidenav-key": { "type": "string", "default": "default",     "description": "Prefix for the localStorage keys used to persist open/closed state. Use distinct values when multiple sidenavs coexist." }
+        }
+      },
+      {
+        "selector": "details[data-aed-sn-group]",
+        "description": "Each collapsible group inside the sidenav.",
+        "fields": {
+          "data-aed-sn-group": { "type": "string", "required": true, "description": "Stable id used as the localStorage key suffix." }
+        }
+      }
+    ]
+  }
+}

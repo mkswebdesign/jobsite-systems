@@ -1,0 +1,108 @@
+/*
+ * Aurora BG — drop-in animated gradient orb background.
+ *
+ * Pure CSS, no JS. Add data-aed-aurora to any block element to give
+ * it an ambient orb-cloud background that drifts slowly. Works
+ * particularly well on heroes, CTA sections, and any "vibey" surface.
+ *
+ * See /aurora-bg/README.md.
+ */
+
+[data-aed-aurora] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+[data-aed-aurora]::before,
+[data-aed-aurora]::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 25% 30%,
+      color-mix(in srgb, var(--accent, #6B00FF) 55%, transparent) 0%,
+      transparent 35%),
+    radial-gradient(
+      circle at 75% 70%,
+      color-mix(in srgb, var(--accent-hover, var(--accent, #6B00FF)) 50%, transparent) 0%,
+      transparent 35%),
+    radial-gradient(
+      circle at 50% 100%,
+      color-mix(in srgb, #fef08a 35%, transparent) 0%,
+      transparent 40%);
+  /* Site-wide tunables written by aurora-bg.js from meta-config:
+     --aed-aurora-blur      (data-orb-blur-px)
+     --aed-aurora-duration  (data-animation-duration-ms)
+     --aed-aurora-opacity   (data-opacity)
+     --aed-aurora-hue       (data-hue-shift-deg) */
+  filter: blur(var(--aed-aurora-blur, 60px)) saturate(1.2) hue-rotate(var(--aed-aurora-hue, 0deg));
+  animation: aed-aurora-drift var(--aed-aurora-duration, 28s) ease-in-out infinite alternate;
+  opacity: var(--aed-aurora-opacity, 0.6);
+  mix-blend-mode: screen;
+}
+
+[data-aed-aurora]::after {
+  /* Second layer drifts slightly faster + reverse for parallax feel. */
+  animation-duration: calc(var(--aed-aurora-duration, 28s) * 0.78);
+  animation-direction: alternate-reverse;
+  background:
+    radial-gradient(
+      circle at 80% 25%,
+      color-mix(in srgb, var(--accent, #6B00FF) 40%, transparent) 0%,
+      transparent 30%),
+    radial-gradient(
+      circle at 15% 80%,
+      color-mix(in srgb, #38bdf8 40%, transparent) 0%,
+      transparent 30%);
+  filter: blur(calc(var(--aed-aurora-blur, 60px) + 10px)) saturate(1.1) hue-rotate(var(--aed-aurora-hue, 0deg));
+  /* ::after sits at 0.75x of the site-wide base opacity. */
+  opacity: calc(var(--aed-aurora-opacity, 0.6) * 0.75);
+}
+
+/* Light theme: lower opacity / dim — orbs over white can look sickly */
+:root[data-theme="light"] [data-aed-aurora]::before,
+:root[data-theme="light"] [data-aed-aurora]::after {
+  opacity: 0.35;
+  filter: blur(70px) saturate(1.05);
+  mix-blend-mode: multiply;
+}
+
+@keyframes aed-aurora-drift {
+  0%   { transform: translate(0, 0)        rotate(0deg);   }
+  50%  { transform: translate(3%, -2%)     rotate(8deg);   }
+  100% { transform: translate(-2%, 3%)     rotate(-6deg);  }
+}
+
+/* Variants */
+[data-aed-aurora][data-aed-aurora-intensity="subtle"]::before,
+[data-aed-aurora][data-aed-aurora-intensity="subtle"]::after { opacity: 0.3; filter: blur(80px); }
+
+[data-aed-aurora][data-aed-aurora-intensity="bold"]::before,
+[data-aed-aurora][data-aed-aurora-intensity="bold"]::after { opacity: 0.85; filter: blur(48px) saturate(1.4); }
+
+[data-aed-aurora][data-aed-aurora-static]::before,
+[data-aed-aurora][data-aed-aurora-static]::after { animation: none; }
+
+/* Hero integration — heroes layer their own .hero-bg (photos/gradient/grid)
+ * inside the section via `position:absolute; inset:0`. At the default
+ * z-index: -1 the aurora pseudos sit BEHIND that bg layer and are invisible.
+ * Lift them into the hero stacking context between .hero-bg (auto → 0) and
+ * .hero-content (z-index: 2) so the orbs blend over the hero's imagery with
+ * the configured mix-blend-mode instead of being covered by it. `overflow:
+ * hidden` on .hero already clips the orbs to the section. */
+.hero[data-aed-aurora]::before,
+.hero[data-aed-aurora]::after { z-index: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-aurora]::before,
+  [data-aed-aurora]::after { animation: none; }
+}
+
+@media print {
+  [data-aed-aurora]::before,
+  [data-aed-aurora]::after { display: none; }
+}

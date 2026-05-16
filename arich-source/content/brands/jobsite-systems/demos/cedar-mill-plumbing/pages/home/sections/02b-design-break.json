@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "How I work",
+  "heading": "One truck.\nOne plumber.\nNo pitch.",
+  "subtext": "Cedar Mill Plumbing is a one-truck shop on purpose. The person you talk to on the phone is the person under your sink. Flat rates posted, written estimates on bigger jobs, photos at completion, 1-year workmanship warranty. Built so you call back next time without thinking twice.",
+  "backgroundImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+  "cta": { "label": "How a job goes", "href": "/demo/cedar-mill-plumbing/process/" }
+}

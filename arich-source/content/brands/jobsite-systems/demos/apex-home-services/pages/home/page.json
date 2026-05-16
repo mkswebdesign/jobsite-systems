@@ -1,0 +1,40 @@
+{
+  "slug": "home",
+  "path": "/",
+  "variants": {
+    "process": "C",
+    "testimonials": "a",
+    "content-section": "C",
+    "photo-gallery": "B",
+    "photo-slider": "D",
+    "design-break": "B",
+    "why": "a",
+    "cta": "C"
+  },
+  "seo": {
+    "title": "Apex Home Services — Handyman, Electrical, Remodel, Exterior · Kansas City Metro",
+    "description": "Multi-trade home services group serving the Kansas City metro. Handyman, electrical, light remodel, and exterior work. Licensed, bonded, insured. 800+ jobs since 2014.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/"
+  },
+  "sections": [
+    "sections/01a-hero-2.json",
+    { "type": "divider", "color": "primary" },
+    "sections/01c-photo-gallery.json",
+    "sections/02-services.json",
+    { "type": "divider", "color": "primary" },
+    "sections/02b-design-break.json",
+    { "type": "divider", "color": "primary" },
+    "sections/03-why.json",
+    "sections/04-capabilities.json",
+    { "type": "divider", "color": "primary" },
+    "sections/04b-design-break.json",
+    { "type": "divider", "color": "primary" },
+    "sections/05-testimonials.json",
+    "sections/07-partnership.json",
+    { "type": "divider", "color": "primary" },
+    "sections/10-design-break.json",
+    { "type": "divider", "color": "primary" },
+    "sections/08-faq.json",
+    "sections/09-final-cta.json"
+  ]
+}

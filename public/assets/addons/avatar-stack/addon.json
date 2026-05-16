@@ -1,0 +1,29 @@
+{
+  "name": "avatar-stack",
+  "assets": {
+    "css": ["avatar-stack.css"],
+    "js":  ["avatar-stack.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-avatars]",
+        "description": "Container for an overlapping avatar row. Each direct child is treated as one avatar.",
+        "fields": {
+          "data-aed-avatars-extra": { "type": "number",                            "description": "Render an additional '+N' badge after the visible avatars." },
+          "data-aed-avatars-label": { "type": "string",                            "description": "Trailing label, e.g. 'happy clients'." },
+          "data-aed-size":          { "type": "string", "enum": ["sm", "default", "lg"], "default": "default", "description": "Avatar diameter." },
+          "data-aed-variant":       { "type": "string", "enum": ["compact"],      "description": "Reduce overlap spacing." }
+        }
+      },
+      {
+        "selector": "span[data-initials]",
+        "description": "Initials-style avatar (used when no <img> child is present).",
+        "fields": {
+          "data-initials": { "type": "string", "required": true, "description": "1–2 character initials shown inside the disc." },
+          "data-color":    { "type": "string",                    "description": "Hex background color for the disc." }
+        }
+      }
+    ]
+  }
+}

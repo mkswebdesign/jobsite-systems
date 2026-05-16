@@ -1,0 +1,54 @@
+/*
+ * Copy Quote — drop-in "select text → copy as formatted quote" button.
+ *
+ * A small floating action button appears above the user's text
+ * selection (desktop only by default, since mobile already has a
+ * native selection toolbar). Click → copies the selected text plus
+ * brand attribution and source URL to the clipboard.
+ *
+ * See /copy-quote/README.md.
+ */
+
+.aed-cq-btn {
+  position: fixed;
+  z-index: 7800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem 0.4rem 0.6rem;
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 999px;
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.45);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(4px) scale(0.96);
+  transition: opacity 0.18s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.aed-cq-btn.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.aed-cq-btn:hover {
+  color: var(--accent, #6B00FF);
+  border-color: var(--accent, #6B00FF);
+}
+.aed-cq-btn.is-copied {
+  color: #10b981;
+  border-color: #10b981;
+}
+.aed-cq-btn svg { width: 14px; height: 14px; }
+
+@media print {
+  .aed-cq-btn { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aed-cq-btn { transition: opacity 0.15s ease; transform: none !important; }
+}

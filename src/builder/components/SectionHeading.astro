@@ -1,0 +1,32 @@
+---
+interface Props {
+  label?: string;
+  heading: string;
+  subtext?: string;
+  /** If true, the label/heading/subtext are centered. */
+  centered?: boolean;
+}
+
+const { label, heading, subtext, centered = false } = Astro.props;
+
+/** Convert `\n` in the JSON copy into <br> line breaks. */
+const headingLines = heading.split('\n');
+---
+
+{centered ? (
+  <div class="section-heading-group is-centered">
+    {label && <span class="section-label">{label}</span>}
+    <h2 class="section-heading">
+      {headingLines.map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </h2>
+    {subtext && <p class="section-subtext">{subtext}</p>}
+  </div>
+) : (
+  <>
+    {label && <span class="section-label reveal">{label}</span>}
+    <h2 class="section-heading reveal" data-reveal-delay="100">
+      {headingLines.map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </h2>
+    {subtext && <p class="section-subtext reveal" data-reveal-delay="200">{subtext}</p>}
+  </>
+)}

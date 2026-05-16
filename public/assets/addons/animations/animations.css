@@ -1,0 +1,112 @@
+/*
+ * Animations — drop-in entrance motion library.
+ *
+ * Add data-aed-fade-in, data-aed-fade-up, etc., to any element. The
+ * addon attaches IntersectionObserver and toggles `is-visible` when
+ * the element scrolls into view. CSS handles the transition.
+ *
+ * See /animations/README.md.
+ */
+
+/* Default duration / easing / distance — sourced from --aed-anim-*
+   CSS variables written to <html> by animations.js from the addon
+   config's data-default-* meta attrs. Per-element inline style still
+   wins at the element level. */
+[data-aed-fade-in],
+[data-aed-fade-up],
+[data-aed-fade-down],
+[data-aed-fade-left],
+[data-aed-fade-right],
+[data-aed-zoom-in],
+[data-aed-zoom-out] {
+  --aed-anim-duration: 700ms;
+  --aed-anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --aed-anim-distance: 24px;
+  --aed-anim-zoom-in: 0.94;
+  --aed-anim-zoom-out: 1.06;
+  opacity: 0;
+  transition:
+    opacity var(--aed-anim-duration) var(--aed-anim-ease),
+    transform var(--aed-anim-duration) var(--aed-anim-ease);
+  will-change: opacity, transform;
+}
+
+/* Initial transforms (the addon clears them when is-visible). These
+   use the shared --aed-anim-distance / zoom variables so one config
+   knob shifts every direction at once. */
+[data-aed-fade-up]    { transform: translateY(var(--aed-anim-distance)); }
+[data-aed-fade-down]  { transform: translateY(calc(-1 * var(--aed-anim-distance))); }
+[data-aed-fade-left]  { transform: translateX(var(--aed-anim-distance)); }
+[data-aed-fade-right] { transform: translateX(calc(-1 * var(--aed-anim-distance))); }
+[data-aed-zoom-in]    { transform: scale(var(--aed-anim-zoom-in)); }
+[data-aed-zoom-out]   { transform: scale(var(--aed-anim-zoom-out)); }
+
+/* Visible state — addon adds .is-visible */
+[data-aed-fade-in].is-visible,
+[data-aed-fade-up].is-visible,
+[data-aed-fade-down].is-visible,
+[data-aed-fade-left].is-visible,
+[data-aed-fade-right].is-visible,
+[data-aed-zoom-in].is-visible,
+[data-aed-zoom-out].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* No-JS / addon-disabled fallback: show everything */
+html.no-js [data-aed-fade-in],
+html.no-js [data-aed-fade-up],
+html.no-js [data-aed-fade-down],
+html.no-js [data-aed-fade-left],
+html.no-js [data-aed-fade-right],
+html.no-js [data-aed-zoom-in],
+html.no-js [data-aed-zoom-out] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Global element-animations off-switch. When <html> has
+   .aed-no-element-anims (set by animations.js when
+   data-element-animations="false"), every scroll-reveal element
+   appears instantly with no transform/opacity entrance. Page
+   transitions stay independent — they're controlled separately via
+   --page-transition-* vars. */
+html.aed-no-element-anims [data-aed-fade-in],
+html.aed-no-element-anims [data-aed-fade-up],
+html.aed-no-element-anims [data-aed-fade-down],
+html.aed-no-element-anims [data-aed-fade-left],
+html.aed-no-element-anims [data-aed-fade-right],
+html.aed-no-element-anims [data-aed-zoom-in],
+html.aed-no-element-anims [data-aed-zoom-out] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+@media print {
+  [data-aed-fade-in],
+  [data-aed-fade-up],
+  [data-aed-fade-down],
+  [data-aed-fade-left],
+  [data-aed-fade-right],
+  [data-aed-zoom-in],
+  [data-aed-zoom-out] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-fade-in],
+  [data-aed-fade-up],
+  [data-aed-fade-down],
+  [data-aed-fade-left],
+  [data-aed-fade-right],
+  [data-aed-zoom-in],
+  [data-aed-zoom-out] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

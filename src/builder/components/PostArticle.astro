@@ -1,0 +1,392 @@
+---
+/**
+ * PostArticle — newsroom single-post layout for /post/<slug>/.
+ * Full-bleed hero with overlay, 3-column body grid (left rail = reading
+ * progress + share + time-left, article column with drop cap, right rail
+ * = sticky TOC of H3s), engagement bar with tags + actions, bottom zone
+ * with author card + older-story link, and a sticky mobile share bar.
+ *
+ * Props: post, Content (Astro component from render()), headings,
+ *        prev (older post), author?, authorName?, categoryName?.
+ *
+ * `related` and `next` are intentionally accepted but unused — the new
+ * layout has no slot for them. Keeping the props means [slug].astro
+ * doesn't need to change its callsite shape.
+ */
+import type { Post, Author } from '../lib/posts';
+import { computeReadingTime } from '../lib/posts';
+import Breadcrumbs from './Breadcrumbs.astro';
+import { brand } from '../lib/brand';
+
+interface Heading { depth: number; slug: string; text: string; }
+interface Props {
+  post: Post;
+  Content: any;
+  headings: Heading[];
+  related?: Post[];
+  prev: Post | null;
+  next?: Post | null;
+  author?: Author | null;
+  authorName?: string;
+  categoryName?: string;
+}
+const { post, Content, headings, prev, author, authorName, categoryName } = Astro.props;
+const d = post.data;
+const url = brand.url + Astro.url.pathname;
+
+const dateStr = d.date.toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+const reading = computeReadingTime(post.body ?? '');
+
+const a = author?.data;
+const initials = a?.name
+  ? a.name.split(/\s+/).map((s) => s[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()
+  : '';
+const displayAuthor = authorName || a?.name;
+
+const shareTwitter = `https://twitter.com/intent/tweet?text=${encodeURIComponent(d.title)}&url=${encodeURIComponent(url)}`;
+const shareEmail = `mailto:?subject=${encodeURIComponent(d.title)}&body=${encodeURIComponent(url)}`;
+
+const tocItems = (headings ?? []).filter((h) => h.depth === 3);
+---
+<article class="post-single" data-category={d.category}>
+  <Breadcrumbs items={[
+    { label: 'Home', href: '/' },
+    { label: 'Latest', href: '/archive/' },
+    { label: categoryName ?? d.category, href: `/category/${d.category}/` },
+    { label: d.title },
+  ]} />
+
+  <figure
+    class="section post-single__hero"
+    data-section-type="post-hero"
+    data-section-label="Post hero"
+    data-section-variants="A:Overlay,B:Compact,C:Subdued"
+  >
+    <img
+      src={d.cover.src}
+      alt={d.cover.alt}
+      width="1600"
+      height="900"
+      loading="eager"
+      decoding="sync"
+      fetchpriority="high"
+    />
+    <div class="post-single__hero-overlay">
+      <div class="post-single__hero-inner">
+        <div class="post-single__meta">
+          <a class="post-single__category" href={`/category/${d.category}/`}>
+            {categoryName ?? d.category}
+          </a>
+          <time datetime={d.date.toISOString()}>{dateStr}</time>
+          <span>{reading}</span>
+          {d.cover.credit && <span>{d.cover.credit}</span>}
+        </div>
+        <h1 class="post-single__headline">{d.title}</h1>
+        <p class="post-single__dek">{d.excerpt}</p>
+      </div>
+    </div>
+  </figure>
+
+  <section
+    class="section post-single__byline"
+    data-section-type="post-byline"
+    data-section-label="Byline"
+    data-section-variants="A:Default,B:Centered"
+  >
+    <div class="post-single__byline-inner">
+      {displayAuthor ? (
+        <a class="post-single__author" href={author ? `/author/${author.data.id}/` : '#'} aria-label={`More from ${displayAuthor}`}>
+          <span class="post-single__author-avatar" aria-hidden="true">
+            {a?.avatar
+              ? <img src={a.avatar} alt="" width="36" height="36" loading="lazy" />
+              : <span class="post-single__author-initials">{initials || '·'}</span>}
+          </span>
+          <span class="post-single__author-text">
+            <span class="post-single__author-name">{displayAuthor}</span>
+            {brand.tagline && <span class="post-single__author-role">{brand.tagline}</span>}
+          </span>
+        </a>
+      ) : <span></span>}
+
+      <ul class="post-single__share" aria-label="Share">
+        <li>
+          <a class="post-single__share-btn" href={shareTwitter} target="_blank" rel="noopener noreferrer" aria-label="Share on X">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </li>
+        <li>
+          <button class="post-single__share-btn" type="button" data-copy-url={url} aria-label="Copy link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </button>
+        </li>
+        <li>
+          <button class="post-single__share-btn" type="button" data-bookmark={d.slug} aria-label="Bookmark" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section
+    class="section post-single__grid"
+    data-section-type="post-body"
+    data-section-label="Article body"
+    data-section-variants="A:ThreeColumn,B:Centered,C:Wide"
+  >
+    <aside class="post-single__rail-left" aria-hidden="false">
+      <div>
+        <div class="post-single__rail-label">Reading</div>
+        <div class="post-single__progress" aria-hidden="true">
+          <div class="post-single__progress-fill" data-progress-fill></div>
+        </div>
+      </div>
+      <ul class="post-single__rail-share" aria-label="Share">
+        <li>
+          <a class="post-single__share-btn" href={shareTwitter} target="_blank" rel="noopener noreferrer" aria-label="Share on X">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </li>
+        <li>
+          <button class="post-single__share-btn" type="button" data-copy-url={url} aria-label="Copy link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </button>
+        </li>
+        <li>
+          <a class="post-single__share-btn" href={shareEmail} aria-label="Share by email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <button class="post-single__share-btn" type="button" data-bookmark={d.slug} aria-label="Bookmark" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </li>
+      </ul>
+      <div class="post-single__time-left" data-time-left>{reading}</div>
+    </aside>
+
+    <div class="post-single__article" data-article>
+      <Content />
+    </div>
+
+    {tocItems.length > 0 && (
+      <aside class="post-single__rail-right" aria-label="In this article">
+        <div>
+          <div class="post-single__rail-label">In this article</div>
+          <ol class="post-single__toc-list" data-toc>
+            {tocItems.map((h) => (
+              <li data-toc-target={h.slug}><a href={`#${h.slug}`}>{h.text}</a></li>
+            ))}
+          </ol>
+        </div>
+      </aside>
+    )}
+  </section>
+
+  <section
+    class="section post-single__engage"
+    data-section-type="post-engage"
+    data-section-label="Engagement bar"
+    data-section-variants="A:Default,B:Compact"
+  >
+    {d.tags.length > 0 ? (
+      <ul class="post-single__tags">
+        {d.tags.map((t) => (
+          <li><a class="post-single__tag" href={`/tag/${t}/`}>#{t}</a></li>
+        ))}
+      </ul>
+    ) : <span></span>}
+    <ul class="post-single__engage-actions">
+      <li><a href={shareTwitter} target="_blank" rel="noopener noreferrer">Share on X</a></li>
+      <li><button type="button" data-copy-url={url}>Copy link</button></li>
+      <li><a href={shareEmail}>Email</a></li>
+    </ul>
+  </section>
+
+  <section
+    class="section post-single__bottom"
+    data-section-type="post-bottom"
+    data-section-label="Bottom zone"
+    data-section-variants="A:TwoColumn,B:Stacked"
+  >
+    {author ? (
+      <article class="post-single__author-card">
+        <div class="post-single__author-card-head">
+          <span class="post-single__author-avatar" aria-hidden="true">
+            {a?.avatar
+              ? <img src={a.avatar} alt="" width="36" height="36" loading="lazy" />
+              : <span class="post-single__author-initials">{initials || '·'}</span>}
+          </span>
+          <h3 class="post-single__author-card-name">{a?.name}</h3>
+        </div>
+        {a?.bio && <p class="post-single__author-card-bio">{a.bio}</p>}
+        <a class="post-single__author-card-more" href={`/author/${author.data.id}/`}>More from {a?.name} →</a>
+      </article>
+    ) : <span></span>}
+
+    {prev ? (
+      <a class="post-single__older" href={`/post/${prev.data.slug}/`}>
+        <span class="post-single__older-label">← Older Story</span>
+        <h3>{prev.data.title}</h3>
+        <span class="post-single__older-cta">Continue reading →</span>
+      </a>
+    ) : <span></span>}
+  </section>
+
+  <div class="post-single__mobile-share" aria-label="Share (mobile)">
+    <ul class="post-single__mobile-share-list">
+      <li>
+        <a class="post-single__share-btn" href={shareTwitter} target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span>X</span>
+        </a>
+      </li>
+      <li>
+        <button class="post-single__share-btn" type="button" data-copy-url={url}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span>Copy</span>
+        </button>
+      </li>
+      <li>
+        <button class="post-single__share-btn" type="button" data-bookmark={d.slug} aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span>Save</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</article>
+
+<script>
+  // Copy-link buttons (multiple instances: byline, left rail, engagement bar, mobile bar).
+  document.querySelectorAll('[data-copy-url]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const target = btn as HTMLElement;
+      const url = target.getAttribute('data-copy-url') ?? location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+        const original = target.getAttribute('aria-label') || target.textContent;
+        const label = target.querySelector('span');
+        if (label) {
+          const orig = label.textContent;
+          label.textContent = 'Copied!';
+          setTimeout(() => { label.textContent = orig ?? ''; }, 1600);
+        } else {
+          target.classList.add('is-active');
+          setTimeout(() => target.classList.remove('is-active'), 1600);
+          target.setAttribute('aria-label', 'Copied!');
+          setTimeout(() => target.setAttribute('aria-label', original ?? 'Copy link'), 1600);
+        }
+      } catch {
+        /* clipboard API unavailable; silently degrade */
+      }
+    });
+  });
+
+  // Bookmark toggle. Persists slug to localStorage so the bookmark
+  // state survives reloads and matches across the byline + rail + mobile bar.
+  const STORAGE_KEY = 'swiftdigest:bookmarks';
+  function readBookmarks(): string[] {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter((s) => typeof s === 'string') : [];
+    } catch { return []; }
+  }
+  function writeBookmarks(list: string[]) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch { /* quota / disabled */ }
+  }
+  function syncBookmarkButtons(slug: string, active: boolean) {
+    document.querySelectorAll(`[data-bookmark="${slug}"]`).forEach((b) => {
+      b.classList.toggle('is-active', active);
+      (b as HTMLElement).setAttribute('aria-pressed', String(active));
+    });
+  }
+  document.querySelectorAll<HTMLElement>('[data-bookmark]').forEach((btn) => {
+    const slug = btn.getAttribute('data-bookmark') ?? '';
+    if (!slug) return;
+    if (readBookmarks().includes(slug)) syncBookmarkButtons(slug, true);
+    btn.addEventListener('click', () => {
+      const list = readBookmarks();
+      const idx = list.indexOf(slug);
+      if (idx === -1) list.push(slug);
+      else list.splice(idx, 1);
+      writeBookmarks(list);
+      syncBookmarkButtons(slug, idx === -1);
+    });
+  });
+
+  // Reading progress + time-remaining counter. Bound to the article column,
+  // not viewport scroll: progress = how much of the article body has scrolled
+  // past the bottom of the viewport, capped at 100%.
+  const article = document.querySelector<HTMLElement>('[data-article]');
+  const progressFill = document.querySelector<HTMLElement>('[data-progress-fill]');
+  const timeLeftEl = document.querySelector<HTMLElement>('[data-time-left]');
+  const READING_WPM = 220;
+  let totalWords = 0;
+  if (article) {
+    totalWords = (article.innerText || '').trim().split(/\s+/).filter(Boolean).length;
+  }
+  let rafQueued = false;
+  function updateProgress() {
+    rafQueued = false;
+    if (!article) return;
+    const rect = article.getBoundingClientRect();
+    const viewport = window.innerHeight || document.documentElement.clientHeight;
+    const total = rect.height;
+    if (total <= 0) return;
+    const passed = Math.min(Math.max(viewport - rect.top, 0), total);
+    const pct = Math.max(0, Math.min(1, passed / total));
+    if (progressFill) progressFill.style.setProperty('--ps-read', `${(pct * 100).toFixed(2)}%`);
+    if (timeLeftEl && totalWords > 0) {
+      const remainingWords = Math.max(0, totalWords * (1 - pct));
+      const minutes = Math.max(0, Math.ceil(remainingWords / READING_WPM));
+      const m = Math.floor(minutes);
+      const s = Math.round((remainingWords / READING_WPM - m) * 60);
+      const display = m > 0
+        ? `${m}:${String(Math.max(0, Math.min(59, s))).padStart(2, '0')} left`
+        : `Done`;
+      timeLeftEl.textContent = display;
+    }
+  }
+  function onScroll() {
+    if (rafQueued) return;
+    rafQueued = true;
+    requestAnimationFrame(updateProgress);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  updateProgress();
+
+  // TOC active-state via IntersectionObserver on H3s in the article.
+  const tocList = document.querySelector('[data-toc]');
+  if (tocList && article) {
+    const map = new Map<string, HTMLElement>();
+    tocList.querySelectorAll<HTMLElement>('[data-toc-target]').forEach((li) => {
+      const slug = li.getAttribute('data-toc-target');
+      if (slug) map.set(slug, li);
+    });
+    const headings = Array.from(article.querySelectorAll<HTMLHeadingElement>('h3[id]'));
+    if (headings.length > 0) {
+      let activeSlug: string | null = null;
+      const setActive = (slug: string | null) => {
+        if (slug === activeSlug) return;
+        activeSlug = slug;
+        map.forEach((li, s) => li.classList.toggle('is-active', s === slug));
+      };
+      const io = new IntersectionObserver((entries) => {
+        // Pick the entry closest to the top of the viewport that is intersecting.
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setActive((visible[0].target as HTMLElement).id);
+        }
+      }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+      headings.forEach((h) => io.observe(h));
+    }
+  }
+</script>

@@ -1,0 +1,21 @@
+{
+  "name": "copy-input",
+  "assets": {
+    "css": ["copy-input.css"],
+    "js":  ["copy-input.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "input[data-aed-copy]",
+        "description": "Read-only-style input field with an attached copy button. The button copies the input's current value.",
+        "fields": {
+          "data-aed-copy":               { "type": "boolean", "required": true,           "description": "Opt-in marker." },
+          "data-aed-copy-label":         { "type": "string",  "default": "Copy",          "description": "Initial copy-button label." },
+          "data-aed-copy-copied-label":  { "type": "string",  "default": "Copied",        "description": "Label shown briefly after a successful copy." },
+          "data-aed-copy-select-on-focus": { "type": "boolean", "default": false,         "description": "Auto-select the field's value when the user focuses it." }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,268 @@
+---
+/**
+ * AboutSplit
+ *
+ * Image-on-one-side / prose-on-the-other introductory block. The third
+ * member of the editorial trio: where DesignBreak is a full-bleed
+ * atmospheric breath and ContentSection is a typographic room, AboutSplit
+ * pairs prose with a single feature image side-by-side. Use it as a
+ * homepage about-teaser, a story-of-the-business band, or any place where
+ * one image plus 1-3 paragraphs needs to land together.
+ *
+ * Three brand-styled variants (declared via `data-section-variants`):
+ *   A "Default"   — image left, text right (standard treatment)
+ *   B "Reversed"  — image right, text left (alternates rhythm)
+ *   C "Compact"   — smaller image, body capped to one paragraph
+ *
+ * Behavior the brand CSS opts into (no JS in this component except the
+ * cycler below):
+ *   - Body container fades + rises in via the canonical aedSectionElEnter
+ *     view-timeline keyframe. Image enters with the text rather than as a
+ *     separate beat.
+ *   - Image stickies on scroll at desktop breakpoints so the visual
+ *     holds while the reader scrolls through the body. On mobile the
+ *     section stacks single-column with the image on top.
+ *
+ * Optional `cycle` deck — when supplied, the static image is replaced
+ * with an auto-rotating stack of clickable frames (each links out to a
+ * work site or in to a service page). Frames cross-fade every ~4.5s,
+ * pause on hover/focus, and expose dot navigation for direct jumps.
+ *
+ * Theme-aware via brand tokens (vibrant / dark / light) and the
+ * per-section override system (data-sec-theme: primary / light / white /
+ * dark / black) — see per-brand CSS for surface treatments.
+ */
+export interface CycleFrame {
+  src: string;
+  alt?: string;
+  href: string;
+  label?: string;
+  meta?: string;
+  urlLabel?: string;
+}
+export interface Props {
+  sectionLabel?: string;
+  heading: string;
+  body: string | string[];
+  image: string;
+  imageAlt?: string;
+  cta: { label: string; href: string };
+  variant?: 'A' | 'B' | 'C';
+  cycle?: CycleFrame[];
+}
+
+const { sectionLabel, heading, body, image, imageAlt, cta, cycle } = Astro.props;
+const paragraphs = Array.isArray(body) ? body : [body];
+const hasCycle = Array.isArray(cycle) && cycle.length >= 2;
+const isExternal = (href: string) => /^https?:\/\//i.test(href);
+---
+
+<section
+  class="about-split"
+  data-section-type="about-split"
+  data-section-label="About split"
+  data-section-variants="A:Default,B:Reversed,C:Compact"
+>
+  <div class="about-split__inner">
+    <div class={`about-split__media${hasCycle ? ' about-split__media--cycle' : ''}`}>
+      {hasCycle ? (
+        <div class="about-split__cycler" data-about-cycler data-cycle-count={cycle!.length}>
+          <div class="about-split__cycle-frames">
+            {cycle!.map((frame, i) => (
+              <a
+                class={`about-split__cycle-frame${i === 0 ? ' is-active' : ''}`}
+                href={frame.href}
+                target={isExternal(frame.href) ? '_blank' : '_self'}
+                rel={isExternal(frame.href) ? 'noopener noreferrer' : undefined}
+                aria-label={frame.label ? `Open ${frame.label}` : 'Open project'}
+                data-cycle-index={i}
+                aria-hidden={i === 0 ? 'false' : 'true'}
+                tabindex={i === 0 ? 0 : -1}
+              >
+                <img
+                  class="about-split__image"
+                  src={frame.src}
+                  alt={frame.alt ?? frame.label ?? ''}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+                {(frame.label || frame.meta || frame.urlLabel) && (
+                  <span class="about-split__cycle-caption">
+                    {frame.label && (
+                      <span class="about-split__cycle-caption-title">{frame.label}</span>
+                    )}
+                    {frame.meta && (
+                      <span class="about-split__cycle-caption-meta">{frame.meta}</span>
+                    )}
+                    {frame.urlLabel && (
+                      <span class="about-split__cycle-caption-url">
+                        <span class="about-split__cycle-caption-url-text">{frame.urlLabel}</span>
+                        <span class="about-split__cycle-caption-icon" aria-hidden="true">
+                          {isExternal(frame.href) ? '↗' : '→'}
+                        </span>
+                      </span>
+                    )}
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
+          <div class="about-split__cycle-progress" aria-hidden="true">
+            <span class="about-split__cycle-progress-bar"></span>
+          </div>
+          <div class="about-split__cycle-dots" role="tablist" aria-label="Featured projects and services">
+            {cycle!.map((frame, i) => (
+              <button
+                type="button"
+                class={`about-split__cycle-dot${i === 0 ? ' is-active' : ''}`}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-label={frame.label ?? `Frame ${i + 1}`}
+                data-cycle-target={i}
+              ></button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <img
+          class="about-split__image"
+          src={image}
+          alt={imageAlt ?? ''}
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+    </div>
+    <div class="about-split__copy">
+      {sectionLabel && <p class="about-split__eyebrow">{sectionLabel}</p>}
+      <h2 class="about-split__heading">{heading}</h2>
+      <div class="about-split__body">
+        {paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+      <a class="about-split__cta" href={cta.href}>{cta.label}</a>
+    </div>
+  </div>
+</section>
+
+{hasCycle && (
+  <script is:inline>
+    (function () {
+      var roots = document.querySelectorAll('[data-about-cycler]');
+      if (!roots.length) return;
+      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var INTERVAL = 4500;
+      roots.forEach(function (root) {
+        if (root.__aedAboutCyclerInit) return;
+        root.__aedAboutCyclerInit = true;
+        var frames = root.querySelectorAll('.about-split__cycle-frame');
+        var dots = root.querySelectorAll('.about-split__cycle-dot');
+        var bar = root.querySelector('.about-split__cycle-progress-bar');
+        if (frames.length < 2) return;
+        var idx = 0;
+        var paused = false;
+        var visible = true;
+        var timer = null;
+        var advance = function (next) {
+          frames[idx].classList.remove('is-active');
+          frames[idx].setAttribute('aria-hidden', 'true');
+          frames[idx].setAttribute('tabindex', '-1');
+          if (dots[idx]) {
+            dots[idx].classList.remove('is-active');
+            dots[idx].setAttribute('aria-selected', 'false');
+          }
+          idx = ((next == null ? idx + 1 : next) + frames.length) % frames.length;
+          frames[idx].classList.add('is-active');
+          frames[idx].setAttribute('aria-hidden', 'false');
+          frames[idx].setAttribute('tabindex', '0');
+          if (dots[idx]) {
+            dots[idx].classList.add('is-active');
+            dots[idx].setAttribute('aria-selected', 'true');
+          }
+          if (bar) {
+            bar.style.animation = 'none';
+            void bar.offsetWidth;
+            bar.style.animation = '';
+          }
+        };
+        var schedule = function () {
+          if (timer) clearTimeout(timer);
+          if (prefersReduced || paused || !visible) return;
+          timer = setTimeout(function () { advance(); schedule(); }, INTERVAL);
+        };
+        var pause = function () { paused = true; if (timer) clearTimeout(timer); if (bar) bar.style.animationPlayState = 'paused'; };
+        var resume = function () { paused = false; if (bar) bar.style.animationPlayState = 'running'; schedule(); };
+        root.addEventListener('mouseenter', pause);
+        root.addEventListener('mouseleave', resume);
+        root.addEventListener('focusin', pause);
+        root.addEventListener('focusout', function (e) {
+          if (!root.contains(e.relatedTarget)) resume();
+        });
+        dots.forEach(function (dot) {
+          dot.addEventListener('click', function () {
+            var t = parseInt(dot.getAttribute('data-cycle-target') || '0', 10);
+            if (!isNaN(t) && t !== idx) advance(t);
+            schedule();
+          });
+        });
+        // Touch-swipe navigation (left = next, right = prev). The
+        // cycler has `touch-action: pan-y` so vertical scroll still
+        // works through the cell while horizontal gestures land here
+        // instead of triggering iOS swipe-back. We require horizontal
+        // dominance (|dx| > 1.5*|dy|) and a minimum 40px / 800ms
+        // commitment to avoid hijacking accidental drags. When a
+        // swipe commits we suppress the trailing click so the wrapping
+        // <a> doesn't navigate to the case study mid-gesture.
+        var sx = 0, sy = 0, st = 0, swipeArmed = false, suppressClick = false;
+        root.addEventListener('touchstart', function (e) {
+          if (e.touches.length !== 1) { swipeArmed = false; return; }
+          sx = e.touches[0].clientX;
+          sy = e.touches[0].clientY;
+          st = Date.now();
+          swipeArmed = true;
+        }, { passive: true });
+        root.addEventListener('touchmove', function (e) {
+          if (!swipeArmed || e.touches.length !== 1) return;
+          var dx = e.touches[0].clientX - sx;
+          var dy = e.touches[0].clientY - sy;
+          // Once the user clearly commits to vertical scroll, disarm
+          // so we don't pull the trigger on touchend.
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) {
+            swipeArmed = false;
+          }
+        }, { passive: true });
+        root.addEventListener('touchend', function (e) {
+          if (!swipeArmed) return;
+          swipeArmed = false;
+          var t = e.changedTouches && e.changedTouches[0];
+          if (!t) return;
+          var dx = t.clientX - sx;
+          var dy = t.clientY - sy;
+          var dt = Date.now() - st;
+          if (dt > 800) return;
+          if (Math.abs(dx) < 40) return;
+          if (Math.abs(dx) < Math.abs(dy) * 1.5) return;
+          advance(dx < 0 ? idx + 1 : idx - 1);
+          schedule();
+          suppressClick = true;
+        });
+        // Capture-phase click suppression: must run before the <a>'s
+        // default action. Reset on the next frame so a real subsequent
+        // tap still navigates.
+        root.addEventListener('click', function (e) {
+          if (!suppressClick) return;
+          suppressClick = false;
+          e.preventDefault();
+          e.stopPropagation();
+        }, true);
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) { visible = e.isIntersecting; visible ? schedule() : (timer && clearTimeout(timer)); });
+          }, { threshold: 0.15 });
+          io.observe(root);
+        } else {
+          schedule();
+        }
+      });
+    })();
+  </script>
+)}

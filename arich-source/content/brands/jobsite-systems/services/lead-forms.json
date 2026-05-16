@@ -1,0 +1,135 @@
+{
+  "slug": "lead-forms",
+  "order": 2,
+  "number": "02",
+  "iconKey": "mail",
+  "inclusionLabel": "Included with every site",
+  "heroImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "heroImageAlt": "Owner taking a call from the truck — the moment an estimate request turns into work",
+  "title": "Estimate Request Forms",
+  "headline": "Estimate Requests\nThat Actually Land.",
+  "shortDescription": "A short, mobile-friendly estimate-request form that emails you directly. Spam-protected. Structured for trade work — job address, what's broken, urgency, optional photos.",
+  "lead": "A simple estimate-request form that lands in your inbox the second someone hits submit. No third-party directory taking a cut, no spam flood, no logging in to a marketplace to see who reached out. The form is built around the realities of trade work: name, contact preference, what trade or service they need, the job address (or just town if they're not ready to share it), urgency, and an optional photo upload so you can see the leak, the dent, or the busted panel before you drive out.",
+  "pricingCallout": "Included with every Jobsite Systems site",
+  "anchorNav": [
+    { "label": "Overview", "href": "#main" },
+    { "label": "What You Get", "href": "#what-you-get" },
+    { "label": "Why It Matters", "href": "#why-it-matters" },
+    { "label": "Perfect For", "href": "#perfect-for" },
+    { "label": "Pricing", "href": "/pricing/" },
+    { "label": "FAQ", "href": "#faq" }
+  ],
+  "inlineTestimonial": {
+    "id": "amanda-r",
+    "placeAfter": 0
+  },
+  "seo": {
+    "title": "Estimate Request Forms for Trade Businesses",
+    "description": "Simple, mobile-first estimate-request forms that email you directly. Structured for trade work, with optional photo upload and clean spam protection.",
+    "schemaName": "Estimate Request Form Setup",
+    "schemaDescription": "Built-in contact and estimate-request forms for trade-business websites — structured for trade work, with spam protection, direct email delivery, and optional photo upload."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "id": "what-you-get",
+      "variant": "showcase",
+      "heading": "What You Get",
+      "intro": "A practical estimate-request form tuned for trade businesses — not a generic contact form. The right surface for first contact, with enough structure to triage between jobs.",
+      "items": [
+        { "label": "Built for trade work", "body": "Name, contact preference, trade or service needed, job address or town, urgency, short description — fields tuned for the questions you actually need answered before quoting" },
+        { "label": "Mobile-first layout", "body": "Big buttons, easy keyboards, no scroll-to-submit frustrations" },
+        { "label": "Optional photo upload", "body": "Customers attach pictures of the busted water heater or the rotted deck so you can scope before driving out" },
+        { "label": "Emails to you directly", "body": "New estimate requests go straight to the email(s) you choose — solo inbox, dispatch address, or both" },
+        { "label": "Spam protection", "body": "Built-in bot filtering so your inbox stays clean" },
+        { "label": "Optional add-ons", "body": "Service-line dropdowns, service-area ZIP check, urgent-vs-routine toggle, residential-vs-commercial routing" }
+      ]
+    },
+    {
+      "type": "feature",
+      "id": "why-it-matters",
+      "theme": "white",
+      "heading": "Why This Matters",
+      "body": "Most trade businesses route web inquiries through a directory like Angi or HomeAdvisor that controls the relationship and adds another login — and takes a cut of every job:",
+      "items": [
+        "Form submits go directly to email (or multiple inboxes) — no marketplace middleman",
+        "No login, no portal, no third-party fees on the work",
+        "Job photos arrive with the request so you can quote without a site visit when you don't need one",
+        "Works on any phone, including older Android",
+        "Easy to scan — you can read between jobs, on the truck, or at the supply house"
+      ]
+    },
+    {
+      "type": "list",
+      "id": "perfect-for",
+      "heading": "Perfect For",
+      "intro": "Estimate-request forms are the cheapest part of a website to get wrong, and the most expensive thing to leave broken. If any of these are you, this fix pays for itself fast.",
+      "variant": "grid",
+      "cols": 2,
+      "items": [
+        {
+          "label": "Form that silently drops requests",
+          "body": "Someone hits submit, nothing happens, you never see the email. A real customer just bounced and you don't even know it. We test every submission path end-to-end.",
+          "iconKey": "zap"
+        },
+        {
+          "label": "Form with no useful info",
+          "body": "Your current form just has \"name\" and \"message,\" and every request comes in saying \"need a quote\" with no address, no urgency, no photo. You waste hours on phone tag. We tighten the fields so you can quote.",
+          "iconKey": "shield"
+        },
+        {
+          "label": "Tired of paying directories",
+          "body": "Angi, HomeAdvisor, Houzz, Thumbtack — they take a slice of your visibility every month and route requests through their own portal. Your own form keeps the whole job.",
+          "iconKey": "tag"
+        },
+        {
+          "label": "Solo operator, inbox between jobs",
+          "body": "You have ten minutes between jobs. You don't have time to log into a portal. You want an email the moment a request comes in so you can reply before the day ends.",
+          "iconKey": "user"
+        },
+        {
+          "label": "Drowning in unstructured requests",
+          "body": "Requests come in from your personal email, voicemail, the form, and three different directories. You want everything funneled into one inbox so triage is consistent.",
+          "iconKey": "grid"
+        }
+      ]
+    }
+  ],
+  "serviceFaq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions about Estimate-Request Forms",
+    "faqs": [
+      {
+        "question": "What information does the form actually capture?",
+        "answer": "Name, contact preference (phone/text/email), trade or service needed, job address or town, urgency (emergency, this week, flexible), a short description, and optional photo upload. We tune the exact fields to your trade — a plumber's form will look slightly different from a finish carpenter's."
+      },
+      {
+        "question": "Do you have spam protection on the form?",
+        "answer": "Yes. We use bot-filtering that doesn't make a real customer solve a puzzle. Most spam never lands in your inbox; what slips through is rare and easy to spot."
+      },
+      {
+        "question": "Will the form work on phones — including older Androids?",
+        "answer": "Yes. Mobile-first is the default — big tap targets, sensible keyboard types per field, no scroll-to-submit frustrations. We test on real devices, not just emulators."
+      },
+      {
+        "question": "Can submissions go to multiple people in a multi-crew shop?",
+        "answer": "Yes. Send to a single dispatch address, multiple crew leads, or route by service if you want, say, HVAC requests going to one address and plumbing to another."
+      },
+      {
+        "question": "Where do submissions actually go — is there a portal?",
+        "answer": "No portal — submissions arrive as a regular email in your inbox the second a customer hits submit. No login. No app. Just email."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Want estimate requests straight to your inbox?",
+    "body": "Included free with every Jobsite Systems site. Start the conversation and we'll have it live in about two weeks.",
+    "label": "Start Your Site",
+    "href": "/contact/",
+    "actions": [
+      { "label": "Start Your Site", "href": "/contact/", "variant": "primary" },
+      { "label": "See Pricing", "href": "/pricing/", "variant": "secondary" },
+      { "label": "See Examples", "href": "/work/", "variant": "tertiary" }
+    ]
+  }
+}

@@ -1,0 +1,262 @@
+---
+import { getEntry } from 'astro:content';
+import { brand } from '../../../builder/lib/brand';
+import Base from '../../../builder/layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const entry = await getEntry('pages', 'pricing');
+  if (!entry) return [];
+  const d: any = entry.data;
+  if (!d.billing) return [];
+
+  const groups: any[] = d.tierGroups?.groups?.length
+    ? d.tierGroups.groups
+    : (d.tiers?.length ? [{ id: 'default', label: null, tiers: d.tiers }] : []);
+  const cycles = ['monthly', 'yearly'];
+
+  const paths: any[] = [];
+  for (const g of groups) {
+    for (const t of (g.tiers ?? [])) {
+      if (!t.id) continue;
+      for (const c of cycles) {
+        paths.push({
+          params: { tier: t.id, cycle: c },
+          props: { tier: t, cycle: c, group: g, billing: d.billing },
+        });
+      }
+    }
+  }
+  return paths;
+}
+
+const { tier, cycle, group, billing } = Astro.props as any;
+
+const nicheRaw = (brand as any).niche || 'business';
+const nicheCap = nicheRaw.replace(/\b\w/g, (c: string) => c.toUpperCase());
+
+const discount = typeof billing.discount === 'number' ? billing.discount : 0.30;
+const priceNum = parseFloat((/(\d+(?:\.\d+)?)/.exec(tier.price || '') || [,'0'])[1]);
+const yearlyMonthlyNum = Math.round(priceNum * (1 - discount));
+const yearlyDisplay = tier.price.replace(/\d+(?:\.\d+)?/, String(yearlyMonthlyNum));
+const displayPrice = cycle === 'yearly' ? yearlyDisplay : tier.price;
+const struckMonthly = cycle === 'yearly' ? tier.price : null;
+const billedNote = cycle === 'yearly'
+  ? (billing.yearlyNote || 'billed annually')
+  : (billing.monthlyNote || 'billed monthly');
+const savePill = cycle === 'yearly' ? (billing.savePill || `Save ${Math.round(discount * 100)}%`) : null;
+const currencyPrefix = (tier.price.match(/^[^\d]*/) || [''])[0];
+const yearlyTotalDisplay = cycle === 'yearly'
+  ? `${currencyPrefix}${(yearlyMonthlyNum * 12).toLocaleString('en-US')}`
+  : null;
+
+const planLabel = `${group?.label ? group.label + ' — ' : ''}${tier.name}`;
+const title = `Start ${planLabel} (${cycle === 'yearly' ? 'yearly' : 'monthly'}) — ${brand.name}`;
+const description = `Confirm your details to start the ${planLabel} plan, billed ${cycle === 'yearly' ? 'annually' : 'monthly'}.`;
+---
+
+<Base title={title} description={description} indexable={false} chromeless skipTarget="#checkout">
+  <div
+    class="checkout-shell"
+    data-section-type="checkout"
+    data-section-label="Checkout"
+    data-section-variants="A:Default,B:Compact"
+  >
+    <header class="checkout-topbar">
+      <a href="/" class="checkout-home" aria-label={`${brand.name} home`}>
+        <span class="checkout-home-label">{brand.name}</span>
+      </a>
+      <a href="/pricing/" class="checkout-back">← Change plan</a>
+    </header>
+
+    <main class="checkout-main" id="checkout">
+      <section class="checkout-summary" aria-labelledby="checkout-plan-heading">
+        <div class="checkout-cycle-pill" data-cycle={cycle}>
+          {cycle === 'yearly' ? 'Yearly billing' : 'Monthly billing'}
+        </div>
+        <h1 id="checkout-plan-heading" class="checkout-plan-name">{tier.name}</h1>
+        {group?.label && <p class="checkout-plan-group">{group.label}</p>}
+        <div class="checkout-price-row">
+          {struckMonthly && <span class="checkout-price-was">{struckMonthly}</span>}
+          <span class="checkout-price-now">{displayPrice}</span>
+          {tier.priceSuffix && <span class="checkout-price-suffix">{tier.priceSuffix}</span>}
+        </div>
+        {savePill && <div class="checkout-save-pill">{savePill}</div>}
+        <p class="checkout-billed-note">{billedNote}</p>
+        {yearlyTotalDisplay && (
+          <p class="checkout-yearly-total">{yearlyTotalDisplay} total per year</p>
+        )}
+        {tier.description && <p class="checkout-plan-desc">{tier.description}</p>}
+        {tier.features && (
+          <ul class="checkout-features">
+            {tier.features
+              .filter((f: any) => typeof f === 'string' || f?.included !== false)
+              .map((f: any) => (
+                <li>{typeof f === 'string' ? f : f?.name}</li>
+              ))}
+          </ul>
+        )}
+        <a href="/pricing/" class="checkout-switch-cycle">
+          Switch to {cycle === 'yearly' ? 'monthly' : 'yearly'} billing
+        </a>
+      </section>
+
+      <section class="checkout-form-wrap" aria-labelledby="checkout-form-heading">
+        <h2 id="checkout-form-heading">Tell us about your business</h2>
+        <p class="checkout-form-lead">
+          A few details so we can prepare your onboarding. The next step is payment — we'll email you a secure link once this is submitted.
+        </p>
+        <form
+          class="checkout-form"
+          data-checkout-form
+          action="https://contact-proxy.anthony-abc.workers.dev"
+          method="POST"
+          novalidate
+        >
+          <input type="hidden" name="brand" value={import.meta.env.PUBLIC_BRAND} />
+          {/* Routing hint for the contact-proxy worker: checkout leads go to
+              the sales inbox, not the general contact mailbox. If the proxy
+              honors `recipient`, it will route here; otherwise the brand-level
+              mapping on the worker remains the source of truth. */}
+          {/* `recipient` was a hint for an older worker draft; current worker
+              ignores it and uses the brand's `to` address. Left as-is for
+              audit / debugging context — visible in the email body. */}
+          <input type="hidden" name="recipient" value={`lead@${brand.domain}`} />
+          <input type="hidden" name="_subject" value={`New signup — ${brand.name}: ${planLabel} (${cycle}) — ${displayPrice}`} />
+          {/* form_source lets the worker distinguish pricing-checkout leads
+              from general /contact/ leads for routing / filtering / subject
+              decoration. Matches the "like any other form submission"
+              pipeline conceptually — same endpoint, tagged source. */}
+          <input type="hidden" name="form_source" value="pricing-checkout" />
+          <input type="hidden" name="plan_tier" value={tier.id} />
+          <input type="hidden" name="plan_name" value={tier.name} />
+          <input type="hidden" name="plan_group" value={group?.id ?? ''} />
+          <input type="hidden" name="billing_cycle" value={cycle} />
+          <input type="hidden" name="price_display" value={displayPrice} />
+          <input type="hidden" name="terms" value="agreed-at-checkout" />
+          {/* `message` is composed from form fields in JS and added to the
+              FormData payload before submit — no DOM input needed. */}
+
+          {/* Honeypot — hidden from humans, filled by naive bots. The inline
+              submit handler strips the field and silently fake-succeeds if
+              it's populated, matching the forms addon convention. */}
+          <label class="aed-form-honeypot" aria-hidden="true">
+            Leave this field empty
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          </label>
+
+          <div class="checkout-field">
+            <label for="cf-name">Your full name</label>
+            <input id="cf-name" name="name" type="text" autocomplete="name" autocapitalize="words" required minlength="2" />
+          </div>
+
+          <div class="checkout-field">
+            <label for="cf-company">{nicheCap} name</label>
+            <input id="cf-company" name="company" type="text" autocomplete="organization" required minlength="2" />
+          </div>
+
+          <div class="checkout-row">
+            <div class="checkout-field">
+              <label for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" required />
+            </div>
+            <div class="checkout-field">
+              <label for="cf-phone">Phone</label>
+              <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+            </div>
+          </div>
+
+          <div class="checkout-field">
+            <label for="cf-area">Primary service area (city, state)</label>
+            <input id="cf-area" name="service_area" type="text" autocomplete="address-level2" placeholder="e.g. Denver, CO" required />
+          </div>
+
+          <div class="checkout-field">
+            <label for="cf-notes">Anything specific we should know? (optional)</label>
+            <textarea id="cf-notes" name="notes" rows="4" placeholder="Existing site URL, target launch date, must-have features…"></textarea>
+          </div>
+
+          <button type="submit" class="checkout-submit">
+            Continue to payment →
+          </button>
+          <p class="checkout-legal">
+            No charge yet. Submitting sends your details to our team. Next, you'll set up ACH via GoCardless to confirm your plan.
+          </p>
+        </form>
+
+        <div class="checkout-error" data-checkout-error hidden role="alert">
+          <strong>Couldn't send.</strong> <span data-checkout-error-msg></span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="checkout-footer">
+      <p>Secure signup — your details are never shared. © {new Date().getFullYear()} {brand.name}.</p>
+    </footer>
+  </div>
+
+  <script is:inline define:vars={{ successPath: Astro.url.pathname.replace(/\/?$/, '/') + 'success/', helpEmail: brand.contact.email }}>
+    (function(){
+      var form = document.querySelector('[data-checkout-form]');
+      var errorEl = document.querySelector('[data-checkout-error]');
+      if (!form) return;
+
+      function composeMessage(fd){
+        var parts = [];
+        parts.push('Plan: ' + (fd.get('plan_name') || '') + ' (' + (fd.get('billing_cycle') || '') + ')');
+        parts.push('Price: ' + (fd.get('price_display') || ''));
+        if (fd.get('company')) parts.push('Company: ' + fd.get('company'));
+        if (fd.get('phone')) parts.push('Phone: ' + fd.get('phone'));
+        if (fd.get('service_area')) parts.push('Service area: ' + fd.get('service_area'));
+        var notes = fd.get('notes');
+        parts.push('Notes: ' + (notes && String(notes).trim() ? notes : '(none)'));
+        return parts.join('\n');
+      }
+
+      function showError(msg){
+        if (!errorEl) { alert(msg); return; }
+        var span = errorEl.querySelector('[data-checkout-error-msg]');
+        if (span) span.textContent = msg;
+        errorEl.hidden = false;
+        errorEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+      function clearError(){ if (errorEl) errorEl.hidden = true; }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (!form.reportValidity()) return;
+
+        var fd = new FormData(form);
+
+        // Honeypot: bot-filled means silent fake-success — redirect to /success/
+        // without hitting the network, mirroring the forms.js addon convention.
+        if (fd.get('_gotcha')) { window.location.assign(successPath); return; }
+        fd.delete('_gotcha');
+
+        fd.set('message', composeMessage(fd));
+
+        var btn = form.querySelector('.checkout-submit');
+        var origLabel = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+        clearError();
+
+        fetch(form.action, { method: 'POST', body: fd, headers: { 'Accept': 'application/json' } })
+          .then(function(res){
+            return res.json().catch(function(){ return {}; }).then(function(j){
+              if (!res.ok) throw new Error((j && j.error) || ('Request failed (' + res.status + ')'));
+              return j;
+            });
+          })
+          .then(function(){
+            // Route to a real success page so the completed state has its own
+            // URL (linkable, refresh-safe, indexable=false) instead of an
+            // inline modal that's gone on refresh. Matches /start/success/.
+            window.location.assign(successPath);
+          })
+          .catch(function(err){
+            if (btn) { btn.disabled = false; btn.textContent = origLabel || 'Continue to payment →'; }
+            showError((err && err.message) || ('Something went wrong. Please try again or email ' + helpEmail + '.'));
+          });
+      });
+    })();
+  </script>
+</Base>

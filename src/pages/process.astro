@@ -1,0 +1,204 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import FinalCta from '../builder/components/sections/FinalCta.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+
+const entry = await getEntry('pages', 'process');
+/* Pass 4: when this brand has no process page (e.g. swift-digest after
+ * legacy retirement), render a meta-refresh stub to /. build-redirects
+ * overwrites this with the canonical 301 stub afterward; the result is
+ * identical either way and astro build doesn't crash. */
+if (!entry) {
+  return new Response(
+    `<!doctype html><meta charset="utf-8"><title>Redirecting…</title><meta http-equiv="refresh" content="0; url=/"><meta name="robots" content="noindex"><body><p>Redirecting to <a href="/">/</a>…</p></body>`,
+    { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+  );
+}
+const d: any = entry.data;
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Process' }]}
+    heading={d.header?.heading ?? 'Process'}
+    lead={d.header?.lead}
+  />
+
+  {d.header?.callout && (
+    <div class="container" style="margin-top:-1rem">
+      <p class="process-time-callout reveal" data-reveal-delay="100" style="
+        max-width: 720px;
+        margin: 0 auto 2rem;
+        padding: 0.875rem 1.25rem;
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        text-align: center;
+        color: var(--text-secondary);
+        background: rgba(var(--accent-rgb), 0.08);
+        border: 1px solid rgba(var(--accent-rgb), 0.18);
+        border-radius: var(--radius, 12px);
+      ">{d.header.callout}</p>
+    </div>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {d.timeline && d.timeline.length > 0 && (
+    <section
+      class="section process-timeline-section"
+      style="padding:3rem 0"
+      data-section-type="process-timeline"
+      data-section-label="Process Timeline"
+      data-section-variants="A:Classic,B:Zigzag,C:Stack"
+    >
+      <div class="process-deco" aria-hidden="true">
+        <svg class="process-deco-svg process-deco-svg-left" viewBox="0 0 80 1000" preserveAspectRatio="none" focusable="false">
+          <path class="process-deco-base" d="M40,0 L20,50 L60,100 L20,150 L60,200 L20,250 L60,300 L20,350 L60,400 L20,450 L60,500 L20,550 L60,600 L20,650 L60,700 L20,750 L60,800 L20,850 L60,900 L20,950 L40,1000" vector-effect="non-scaling-stroke"/>
+          <path class="process-deco-fill" d="M40,0 L20,50 L60,100 L20,150 L60,200 L20,250 L60,300 L20,350 L60,400 L20,450 L60,500 L20,550 L60,600 L20,650 L60,700 L20,750 L60,800 L20,850 L60,900 L20,950 L40,1000" pathLength="1" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <svg class="process-deco-svg process-deco-svg-right" viewBox="0 0 80 1000" preserveAspectRatio="none" focusable="false">
+          <path class="process-deco-base" d="M40,0 L60,50 L20,100 L60,150 L20,200 L60,250 L20,300 L60,350 L20,400 L60,450 L20,500 L60,550 L20,600 L60,650 L20,700 L60,750 L20,800 L60,850 L20,900 L60,950 L40,1000" vector-effect="non-scaling-stroke"/>
+          <path class="process-deco-fill" d="M40,0 L60,50 L20,100 L60,150 L20,200 L60,250 L20,300 L60,350 L20,400 L60,450 L20,500 L60,550 L20,600 L60,650 L20,700 L60,750 L20,800 L60,850 L20,900 L60,950 L40,1000" pathLength="1" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+      <div class="container">
+        <div class="process-timeline">
+          {d.timeline.map((step: any, i: number) => (
+            <>
+            <div class="process-card reveal" data-reveal-delay={i * 100}>
+              <div class="step-number">{step.number}</div>
+              <div class="card-body">
+                <div class="card-header">
+                  <h3>{step.title}</h3>
+                  {step.duration && <span class="step-duration">{step.duration}</span>}
+                </div>
+                {step.lead && <p>{step.lead}</p>}
+                {step.items && (
+                  <ul>
+                    {step.items.map((it: string) => <li>{it}</li>)}
+                  </ul>
+                )}
+                {step.deliverable && (
+                  <div class="deliverable">
+                    <h4>{step.deliverable.title}</h4>
+                    <p>{step.deliverable.body}</p>
+                  </div>
+                )}
+                {(step.yourTime || step.whatWeNeed) && (
+                  <div class="step-callouts">
+                    {step.yourTime && (
+                      <div class="step-callout step-callout--time">
+                        <span class="step-callout-label">Your time</span>
+                        <span class="step-callout-value">{step.yourTime}</span>
+                      </div>
+                    )}
+                    {step.whatWeNeed && (
+                      <div class="step-callout step-callout--need">
+                        <span class="step-callout-label">What we need from you</span>
+                        <span class="step-callout-value">{step.whatWeNeed}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {step.afterNote && (
+                  <p class="step-after-note">{step.afterNote}</p>
+                )}
+              </div>
+            </div>
+            {step.afterFigure?.kind === 'browser-frame' && (
+              <figure class="process-figure process-figure--browser reveal" data-reveal-delay={i * 100 + 60}>
+                <div class="process-browser-frame" aria-hidden="true">
+                  <div class="process-browser-bar">
+                    <span class="process-browser-dot" data-dot="r"></span>
+                    <span class="process-browser-dot" data-dot="y"></span>
+                    <span class="process-browser-dot" data-dot="g"></span>
+                    <span class="process-browser-url">staging.your-practice.com</span>
+                  </div>
+                  <div class="process-browser-body">
+                    <div class="process-browser-block process-browser-block--hero"></div>
+                    <div class="process-browser-block process-browser-block--row"></div>
+                    <div class="process-browser-block process-browser-block--row"></div>
+                    <div class="process-browser-grid">
+                      <div class="process-browser-tile"></div>
+                      <div class="process-browser-tile"></div>
+                      <div class="process-browser-tile"></div>
+                    </div>
+                  </div>
+                </div>
+                {step.afterFigure.caption && (
+                  <figcaption class="process-figure-caption">{step.afterFigure.caption}</figcaption>
+                )}
+              </figure>
+            )}
+            </>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="timeline" />
+
+  {d.finalCta && (
+    <FinalCta
+      heading={d.finalCta.heading}
+      body={d.finalCta.body}
+      ctaPrimary={d.finalCta.ctaPrimary}
+      ctaSecondary={d.finalCta.ctaSecondary}
+      headshot={d.finalCta.headshot}
+    />
+  )}
+</Base>
+
+<script>
+  (function() {
+    const timeline = document.querySelector<HTMLElement>('.process-timeline');
+    if (!timeline) return;
+    const section = timeline.closest<HTMLElement>('.process-timeline-section');
+    const cards = Array.from(timeline.querySelectorAll<HTMLElement>('.process-card'));
+    if (!cards.length) return;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let activeIdx = -1;
+    let rafId: number | null = null;
+
+    const update = () => {
+      const vh = window.innerHeight;
+      const center = vh / 2;
+      const rect = timeline.getBoundingClientRect();
+      const totalH = rect.height;
+      const passed = Math.max(0, Math.min(totalH, center - rect.top));
+      const pct = totalH ? passed / totalH : 0;
+      timeline.style.setProperty('--process-progress', pct.toFixed(3));
+      if (section) section.style.setProperty('--process-progress', pct.toFixed(3));
+
+      let best = { idx: -1, dist: Infinity };
+      cards.forEach((card, i) => {
+        const r = card.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        const cardCenter = r.top + r.height / 2;
+        const dist = Math.abs(center - cardCenter);
+        if (dist < best.dist) best = { idx: i, dist };
+      });
+      if (best.idx !== activeIdx) {
+        cards.forEach((c, i) => c.classList.toggle('is-active', i === best.idx));
+        activeIdx = best.idx;
+      }
+    };
+
+    const schedule = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => { update(); rafId = null; });
+    };
+
+    if (reduce) {
+      update();
+    } else {
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule);
+      schedule();
+    }
+  })();
+</script>

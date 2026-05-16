@@ -1,0 +1,153 @@
+/*
+ * Booking — drop-in calendar embed (Cal.com, Calendly, SavvyCal).
+ *
+ * Two surfaces: a centered modal (triggered by buttons) and an inline
+ * embed (drop a div anywhere). Both use a provider iframe — no
+ * third-party JS needed unless you want it. See /booking/README.md.
+ */
+
+/* -- Inline embed wrapper -------------------------------------------- */
+.aed-booking-inline {
+  position: relative;
+  width: 100%;
+  min-height: 640px;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+}
+.aed-booking-inline iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+.aed-booking-inline-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: var(--text-muted, #9a9aa2);
+  font-size: 0.875rem;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.aed-booking-inline.is-loaded .aed-booking-inline-loading { opacity: 0; }
+.aed-booking-spinner {
+  width: 24px; height: 24px;
+  border: 2.5px solid var(--border, #27272a);
+  border-top-color: var(--accent, #6B00FF);
+  border-radius: 50%;
+  animation: aed-booking-spin 0.7s linear infinite;
+}
+@keyframes aed-booking-spin { to { transform: rotate(360deg); } }
+
+/* -- Modal ----------------------------------------------------------- */
+.aed-booking-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9200;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.aed-booking-scrim.is-open { opacity: 1; }
+.aed-booking-scrim[hidden] { display: none; }
+
+.aed-booking-modal {
+  position: relative;
+  width: min(960px, 100%);
+  height: min(720px, calc(100vh - 48px));
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  box-shadow: 0 32px 80px -20px rgba(0, 0, 0, 0.6);
+  transform: translateY(8px) scale(0.98);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+.aed-booking-scrim.is-open .aed-booking-modal { transform: translateY(0) scale(1); }
+
+.aed-booking-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border, #27272a);
+  background: var(--bg-secondary, #111113);
+  flex-shrink: 0;
+}
+.aed-booking-modal-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--text-primary, #fafafa);
+}
+.aed-booking-modal-close {
+  background: transparent;
+  border: 0;
+  padding: 0.35rem;
+  margin: -0.35rem;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.aed-booking-modal-close:hover {
+  color: var(--text-primary, #fafafa);
+  background: var(--bg-card, #18181b);
+}
+.aed-booking-modal-close svg { width: 18px; height: 18px; }
+
+.aed-booking-modal-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.aed-booking-modal-body iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+
+/* -- Mobile ---------------------------------------------------------- */
+@media (max-width: 640px) {
+  .aed-booking-scrim { padding: 0; }
+  .aed-booking-modal {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    border: 0;
+  }
+  .aed-booking-inline { min-height: 540px; }
+}
+
+@media print {
+  .aed-booking-scrim,
+  .aed-booking-modal,
+  .aed-booking-inline { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-booking-scrim,
+  .aed-booking-modal { transition: opacity 0.15s ease; }
+  .aed-booking-spinner { animation: none; }
+}

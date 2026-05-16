@@ -1,0 +1,27 @@
+{
+  "name": "contact-fab",
+  "assets": {
+    "css": ["contact-fab.css"],
+    "js":  ["contact-fab.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-contact-fab-config",
+        "description": "Floating contact button. With no config the panel auto-discovers tel:/mailto: links from the page and adds a Send-a-message link to /contact/. All fields optional.",
+        "fields": {
+          "label":              { "type": "string",  "default": "Talk to us",                "description": "ARIA label and tooltip on the button itself." },
+          "panelTitle":         { "type": "string",  "default": "How can we help?",          "description": "Heading shown at the top of the open panel." },
+          "panelSubtitle":      { "type": "string",  "default": "Pick the channel that suits you.", "description": "Subheading under the panel title." },
+          "welcomeBubble":      { "type": "string",  "default": "Hi! Got a question?",      "description": "One-time chat-bubble teaser. Set to empty string to suppress." },
+          "welcomeBubbleDelay": { "type": "number",  "default": 4000,                       "description": "Milliseconds after page load before the bubble appears." },
+          "hideOnPaths":        { "type": "string[]","default": ["/contact/"],              "description": "Paths to hide the button on." },
+          "footer":             { "type": "string",                                          "description": "Optional small footnote rendered below the action list." },
+          "actions":            { "type": "object[]",                                        "description": "Override the auto-discovered action list entirely. Each entry: { kind, label, sublabel?, href, icon?, target? }." },
+          "prependActions":     { "type": "object[]",                                        "description": "Insert custom actions above the auto-discovered list (e.g. a 'Book a call' calendar entry)." },
+          "appendActions":      { "type": "object[]",                                        "description": "Append custom actions below the auto-discovered list." }
+        }
+      }
+    ]
+  }
+}

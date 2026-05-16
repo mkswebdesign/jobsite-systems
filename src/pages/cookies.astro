@@ -1,0 +1,13 @@
+---
+/**
+ * Brand-specific page. Sibling brands without a `cookies` page entry
+ * render an empty doc instead of throwing, so this route doesn't break
+ * their builds. (Same pattern as support.astro.)
+ */
+import { getEntry } from 'astro:content';
+import LegalPage from '../builder/components/LegalPage.astro';
+
+const entry = await getEntry('pages', 'cookies');
+---
+
+{entry && <LegalPage data={entry.data} />}

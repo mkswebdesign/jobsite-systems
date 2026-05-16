@@ -1,0 +1,18 @@
+{
+  "_TODO": "P2 #11 — replaces the prior 'We're not a template shop' aboutSplit (kept on disk as 01b1-why-us-split.json for reference). Trade icons currently link to '#' placeholders. WIRE-UP: when trade-specific landing pages exist, replace each href with /trades/<slug>/. ALSO TODO: build a dedicated `tradesStrip` section type so this isn't shoehorned into trustBand items.",
+  "type": "trustBand",
+  "items": [
+    { "iconKey": "settings", "text": "HVAC" },
+    { "iconKey": "droplet",  "text": "Plumbing" },
+    { "iconKey": "zap",      "text": "Electrical" },
+    { "iconKey": "hat",      "text": "GC" },
+    { "iconKey": "hammer",   "text": "Remodel" },
+    { "iconKey": "tool",     "text": "Handyman" },
+    { "iconKey": "home",     "text": "Roofing" },
+    { "iconKey": "leaf",     "text": "Landscape" }
+  ],
+  "cta": {
+    "label": "See all trades we serve",
+    "href": "#"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "terms",
+  "path": "/terms/",
+  "breadcrumbLabel": "Terms",
+  "seo": {
+    "title": "Terms — Apex Home Services",
+    "description": "Plain-language rules for using apexhomeservices.example and submitting a quote request. Pricing and scope for any actual job is finalized only on a written quote.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/terms/"
+  },
+  "header": {
+    "heading": "Website Terms",
+    "lead": "Plain-language rules for using this website. The actual terms of any job we do for you — pricing, scope, warranty, payment schedule — are finalized only on the written quote you sign before work begins."
+  },
+  "lastUpdated": "April 2026",
+  "body": [
+    { "heading": "1. Scope", "paragraphs": ["These terms apply to use of apexhomeservices.example and any submission of the quote request or contact forms. They do not establish a contract for work — that begins only when you sign a written quote and we schedule the job."] },
+    { "heading": "2. The website is informational", "paragraphs": ["This site exists to describe the company, our trades, our pricing structure, and how to request a quote. Pricing examples on the site are typical ranges — not binding quotes. The binding number is the one on the written quote we email you after the phone-quote or in-home estimate."] },
+    { "heading": "3. Submitting a request is not a contract", "paragraphs": ["Filling out the quote request form starts a conversation — it is not, by itself, a job booking or a contract for work. We are not equipped to dispatch crews based on website submissions alone; every job goes through our normal scheduling process."] },
+    { "heading": "4. Real emergencies", "paragraphs": ["If you have a fire, gas leak, active flooding, or downed live wires, please call 911 first. Once you're safe, we'll coordinate any repair work. The website form is not an emergency dispatch."] },
+    { "heading": "5. Intellectual property", "paragraphs": ["The site's content — text, design, project photos, structure — belongs to Apex Home Services. Don't copy, redistribute, or republish without written permission. Linking to a page is fine."] },
+    { "heading": "6. No warranty on the website", "paragraphs": ["The site is provided \"as is.\" We aim for accuracy but make no warranty that everything is current or continuously available. Our 1-year workmanship warranty applies to actual work we perform, governed by your written quote."] },
+    { "heading": "7. Limitation of liability", "paragraphs": ["To the fullest extent permitted by law, Apex Home Services is not liable for indirect, incidental, or consequential damages arising from use of this website. Nothing in these terms limits any liability that cannot legally be limited (including liabilities related to our contractor and electrical licensure)."] },
+    { "heading": "8. Updates", "paragraphs": ["These terms may be updated occasionally. The \"last updated\" date at the top reflects the most recent revision."] },
+    { "heading": "9. Contact", "paragraphs": ["Questions about these terms? Call (913) 555-0177 or use the contact form."] }
+  ]
+}

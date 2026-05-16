@@ -1,0 +1,14 @@
+﻿{
+    "settings": {
+        "files.exclude": {
+            "dist": true,
+            ".astro": true,
+            "node_modules": true
+        }
+    },
+    "folders": [
+        {
+            "path": "."
+        }
+    ]
+}

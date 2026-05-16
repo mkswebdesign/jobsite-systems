@@ -1,0 +1,22 @@
+{
+  "type": "photoGallery",
+  "sectionLabel": "The work",
+  "heading": "One crew, four trades.",
+  "subtext": "Recent project photos from across the KC metro — handyman jobs, electrical installs, kitchen and bath remodels, and exterior fixes. Tap any photo for a closer look.",
+  "images": [
+    { "src": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Branded Apex truck parked at a customer driveway" },
+    { "src": "https://images.pexels.com/photos/35869441/pexels-photo-35869441.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Mid-renovation kitchen with new cabinets in place" },
+    { "src": "https://images.pexels.com/photos/4440214/pexels-photo-4440214.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Crew member running new electrical to a finished basement" },
+    { "src": "https://images.pexels.com/photos/7682201/pexels-photo-7682201.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Bathroom remodel with new tile shower in progress" },
+    { "src": "https://images.pexels.com/photos/6682787/pexels-photo-6682787.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Deck board replacement and refinish job" },
+    { "src": "https://images.unsplash.com/photo-1700616270841-078da5600853?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "New panel install with breakers labeled" },
+    { "src": "https://images.unsplash.com/photo-1603477911780-59dcb83aecf8?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Drywall patch ready for paint after a punch-list visit" },
+    { "src": "https://images.pexels.com/photos/31047167/pexels-photo-31047167.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Finished basement with framing and lighting complete" },
+    { "src": "https://images.pexels.com/photos/1249614/pexels-photo-1249614.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Custom mudroom built-in bench installed" },
+    { "src": "https://images.pexels.com/photos/7681951/pexels-photo-7681951.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Crew member installing a Level 2 EV charger in the garage" },
+    { "src": "https://images.pexels.com/photos/4956920/pexels-photo-4956920.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "Kitchen backsplash mid-installation" },
+    { "src": "https://images.pexels.com/photos/5860937/pexels-photo-5860937.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop", "alt": "New gutters and downspouts installed on a single-family home" }
+  ],
+  "variant": "A",
+  "perPage": 8
+}

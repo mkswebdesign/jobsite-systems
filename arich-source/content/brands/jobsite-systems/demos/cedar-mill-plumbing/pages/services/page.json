@@ -1,0 +1,34 @@
+{
+  "slug": "services",
+  "path": "/services/",
+  "breadcrumbLabel": "What I Do",
+  "seo": {
+    "title": "What I Do — Cedar Mill Plumbing · Mike Hollister",
+    "description": "Residential plumbing across NW Portland and the Westside: drain cleaning and hydro jetting, water heater install and service, repipe and leak detection, and 24/7 emergency dispatch.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/services/"
+  },
+  "header": {
+    "heading": "What I Do",
+    "lead": "Four core service areas — done well, by the same plumber every visit, with flat-rate pricing on common calls and free written estimates on bigger projects."
+  },
+  "grid": {
+    "serviceSlugs": [
+      "drain-cleaning",
+      "water-heaters",
+      "repipe-and-leaks",
+      "emergency-service"
+    ]
+  },
+  "gridVariant": "image",
+  "cta": {
+    "heading": "Not sure which service fits your job?",
+    "body": "Easiest way is to call or send a contact form with a few sentences about what's going on. I'll tell you straight whether it's a flat-rate service call, an estimate visit, or something I'd refer to a colleague who specializes.",
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

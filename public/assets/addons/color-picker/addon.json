@@ -1,0 +1,18 @@
+{
+  "name": "color-picker",
+  "assets": {
+    "css": ["color-picker.css"],
+    "js":  ["color-picker.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "input[type='color'][data-aed-color]",
+        "description": "Polished color input. Add the marker attribute to any native <input type='color'> to upgrade its appearance and behavior.",
+        "fields": {
+          "data-aed-color": { "type": "boolean", "required": true, "description": "Opt-in marker. Use the input's `value` attribute for the default hex." }
+        }
+      }
+    ]
+  }
+}

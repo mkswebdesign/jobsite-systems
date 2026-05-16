@@ -1,0 +1,93 @@
+{
+  "slug": "about",
+  "path": "/about/",
+  "breadcrumbLabel": "About",
+  "seo": {
+    "title": "About Mike Hollister — Cedar Mill Plumbing",
+    "description": "Licensed Oregon plumber serving Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland. 18 years in the trade, 6 years running Cedar Mill Plumbing. Bonded, insured, family-owned.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/about/"
+  },
+  "header": {
+    "heading": "About Mike Hollister",
+    "lead": "Eighteen years in the plumbing trade. Six running Cedar Mill Plumbing as a one-truck shop. Built around the idea that plumbing should be honest, photographed, and warrantied — not a high-pressure sales pitch with a clipboard."
+  },
+  "intro": {
+    "headshot": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop",
+    "heading": "A small shop — just Mike and the truck, working the Westside.",
+    "paragraphs": [
+      "Cedar Mill Plumbing is a one-truck shop. There's no dispatch team, no sales rep, no \"a tech will follow up.\" When you call, you reach Mike directly. When the work happens, Mike does it. The phone goes home with him at the end of the day, including weekends — that's how the after-hours dispatch actually works.",
+      "Most homeowners who call have been burned by the bigger outfits — diagnostic fees that double when the repair starts, written quotes that grow on the invoice, three different techs over three visits, and an upsell pitch on every job. The one-truck setup isn't a romantic choice; it's a structural one. Skip the dispatch overhead and the commission scheme, and most of the friction homeowners hate goes away.",
+      "Mike started in the trade in 2008, apprenticing through the Plumbers and Steamfitters Local 290 program here in Portland. Twelve years working for two of the bigger Westside plumbing companies — service, new construction, and remodel — before opening Cedar Mill Plumbing in 2020. He's a licensed Oregon plumber, holds an Oregon CCB number (placeholder), and carries full general liability, workers' comp, and a bond.",
+      "Outside the truck, he lives in Cedar Mill with his wife and two kids, coaches Little League at Maple Park, and spends weekends he's not on call rebuilding an old camper trailer. Vacations are rare and scheduled — when he's actually out, the phone forwards to a colleague he trusts for emergencies."
+    ],
+    "stats": [
+      { "value": "18 yrs", "label": "In the plumbing trade" },
+      { "value": "OR CCB", "label": "Licensed, bonded, insured" },
+      { "value": "60+", "label": "Google reviews — 4.9 average" },
+      { "value": "1 truck", "label": "Same plumber every visit" }
+    ]
+  },
+  "philosophy": {
+    "sectionLabel": "Principles",
+    "heading": "How the shop runs.",
+    "cards": [
+      {
+        "title": "Same plumber every visit.",
+        "body": "You see Mike — every time. No rotating techs, no \"a colleague will follow up.\" Knowing the house is half the work, and the truck has the parts to back that up."
+      },
+      {
+        "title": "Honest about scope.",
+        "body": "Residential plumbing is the wheelhouse. Commercial new-construction, septic systems, and well work are referred to specialists. We're explicit about what's inside and outside the shop — pretending otherwise is how jobs go sideways."
+      },
+      {
+        "title": "Transparent on price.",
+        "body": "Flat-rate on common service calls. Free written estimates on projects $500+. The number on the quote matches the number on the invoice. No diagnostic fee on top of repair, no surprise add-ons, no commission upsell."
+      },
+      {
+        "title": "Documented, photographed, warrantied.",
+        "body": "Every job photographed before drywall closes. Written invoices and photo reports sent the same day. 1-year workmanship warranty standard, 5-year on whole-house repipes. The work depends on standing behind it."
+      }
+    ]
+  },
+  "designBreak": {
+    "type": "designBreak",
+    "sectionLabel": "Sound like a fit?",
+    "heading": "Less drama.\nMore steady, careful work.",
+    "subtext": "If the way Cedar Mill Plumbing runs matches what you've been looking for in a plumber, the next step is a phone call or a contact form.",
+    "backgroundImage": "https://images.pexels.com/photos/4910020/pexels-photo-4910020.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "cta": { "label": "Request a Service Call", "href": "/demo/cedar-mill-plumbing/contact/" }
+  },
+  "contentSection": {
+    "type": "contentSection",
+    "sectionLabel": "Why a one-truck shop",
+    "heading": "Why Mike runs it this way.",
+    "body": [
+      "Twelve years inside two of the bigger Westside plumbing companies taught Mike a lot — including that the dispatch-and-commission model is most of why homeowners distrust plumbers. Techs paid on what they sell will sell something. Diagnostic fees designed to coerce you into the repair right now will do that. The math works for the company; it doesn't work for the customer.",
+      "The one-truck setup means a smaller operation, longer non-emergency lead times, and a hard cap on how many jobs a week can run. We'd rather be honest about those tradeoffs than promise a dispatch capacity we can't deliver. The result is a steadier shop — one Mike can run without burning out, which means the work and the warranty actually hold.",
+      "Most of what shows up in customer feedback comes back to the same handful of decisions: same plumber every visit, flat-rate on common calls, photos and documentation on every job, real warranty terms in writing. Boring on purpose."
+    ],
+    "variant": "C"
+  },
+  "capabilities": {
+    "sectionLabel": "Tools & training",
+    "heading": "What I work with day to day.",
+    "useSkillsCarousel": true
+  },
+  "cta": {
+    "heading": "Not ready to book? That's fine — let's just talk.",
+    "body": "A quick phone call or contact-form note is exactly that: a conversation. No commitment, no pressure, no diagnostic fee on the schedule. Bring your questions; bring the photo of the leak.",
+    "ctaPrimary": {
+      "label": "Request a Service Call",
+      "href": "/demo/cedar-mill-plumbing/contact/"
+    },
+    "ctaSecondary": {
+      "label": "Back to Home",
+      "href": "/demo/cedar-mill-plumbing/"
+    }
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

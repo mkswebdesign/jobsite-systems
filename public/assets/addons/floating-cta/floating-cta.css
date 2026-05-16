@@ -1,0 +1,98 @@
+/*
+ * Floating CTA — bottom-right pill on desktop, full-width bar on mobile.
+ * Theme-aware via brand CSS vars (--accent, --accent-rgb, --bg-primary).
+ */
+.float-cta {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 70;
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .8rem 1.15rem .8rem 1rem;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .95rem;
+  box-shadow:
+    0 14px 32px -10px rgba(var(--accent-rgb), .55),
+    0 2px 6px rgba(0, 0, 0, .15);
+  opacity: 0;
+  transform: translateY(20px) scale(.96);
+  pointer-events: none;
+  transition: opacity .35s ease, transform .35s cubic-bezier(.2,.9,.3,1.2), box-shadow .25s ease;
+}
+.float-cta[data-revealed="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.float-cta:hover {
+  box-shadow:
+    0 18px 40px -10px rgba(var(--accent-rgb), .65),
+    0 4px 10px rgba(0, 0, 0, .2);
+  transform: translateY(-2px) scale(1);
+}
+.float-cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bg-primary) 18%, transparent);
+}
+.float-cta-text { display: flex; flex-direction: column; line-height: 1.15; }
+.float-cta-label { font-weight: 700; }
+.float-cta-hint {
+  font-size: .72rem;
+  font-weight: 500;
+  opacity: .85;
+  letter-spacing: .01em;
+}
+
+.float-cta-dismiss {
+  position: fixed;
+  right: .55rem;
+  bottom: calc(1.25rem + 38px);
+  z-index: 71;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--bg-primary) 30%, transparent);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font: 700 14px/1 ui-monospace, Menlo, monospace;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(.85);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, color .15s ease, border-color .15s ease;
+}
+.float-cta-dismiss[data-revealed="true"] {
+  opacity: .9;
+  transform: scale(1);
+  pointer-events: auto;
+}
+.float-cta-dismiss:hover { color: var(--text-primary); border-color: var(--accent); }
+
+@media (max-width: 640px) {
+  .float-cta {
+    right: .75rem;
+    left: .75rem;
+    bottom: .75rem;
+    justify-content: center;
+    padding: .85rem 1rem;
+    border-radius: 14px;
+    font-size: .92rem;
+  }
+  .float-cta-hint { display: none; }
+  .float-cta-dismiss {
+    right: .9rem;
+    bottom: calc(.75rem + 60px);
+  }
+}

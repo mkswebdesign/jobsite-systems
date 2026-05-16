@@ -1,0 +1,76 @@
+---
+/* Partnership — engagement narrative + soft money signal. Replaces the old
+ * /pricing/ page; tier numbers intentionally do not appear. Composes via the
+ * `sections` discriminated union (same shape as the homepage).
+ *
+ * Brands without a partnership.json fall back to a meta-refresh stub to /,
+ * which build-redirects.mjs then overwrites with the canonical 301 if a
+ * redirects.json entry exists. */
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import Hero from '../builder/components/sections/Hero.astro';
+import ServicesGrid from '../builder/components/sections/ServicesGrid.astro';
+import WorkGrid from '../builder/components/sections/WorkGrid.astro';
+import Why from '../builder/components/sections/Why.astro';
+import Capabilities from '../builder/components/sections/Capabilities.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import ProcessSteps from '../builder/components/sections/ProcessSteps.astro';
+import Partnership from '../builder/components/sections/Partnership.astro';
+import FAQ from '../builder/components/sections/FAQ.astro';
+import FinalCta from '../builder/components/sections/FinalCta.astro';
+import DesignBreak from '../builder/components/sections/DesignBreak.astro';
+import AboutSplit from '../builder/components/sections/AboutSplit.astro';
+import ContentSection from '../builder/components/sections/ContentSection.astro';
+import StatRibbon from '../builder/components/sections/StatRibbon.astro';
+import PhotoGallery from '../builder/components/sections/PhotoGallery.astro';
+import PhotoSlider from '../builder/components/sections/PhotoSlider.astro';
+import VersusBlock from '../builder/components/sections/VersusBlock.astro';
+import Divider from '../builder/components/sections/Divider.astro';
+import TrustBand from '../builder/components/sections/TrustBand.astro';
+
+const entry = await getEntry('pages', 'partnership');
+if (!entry) {
+  return new Response(
+    `<!doctype html><meta charset="utf-8"><title>Redirecting…</title><meta http-equiv="refresh" content="0; url=/"><meta name="robots" content="noindex"><body><p>Redirecting to <a href="/">/</a>…</p></body>`,
+    { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+  );
+}
+const d: any = entry.data;
+const sections: any[] = d.sections ?? [];
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  {sections.map((section: any) => (
+    <>
+      {section.type === 'hero' && <Hero {...section} />}
+      {section.type === 'services' && <ServicesGrid {...section} />}
+      {section.type === 'work' && <WorkGrid {...section} />}
+      {section.type === 'why' && <Why {...section} />}
+      {section.type === 'capabilities' && <Capabilities {...section} />}
+      {section.type === 'testimonials' && <Testimonials {...section} />}
+      {section.type === 'process' && <ProcessSteps {...section} />}
+      {section.type === 'partnership' && <Partnership {...section} />}
+      {section.type === 'faq' && <FAQ {...section} />}
+      {section.type === 'designBreak' && <DesignBreak {...section} />}
+      {section.type === 'aboutSplit' && <AboutSplit {...section} />}
+      {section.type === 'contentSection' && <ContentSection {...section} />}
+      {section.type === 'statRibbon' && <StatRibbon {...section} />}
+      {section.type === 'photoGallery' && <PhotoGallery {...section} />}
+      {section.type === 'photoSlider' && <PhotoSlider {...section} />}
+      {section.type === 'versusBlock' && <VersusBlock {...section} />}
+      {section.type === 'trustBand' && <TrustBand items={section.items} cta={section.cta} />}
+      {section.type === 'finalCta' && <FinalCta {...section} />}
+      {section.type === 'divider' && <Divider color={section.color} />}
+    </>
+  ))}
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+</Base>

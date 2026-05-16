@@ -1,0 +1,25 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "Ready when you are",
+  "heading": "Live in two weeks. Hands-off forever.",
+  "headingHtml": "Live in <span class=\"accent\">two weeks</span>. Hands-off <span class=\"accent\">forever</span>.",
+  "subtext": "Most sites launch within fourteen days of kickoff. After that they just keep running — no plugins to update, no version drift, no surprise renewals. We handle the upkeep so you can stay on the job.",
+  "cta": { "label": "Book an intro call", "href": "/contact/" },
+  "secondaryCta": { "label": "See pricing", "href": "/pricing/" },
+  "trustItems": [
+    "No long-term contracts",
+    "Hosting & SSL included",
+    "Direct email support"
+  ],
+  "stats": [
+    { "category": "Timeline",    "value": "2",     "unit": "wks", "label": "Kickoff to launch" },
+    { "category": "Maintenance", "value": "0",                    "label": "Plugins to manage" },
+    { "category": "Performance", "value": "<1",    "unit": "s",   "label": "Mobile load time" },
+    { "category": "Reliability", "value": "99.99", "unit": "%",   "label": "Typical uptime" }
+  ],
+  "statsFooter": {
+    "left": "Live metrics · last 90 days",
+    "right": "All systems normal"
+  },
+  "variant": "B"
+}

@@ -1,0 +1,13 @@
+---
+/**
+ * ReadingTime — renders "<n> min read" for a post body.
+ * Props: body (raw markdown string) OR minutes (precomputed number).
+ * Uses src/builder/lib/posts.ts:computeReadingTime when body is provided.
+ */
+import { computeReadingTime } from '../lib/posts';
+
+interface Props { body?: string; minutes?: number; }
+const { body, minutes } = Astro.props;
+const text = minutes != null ? `${minutes} min read` : body ? computeReadingTime(body) : '';
+---
+{text && <span class="reading-time">{text}</span>}

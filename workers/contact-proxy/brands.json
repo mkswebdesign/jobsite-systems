@@ -1,0 +1,22 @@
+{
+  "$comment": "Single source of truth for the contact-proxy worker's brand routing AND the smoke test's brand list. Both worker (src/index.ts) and smoke (scripts/smoke.mjs) import this file directly. Adding a new child brand: add an entry to `brands` and redeploy the worker — smoke picks it up automatically. Convention for child-brand sites without their own verified Emailit domain: `from: '<Brand> via GoMKS <hello@gomks.com>'`, `to: 'leads@gomks.com'`. See memory/emailit_domain_verification.md.",
+
+  "fallbackBrand": "gomks",
+  "brands": {
+    "arich": {
+      "from": "A Rich Design <hello@arich.design>",
+      "to": "hi@arich.design",
+      "origin": "https://arich.design"
+    },
+    "gomks": {
+      "from": "GoMKS Web Design <hello@gomks.com>",
+      "to": "hello@gomks.com",
+      "origin": "https://gomks.com"
+    },
+    "landscape-systems": {
+      "from": "Landscape Systems via GoMKS <hello@gomks.com>",
+      "to": "leads@gomks.com",
+      "origin": "https://landscape.systems"
+    }
+  }
+}

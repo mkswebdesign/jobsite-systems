@@ -1,0 +1,413 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import WizardField from '../builder/components/WizardField.astro';
+
+const entry = await getEntry('pages', 'start');
+if (!entry) throw new Error('pages/start entry not found');
+const d: any = entry.data;
+
+/* Expand any field with `source: "pricing-tiers"` into real options
+ * pulled from the brand's pricing.json. Keeps the wizard's plan step
+ * in lockstep with the live pricing page without duplicating prices
+ * across two files. Falls back silently if pricing isn't available.
+ *
+ * Billing parity: the pricing page ships with a yearly-default billing
+ * toggle that visually strikes the monthly price and shows the
+ * discounted /mo. The wizard's plan step must show the same headline
+ * number or the choices look mismatched — so when the brand's pricing
+ * config defaults to yearly, apply the same discount to the raw
+ * monthly price pulled from each tier. */
+const pricingEntry = (await getEntry('pages', 'pricing')) ?? null;
+function pricingTierOptions() {
+  const pricingData = pricingEntry?.data as any;
+  const groups = pricingData?.tierGroups?.groups ?? [];
+  const billing = pricingData?.billing ?? null;
+  const yearlyDefault = billing?.default === 'yearly';
+  const discount = typeof billing?.discount === 'number' ? billing.discount : 0;
+  const discountedPrice = (raw: string) => {
+    if (!yearlyDefault || !discount) return raw;
+    if (typeof raw !== 'string') return raw;
+    const m = /(\d+(?:\.\d+)?)/.exec(raw);
+    if (!m) return raw;
+    const monthly = parseFloat(m[1]);
+    const yearly = Math.round(monthly * (1 - discount));
+    return raw.replace(m[0], String(yearly));
+  };
+  const out: Array<{ value: string; label: string; description?: string }> = [];
+  for (const g of groups) {
+    const groupLabel = String(g.label ?? g.id ?? '')
+      .replace(/\s*Website\s*$/i, '')
+      .trim();
+    for (const t of g.tiers ?? []) {
+      if (!t?.id) continue;
+      const price = t.price ? `${discountedPrice(t.price)}${t.priceSuffix ?? ''}` : '';
+      out.push({
+        value: String(t.id),
+        label: [groupLabel, t.name].filter(Boolean).join(' — ') + (price ? ` — ${price}` : ''),
+        description: t.description,
+      });
+    }
+  }
+  return out;
+}
+
+function expandFieldOptions(field: any) {
+  if (!field || field.source !== 'pricing-tiers') return field;
+  const dynamic = pricingTierOptions();
+  const extras = Array.isArray(field.extraOptions) ? field.extraOptions : [];
+  return {
+    ...field,
+    options: [...dynamic, ...extras],
+  };
+}
+
+const steps = ((d.form?.steps ?? []) as any[]).map((step: any) => ({
+  ...step,
+  fields: (step.fields ?? []).map(expandFieldOptions),
+}));
+
+function fieldsByRow(fields: any[]) {
+  const rows = new Map<number, any[]>();
+  for (const f of fields ?? []) {
+    const r = f.row ?? 0;
+    if (!rows.has(r)) rows.set(r, []);
+    rows.get(r)!.push(f);
+  }
+  return [...rows.entries()].sort((a, b) => a[0] - b[0]).map(([, fs]) => fs);
+}
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Start' }]}
+    sectionLabel={d.header?.sectionLabel}
+    heading={d.header?.heading ?? 'Start'}
+    lead={d.header?.lead}
+  />
+
+  <section
+    class="section start-wizard-section"
+    data-section-type="start-wizard"
+    data-section-label="Start wizard"
+    data-section-variants="A:Default,B:Minimal,C:Featured"
+  >
+    <div class="container">
+      <div class="start-wizard" data-total-steps={steps.length}>
+
+        <div class="wizard-progress" aria-hidden="false">
+          <div class="wizard-progress-meta">
+            <span class="wizard-progress-step">Step <span id="wizardCurrent">1</span> of {steps.length}</span>
+            <span class="wizard-progress-title" id="wizardStepTitle">{steps[0]?.title}</span>
+          </div>
+          <div class="wizard-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax={steps.length} aria-valuenow="1">
+            <div class="wizard-progress-fill" id="wizardProgressFill" style={`width:${(1 / steps.length) * 100}%`}></div>
+          </div>
+        </div>
+
+        <form id="startForm" action={d.form.action} method={d.form.method ?? 'POST'} novalidate>
+          {d.form.subject && <input type="hidden" name="_subject" value={d.form.subject} />}
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
+
+          {steps.map((step: any, i: number) => (
+            <fieldset
+              class={`wizard-step${i === 0 ? ' is-active' : ''}`}
+              data-step-index={i}
+              data-step-id={step.id}
+              data-step-title={step.title}
+              aria-hidden={i === 0 ? 'false' : 'true'}
+            >
+              <div class="wizard-step-header">
+                {step.eyebrow && <span class="wizard-step-eyebrow">{step.eyebrow}</span>}
+                <h2 class="wizard-step-title">{step.title}</h2>
+                {step.description && <p class="wizard-step-description">{step.description}</p>}
+              </div>
+
+              <div class="wizard-step-fields">
+                {(() => {
+                  const standardFieldTypes = new Set(['text', 'email', 'url', 'tel']);
+                  const standardFields = step.fields.filter((f: any) => standardFieldTypes.has(f.type));
+                  const otherFields = step.fields.filter((f: any) => !standardFieldTypes.has(f.type));
+                  const rows = fieldsByRow(standardFields);
+                  return (
+                    <>
+                      {rows.map((row: any[]) => (
+                        row.length > 1 ? (
+                          <div class="form-row">
+                            {row.map((f: any) => <WizardField field={f} />)}
+                          </div>
+                        ) : (
+                          row.map((f: any) => <WizardField field={f} />)
+                        )
+                      ))}
+                      {otherFields.map((f: any) => <WizardField field={f} />)}
+                    </>
+                  );
+                })()}
+              </div>
+            </fieldset>
+          ))}
+
+          <div class="wizard-nav">
+            <button type="button" class="btn btn-secondary wizard-back" id="wizardBack" disabled>
+              <span class="arrow" aria-hidden="true">&larr;</span>
+              Back
+            </button>
+            <button type="button" class="btn btn-primary wizard-next" id="wizardNext">
+              Continue
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </button>
+            <button type="submit" class="btn btn-primary wizard-submit" id="wizardSubmit" hidden>
+              {d.form.submitLabel ?? 'Submit'}
+            </button>
+          </div>
+
+          <p class="wizard-error-hint" id="wizardErrorHint" role="alert" aria-live="polite"></p>
+        </form>
+
+        <div class="form-status" id="startFormSuccess">
+          <strong>Thanks!</strong> {d.form.successMessage}
+        </div>
+        <div class="form-status" id="startFormError">
+          <strong>Something went wrong.</strong> {d.form.errorMessage}
+        </div>
+
+        <p class="wizard-footnote">
+          Prefer to just send a quick note? <a href="/contact/">Use the simple contact form instead.</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script is:inline define:vars={{ storageKey: `start-wizard:${d.slug}`, errorFallback: d.form?.errorMessage }}>
+(function(){
+  const form = document.getElementById('startForm');
+  if (!form) return;
+
+  const wizard = document.querySelector('.start-wizard');
+  const steps = Array.from(form.querySelectorAll('.wizard-step'));
+  if (!wizard || !steps.length) return;
+
+  const totalSteps = steps.length;
+  const backBtn = document.getElementById('wizardBack');
+  const nextBtn = document.getElementById('wizardNext');
+  const submitBtn = document.getElementById('wizardSubmit');
+  const currentEl = document.getElementById('wizardCurrent');
+  const titleEl = document.getElementById('wizardStepTitle');
+  const fillEl = document.getElementById('wizardProgressFill');
+  const trackEl = wizard.querySelector('.wizard-progress-track');
+  const errorHint = document.getElementById('wizardErrorHint');
+  const successEl = document.getElementById('startFormSuccess');
+  const errorEl = document.getElementById('startFormError');
+
+  let current = 0;
+
+  function saveState(){
+    try {
+      const data = {};
+      form.querySelectorAll('input, textarea, select').forEach(el => {
+        if (!el.name || el.name.startsWith('_')) return;
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          if (el.checked) {
+            if (el.type === 'checkbox' && data[el.name] && !Array.isArray(data[el.name])) {
+              data[el.name] = [data[el.name]];
+            }
+            if (Array.isArray(data[el.name])) data[el.name].push(el.value);
+            else data[el.name] = el.value;
+          }
+        } else {
+          if (el.value) data[el.name] = el.value;
+        }
+      });
+      data.__step = current;
+      sessionStorage.setItem(storageKey, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function restoreState(){
+    try {
+      const raw = sessionStorage.getItem(storageKey);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      Object.keys(data).forEach(key => {
+        if (key === '__step') return;
+        const value = data[key];
+        const fields = form.querySelectorAll(`[name="${CSS.escape(key)}"]`);
+        fields.forEach(el => {
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            if (Array.isArray(value)) {
+              if (value.includes(el.value)) el.checked = true;
+            } else if (el.value === value) {
+              el.checked = true;
+            }
+          } else {
+            el.value = value;
+          }
+        });
+      });
+      if (typeof data.__step === 'number' && data.__step >= 0 && data.__step < totalSteps) {
+        goToStep(data.__step, { smooth: false });
+      }
+    } catch(e) {}
+  }
+
+  function updateNavState(){
+    backBtn.disabled = current === 0;
+    const isLast = current === totalSteps - 1;
+    nextBtn.hidden = isLast;
+    submitBtn.hidden = !isLast;
+  }
+
+  function updateProgress(){
+    const pct = ((current + 1) / totalSteps) * 100;
+    fillEl.style.width = pct + '%';
+    currentEl.textContent = String(current + 1);
+    titleEl.textContent = steps[current].dataset.stepTitle || '';
+    if (trackEl) trackEl.setAttribute('aria-valuenow', String(current + 1));
+  }
+
+  function goToStep(index, opts){
+    opts = opts || {};
+    if (index < 0 || index >= totalSteps) return;
+    steps.forEach((s, i) => {
+      s.classList.toggle('is-active', i === index);
+      s.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+    });
+    current = index;
+    updateNavState();
+    updateProgress();
+    errorHint.textContent = '';
+    if (opts.smooth !== false) {
+      wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    const firstField = steps[index].querySelector('input, textarea, select');
+    if (firstField && opts.focus !== false) {
+      setTimeout(() => firstField.focus({ preventScroll: true }), 250);
+    }
+  }
+
+  function validateStep(index){
+    const step = steps[index];
+    const fields = Array.from(step.querySelectorAll('input, textarea, select'));
+    let firstInvalid = null;
+    const radioGroups = new Set();
+    for (const f of fields) {
+      if (!f.required) continue;
+      if (f.type === 'radio' || f.type === 'checkbox') {
+        if (!f.name) continue;
+        if (radioGroups.has(f.name)) continue;
+        radioGroups.add(f.name);
+        const group = step.querySelectorAll(`[name="${CSS.escape(f.name)}"]`);
+        const anyChecked = Array.from(group).some(g => g.checked);
+        if (!anyChecked) {
+          if (!firstInvalid) firstInvalid = f;
+        }
+      } else {
+        if (!f.value || !f.checkValidity()) {
+          if (!firstInvalid) firstInvalid = f;
+        }
+      }
+    }
+    if (firstInvalid) {
+      errorHint.textContent = firstInvalid.validationMessage && firstInvalid.value
+        ? firstInvalid.validationMessage
+        : 'Please complete the required field(s) before continuing.';
+      firstInvalid.focus({ preventScroll: false });
+      step.classList.add('wizard-step--invalid');
+      setTimeout(() => step.classList.remove('wizard-step--invalid'), 600);
+      return false;
+    }
+    errorHint.textContent = '';
+    return true;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (!validateStep(current)) return;
+    saveState();
+    goToStep(current + 1);
+  });
+
+  backBtn.addEventListener('click', () => {
+    saveState();
+    goToStep(current - 1);
+  });
+
+  form.addEventListener('input', saveState);
+  form.addEventListener('change', saveState);
+
+  /* Exclusive options in checkbox-grid groups: an option marked
+   * data-wizard-exclusive (authored via `exclusive: true` in the step
+   * JSON) acts as an opt-out / "skip this step" pick — checking it
+   * clears every other box in the same name group, and checking any
+   * non-exclusive box clears the exclusive one. Keeps the signal
+   * clean so a user who picked "Not sure what I need" can't also
+   * accidentally carry specific feature picks alongside it. */
+  form.addEventListener('change', (e) => {
+    const el = e.target;
+    if (!(el instanceof HTMLInputElement) || el.type !== 'checkbox') return;
+    if (!el.name || !el.checked) return;
+    const group = form.querySelectorAll('input[type="checkbox"][name="' + CSS.escape(el.name) + '"]');
+    if (group.length < 2) return;
+    const isExclusive = el.hasAttribute('data-wizard-exclusive');
+    group.forEach((other) => {
+      if (other === el) return;
+      const otherExclusive = other.hasAttribute('data-wizard-exclusive');
+      if (isExclusive || otherExclusive) {
+        if (other.checked) other.checked = false;
+      }
+    });
+  });
+
+  form.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'textarea') return;
+    e.preventDefault();
+    if (current < totalSteps - 1) {
+      if (!validateStep(current)) return;
+      saveState();
+      goToStep(current + 1);
+    } else {
+      submitBtn.click();
+    }
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    for (let i = 0; i <= current; i++) {
+      if (!validateStep(i)) {
+        goToStep(i);
+        return;
+      }
+    }
+    submitBtn.disabled = true;
+    submitBtn.setAttribute('aria-busy', 'true');
+    const origLabel = submitBtn.textContent;
+    submitBtn.textContent = 'Sending…';
+    successEl.className = 'form-status';
+    errorEl.className = 'form-status';
+    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+      .then(r => {
+        if (!r.ok) throw new Error('fail');
+        if (window.plausible) window.plausible('Start Submit');
+        sessionStorage.removeItem(storageKey);
+        /* Route to a real success page so the completed state has its
+         * own URL (linkable, shareable, indexable if needed) instead of
+         * a transient inline banner that's gone on refresh. */
+        window.location.assign('/start/success/');
+      })
+      .catch(() => {
+        errorEl.className = 'form-status error';
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('aria-busy');
+        submitBtn.textContent = origLabel;
+      });
+  });
+
+  restoreState();
+  updateNavState();
+  updateProgress();
+})();
+</script>

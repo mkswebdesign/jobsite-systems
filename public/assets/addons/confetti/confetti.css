@@ -1,0 +1,23 @@
+/*
+ * Confetti — drop-in canvas burst.
+ *
+ * Almost no CSS — the addon manages a single full-viewport canvas
+ * above the page. See /confetti/README.md.
+ */
+
+.aed-confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9800;        /* above toast (9700), below editor */
+  pointer-events: none;
+}
+
+@media print {
+  .aed-confetti-canvas { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* JS bypasses the burst when this is set; nothing to do here. */
+}

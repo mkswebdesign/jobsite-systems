@@ -1,0 +1,97 @@
+---
+/**
+ * VersusBlock
+ *
+ * Head-to-head comparison band. Two columns of paired statements:
+ * the way most operators do it (left, dampened) versus the way the
+ * brand does it (right, accent + checkmarks). Each row is the same
+ * point cast both ways, so the contrast carries the argument
+ * without needing prose. Distinct from contentSection (single-column
+ * editorial prose) and statRibbon (numerical proof points) — this
+ * type's job is positioning by direct comparison.
+ *
+ * Brand-styled variants (declared via `data-section-variants`):
+ *   A "Standard" — side-by-side columns with a "vs." divider
+ *   B "Stacked"  — left above right; reads as a flip on desktop
+ *
+ * Theme-aware via brand tokens (vibrant / dark / light) and the
+ * per-section override system (data-sec-theme).
+ */
+export interface Props {
+  sectionLabel?: string;
+  heading: string;
+  subtext?: string;
+  leftLabel: string;
+  rightLabel: string;
+  rows: Array<{ left: string; right: string }>;
+  cta?: { label: string; href: string };
+  variant?: 'A' | 'B';
+}
+
+const {
+  sectionLabel,
+  heading,
+  subtext,
+  leftLabel,
+  rightLabel,
+  rows,
+  cta,
+  variant,
+} = Astro.props;
+
+const variantKey = typeof variant === 'string' && /^[A-H]$/.test(variant) ? variant : null;
+---
+
+<section
+  class="versus-block"
+  data-section-type="versus-block"
+  data-section-label="Versus block"
+  data-section-variants="A:Standard,B:Stacked"
+  {...(variantKey ? { 'data-versus-block-variant': variantKey } : {})}
+>
+  <div class="versus-block__inner">
+    <div class="versus-block__head">
+      {sectionLabel && <p class="versus-block__eyebrow reveal">{sectionLabel}</p>}
+      <h2 class="versus-block__heading reveal" data-reveal-delay="80">{heading}</h2>
+      {subtext && <p class="versus-block__subtext reveal" data-reveal-delay="160">{subtext}</p>}
+    </div>
+
+    <div class="versus-block__grid" role="presentation">
+      <div class="versus-block__column versus-block__column--from">
+        <p class="versus-block__col-label reveal" data-reveal-delay="200">{leftLabel}</p>
+        <ul class="versus-block__list">
+          {rows.map((row, i) => (
+            <li class="versus-block__item versus-block__item--from reveal" data-reveal-delay={240 + i * 80}>
+              <span class="versus-block__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 3 13 13 M13 3 3 13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+              </span>
+              <span class="versus-block__text">{row.left}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="versus-block__divider reveal" data-reveal-delay="220" aria-hidden="true">
+        <span class="versus-block__vs">vs.</span>
+      </div>
+
+      <div class="versus-block__column versus-block__column--to">
+        <p class="versus-block__col-label reveal" data-reveal-delay="200">{rightLabel}</p>
+        <ul class="versus-block__list">
+          {rows.map((row, i) => (
+            <li class="versus-block__item versus-block__item--to reveal" data-reveal-delay={240 + i * 80}>
+              <span class="versus-block__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              </span>
+              <span class="versus-block__text">{row.right}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    {cta && (
+      <a class="versus-block__cta reveal" data-reveal-delay={240 + rows.length * 80} href={cta.href}>{cta.label}</a>
+    )}
+  </div>
+</section>

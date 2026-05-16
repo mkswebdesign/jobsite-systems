@@ -1,0 +1,24 @@
+{
+  "name": "progress-ring",
+  "assets": {
+    "css": ["progress-ring.css"],
+    "js":  ["progress-ring.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-ring]",
+        "description": "Per-element SVG circular progress indicator. Animates from `animate-from` to the supplied value when scrolled into view.",
+        "fields": {
+          "data-aed-ring":              { "type": "number", "required": true, "description": "Current value (0 to `data-aed-ring-max`)." },
+          "data-aed-ring-max":          { "type": "number", "default": 100,   "description": "Upper bound used to compute the percentage filled." },
+          "data-aed-ring-size":         { "type": "number", "default": 56,    "description": "Outer diameter in pixels." },
+          "data-aed-ring-stroke":       { "type": "number", "default": 5,     "description": "Stroke width in pixels." },
+          "data-aed-ring-label":        { "type": "string",                    "description": "Center label text. Defaults to the percentage if omitted." },
+          "data-aed-ring-animate-from": { "type": "number", "default": 0,     "description": "Value the animation starts from." },
+          "data-aed-trend":             { "type": "string", "enum": ["up", "down", "warn"], "description": "Overrides the accent color to signal direction or status." }
+        }
+      }
+    ]
+  }
+}

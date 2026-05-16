@@ -1,0 +1,28 @@
+---
+/**
+ * TagCloud — wrapped chip row, size weight loosely by usage count.
+ * Props: tags[] of { tag, count }. Each chip links to /tag/<slug>/.
+ */
+import type { TagUsage } from '../lib/posts';
+interface Props { tags: TagUsage[]; }
+const { tags } = Astro.props;
+
+const max = Math.max(1, ...tags.map((t) => t.count));
+function weight(count: number): string {
+  const ratio = count / max;
+  if (ratio > 0.75) return 'xl';
+  if (ratio > 0.5)  return 'lg';
+  if (ratio > 0.25) return 'md';
+  return 'sm';
+}
+---
+<ul class="tag-cloud">
+  {tags.map(({ tag, count }) => (
+    <li class="tag-cloud__item">
+      <a class={`tag-cloud__chip tag-cloud__chip--${weight(count)}`} href={`/tag/${tag}/`}>
+        <span class="tag-cloud__hash" aria-hidden="true">#</span>{tag}
+        <span class="tag-cloud__count">{count}</span>
+      </a>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,757 @@
+---
+/**
+ * PhotoSlider
+ *
+ * Auto-advancing photo slider. Two variants today, both share the same
+ * markup — CSS branches on data-photo-slider-variant on `<html>` (site-wide)
+ * or the section element itself (per-instance pin via the editor chip).
+ *
+ *   A "Default"  — single-photo-at-a-time hero cinema. Cross-fade between
+ *                  slides, prev/next arrows, dot pagination, swipe gestures,
+ *                  keyboard nav, autoplay with hover/focus/offscreen pause.
+ *   B "Carousel" — continuous-scroll marquee. Multiple slides visible at
+ *                  once, slow horizontal scroll, hover-to-pause, click any
+ *                  image to open the lightbox. Slides are cloned at runtime
+ *                  for a seamless loop; clones are marked
+ *                  `data-aed-lightbox="off"` so the lightbox group sees
+ *                  each photo exactly once.
+ *
+ * 2-48 image items required. Captions + alt text optional per image.
+ * Heading + sectionLabel + subtext + CTA all optional.
+ *
+ * Auto-advance (variant A only): on by default, configurable via `interval`
+ * (1500-20000ms, default 5000). Pauses on hover, focus-within, offscreen
+ * (IntersectionObserver). Suppressed under prefers-reduced-motion. Variant B
+ * uses pure CSS animation, also pauses on hover and offscreen, also
+ * suppressed under reduced motion (falls back to a horizontal scroll-snap
+ * strip).
+ *
+ * Lightbox: every image emits `data-aed-lightbox=""` plus a stable group id
+ * scoped to this slider instance. Requires the `image-lightbox` addon to be
+ * enabled per brand (`site.json` → addons → image-lightbox.enabled = true).
+ */
+export interface Props {
+  sectionLabel?: string;
+  heading?: string;
+  subtext?: string;
+  images: Array<{
+    src: string;
+    alt?: string;
+    caption?: string;
+  }>;
+  cta?: { label: string; href: string };
+  variant?: 'A' | 'B' | 'C' | 'D';
+  autoplay?: boolean;
+  interval?: number;
+  shuffle?: boolean;
+}
+
+const { sectionLabel, heading, subtext, images, cta, autoplay, interval, variant, shuffle } = Astro.props;
+const variantPin = (typeof variant === 'string' && /^[A-D]$/i.test(variant)) ? variant.toUpperCase() : null;
+const items = Array.isArray(images) ? images.filter((i) => i && i.src) : [];
+
+const advanceMs = (typeof interval === 'number' && interval >= 1500 && interval <= 20000)
+  ? Math.floor(interval)
+  : 5000;
+const auto = autoplay !== false;
+
+// Stable per-instance lightbox group id — keeps prev/next inside this
+// slider's images rather than bleeding across other galleries on the page.
+function sliderGroupId() {
+  const seed = String(heading || '') + '|' + String(sectionLabel || '') + '|' + (items[0] && items[0].src || '');
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) { h = ((h << 5) - h + seed.charCodeAt(i)) | 0; }
+  return 'ps-' + Math.abs(h).toString(36);
+}
+const groupId = items.length >= 2 ? sliderGroupId() : null;
+---
+
+<section
+  class="photo-slider"
+  data-section-type="photo-slider"
+  data-section-label="Photo slider"
+  data-section-variants="A:Default,B:Carousel,C:Carousel Slim,D:Carousel Slim Full"
+  data-photo-slider-variant={variantPin}
+  data-autoplay={auto ? 'true' : 'false'}
+  data-interval={String(advanceMs)}
+  data-ps-shuffle={shuffle === true ? 'true' : undefined}
+>
+  <div class="photo-slider__inner">
+    {(sectionLabel || heading || subtext) && (
+      <div class="photo-slider__head">
+        {sectionLabel && <p class="photo-slider__eyebrow">{sectionLabel}</p>}
+        {heading && <h2 class="photo-slider__heading">{heading}</h2>}
+        {subtext && <p class="photo-slider__subtext">{subtext}</p>}
+      </div>
+    )}
+    {items.length > 0 && (
+      <div
+        class="photo-slider__viewport"
+        role="region"
+        aria-label="Photo slider"
+        aria-roledescription="carousel"
+        tabindex="0"
+        data-ps-viewport
+      >
+        <ul class="photo-slider__track" role="list" data-ps-track>
+          {items.map((img, i) => (
+            <li
+              class="photo-slider__slide"
+              data-ps-slide
+              data-active={i === 0 ? 'true' : 'false'}
+              aria-hidden={i === 0 ? 'false' : 'true'}
+              aria-roledescription="slide"
+              aria-label={`Slide ${i + 1} of ${items.length}`}
+            >
+              <figure class="photo-slider__figure">
+                <img
+                  class="photo-slider__img"
+                  src={img.src}
+                  alt={img.alt || ''}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  data-aed-lightbox=""
+                  data-aed-lightbox-caption={img.caption || undefined}
+                  data-aed-lightbox-group={groupId || undefined}
+                />
+                {img.caption && (
+                  <figcaption class="photo-slider__caption">{img.caption}</figcaption>
+                )}
+              </figure>
+            </li>
+          ))}
+        </ul>
+        {items.length > 1 && (
+          <div class="photo-slider__controls">
+            <button
+              class="photo-slider__arrow photo-slider__arrow--prev"
+              type="button"
+              data-ps-prev
+              aria-label="Previous slide"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button
+              class="photo-slider__arrow photo-slider__arrow--next"
+              type="button"
+              data-ps-next
+              aria-label="Next slide"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ol class="photo-slider__dots" role="list" data-ps-dots>
+              {items.map((_, i) => (
+                <li>
+                  <button
+                    type="button"
+                    class="photo-slider__dot"
+                    data-ps-dot={String(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                    aria-current={i === 0 ? 'true' : undefined}
+                  ></button>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+      </div>
+    )}
+    {cta && (
+      <a class="photo-slider__cta" href={cta.href}>{cta.label}</a>
+    )}
+  </div>
+</section>
+
+<style is:global>
+  /* Baseline slider chrome — every brand inherits this skeleton. Per-brand
+     CSS in src/builder/styles/brands/<brand>.css can override colors / spacing.
+     Variant CSS uses the dual-form selector pattern (per
+     section_variant_dual_selectors memory): every variant rule matches BOTH
+     the html-broadcast form AND the per-instance form, so chip switching
+     works at any scope (instance / page / sitewide). */
+  .photo-slider { padding: clamp(2.5rem, 6vw, 5rem) 0; }
+  .photo-slider__inner {
+    width: min(100% - 2rem, var(--max-width, 1200px));
+    margin-inline: auto;
+  }
+  .photo-slider__head { margin-bottom: clamp(1rem, 2vw, 1.75rem); text-align: center; }
+  .photo-slider__eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .photo-slider__heading {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.15;
+  }
+  .photo-slider__subtext { margin: 0; opacity: 0.75; max-width: 60ch; margin-inline: auto; }
+
+  .photo-slider__viewport {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg, 16px);
+    background: rgba(0, 0, 0, 0.05);
+    aspect-ratio: 16 / 9;
+    isolation: isolate;
+  }
+  .photo-slider__viewport:focus-visible {
+    outline: 2px solid var(--brand-accent-on-dark, currentColor);
+    outline-offset: 3px;
+  }
+  .photo-slider__track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  .photo-slider__slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 600ms ease;
+    pointer-events: none;
+  }
+  .photo-slider__slide[data-active='true'] {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+  .photo-slider__figure { margin: 0; width: 100%; height: 100%; }
+  .photo-slider__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-slider__caption {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 1.5rem 1.25rem 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0));
+    color: #fff;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .photo-slider__controls {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .photo-slider__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    appearance: none;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .photo-slider__arrow:hover { background: rgba(0, 0, 0, 0.7); border-color: rgba(255,255,255,0.7); }
+  .photo-slider__arrow:focus-visible {
+    outline: 2px solid var(--brand-accent-on-dark, #fff);
+    outline-offset: 2px;
+  }
+  .photo-slider__arrow--prev { left: 0.75rem; }
+  .photo-slider__arrow--next { right: 0.75rem; }
+  .photo-slider__arrow:active { transform: translateY(-50%) scale(0.94); }
+
+  .photo-slider__dots {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    pointer-events: auto;
+  }
+  .photo-slider__dot {
+    appearance: none;
+    border: 1px solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.3);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    transition: background 160ms ease, transform 160ms ease;
+  }
+  .photo-slider__dot[aria-current='true'] {
+    background: #fff;
+    transform: scale(1.25);
+  }
+  .photo-slider__dot:hover { background: rgba(255,255,255,0.65); }
+  .photo-slider__dot:focus-visible { outline: 2px solid var(--brand-accent-on-dark, #fff); outline-offset: 2px; }
+
+  .photo-slider__cta {
+    display: inline-flex;
+    margin-top: 1.5rem;
+    padding: 0.875rem 1.75rem;
+    background: var(--accent, var(--brand-accent-on-dark, currentColor));
+    color: var(--brand-on-accent, #fff);
+    border-radius: var(--radius, 12px);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* Mobile responsive — tighter aspect ratio, smaller arrows */
+  @media (max-width: 640px) {
+    .photo-slider__viewport { aspect-ratio: 4 / 3; border-radius: var(--radius, 12px); }
+    .photo-slider__arrow { width: 38px; height: 38px; }
+    .photo-slider__arrow--prev { left: 0.5rem; }
+    .photo-slider__arrow--next { right: 0.5rem; }
+    .photo-slider__caption { font-size: 0.85rem; padding: 1rem 0.85rem 0.75rem; }
+  }
+
+  /* Reduced motion — kill the cross-fade transition; auto-advance is also
+     suppressed in JS when this query matches. */
+  @media (prefers-reduced-motion: reduce) {
+    .photo-slider__slide { transition: none; }
+  }
+
+  /* Section-overrides (Base.astro applies these data-attrs / vars before paint) */
+  .photo-slider[data-sec-disabled='on'] { display: none; }
+  .photo-slider[data-sec-parallax-bg='on'] {
+    background-image: var(--sec-parallax-url);
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Variants B "Carousel" + C "Carousel Slim"
+   * Both share the same carousel behavior — continuous horizontal marquee,
+   * multiple slides visible, slow auto-scroll, hover/focus pause. Slides
+   * are cloned in JS for a seamless loop (track is rendered double-width,
+   * animated -50%). Variant C adds an ultra-thin section frame on top of
+   * everything else.
+   * Selectors use :is() to fan out across the dual-form pattern (per
+   * section_variant_dual_selectors memory) AND across both variants in one
+   * rule, keeping the stylesheet readable as variants share most behavior.
+   * ------------------------------------------------------------------ */
+  @keyframes ps-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  /* Viewport — height-driven instead of aspect-ratio so the strip can
+     accommodate variable-aspect images without cropping vertically. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport {
+    aspect-ratio: auto;
+    height: clamp(220px, 32vh, 360px);
+    background: rgba(0, 0, 0, 0.04);
+  }
+  /* Track — flex row, sits at intrinsic content width so translateX(-50%)
+     scrolls past the original set into the cloned set seamlessly. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__track,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: clamp(8px, 1.2vw, 16px);
+    width: max-content;
+    height: 100%;
+    position: relative;
+    animation: ps-marquee 60s linear infinite;
+    animation-play-state: running;
+    will-change: transform;
+  }
+  /* Pause when user hovers anywhere in the viewport, or focus enters it. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport:hover .photo-slider__track,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport:hover .photo-slider__track,
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport:focus-within .photo-slider__track,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport:focus-within .photo-slider__track {
+    animation-play-state: paused;
+  }
+  /* Slides — overrides variant A's absolute fade defaults. Every slide is
+     visible side-by-side, fixed-width, full viewport height. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide {
+    position: relative;
+    inset: auto;
+    flex: 0 0 auto;
+    width: clamp(180px, 22vw, 320px);
+    height: 100%;
+    opacity: 1;
+    pointer-events: auto;
+    transition: none;
+    border-radius: var(--radius, 12px);
+    overflow: hidden;
+  }
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__img,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__img {
+    cursor: zoom-in;
+    transition: transform 240ms ease, filter 240ms ease;
+  }
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide:hover .photo-slider__img,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide:hover .photo-slider__img {
+    transform: scale(1.04);
+    filter: brightness(1.05);
+  }
+  /* Captions in variant B/C sit fully inside each slide tile. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__caption,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__caption {
+    padding: 1rem 0.85rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  /* Hide variant A's prev/next + dots in carousel mode — motion is automatic
+     and the lightbox provides the only "navigate" affordance. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__controls,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__controls {
+    display: none;
+  }
+  /* Optional fade edges — soften the strip's left/right boundaries so the
+     in/out edges don't feel hard. */
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::before,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::before,
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::after,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(40px, 6vw, 96px);
+    z-index: 3;
+    pointer-events: none;
+  }
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::before,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg-primary, rgba(0,0,0,0.04)) 10%, transparent 100%);
+  }
+  :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::after,
+  .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg-primary, rgba(0,0,0,0.04)) 10%, transparent 100%);
+  }
+  @media (max-width: 640px) {
+    :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport,
+    .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport {
+      height: clamp(180px, 28vh, 260px);
+    }
+    :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide,
+    .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide {
+      width: clamp(150px, 60vw, 240px);
+    }
+  }
+  /* Reduced-motion fallback — kill the marquee animation entirely and
+     swap to a horizontal scroll-snap strip the user controls themselves. */
+  @media (prefers-reduced-motion: reduce) {
+    :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__track,
+    .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__track {
+      animation: none;
+      width: 100%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+    }
+    :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide,
+    .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__slide {
+      scroll-snap-align: start;
+    }
+    :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::before,
+    .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::before,
+    :is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::after,
+    .photo-slider:is([data-photo-slider-variant='B'], [data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__viewport::after {
+      display: none;
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Variants C "Carousel Slim" + D "Carousel Slim Full" — slim frame
+   * Both inherit B's carousel behavior. Slim frame collapses section
+   * padding to 1px and margin to 0 so the marquee reads as an ultra-thin
+   * divider-weight band rather than a full breathing-room section.
+   * ------------------------------------------------------------------ */
+  :is([data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider,
+  .photo-slider:is([data-photo-slider-variant='C'], [data-photo-slider-variant='D']) {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  :is([data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__head,
+  .photo-slider:is([data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__head {
+    margin-bottom: 0;
+  }
+  :is([data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__cta,
+  .photo-slider:is([data-photo-slider-variant='C'], [data-photo-slider-variant='D']) .photo-slider__cta {
+    margin-top: 1px;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Variant D — "Carousel Slim Full" full-bleed override
+   * Inherits everything from C (carousel + slim frame), then breaks the
+   * inner container out of the brand's max-width gutter so the marquee
+   * stretches edge-to-edge across the viewport. The section element
+   * itself is already block-level / full-width; the .photo-slider__inner
+   * is what normally clamps content to var(--max-width). Override it.
+   * ------------------------------------------------------------------ */
+  [data-photo-slider-variant='D'] .photo-slider__inner,
+  .photo-slider[data-photo-slider-variant='D'] .photo-slider__inner {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  /* The fade-edge gradients align to the viewport edges in D. The viewport
+     itself doesn't need its own border-radius collapse — but doing so reads
+     more naturally for an edge-to-edge band. */
+  [data-photo-slider-variant='D'] .photo-slider__viewport,
+  .photo-slider[data-photo-slider-variant='D'] .photo-slider__viewport {
+    border-radius: 0;
+  }
+</style>
+
+<script>
+  // PhotoSlider — vanilla JS, runs once per slider instance.
+  // Variant resolution at boot time:
+  //   - Read `data-photo-slider-variant` on the section element first (per-
+  //     instance pin), then fall back to `<html>` (page / sitewide).
+  //   - Default to 'A' when nothing is set.
+  // Variant A (Default fade):
+  //   - Cross-fades between slides via [data-active='true']
+  //   - Auto-advance left → right when data-autoplay='true' and not reduced-motion
+  //   - Pauses on hover, focus-within, and when offscreen (IntersectionObserver)
+  //   - Prev/next arrows + dot navigation + ←/→ keyboard nav
+  //   - Touch swipe (>40px horizontal threshold) advances ±1
+  // Variant B (Carousel marquee):
+  //   - Clones the entire slide list once and appends to track so the CSS
+  //     animation can translateX(-50%) seamlessly. Clones get
+  //     `data-aed-lightbox="off"` on their imgs so the lightbox group counts
+  //     each photo exactly once.
+  //   - Animation duration scales with slide count (~3.5s per slide, floor 30s)
+  //     so brands with many photos don't whip past too fast.
+  //   - Hover/focus pause is purely CSS via :hover / :focus-within.
+  //   - IntersectionObserver toggles animationPlayState when offscreen so the
+  //     marquee doesn't burn cycles when not visible.
+  //   - Click any slide image → lightbox addon picks it up via
+  //     data-aed-lightbox attrs already emitted by the component.
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const sliders = document.querySelectorAll('.photo-slider');
+
+    function activeVariant(section) {
+      const inst = section.getAttribute('data-photo-slider-variant');
+      if (inst) return inst;
+      const html = document.documentElement.getAttribute('data-photo-slider-variant');
+      return html || 'A';
+    }
+
+    sliders.forEach((root) => {
+      // Per-instance shuffle — when data-ps-shuffle="true" on the section,
+      // randomize the slide DOM order BEFORE the variant-specific setup runs
+      // so carousel cloning + fade indexing both see the shuffled order. The
+      // SSR'd order remains the SEO/no-JS fallback.
+      if (root.getAttribute('data-ps-shuffle') === 'true') shuffleSlides(root);
+      const variant = activeVariant(root);
+      // Variants B / C / D share carousel behavior. C only differs in frame
+      // padding/margin (CSS-only). D extends C with a full-bleed inner
+      // container override (also CSS-only). All three use the same JS path.
+      if (variant === 'B' || variant === 'C' || variant === 'D') setupCarousel(root);
+      else setupFade(root);
+    });
+
+    function shuffleSlides(root) {
+      const track = root.querySelector('[data-ps-track]');
+      if (!track) return;
+      const slides = Array.from(track.querySelectorAll(':scope > [data-ps-slide]'));
+      if (slides.length < 2) return;
+      // Fisher-Yates over a copy, then re-append in the new order. Each
+      // appendChild on an existing node moves it; net effect is O(n) DOM
+      // mutations rather than detach-then-rebuild.
+      for (let i = slides.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = slides[i];
+        slides[i] = slides[j];
+        slides[j] = tmp;
+      }
+      slides.forEach((s) => track.appendChild(s));
+      // Variant A uses [data-active='true'] on the first slide for initial
+      // paint. After shuffle, the previously-first slide may not be at
+      // position 0 anymore, so re-apply: clear all, then mark the new first.
+      slides.forEach((s, i) => {
+        s.setAttribute('data-active', i === 0 ? 'true' : 'false');
+        s.setAttribute('aria-hidden', i === 0 ? 'false' : 'true');
+        s.setAttribute('aria-label', 'Slide ' + (i + 1) + ' of ' + slides.length);
+      });
+      // Variant A dot pagination — re-sync aria-current so the active dot
+      // matches the new slide-0. Dot order doesn't need to shuffle (dots are
+      // positional, not photo-bound).
+      const dots = root.querySelectorAll('[data-ps-dot]');
+      dots.forEach((d, i) => {
+        if (i === 0) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
+    }
+
+    function setupCarousel(root) {
+      const track = root.querySelector('[data-ps-track]');
+      if (!track) return;
+      const slides = Array.from(track.querySelectorAll(':scope > [data-ps-slide]'));
+      if (slides.length < 2) return;
+      // All slides need to be visible + interactive in carousel mode.
+      slides.forEach((s) => {
+        s.setAttribute('data-active', 'true');
+        s.setAttribute('aria-hidden', 'false');
+      });
+      // Clone the slide list once so the CSS marquee can loop seamlessly
+      // (track translates from 0 → -50%; the second half is identical).
+      slides.forEach((slide) => {
+        const clone = slide.cloneNode(true);
+        clone.setAttribute('data-ps-clone', 'true');
+        clone.setAttribute('aria-hidden', 'true');
+        // Strip lightbox participation from cloned imgs — the lightbox would
+        // otherwise show every photo twice in its prev/next sequence.
+        clone.querySelectorAll('img').forEach((img) => {
+          img.setAttribute('data-aed-lightbox', 'off');
+        });
+        track.appendChild(clone);
+      });
+      // Animation duration — slide-count-aware so 5-photo and 48-photo
+      // sliders both feel "slow" rather than one being a blur and the other
+      // glacial. Floor at 30s for very small sets.
+      const cycleSeconds = Math.max(30, Math.round(slides.length * 3.5));
+      track.style.animationDuration = cycleSeconds + 's';
+      // Pause animation when the slider scrolls offscreen.
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const ent of entries) {
+            track.style.animationPlayState = ent.isIntersecting ? 'running' : 'paused';
+          }
+        }, { threshold: 0.05 });
+        io.observe(root);
+      }
+    }
+
+    function setupFade(root) {
+      const slides = Array.from(root.querySelectorAll('[data-ps-slide]'));
+      if (slides.length < 2) return;
+      const dots = Array.from(root.querySelectorAll('[data-ps-dot]'));
+      const prevBtn = root.querySelector('[data-ps-prev]');
+      const nextBtn = root.querySelector('[data-ps-next]');
+      const viewport = root.querySelector('[data-ps-viewport]');
+      const auto = root.getAttribute('data-autoplay') === 'true' && !reduceMotion;
+      const intervalMs = parseInt(root.getAttribute('data-interval') || '5000', 10);
+      let idx = 0;
+      let timer = null;
+      let paused = false;
+      let visible = true;
+
+      function paint() {
+        slides.forEach((s, i) => {
+          const active = i === idx;
+          s.setAttribute('data-active', active ? 'true' : 'false');
+          s.setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+        dots.forEach((d, i) => {
+          if (i === idx) d.setAttribute('aria-current', 'true');
+          else d.removeAttribute('aria-current');
+        });
+      }
+
+      function go(target) {
+        idx = ((target % slides.length) + slides.length) % slides.length;
+        paint();
+      }
+      function next() { go(idx + 1); }
+      function prev() { go(idx - 1); }
+
+      function start() {
+        if (!auto || timer || paused || !visible) return;
+        timer = setInterval(next, intervalMs);
+      }
+      function stop() {
+        if (!timer) return;
+        clearInterval(timer);
+        timer = null;
+      }
+
+      if (prevBtn) prevBtn.addEventListener('click', () => { stop(); prev(); start(); });
+      if (nextBtn) nextBtn.addEventListener('click', () => { stop(); next(); start(); });
+      dots.forEach((d) => {
+        d.addEventListener('click', () => {
+          const t = parseInt(d.getAttribute('data-ps-dot') || '0', 10);
+          stop(); go(t); start();
+        });
+      });
+
+      if (viewport) {
+        viewport.addEventListener('mouseenter', () => { paused = true; stop(); });
+        viewport.addEventListener('mouseleave', () => { paused = false; start(); });
+        viewport.addEventListener('focusin', () => { paused = true; stop(); });
+        viewport.addEventListener('focusout', () => { paused = false; start(); });
+
+        viewport.addEventListener('keydown', (ev) => {
+          if (ev.key === 'ArrowLeft') { ev.preventDefault(); stop(); prev(); start(); }
+          else if (ev.key === 'ArrowRight') { ev.preventDefault(); stop(); next(); start(); }
+        });
+
+        // Touch swipe
+        let startX = 0;
+        let startY = 0;
+        let tracking = false;
+        viewport.addEventListener('touchstart', (e) => {
+          if (e.touches.length !== 1) return;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          tracking = true;
+          paused = true;
+          stop();
+        }, { passive: true });
+        viewport.addEventListener('touchend', (e) => {
+          if (!tracking) return;
+          tracking = false;
+          const t = e.changedTouches[0];
+          const dx = t.clientX - startX;
+          const dy = t.clientY - startY;
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+            if (dx < 0) next();
+            else prev();
+          }
+          paused = false;
+          start();
+        }, { passive: true });
+      }
+
+      // Pause when offscreen
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const ent of entries) {
+            visible = ent.isIntersecting;
+            if (visible) start();
+            else stop();
+          }
+        }, { threshold: 0.25 });
+        io.observe(root);
+      }
+
+      start();
+    }
+  })();
+</script>

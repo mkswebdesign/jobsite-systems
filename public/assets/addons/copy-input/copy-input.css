@@ -1,0 +1,60 @@
+/*
+ * Copy Input — drop-in input with one-click copy button.
+ *
+ * Wraps any <input data-aed-copy> with a styled container + trailing
+ * Copy button. Theme-aware. See /copy-input/README.md.
+ */
+
+.aed-ci {
+  display: inline-flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 8px;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.15s ease;
+}
+.aed-ci:focus-within { border-color: var(--accent, #6B00FF); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #6B00FF) 18%, transparent); }
+
+input[data-aed-copy] {
+  flex: 1;
+  min-width: 0;
+  padding: 0.55rem 0.75rem;
+  background: transparent;
+  border: 0;
+  color: var(--text-primary, #fafafa);
+  font: inherit;
+  font-size: 0.875rem;
+  outline: none;
+}
+input[data-aed-copy]::selection { background: color-mix(in srgb, var(--accent, #6B00FF) 30%, transparent); }
+
+.aed-ci-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.85rem;
+  background: var(--bg-secondary, #111113);
+  color: var(--text-secondary, #a1a1aa);
+  border: 0;
+  border-left: 1px solid var(--border, #27272a);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+.aed-ci-btn:hover { color: var(--accent, #6B00FF); background: color-mix(in srgb, var(--accent, #6B00FF) 8%, var(--bg-secondary, #111113)); }
+.aed-ci-btn.is-copied { color: #10b981; background: color-mix(in srgb, #10b981 10%, var(--bg-secondary, #111113)); }
+.aed-ci-btn svg { width: 13px; height: 13px; }
+
+@media print {
+  .aed-ci-btn { display: none; }
+  .aed-ci { border: 0; padding: 0; }
+}

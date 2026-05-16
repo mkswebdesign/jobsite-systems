@@ -1,0 +1,508 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import Icon from '../builder/components/Icon.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+import Field from './_contactField.astro';
+
+const entry = await getEntry('pages', 'contact');
+if (!entry) throw new Error('pages/contact entry not found');
+const d: any = entry.data;
+
+type ShowIf = {
+  field: string;
+  equals?: string;
+  in?: string[];
+  notEmpty?: boolean;
+};
+
+type FieldOption = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+  selected?: boolean;
+  description?: string;
+};
+
+type FieldDef = {
+  id: string;
+  name: string;
+  label?: string;
+  type: string;
+  placeholder?: string;
+  required?: boolean;
+  row?: number;
+  step?: string;
+  value?: string;
+  options?: FieldOption[];
+  showIf?: ShowIf;
+};
+
+type StepDef = { id: string; label: string; title?: string; subtitle?: string };
+
+const allFields: FieldDef[] = d.form?.fields ?? [];
+const steps: StepDef[] = d.form?.steps ?? [];
+const isMultiStep = steps.length > 0;
+
+function fieldsForStep(stepId: string) {
+  return allFields.filter((f) => (f.step ?? steps[0]?.id) === stepId);
+}
+
+function fieldsByRow(fields: FieldDef[]) {
+  const rows = new Map<number, FieldDef[]>();
+  for (const f of fields) {
+    const r = f.row ?? 0;
+    if (!rows.has(r)) rows.set(r, []);
+    rows.get(r)!.push(f);
+  }
+  return [...rows.entries()].sort((a, b) => a[0] - b[0]).map(([, fs]) => fs);
+}
+
+// If no steps are defined, render as a single step named "all" so the form still works.
+const renderSteps: StepDef[] = isMultiStep
+  ? steps
+  : [{ id: 'all', label: 'Form' }];
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Contact' }]}
+    sectionLabel={d.header?.sectionLabel}
+    heading={d.header?.heading ?? 'Contact'}
+    lead={d.header?.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {d.form && (
+    <section
+      id="contact-form"
+      class="section"
+      data-section-type="contact-form"
+      data-section-label="Contact form"
+      data-section-variants="A:Default,B:Minimal,C:Featured"
+    >
+      <div class="container">
+        <div class="contact-grid">
+          <div class="contact-form-wrap reveal">
+            {isMultiStep && (
+              <div class="form-stepper" role="list" aria-label="Form progress">
+                {renderSteps.map((s, i) => (
+                  <div class="form-stepper-item" role="listitem" data-stepper-item={i}>
+                    <div class="form-stepper-bubble">
+                      <span class="form-stepper-num">{i + 1}</span>
+                      <svg class="form-stepper-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                    <span class="form-stepper-label">{s.label}</span>
+                    {i < renderSteps.length - 1 && <span class="form-stepper-connector" aria-hidden="true"></span>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <form
+              id="contactForm"
+              action={d.form.action}
+              method={d.form.method ?? 'POST'}
+              novalidate={isMultiStep}
+              data-aed-form
+              data-aed-form-success-title="Thanks — we got it."
+              data-aed-form-success-body="We'll review your inquiry and reply within one business day with a scope confirmation and subscription agreement."
+            >
+              {d.form.subject && <input type="hidden" name="_subject" value={d.form.subject} />}
+              <input type="hidden" name="brand" value={import.meta.env.PUBLIC_BRAND} />
+
+              {renderSteps.map((s, stepIdx) => {
+                const stepFields = isMultiStep ? fieldsForStep(s.id) : allFields;
+                const rows = fieldsByRow(stepFields);
+                const isLast = isMultiStep && stepIdx === renderSteps.length - 1;
+                return (
+                  <fieldset class="form-step" data-form-step={stepIdx} aria-hidden={stepIdx === 0 ? 'false' : 'true'}>
+                    {(s.title || s.subtitle) && (
+                      <div class="form-step-header">
+                        {s.title && <h3 class="form-step-title">{s.title}</h3>}
+                        {s.subtitle && <p class="form-step-subtitle">{s.subtitle}</p>}
+                      </div>
+                    )}
+                    {isLast && (
+                      <div class="form-review" data-form-review>
+                        <span class="form-review-heading">Review your info</span>
+                        <div class="form-review-list" data-form-review-list></div>
+                        <button type="button" class="form-review-edit" data-form-review-edit>&larr; Edit answers</button>
+                      </div>
+                    )}
+                    {rows.map(row => (
+                      row.length > 1 ? (
+                        <div class="form-row">
+                          {row.map((f) => <Field f={f} />)}
+                        </div>
+                      ) : (
+                        row.map((f) => <Field f={f} />)
+                      )
+                    ))}
+                  </fieldset>
+                );
+              })}
+
+              <div class="form-nav" data-form-nav>
+                <button type="button" class="btn btn-secondary form-back" data-form-back hidden>{d.form.backLabel ?? 'Back'}</button>
+                {isMultiStep && renderSteps.length > 1 && (
+                  <button type="button" class="btn btn-primary form-next" data-form-next>{d.form.nextLabel ?? 'Continue'}</button>
+                )}
+                <button type="submit" class="btn btn-primary form-submit" id="submitBtn" data-form-submit hidden={isMultiStep && renderSteps.length > 1}>{d.form.submitLabel ?? 'Send'}</button>
+              </div>
+              {/* Honeypot — must remain empty. Bots auto-fill; the contact-proxy
+                  Worker silently 200s any submission where _gotcha is non-empty. */}
+              <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
+                <label for="_gotcha">Leave this field empty</label>
+                <input type="text" id="_gotcha" name="_gotcha" tabindex="-1" autocomplete="off" />
+              </div>
+            </form>
+            <div class="form-status" id="formSuccess">
+              <strong>Message sent!</strong> {d.form.successMessage}
+            </div>
+            <div class="form-status" id="formError">
+              <strong>Something went wrong.</strong> {d.form.errorMessage}
+            </div>
+          </div>
+
+          {d.sidebar && (
+            <div class="contact-info reveal" data-reveal-delay="200">
+              {d.sidebar.infoCards?.map((c: any) => (
+                <div class={`contact-info-card${c.prominent ? ' contact-info-card--prominent' : ''}`}>
+                  {c.iconKey && (
+                    <div class="contact-info-icon">
+                      <Icon name={c.iconKey} />
+                    </div>
+                  )}
+                  {c.title && <h3>{c.title}</h3>}
+                  {c.body && <p class="contact-info-body">{c.body}</p>}
+                  {c.link && (
+                    c.prominent ? (
+                      c.link.external
+                        ? <a class="contact-info-prominent-link" href={c.link.href} target="_blank" rel="noopener">{c.link.label}<span class="arrow" aria-hidden="true">&rarr;</span></a>
+                        : <a class="contact-info-prominent-link" href={c.link.href}>{c.link.label}<span class="arrow" aria-hidden="true">&rarr;</span></a>
+                    ) : (
+                      <p>
+                        {c.link.external
+                          ? <a href={c.link.href} target="_blank" rel="noopener">{c.link.label}</a>
+                          : <a href={c.link.href}>{c.link.label}</a>}
+                      </p>
+                    )
+                  )}
+                </div>
+              ))}
+              {d.sidebar.expect && (
+                <div class="contact-expect">
+                  <h3>{d.sidebar.expect.heading}</h3>
+                  <div class="expect-list">
+                    {d.sidebar.expect.items?.map((i: string) => (
+                      <div class="expect-item expect-check">{i}</div>
+                    ))}
+                  </div>
+                  {d.sidebar.expect.footnote && (
+                    <p class="contact-expect-footnote">{d.sidebar.expect.footnote}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="contact-form" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+</Base>
+
+<script is:inline define:vars={{ errorFallback: d.form?.errorMessage, submitLabel: d.form?.submitLabel ?? 'Send' }}>
+  (function(){
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+
+    // Pre-select billing preference from ?plan= URL param (monthly|annual)
+    try {
+      var planParam = new URLSearchParams(window.location.search).get('plan');
+      if (planParam) {
+        var planSelect = form.querySelector('select[name="plan"]');
+        if (planSelect) {
+          var match = Array.prototype.find.call(planSelect.options, function(o){
+            return o.value === planParam && !o.disabled;
+          });
+          if (match) {
+            planSelect.value = planParam;
+            planSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      }
+    } catch (e) { /* no-op */ }
+
+    var submitBtn = document.getElementById('submitBtn');
+    var successEl = document.getElementById('formSuccess');
+    var errorEl = document.getElementById('formError');
+    var nextBtn = form.querySelector('[data-form-next]');
+    var backBtn = form.querySelector('[data-form-back]');
+    var fieldsets = Array.prototype.slice.call(form.querySelectorAll('[data-form-step]'));
+    var stepperItems = Array.prototype.slice.call(document.querySelectorAll('[data-stepper-item]'));
+    var isMulti = fieldsets.length > 1;
+    var currentIndex = 0;
+    var reviewList = form.querySelector('[data-form-review-list]');
+    var reviewEditBtn = form.querySelector('[data-form-review-edit]');
+
+    // ---------- Conditional fields (showIf) ----------
+    var showIfWraps = Array.prototype.slice.call(form.querySelectorAll('[data-show-if]')).map(function(el){
+      var rule = null;
+      try { rule = JSON.parse(el.getAttribute('data-show-if')); } catch (e) { rule = null; }
+      return { el: el, rule: rule };
+    });
+
+    function fieldValue(name) {
+      var ctrls = form.querySelectorAll('[name="' + name.replace(/"/g, '\\"') + '"]');
+      if (!ctrls.length) return '';
+      var first = ctrls[0];
+      if (first.type === 'radio') {
+        var checked = null;
+        for (var i = 0; i < ctrls.length; i++) if (ctrls[i].checked) { checked = ctrls[i]; break; }
+        return checked ? checked.value : '';
+      }
+      if (first.type === 'checkbox') return first.checked ? (first.value || 'yes') : '';
+      return (first.value || '').trim();
+    }
+
+    function evalShowIf(rule) {
+      if (!rule || !rule.field) return true;
+      var v = fieldValue(rule.field);
+      if (rule.notEmpty) return v !== '';
+      if (rule.equals !== undefined) return v === rule.equals;
+      if (Array.isArray(rule.in)) return rule.in.indexOf(v) >= 0;
+      return true;
+    }
+
+    function applyConditionals() {
+      // Iterate twice in case a conditional depends on another conditional
+      for (var pass = 0; pass < 2; pass++) {
+        showIfWraps.forEach(function(item) {
+          var visible = evalShowIf(item.rule);
+          var wasShown = item.el.classList.contains('is-shown');
+          item.el.classList.toggle('is-shown', visible);
+          var ctrls = item.el.querySelectorAll('input, select, textarea');
+          for (var i = 0; i < ctrls.length; i++) {
+            var c = ctrls[i];
+            if (!visible) {
+              if (c.required) {
+                c.dataset.aedOrigRequired = '1';
+                c.required = false;
+              }
+              c.disabled = true;
+            } else {
+              c.disabled = false;
+              if (c.dataset.aedOrigRequired === '1') c.required = true;
+            }
+          }
+          if (visible && !wasShown) item.el.classList.add('is-revealed');
+        });
+      }
+    }
+
+    function buildReview() {
+      if (!reviewList) return;
+      reviewList.innerHTML = '';
+      for (var i = 0; i < fieldsets.length - 1; i++) {
+        var fs = fieldsets[i];
+        var groups = fs.querySelectorAll('[data-field-name]');
+        for (var j = 0; j < groups.length; j++) {
+          var group = groups[j];
+          if (group.hasAttribute('data-show-if') && !group.classList.contains('is-shown')) continue;
+          if (group.classList.contains('form-group-checkbox')) continue;
+
+          var label = '';
+          var value = '';
+
+          if (group.classList.contains('form-radio-cards')) {
+            var legend = group.querySelector('legend');
+            label = legend ? legend.textContent.trim() : (group.getAttribute('data-field-name') || '');
+            var checked = group.querySelector('input[type="radio"]:checked');
+            if (!checked) continue;
+            var titleEl = checked.parentElement.querySelector('.radio-card-title');
+            value = titleEl ? titleEl.textContent.trim() : checked.value;
+          } else {
+            var ctrl = group.querySelector('input:not([type=hidden]), select, textarea');
+            if (!ctrl) continue;
+            var labelEl = ctrl.id ? form.querySelector('label[for="' + ctrl.id + '"]') : null;
+            label = labelEl ? labelEl.textContent.trim() : (ctrl.name || '');
+            var raw = (ctrl.value || '').trim();
+            if (ctrl.tagName === 'SELECT') {
+              var opt = ctrl.options[ctrl.selectedIndex];
+              raw = opt && !opt.disabled ? opt.textContent.trim() : '';
+            }
+            value = raw;
+          }
+
+          if (!value) continue;
+
+          var item = document.createElement('div');
+          item.className = 'form-review-item';
+          var labelSpan = document.createElement('span');
+          labelSpan.className = 'form-review-label';
+          labelSpan.textContent = label;
+          var valueSpan = document.createElement('span');
+          valueSpan.className = 'form-review-value';
+          valueSpan.textContent = value;
+          item.appendChild(labelSpan);
+          item.appendChild(valueSpan);
+          reviewList.appendChild(item);
+        }
+      }
+      if (!reviewList.childNodes.length) {
+        var empty = document.createElement('div');
+        empty.className = 'form-review-empty';
+        empty.textContent = 'Nothing to review yet — go back and fill out the steps above.';
+        reviewList.appendChild(empty);
+      }
+    }
+
+    function showStep(i) {
+      currentIndex = Math.max(0, Math.min(fieldsets.length - 1, i));
+      fieldsets.forEach(function(fs, idx) {
+        var active = idx === currentIndex;
+        fs.setAttribute('aria-hidden', active ? 'false' : 'true');
+        fs.classList.toggle('is-active', active);
+      });
+      stepperItems.forEach(function(si, idx) {
+        si.classList.toggle('is-active', idx === currentIndex);
+        si.classList.toggle('is-complete', idx < currentIndex);
+      });
+      if (backBtn) backBtn.hidden = currentIndex === 0;
+      if (isMulti && nextBtn && submitBtn) {
+        var onLast = currentIndex === fieldsets.length - 1;
+        nextBtn.hidden = onLast;
+        submitBtn.hidden = !onLast;
+        if (onLast) buildReview();
+      }
+      // Focus first field in step for keyboard users (skip on review step so submit isn't accidentally triggered)
+      var first = fieldsets[currentIndex].querySelector('input:not([type="hidden"]), select, textarea');
+      if (first && typeof first.focus === 'function') {
+        setTimeout(function(){ first.focus({ preventScroll: true }); }, 50);
+      }
+      // Scroll to top of form on step change
+      var wrap = form.closest('.contact-form-wrap');
+      if (wrap && wrap.scrollIntoView) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function validateStep(i) {
+      var fs = fieldsets[i];
+      if (!fs) return true;
+      // Clear any previous error styling on this step
+      var prev = fs.querySelectorAll('.has-error');
+      for (var p = 0; p < prev.length; p++) prev[p].classList.remove('has-error');
+
+      var controls = Array.prototype.slice.call(fs.querySelectorAll('input, select, textarea'));
+      var ok = true;
+      var firstInvalid = null;
+      controls.forEach(function(el) {
+        if (el.disabled) return; // skip hidden conditionals
+        if (!el.checkValidity()) {
+          ok = false;
+          if (el.type === 'radio') {
+            var rcFs = el.closest('fieldset.form-radio-cards');
+            if (rcFs) rcFs.classList.add('has-error');
+          } else {
+            el.classList.add('has-error');
+          }
+          if (!firstInvalid) firstInvalid = el;
+        }
+      });
+      if (!ok && firstInvalid && firstInvalid.reportValidity) firstInvalid.reportValidity();
+      return ok;
+    }
+
+    // Re-run conditionals on every input/change so fields appear/disappear live
+    form.addEventListener('input', applyConditionals);
+    form.addEventListener('change', applyConditionals);
+    // Clear error styling on a field as soon as the user edits it
+    form.addEventListener('input', function(e) {
+      var t = e.target;
+      if (!t) return;
+      t.classList.remove('has-error');
+      var rcFs = t.closest && t.closest('fieldset.form-radio-cards');
+      if (rcFs) rcFs.classList.remove('has-error');
+    });
+    // Initial pass — set conditional visibility on load
+    applyConditionals();
+
+    if (isMulti) {
+      showStep(0);
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function(){
+          if (validateStep(currentIndex)) showStep(currentIndex + 1);
+        });
+      }
+      if (backBtn) {
+        backBtn.addEventListener('click', function(){
+          showStep(currentIndex - 1);
+        });
+      }
+      // Clicking a completed stepper bubble jumps back
+      stepperItems.forEach(function(si, idx) {
+        si.addEventListener('click', function(){
+          if (idx < currentIndex) showStep(idx);
+        });
+      });
+      if (reviewEditBtn) {
+        reviewEditBtn.addEventListener('click', function(){
+          showStep(0);
+        });
+      }
+      // Enter key on non-textarea inputs advances instead of submitting
+      form.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.target && e.target.tagName !== 'TEXTAREA') {
+          if (currentIndex < fieldsets.length - 1) {
+            e.preventDefault();
+            if (validateStep(currentIndex)) showStep(currentIndex + 1);
+          }
+        }
+      });
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      // Validate all steps before sending
+      for (var i = 0; i < fieldsets.length; i++) {
+        if (!validateStep(i)) {
+          if (isMulti) showStep(i);
+          return;
+        }
+      }
+      submitBtn.disabled = true;
+      var origLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      successEl.className = 'form-status';
+      errorEl.className = 'form-status';
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+        .then(function(r){
+          if (!r.ok) throw new Error('fail');
+          if (window.plausible) window.plausible('Form Submit');
+          window.location.href = '/contact/success/';
+        })
+        .catch(function(){
+          errorEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = origLabel || submitLabel;
+        });
+    });
+  })();
+</script>

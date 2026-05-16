@@ -1,0 +1,23 @@
+/*
+ * Relative Time — drop-in human-friendly time formatter.
+ *
+ * Almost no CSS — just a tabular-numerals hint and a "tooltip on hover"
+ * pattern using the underlying <time> element's title attribute (set
+ * by the JS to the absolute datetime).
+ *
+ * See /relative-time/README.md.
+ */
+
+time[data-aed-relative] {
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--text-muted, #9a9aa2);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+time[data-aed-relative][data-aed-style="plain"] {
+  cursor: default;
+  text-decoration: none;
+}

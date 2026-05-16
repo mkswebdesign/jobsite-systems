@@ -1,0 +1,24 @@
+---
+/**
+ * TagHeader — section header for /tag/<slug>/ pages.
+ * Breadcrumbs (Home > Tags > <tag>), title, post count.
+ * No RSS link this pass (Pass 3 adds per-category feeds; per-tag isn't planned).
+ */
+import Breadcrumbs from './Breadcrumbs.astro';
+interface Props { tag: string; postCount: number; }
+const { tag, postCount } = Astro.props;
+---
+<header
+  class="tag-header"
+  data-section-type="tag-header"
+  data-section-label="Tag header"
+  data-section-variants="A:Default,B:Compact"
+>
+  <Breadcrumbs items={[
+    { label: 'Home', href: '/' },
+    { label: 'Tags', href: '/archive/' },
+    { label: `#${tag}` },
+  ]} />
+  <h1 class="tag-header__title">#{tag}</h1>
+  <p class="tag-header__count">{postCount} {postCount === 1 ? 'article' : 'articles'}</p>
+</header>

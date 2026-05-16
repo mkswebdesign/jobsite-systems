@@ -1,0 +1,54 @@
+/*
+ * Sparkline — drop-in inline mini chart.
+ *
+ * Pure SVG, theme-aware via brand --accent. No dependencies.
+ *
+ * See /sparkline/README.md.
+ */
+
+[data-aed-sparkline] {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 0;
+}
+[data-aed-sparkline] svg {
+  display: block;
+  overflow: visible;
+}
+.aed-spark-line {
+  fill: none;
+  stroke: var(--accent, #6B00FF);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.aed-spark-area {
+  fill: var(--accent, #6B00FF);
+  opacity: 0.16;
+}
+.aed-spark-dot {
+  fill: var(--accent, #6B00FF);
+}
+.aed-spark-dot-last {
+  fill: var(--accent, #6B00FF);
+  stroke: var(--bg-primary, #0a0a0b);
+  stroke-width: 1.5;
+}
+
+/* Trend variants — overrides accent */
+[data-aed-sparkline][data-aed-trend="up"] .aed-spark-line,
+[data-aed-sparkline][data-aed-trend="up"] .aed-spark-area,
+[data-aed-sparkline][data-aed-trend="up"] .aed-spark-dot,
+[data-aed-sparkline][data-aed-trend="up"] .aed-spark-dot-last { stroke: #10b981; fill: #10b981; }
+[data-aed-sparkline][data-aed-trend="up"] .aed-spark-area { opacity: 0.18; }
+
+[data-aed-sparkline][data-aed-trend="down"] .aed-spark-line,
+[data-aed-sparkline][data-aed-trend="down"] .aed-spark-area,
+[data-aed-sparkline][data-aed-trend="down"] .aed-spark-dot,
+[data-aed-sparkline][data-aed-trend="down"] .aed-spark-dot-last { stroke: #ef4444; fill: #ef4444; }
+[data-aed-sparkline][data-aed-trend="down"] .aed-spark-area { opacity: 0.18; }
+
+[data-aed-sparkline][data-aed-trend="flat"] .aed-spark-line,
+[data-aed-sparkline][data-aed-trend="flat"] .aed-spark-area,
+[data-aed-sparkline][data-aed-trend="flat"] .aed-spark-dot,
+[data-aed-sparkline][data-aed-trend="flat"] .aed-spark-dot-last { stroke: var(--text-muted, #9a9aa2); fill: var(--text-muted, #9a9aa2); }

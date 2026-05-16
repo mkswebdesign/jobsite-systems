@@ -1,0 +1,37 @@
+{
+  "name": "breadcrumbs",
+  "assets": {
+    "css": ["breadcrumbs.css"],
+    "js":  ["breadcrumbs.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:breadcrumbs:label",
+        "description": "Per-page override for the current page's breadcrumb label. Defaults to the page title."
+      }
+    ],
+    "json": [
+      {
+        "id": "aed-breadcrumbs",
+        "description": "Site-wide breadcrumb behavior. Optional — sensible defaults apply if omitted.",
+        "fields": {
+          "home.label": { "type": "string", "default": "Home",   "description": "Label for the root crumb." },
+          "home.href":  { "type": "string", "default": "/",      "description": "URL for the root crumb." },
+          "separator":  { "type": "string", "default": "/",      "description": "Visual separator between crumbs." },
+          "labels":     { "type": "object",                      "description": "Map of path → label overrides, e.g. { '/work': 'Case studies' }." }
+        }
+      }
+    ],
+    "data": [
+      {
+        "selector": "nav[data-aed-breadcrumbs]",
+        "description": "Per-instance flags on the breadcrumb nav element.",
+        "fields": {
+          "data-aed-variant":     { "type": "string",  "enum": ["ghost"], "description": "Subdued visual variant." },
+          "data-aed-skip-schema": { "type": "boolean",                    "description": "Suppress the BreadcrumbList JSON-LD that otherwise gets injected for SEO." }
+        }
+      }
+    ]
+  }
+}

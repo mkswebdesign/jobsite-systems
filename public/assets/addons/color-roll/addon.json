@@ -1,0 +1,21 @@
+{
+  "name": "color-roll",
+  "assets": {
+    "css": ["color-roll.css"],
+    "js":  ["color-roll.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "id": "aed-color-roll-config",
+        "description": "Visitor-facing accent randomizer for demo pages. Renders a floating button that lets unauthenticated visitors roll a new accent color for the demo subtree. State persists per-session in sessionStorage and is scoped to the configured path prefix so the rolled color follows the visitor across sub-pages of the same demo.",
+        "fields": {
+          "scopePrefix": { "type": "string", "required": true, "description": "Path prefix where the button activates. Match is exact (no trailing slash) OR any sub-path of `<prefix>/`. Example: `/demo/flinthills/` shows the button on `/demo/flinthills/`, `/demo/flinthills/services/`, etc., but not on `/services/`." },
+          "label": { "type": "string", "required": false, "description": "Button label. Defaults to `Try a new color`." },
+          "resetLabel": { "type": "string", "required": false, "description": "Reset link label. Defaults to `Reset`." },
+          "hint": { "type": "string", "required": false, "description": "Optional sublabel rendered under the main label. Defaults to `Demo only — your visit only`." }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "slug": "process",
+  "path": "/process/",
+  "breadcrumbLabel": "Process",
+  "seo": {
+    "title": "Process — How It Works | Jobsite Systems",
+    "description": "Six clear steps from first call to a live, maintained trade-business website. No long discovery, no surprise invoices.",
+    "canonical": "https://jobsite.systems/process/"
+  },
+  "header": {
+    "heading": "How It Works — And Why It's Simple",
+    "lead": "Six clear steps from first call to a live, maintained trade-business website.",
+    "callout": "Total client time: ~2 hours across two weeks. Most of the wait is on us, not on you."
+  },
+  "dividers": [
+    { "after": "header", "color": "primary" },
+    { "after": "timeline", "color": "primary" }
+  ],
+  "timeline": [
+    {
+      "number": "01",
+      "title": "Intro Call",
+      "duration": "20–30 minutes",
+      "lead": "A short call to cover your services, trades, service area, and what you want the site to do. No pitch — we listen, answer questions, and tell you honestly whether this is a fit.",
+      "items": [
+        "Discussion of your business and customers you serve",
+        "Walk-through of what's included",
+        "Clear pricing with no mystery add-ons",
+        "Honest yes/no on fit"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A written scope summary and a clear path forward."
+      },
+      "yourTime": "20–30 minutes",
+      "whatWeNeed": "Nothing — just show up."
+    },
+    {
+      "number": "02",
+      "title": "Content Handoff",
+      "duration": "1–3 days",
+      "lead": "You send us what you have — license info, services, service area, photos. We give you a simple checklist and templates so nothing gets missed.",
+      "items": [
+        "Service / trade checklist to fill out",
+        "Photo upload link (phone photos are fine)",
+        "Short owner bio or \"about\" paragraph",
+        "License, insurance, and pricing notes"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A confirmation that we have everything needed to start building."
+      },
+      "yourTime": "~30 minutes total",
+      "whatWeNeed": "License info, services list, photos (phone photos are fine)."
+    },
+    {
+      "number": "03",
+      "title": "Design & Build",
+      "duration": "1–2 weeks",
+      "lead": "We build your site on our trade-business template system — brand-matched colors, your photos, your services, your voice — built on simple, solid hosting.",
+      "items": [
+        "Branded design based on your existing look",
+        "All your content laid out on real pages",
+        "Estimate-request form wired to your email",
+        "Local SEO basics built in from day one"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A staging link you can share with your team for review."
+      },
+      "yourTime": "0 minutes",
+      "whatWeNeed": "Nothing — we build."
+    },
+    {
+      "number": "04",
+      "title": "Review",
+      "duration": "2–5 days",
+      "lead": "You review the staging site. We include one round of revisions — wording, photos, section changes — to get it right before launch.",
+      "items": [
+        "Full review on phone and desktop",
+        "One round of revisions included",
+        "Sign-off before launch"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A finalized site ready to go live."
+      },
+      "yourTime": "15–30 minutes",
+      "whatWeNeed": "Feedback on the staging link."
+    },
+    {
+      "number": "05",
+      "title": "Launch",
+      "duration": "1–2 days",
+      "lead": "We point your domain, turn on SSL, wire up analytics, register the site with Google and the AI answer engines (ChatGPT, Perplexity) — then it's live and findable everywhere.",
+      "items": [
+        "Domain cutover and SSL",
+        "Analytics and form testing",
+        "Submitted to Google and Bing search engines",
+        "Ready for ChatGPT-style AI answer engines"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A live site at your domain, monitored and backed up."
+      },
+      "yourTime": "0 minutes",
+      "whatWeNeed": "Domain access — we'll walk you through it."
+    },
+    {
+      "number": "06",
+      "title": "Hands-Off Ongoing",
+      "duration": "Ongoing",
+      "lead": "Your site stays up, stays updated, and stays accurate. Need a crew bio refreshed, a service area updated, or a new before-and-after photo published? One email, handled.",
+      "items": [
+        "Uptime monitoring and daily backups",
+        "Small content changes handled for you",
+        "Crew bio and roster updates",
+        "Direct email support"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A site that stays working year after year."
+      },
+      "yourTime": "0 minutes",
+      "whatWeNeed": "An email when something changes."
+    }
+  ],
+  "finalCta": {
+    "heading": "Think we're a good fit?",
+    "body": "Tell us about your business and we'll walk you through exactly what your site would include. No commitment needed.",
+    "ctaPrimary": {
+      "label": "Start Your Site",
+      "href": "/contact/"
+    },
+    "ctaSecondary": {
+      "label": "Send an Email",
+      "href": "mailto:hello@jobsite.systems"
+    },
+    "headshot": null
+  }
+}

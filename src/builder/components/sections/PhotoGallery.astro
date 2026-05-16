@@ -1,0 +1,278 @@
+---
+/**
+ * PhotoGallery
+ *
+ * A multi-image gallery section — for showcasing project work, before/after
+ * photos, team shots, equipment, etc. Distinct from:
+ *   - DesignBreak (single atmospheric image with copy)
+ *   - ContentSection (text-only editorial)
+ *   - StatRibbon (data/proof points)
+ *
+ * Three brand-styled variants:
+ *   A "Grid"     — uniform aspect-ratio grid, default. 3-up tablet, 4-up desktop.
+ *   B "Masonry"  — varied heights via CSS columns. Better for mixed-orientation photos.
+ *   C "Carousel" — horizontal scroll-snap strip. Best for 6+ photos where vertical
+ *                  scroll would dominate the page.
+ *
+ * 2-48 image items required. Captions + alt text optional per image.
+ * Heading + sectionLabel + subtext + CTA all optional.
+ *
+ * Pagination: set `perPage` to chunk the gallery into pages with prev/next +
+ * numbered controls. All items still render in the DOM (so the image-lightbox
+ * addon can browse the full set seamlessly), but only one page is visible at
+ * a time. Omit or set to 0 to render all items at once.
+ */
+export interface Props {
+  sectionLabel?: string;
+  heading?: string;
+  subtext?: string;
+  images: Array<{
+    src: string;
+    alt?: string;
+    caption?: string;
+  }>;
+  cta?: { label: string; href: string };
+  variant?: 'A' | 'B' | 'C';
+  perPage?: number;
+}
+
+const { sectionLabel, heading, subtext, images, cta, perPage } = Astro.props;
+const items = Array.isArray(images) ? images.filter((i) => i && i.src) : [];
+
+// Stable per-instance group id so the image-lightbox addon's prev/next
+// stays scoped to THIS gallery (not bleeding into adjacent galleries on
+// the same page). Hashing heading+sectionLabel+first src gives a
+// deterministic id that survives rebuilds without leaking content.
+function galleryGroupId() {
+  const seed = String(heading || '') + '|' + String(sectionLabel || '') + '|' + (items[0] && items[0].src || '');
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) { h = ((h << 5) - h + seed.charCodeAt(i)) | 0; }
+  return 'pg-' + Math.abs(h).toString(36);
+}
+const groupId = items.length >= 2 ? galleryGroupId() : null;
+
+// Pagination math — only chunks when perPage is a positive integer SMALLER
+// than the total count. Otherwise the gallery renders flat.
+const pageSize = (typeof perPage === 'number' && perPage > 0 && perPage < items.length)
+  ? Math.floor(perPage)
+  : 0;
+const pageCount = pageSize > 0 ? Math.ceil(items.length / pageSize) : 1;
+const paged = pageSize > 0;
+---
+
+<section
+  class="photo-gallery"
+  data-section-type="photo-gallery"
+  data-section-label="Photo gallery"
+  data-section-variants="A:Grid,B:Masonry,C:Carousel"
+  data-paged={paged ? 'true' : 'false'}
+  data-per-page={paged ? String(pageSize) : undefined}
+  data-page-count={paged ? String(pageCount) : undefined}
+>
+  <div class="photo-gallery__inner">
+    {(sectionLabel || heading || subtext) && (
+      <div class="photo-gallery__head">
+        {sectionLabel && <p class="photo-gallery__eyebrow">{sectionLabel}</p>}
+        {heading && <h2 class="photo-gallery__heading">{heading}</h2>}
+        {subtext && <p class="photo-gallery__subtext">{subtext}</p>}
+      </div>
+    )}
+    {items.length > 0 && (
+      <ul class="photo-gallery__body" role="list">
+        {items.map((img, i) => (
+          <li
+            class="photo-gallery__item"
+            data-page-idx={paged ? String(Math.floor(i / pageSize)) : undefined}
+            data-hidden={paged && Math.floor(i / pageSize) !== 0 ? 'true' : undefined}
+          >
+            <figure class="photo-gallery__figure">
+              <img
+                class="photo-gallery__img"
+                src={img.src}
+                alt={img.alt || ''}
+                loading="lazy"
+                decoding="async"
+                data-aed-lightbox=""
+                data-aed-lightbox-caption={img.caption || undefined}
+                data-aed-lightbox-group={groupId || undefined}
+              />
+              {img.caption && (
+                <figcaption class="photo-gallery__caption">{img.caption}</figcaption>
+              )}
+            </figure>
+          </li>
+        ))}
+      </ul>
+    )}
+    {paged && (
+      <nav class="photo-gallery__pagination" aria-label="Gallery pagination" data-pg-pagination>
+        <button class="photo-gallery__page-btn photo-gallery__page-btn--prev" type="button" data-pg-prev aria-label="Previous page" disabled>
+          <span aria-hidden="true">←</span>
+          <span class="photo-gallery__page-btn-label">Prev</span>
+        </button>
+        <ol class="photo-gallery__page-list" role="list" data-pg-pages>
+          {Array.from({ length: pageCount }, (_, i) => (
+            <li>
+              <button
+                type="button"
+                class="photo-gallery__page-num"
+                data-pg-page={String(i)}
+                aria-label={`Go to page ${i + 1}`}
+                aria-current={i === 0 ? 'page' : undefined}
+              >{i + 1}</button>
+            </li>
+          ))}
+        </ol>
+        <button class="photo-gallery__page-btn photo-gallery__page-btn--next" type="button" data-pg-next aria-label="Next page">
+          <span class="photo-gallery__page-btn-label">Next</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <p class="photo-gallery__page-status" data-pg-status>
+          Page <span data-pg-current>1</span> of <span data-pg-total>{pageCount}</span> · {items.length} images
+        </p>
+      </nav>
+    )}
+    {cta && (
+      <a class="photo-gallery__cta" href={cta.href}>{cta.label}</a>
+    )}
+  </div>
+</section>
+
+<style is:global>
+  /* Pagination chrome — kept in the component so every brand inherits the
+     same baseline. Per-brand CSS may still override colors / spacing. */
+  .photo-gallery[data-paged='true'] .photo-gallery__item[data-hidden='true'] { display: none; }
+  .photo-gallery__pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border, rgba(255,255,255,.08));
+  }
+  .photo-gallery__page-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+  .photo-gallery__page-btn,
+  .photo-gallery__page-num {
+    appearance: none;
+    border: 1px solid var(--border, rgba(255,255,255,.18));
+    background: transparent;
+    color: inherit;
+    font: 600 13px/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 36px;
+  }
+  .photo-gallery__page-num { min-width: 36px; justify-content: center; padding: 0.5rem 0.65rem; }
+  .photo-gallery__page-btn:hover:not(:disabled),
+  .photo-gallery__page-num:hover { background: var(--brand-accent-readable, rgba(255,255,255,.06)); border-color: var(--brand-accent-on-dark, currentColor); }
+  .photo-gallery__page-num[aria-current='page'] {
+    background: var(--brand-accent-on-dark, currentColor);
+    color: var(--brand-on-accent, var(--bg-primary, #0a0a0a));
+    border-color: var(--brand-accent-on-dark, currentColor);
+  }
+  .photo-gallery__page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .photo-gallery__page-btn:focus-visible,
+  .photo-gallery__page-num:focus-visible { outline: 2px solid var(--brand-accent-on-dark, currentColor); outline-offset: 2px; }
+  .photo-gallery__page-status {
+    flex-basis: 100%;
+    text-align: center;
+    margin: 0.4rem 0 0;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+  @media (min-width: 720px) {
+    .photo-gallery__page-status { flex-basis: auto; margin: 0 0 0 auto; }
+  }
+</style>
+
+<script>
+  // PhotoGallery pagination — vanilla JS, runs once per gallery instance.
+  // Hides items outside the current page via [data-hidden='true'] (matches
+  // the SSR initial state), wires prev/next + page-number buttons, syncs
+  // [aria-current], and smooth-scrolls the gallery into view on page change.
+  // The image-lightbox addon scans `img[data-aed-lightbox]` regardless of
+  // display state, so its prev/next still browses the full set seamlessly.
+  (function () {
+    const galleries = document.querySelectorAll('.photo-gallery[data-paged="true"]');
+    galleries.forEach((root) => {
+      const perPage = parseInt(root.getAttribute('data-per-page') || '0', 10);
+      const pageCount = parseInt(root.getAttribute('data-page-count') || '1', 10);
+      if (!perPage || pageCount <= 1) return;
+      const items = Array.from(root.querySelectorAll('.photo-gallery__item'));
+      const pageBtns = Array.from(root.querySelectorAll('[data-pg-page]'));
+      const prevBtn = root.querySelector<HTMLButtonElement>('[data-pg-prev]');
+      const nextBtn = root.querySelector<HTMLButtonElement>('[data-pg-next]');
+      const currentEl = root.querySelector('[data-pg-current]');
+      let page = 0;
+
+      function paint() {
+        items.forEach((it) => {
+          const idx = parseInt(it.getAttribute('data-page-idx') || '0', 10);
+          if (idx === page) it.removeAttribute('data-hidden');
+          else it.setAttribute('data-hidden', 'true');
+        });
+        pageBtns.forEach((btn) => {
+          const i = parseInt(btn.getAttribute('data-pg-page') || '0', 10);
+          if (i === page) btn.setAttribute('aria-current', 'page');
+          else btn.removeAttribute('aria-current');
+        });
+        if (prevBtn) prevBtn.disabled = page <= 0;
+        if (nextBtn) nextBtn.disabled = page >= pageCount - 1;
+        if (currentEl) currentEl.textContent = String(page + 1);
+      }
+
+      function scrollIntoView() {
+        const head = root.querySelector('.photo-gallery__head') || root;
+        head.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      pageBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const i = parseInt(btn.getAttribute('data-pg-page') || '0', 10);
+          if (i === page) return;
+          page = Math.max(0, Math.min(pageCount - 1, i));
+          paint();
+          scrollIntoView();
+        });
+      });
+      if (prevBtn) prevBtn.addEventListener('click', () => {
+        if (page <= 0) return;
+        page -= 1; paint(); scrollIntoView();
+      });
+      if (nextBtn) nextBtn.addEventListener('click', () => {
+        if (page >= pageCount - 1) return;
+        page += 1; paint(); scrollIntoView();
+      });
+
+      // Keyboard nav — ←/→ when focus is inside the gallery. Skips the
+      // textareas the lightbox might use; we only intercept when the focused
+      // element is a gallery descendant.
+      root.addEventListener('keydown', (ev) => {
+        const e = ev as KeyboardEvent;
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        const target = e.target;
+        if (target instanceof HTMLElement && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+        if (e.key === 'ArrowLeft' && page > 0) { page -= 1; paint(); }
+        if (e.key === 'ArrowRight' && page < pageCount - 1) { page += 1; paint(); }
+      });
+
+      paint();
+    });
+  })();
+</script>

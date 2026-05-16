@@ -1,0 +1,322 @@
+---
+/**
+ * Internal fork-guide page. Documents how to clone this repo structure to a
+ * new location and scaffold a brand with the /new-brand Claude skill.
+ *
+ * Not indexed:
+ *   - `indexable={false}` prop emits <meta name="robots" content="noindex,
+ *     nofollow, noarchive"> plus an explicit googlebot directive via Base.astro
+ *   - Not linked from Nav, Footer, sitemap, robots.txt, or llms.txt
+ *   - URL is non-obvious (`/internal-fork/`) — obscurity does most of the hiding
+ *
+ * Content is plaintext HTML. Anyone who navigates to the URL can read it.
+ * Don't put secrets here — this is a reference for yourself, not a vault.
+ */
+import Base from '../builder/layouts/Base.astro';
+---
+
+<Base
+  title="Internal — Fork Guide"
+  description="Internal reference."
+  indexable={false}
+>
+  <section class="section" id="fork-guide-root">
+    <div class="container" style="max-width:820px">
+      <article class="fg-content">
+        <header style="margin-bottom:3rem">
+          <span class="section-label">Internal · Fork Guide</span>
+          <h1 style="margin-top:0.5rem">Fork this site to a new brand.</h1>
+          <p class="lead">
+            Everything you need to clone the repo structure, scaffold a new business,
+            and deploy it. Bookmark this page on any deployed brand — the same URL works
+            on every fork.
+          </p>
+        </header>
+
+        <nav class="fg-toc">
+          <strong>On this page</strong>
+          <ol>
+            <li><a href="#one-time-setup">One-time setup on a new machine</a></li>
+            <li><a href="#prompt-format">The <code>/new-brand</code> prompt format</a></li>
+            <li><a href="#examples">Copy-paste prompt examples</a></li>
+            <li><a href="#what-happens">What the skill does end-to-end</a></li>
+            <li><a href="#post-skill">Post-skill manual checklist</a></li>
+            <li><a href="#deploy">Deploy workflow</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+          </ol>
+        </nav>
+
+        <section id="one-time-setup">
+          <h2>1. One-time setup on a new machine</h2>
+          <p>
+            Copy <strong>both</strong> folders side-by-side. The Astro loader walks <code>../arich-source</code>,
+            so they must remain siblings:
+          </p>
+          <pre data-copy>&lt;new-location&gt;/
+├── arich-astro/      ← build system, Astro, scripts, components
+└── arich-source/     ← per-brand JSON content + starter templates</pre>
+
+          <p>Then:</p>
+          <pre data-copy>cd arich-astro
+npm install
+BRAND=arich npm run build:fast    # smoke test — should output 20+ pages
+cp deploy.config.example.json deploy.config.json    # you'll fill per-brand</pre>
+
+          <p>
+            If the smoke build passes, the stack works. The <code>arich</code> brand stays in
+            place as the reference. You do <em>not</em> need to delete it to add new brands —
+            each brand lives in its own <code>brands/&lt;id&gt;/</code> folder.
+          </p>
+        </section>
+
+        <section id="prompt-format">
+          <h2>2. The <code>/new-brand</code> prompt format</h2>
+          <p>
+            In VS Code's Claude agent, invoke the skill with as much structured detail
+            as you have. The skill infers the rest and flags what it had to invent.
+          </p>
+
+          <h3>Recommended prompt shape</h3>
+          <pre data-copy>/new-brand &lt;Business Name&gt; in &lt;City&gt;, &lt;State&gt; — &lt;trade/industry&gt;.
+Owner: &lt;Owner Name&gt;. Founded &lt;year&gt;.
+Service area: &lt;cities or region&gt;.
+Phone: &lt;phone&gt;. Email: &lt;email&gt;. Domain: &lt;domain.com&gt;.
+Differentiators: &lt;family-owned, 24/7, licensed, whatever is distinctive&gt;.
+Tone: &lt;friendly / premium / no-nonsense — optional&gt;.</pre>
+
+          <h3>What each field buys you</h3>
+          <ul>
+            <li><strong>Business name / trade / city</strong> — drives brand name, tagline, headline, service-area copy, SEO</li>
+            <li><strong>Owner name / founded year</strong> — about page bio, copyright, experience stats</li>
+            <li><strong>Service area (specific cities)</strong> — <code>llms.txt</code>, <code>work.json</code>, FAQ "do you serve ___"</li>
+            <li><strong>Phone / email / domain</strong> — contact page, footer, schema.org, email links. Missing values become flagged placeholders.</li>
+            <li><strong>Differentiators</strong> — landing hero bullets, "Why Us" section, testimonial framing</li>
+            <li><strong>Tone</strong> — word choice across every page</li>
+          </ul>
+        </section>
+
+        <section id="examples">
+          <h2>3. Copy-paste prompt examples</h2>
+
+          <h3>Fully specified (best results)</h3>
+          <pre data-copy>/new-brand Bluebird Electric in Austin, TX — residential + commercial electrician.
+Owner: Marcus Chen. Founded 2015.
+Service area: Greater Austin — Austin, Round Rock, Cedar Park, Pflugerville, Leander.
+Phone: (512) 555-0188. Email: hello@bluebirdelectric.com. Domain: bluebirdelectric.com.
+Differentiators: licensed master electrician, 24/7 emergency service, whole-home rewiring specialty, transparent flat-rate pricing, veteran-owned.
+Tone: professional but friendly, emphasize safety and trust.</pre>
+
+          <h3>Mid-detail (more placeholders to fill after)</h3>
+          <pre data-copy>/new-brand Crestline Roofing in Boise, ID — residential + commercial roofing &amp; gutter service.
+Owner: Diana Park, master roofer. Founded 2008.
+Service area: Treasure Valley — Boise, Meridian, Nampa, Caldwell, Eagle.
+Differentiators: GAF Master Elite certified, drone roof inspections, storm-damage insurance-claim experienced, lifetime workmanship warranty, family-owned for three generations.
+Tone: trustworthy, practical, emphasize storm-response speed.</pre>
+
+          <h3>Minimal (skill fills more, you flag more afterward)</h3>
+          <pre data-copy>/new-brand a plumbing company in Columbus Ohio, family-owned, 24/7 emergency service</pre>
+
+          <h3>Non-trade brand (design / creative / professional services)</h3>
+          <p style="color:var(--text-muted);font-size:0.95rem">
+            Skill will skip the <code>service-business</code> template and clone <code>arich</code> instead.
+            Expect more wholesale rewrites of copy.
+          </p>
+          <pre data-copy>/new-brand Aurora Design Studio — boutique brand-identity studio based in Toronto.
+Owner: Priya Arora. Founded 2019.
+Services: brand identity, web design, packaging design.
+Domain: auroradesign.studio.
+Tone: premium, minimalist, confident.</pre>
+        </section>
+
+        <section id="what-happens">
+          <h2>4. What the skill does end-to-end</h2>
+          <ol>
+            <li>Derives a kebab-case brand id (e.g. <code>bluebird-electric</code>)</li>
+            <li>Picks the starter template from industry signals (<code>service-business</code> for trades; otherwise clones <code>arich</code>)</li>
+            <li>Runs <code>node scripts/scaffold-brand.mjs &lt;id&gt; [--template=…]</code></li>
+            <li>Fills <code>brand.json</code> with palette, positioning, SEO, owner, contact</li>
+            <li>Customizes every page JSON, service, FAQ, testimonial, and <code>llms.txt</code></li>
+            <li>Generates favicon + OG image via <code>node scripts/generate-brand-assets.mjs &lt;id&gt;</code></li>
+            <li>Smoke-builds: <code>BRAND=&lt;id&gt; npm run build:fast</code></li>
+            <li>
+              Runs the quality gate: <code>node scripts/brand-lint.mjs &lt;id&gt;</code>. Must exit 0 before the skill reports done. Catches:
+              <ul>
+                <li>Leftover arich tokens (Anthony, A Rich Design, arich.design, MKS, arich clients)</li>
+                <li>Unfilled <code>{'{{'}PLACEHOLDER{'}}'}</code> markers from the template</li>
+                <li>Stale arich binary files in <code>public/assets/brands/&lt;id&gt;/</code></li>
+              </ul>
+            </li>
+            <li>Reports what was flagged as an invention the user should replace with real data (testimonials, license #, form endpoint, etc.)</li>
+          </ol>
+        </section>
+
+        <section id="post-skill">
+          <h2>5. Post-skill manual checklist</h2>
+          <p>
+            The skill leaves the site buildable and launchable, but these items require
+            real-world data only you have:
+          </p>
+          <ol>
+            <li>
+              <strong>Review in the browser.</strong>
+              <pre data-copy>BRAND=&lt;id&gt; npm run dev
+# open http://localhost:4321</pre>
+            </li>
+            <li>
+              <strong>Contact form endpoint.</strong> New brands point at the shared Cloudflare Worker
+              (<code>https://contact-proxy.anthony-abc.workers.dev</code>), which falls back to the
+              <code>gomks</code> inbox until the brand verifies its own domain in emailit. When the brand
+              is ready for its own inbox, verify the domain in emailit, add a <code>BRANDS</code> entry in
+              <code>workers/contact-proxy/src/index.ts</code>, and <code>wrangler deploy</code>. Alternative
+              for quick pilots: swap <code>form.action</code> to a third-party like Formspree or Basin.
+            </li>
+            <li>
+              <strong>Real imagery.</strong> Drop files into <code>public/assets/brands/&lt;id&gt;/images/site/</code>,
+              then update <code>brand.json.owner.headshot</code> and <code>assets.headshot</code> to point at them.
+              Until then, the generated initials-avatar fallback renders.
+            </li>
+            <li>
+              <strong>Real testimonials.</strong> The skill seeds plausible placeholder reviewers.
+              Replace with real quotes + names in <code>testimonials.json</code>.
+            </li>
+            <li>
+              <strong>Logo / custom OG image.</strong> The auto-generated OG is serviceable.
+              If you want a designed one, drop it into <code>public/assets/brands/&lt;id&gt;/og-image.jpg</code> (1200×630) and commit.
+            </li>
+          </ol>
+        </section>
+
+        <section id="deploy">
+          <h2>6. Deploy workflow</h2>
+          <ol>
+            <li><strong>xCloud panel:</strong> create site, point domain, provision SFTP user.</li>
+            <li><strong>Mountain Duck:</strong> add bookmark with those SFTP creds. A new UUID folder appears under <code>c:/Users/antho/Mountain Duck/</code>.</li>
+            <li><strong>Add the brand to <code>deploy.config.json</code>:</strong></li>
+          </ol>
+          <pre data-copy>{`{
+  "arich": "c:/Users/antho/Mountain Duck/26985f79-7ce6-445e-a9bb-770d47854798",
+  "bluebird-electric": "c:/Users/antho/Mountain Duck/<new-uuid-here>"
+}`}</pre>
+
+          <h3>Then ship</h3>
+          <pre data-copy>BRAND=&lt;id&gt; npm run ship</pre>
+          <p style="color:var(--text-muted);font-size:0.95rem">
+            This runs <code>build:fast</code> and uploads via the Mountain Duck SFTP mount.
+            First-time deploys to a site that previously hosted a different brand may need
+            <code>--clean</code> once to sweep stale files. <em>Never</em> run <code>--clean</code>
+            without confirming the target path is correct — it deletes server files not in your build.
+          </p>
+        </section>
+
+        <section id="troubleshooting">
+          <h2>7. Troubleshooting</h2>
+          <dl class="fg-dl">
+            <dt><code>brand-lint</code> exits 1 after the skill says it's done</dt>
+            <dd>Run it yourself to see what it caught: <code>npm run lint-brand &lt;id&gt;</code>. Fix each flagged file, re-run. Common miss: <code>llms.txt</code> (easy to overlook because it's plain markdown, not JSON).</dd>
+
+            <dt>Build fails with schema errors</dt>
+            <dd>Usually a required field is missing in a <code>pages/*.json</code> or <code>services/*.json</code>. Read <code>src/content/config.ts</code> to see what the Zod schema expects. Most often a missing <code>slug</code> or <code>order</code> on a new service.</dd>
+
+            <dt>Work page shows an empty grid</dt>
+            <dd>New brands (especially from <code>service-business</code> template) ship with no <code>work/*.json</code> entries. Either add real case studies and reference their slugs in <code>pages/work.json</code>, or embrace the "Service Area" framing the template defaults to.</dd>
+
+            <dt>Favicon shows arich purple on a brand with a different accent</dt>
+            <dd>You forgot to run <code>npm run gen-assets &lt;id&gt;</code> after changing the palette. Generator output is deterministic — same <code>brand.json</code>, same bytes — so re-run any time <code>theme.colors.accent</code> changes.</dd>
+
+            <dt>Deploy target wrong / "mount not connected"</dt>
+            <dd>Open Mountain Duck and verify the bookmark is connected (green dot). Check <code>deploy.config.json</code> UUID matches the brand. If unsure, run <code>BRAND=&lt;id&gt; npm run deploy -- --dry</code> first to see what would upload.</dd>
+
+            <dt>Initials avatar still shows after I added a real headshot file</dt>
+            <dd>The file exists but <code>brand.json.owner.headshot</code> is still null. Update the path. Rebuild.</dd>
+          </dl>
+        </section>
+      </article>
+    </div>
+  </section>
+
+  <style is:global>
+    #fork-guide-root .fg-content h1 { font-size: 2.25rem; margin: 0.5rem 0 1rem; }
+    #fork-guide-root .fg-content h2 { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 1.4rem; }
+    #fork-guide-root .fg-content h3 { margin-top: 1.75rem; font-size: 1.1rem; color: var(--text-primary); }
+    #fork-guide-root .fg-content p,
+    #fork-guide-root .fg-content li,
+    #fork-guide-root .fg-content dd { line-height: 1.7; color: var(--text-secondary); }
+    #fork-guide-root .fg-content code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    #fork-guide-root .fg-content pre {
+      position: relative;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.875rem;
+      padding: 1.1rem 3.5rem 1.1rem 1.1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      white-space: pre;
+      color: var(--text-primary);
+      margin: 1rem 0;
+    }
+    #fork-guide-root .fg-content pre code { background: transparent; border: none; padding: 0; }
+    #fork-guide-root .fg-content pre .fg-copy {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    #fork-guide-root .fg-content pre .fg-copy:hover { color: var(--accent); border-color: var(--accent); }
+    #fork-guide-root .fg-content pre .fg-copy.copied { color: #10b981; border-color: #10b981; }
+    #fork-guide-root .fg-toc {
+      padding: 1.25rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      margin-bottom: 3rem;
+    }
+    #fork-guide-root .fg-toc strong { display: block; margin-bottom: 0.5rem; color: var(--text-primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    #fork-guide-root .fg-toc ol { margin: 0; padding-left: 1.25rem; color: var(--text-secondary); }
+    #fork-guide-root .fg-toc a { color: var(--text-secondary); text-decoration: none; }
+    #fork-guide-root .fg-toc a:hover { color: var(--accent); }
+    #fork-guide-root .fg-dl dt { margin-top: 1.25rem; color: var(--text-primary); font-weight: 600; }
+    #fork-guide-root .fg-dl dd { margin: 0.35rem 0 0; padding-left: 1rem; border-left: 2px solid var(--border); }
+  </style>
+
+  <script>
+    (function () {
+      document.querySelectorAll('#fork-guide-root pre[data-copy]').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'fg-copy';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', async () => {
+          const clone = pre.cloneNode(true) as HTMLElement;
+          clone.querySelectorAll('.fg-copy').forEach((b: Element) => b.remove());
+          const text = (clone.textContent ?? '').trim();
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.textContent = 'Copied';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+          } catch {
+            btn.textContent = 'Press \u2318C';
+          }
+        });
+        pre.appendChild(btn);
+      });
+    })();
+  </script>
+</Base>

@@ -1,0 +1,309 @@
+---
+import { brand } from '../../lib/brand';
+
+export interface Props {
+  sectionLabel?: string;
+  heading: string;
+  /** Variant J (Direct, landscape-systems only): optional HTML-bearing
+   * heading used to render lime accent words via inline <span class="accent">.
+   * When set, takes precedence over `heading`. Other variants ignore this
+   * field — they continue to render `heading` as plain text. The plain-text
+   * `heading` should still be authored as a fallback for SEO + future
+   * editor text edits (which strip HTML). */
+  headingHtml?: string;
+  subtext?: string;
+  backgroundImage?: string;
+  cta: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  stats?: {
+    value: string;
+    label: string;
+    /** Variant J (Direct, landscape-systems only): uppercase category tag
+     * rendered above the value (e.g. "TIMELINE", "RELIABILITY"). Other
+     * variants ignore this field. */
+    category?: string;
+    /** Variant J (Direct, landscape-systems only): smaller suffix appended
+     * to the value via <small> (e.g. value "<1" + unit "s"). Other variants
+     * ignore this field. */
+    unit?: string;
+  }[];
+  /** Variant J (Direct, landscape-systems only): 3-item trust row rendered
+   * between the CTAs and the stats card. Each entry renders alongside a
+   * decorative check icon. Other variants ignore this field. */
+  trustItems?: string[];
+  /** Variant J (Direct, landscape-systems only): footer text inside the
+   * stats card. `right` renders alongside a pulsing status dot. Other
+   * variants ignore this field. */
+  statsFooter?: { left: string; right: string };
+  steps?: {
+    number: string;
+    title: string;
+    body?: string;
+    proof?: { value: string; label: string };
+    /** Variant I (Field-Notes, landscape-systems only): single uppercase
+     * proof-point chip text rendered beneath each step body. Variants A–H
+     * ignore this field; variant I ignores `proof` if both are present. */
+    chip?: string;
+  }[];
+  /** Variant H (Walk-Through, landscape-systems only): numbered "What to
+   * expect" checklist rendered as a sibling inside .db-card__copy. Empty
+   * default; non-H variants ignore the array via the brand CSS hide guard. */
+  expectations?: { title: string; body: string }[];
+  /** Variant H reassurance microcopy beneath the CTA. Optional everywhere;
+   * the brand CSS also has a fallback ::after for sections that ship the
+   * value via JSON before the component started rendering it as DOM. */
+  actionsMicrocopy?: string;
+  credential?: { value: string; label: string };
+  footerNote?: string;
+  variant?: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K';
+}
+
+const {
+  sectionLabel,
+  heading,
+  headingHtml,
+  subtext,
+  backgroundImage,
+  cta,
+  secondaryCta,
+  stats,
+  trustItems,
+  statsFooter,
+  steps,
+  expectations,
+  actionsMicrocopy,
+  credential,
+  footerNote,
+  variant,
+} = Astro.props;
+
+const hasExpectations = Array.isArray(expectations) && expectations.length > 0;
+const showExpectations = hasExpectations && variant === 'H';
+
+// Variant catalog advertised to the in-page editor's variant chip. F
+// (Timeline-Rail), G (Timeline-Track), H (Walk-Through), I (Field-Notes),
+// J (Direct), and K (Quiet-Promise) are landscape-systems only — keeping them
+// brand-conditional avoids surfacing a chip on brands that have no CSS for them.
+const variantCatalog = brand.id === 'landscape-systems'
+  ? 'A:Default,B:Aligned,C:Minimal,D:Spotlight,E:Process,F:Timeline-Rail,G:Timeline-Track,H:Walk-Through,I:Field-Notes,J:Direct,K:Quiet-Promise'
+  : 'A:Default,B:Aligned,C:Minimal,D:Spotlight,E:Process';
+
+const hasBg = typeof backgroundImage === 'string' && backgroundImage.length > 0;
+const bgStyle = hasBg ? `--design-break-bg-image: url("${backgroundImage}");` : undefined;
+
+// Variants D (Spotlight) and E (Process) render a 2x2 stats grid. Defaults are
+// deliberately generic web-services oriented (the brand using D is an agency);
+// content authors override per-section via the `stats` JSON field.
+const DEFAULT_STATS = [
+  { value: '2 wks', label: 'From kickoff to live' },
+  { value: '0',     label: 'Plugins. Ever.' },
+  { value: '<1s',   label: 'Page loads on mobile' },
+  { value: '100%',  label: 'Uptime guaranteed' },
+];
+const resolvedStats = (stats && stats.length > 0 ? stats : DEFAULT_STATS).slice(0, 4);
+
+// Variant E (Process) renders an inline numbered process list. Variants A–D
+// ignore the `steps` field; variant E without steps falls back to the same
+// stats-only layout as D so authors don't get an empty rail.
+const hasSteps = Array.isArray(steps) && steps.length > 0;
+---
+
+<section
+  class="design-break"
+  data-section-type="design-break"
+  data-section-label="Design break"
+  data-section-variants={variantCatalog}
+  data-design-break-variant={variant}
+  data-has-bg={hasBg ? 'true' : 'false'}
+  data-has-steps={hasSteps ? 'true' : 'false'}
+  style={bgStyle}
+>
+  {hasBg && <div class="design-break__bg" aria-hidden="true"></div>}
+  <div class="design-break__overlay" aria-hidden="true"></div>
+  <div class="design-break__inner">
+    <div class="db-card">
+      <div class="db-card__copy">
+        {sectionLabel && <p class="design-break__eyebrow reveal">{sectionLabel}</p>}
+        {headingHtml ? (
+          <h2 class="design-break__heading reveal" data-reveal-delay="100" set:html={headingHtml} />
+        ) : (
+          <h2 class="design-break__heading reveal" data-reveal-delay="100">{heading}</h2>
+        )}
+        {subtext && <p class="design-break__subtext reveal" data-reveal-delay="200">{subtext}</p>}
+        {credential && (
+          <span class="design-break__credential" aria-label={`${credential.value} ${credential.label}`}>
+            <span class="design-break__credential-value">{credential.value}</span>
+            <span class="design-break__credential-label">{credential.label}</span>
+          </span>
+        )}
+        {hasSteps && (
+          <ol class="db-card__steps" data-db-steps>
+            {steps!.map((step, i) => (
+              <li class="db-step" data-db-step-index={i} style={`--db-step-i:${i};`}>
+                <div class="db-step__num" aria-hidden="true">{step.number}</div>
+                <div class="db-step__body">
+                  <h3 class="db-step__title">{step.title}</h3>
+                  {step.body && <p class="db-step__copy">{step.body}</p>}
+                  {step.proof && !(variant === 'I' && step.chip) && (
+                    <span class="db-step__proof" aria-label={`${step.proof.value} ${step.proof.label}`}>
+                      <span class="db-step__proof-value">{step.proof.value}</span>
+                      <span class="db-step__proof-label">{step.proof.label}</span>
+                    </span>
+                  )}
+                  {variant === 'I' && step.chip && (
+                    <span class="db-step__chip">{step.chip}</span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+        <div class="db-card__actions">
+          {footerNote && <p class="design-break__footer-note">{footerNote}</p>}
+          <a class="design-break__cta reveal" data-reveal-delay="300" href={cta.href}>{cta.label}</a>
+          {secondaryCta && (
+            <a class="db-card__secondary reveal" data-reveal-delay="350" href={secondaryCta.href}>{secondaryCta.label}</a>
+          )}
+          {actionsMicrocopy && variant === 'H' && (
+            <p class="db-card__actions-microcopy">{actionsMicrocopy}</p>
+          )}
+        </div>
+        {variant === 'J' && Array.isArray(trustItems) && trustItems.length > 0 && (
+          <ul class="db-card__trust reveal" data-reveal-delay="380" role="list">
+            {trustItems.map((item) => (
+              <li>
+                <span class="db-card__trust-check" aria-hidden="true"></span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {showExpectations && (
+          <aside class="db-walkthrough-list">
+            <h4>What to expect</h4>
+            <ol>
+              {expectations!.map((step) => (
+                <li><span><b>{step.title}</b>{step.body}</span></li>
+              ))}
+            </ol>
+          </aside>
+        )}
+      </div>
+      {variant === 'J' ? (
+        <aside class="db-card__stats db-card__stats--j reveal" data-reveal-delay="400" role="group" aria-label="Performance metrics">
+          <div class="db-stats__grid">
+            {resolvedStats.map((s, i) => (
+              <div class="db-stat" data-db-stat-icon={['clock','plug','gauge','shield'][i]}>
+                <i class="db-stat__chip" aria-hidden="true"></i>
+                {s.category && <div class="db-stat__category">{s.category}</div>}
+                <div class="db-stat__value" data-db-stat-value={s.value}>
+                  {s.value}{s.unit && <small> {s.unit}</small>}
+                </div>
+                <div class="db-stat__label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+          {statsFooter && (
+            <footer class="db-stats__footer">
+              <span class="db-stats__footer-left">{statsFooter.left}</span>
+              <span class="db-stats__footer-right">
+                <i class="db-stats__pulse" aria-hidden="true"></i>
+                {statsFooter.right}
+              </span>
+            </footer>
+          )}
+        </aside>
+      ) : (
+        <div class="db-card__stats reveal" data-reveal-delay="400" aria-hidden="false">
+          {resolvedStats.map((s) => (
+            <div class="db-stat">
+              <div class="db-stat__value" data-db-stat-value={s.value}>{s.value}</div>
+              <div class="db-stat__label">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Variant E (Process) only — count-up on numeric stat values + step-row
+  // reveal with 80ms stagger. Other variants are still purely declarative.
+  // Guarded by `prefers-reduced-motion`: reduced-motion users get the
+  // final value painted instantly with no fade-rise, no number count.
+  (function () {
+    const sections = document.querySelectorAll<HTMLElement>(
+      '.design-break[data-design-break-variant="E"], [data-design-break-variant="E"] .design-break'
+    );
+    if (!sections.length) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Parse "100", "100%", "2 wks" → { num: 100, prefix: '', suffix: '%' | ' wks' }
+    // Returns null when the value has no leading numeric run we can animate
+    // (e.g. "<1s", "Same Day").
+    const parse = (raw: string) => {
+      const m = raw.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+      if (!m) return null;
+      return { prefix: m[1], num: parseFloat(m[2]), suffix: m[3] };
+    };
+
+    const animateNumber = (el: HTMLElement, target: { prefix: string; num: number; suffix: string }) => {
+      const start = performance.now();
+      const dur = 900;
+      const isInt = Number.isInteger(target.num);
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / dur);
+        // easeOutCubic
+        const eased = 1 - Math.pow(1 - t, 3);
+        const v = target.num * eased;
+        el.textContent = target.prefix + (isInt ? Math.round(v).toString() : v.toFixed(1)) + target.suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    sections.forEach((section) => {
+      const stats = Array.from(section.querySelectorAll<HTMLElement>('[data-db-stat-value]'));
+      const steps = Array.from(section.querySelectorAll<HTMLElement>('.db-step'));
+
+      // Pre-paint state for animatable nodes (only when motion is allowed).
+      // Without this, a slow IntersectionObserver fire would briefly show the
+      // final state before animating.
+      if (!reduce) {
+        steps.forEach((s) => s.classList.add('is-pending'));
+      }
+
+      const reveal = () => {
+        if (!reduce) {
+          steps.forEach((s, i) => {
+            setTimeout(() => {
+              s.classList.remove('is-pending');
+              s.classList.add('is-revealed');
+            }, i * 80);
+          });
+          stats.forEach((el) => {
+            const target = parse(el.dataset.dbStatValue || '');
+            if (target) animateNumber(el, target);
+          });
+        }
+      };
+
+      if (!('IntersectionObserver' in window)) {
+        reveal();
+        return;
+      }
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            reveal();
+            io.disconnect();
+          }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+      io.observe(section);
+    });
+  })();
+</script>

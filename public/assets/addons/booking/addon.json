@@ -1,0 +1,17 @@
+{
+  "name": "booking",
+  "assets": {
+    "css": ["booking.css"],
+    "js":  ["booking.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:booking",
+        "default": "cal:yourname/15min",
+        "required": true,
+        "description": "Default provider token, formatted '<provider>:<path>'. Supported providers: 'cal' (Cal.com), 'calendly', 'savvycal'. Per-trigger overrides via data-aed-booking-trigger='cal:other/30min'."
+      }
+    ]
+  }
+}

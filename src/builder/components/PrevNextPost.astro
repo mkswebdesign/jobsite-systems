@@ -1,0 +1,29 @@
+---
+/**
+ * PrevNextPost — two-column nav at article foot.
+ * Props: prev?, next? — Post entries. Hidden columns when one side is null.
+ */
+import type { Post } from '../lib/posts';
+interface Props { prev: Post | null; next: Post | null; }
+const { prev, next } = Astro.props;
+---
+{(prev || next) && (
+  <nav class="prev-next" aria-label="Previous and next post">
+    {prev
+      ? (
+        <a class="prev-next__link prev-next__prev" href={`/post/${prev.data.slug}/`} rel="prev">
+          <span class="prev-next__label">← Older</span>
+          <span class="prev-next__title">{prev.data.title}</span>
+        </a>
+      )
+      : <span class="prev-next__link prev-next__prev prev-next__link--empty" aria-hidden="true"></span>}
+    {next
+      ? (
+        <a class="prev-next__link prev-next__next" href={`/post/${next.data.slug}/`} rel="next">
+          <span class="prev-next__label">Newer →</span>
+          <span class="prev-next__title">{next.data.title}</span>
+        </a>
+      )
+      : <span class="prev-next__link prev-next__next prev-next__link--empty" aria-hidden="true"></span>}
+  </nav>
+)}

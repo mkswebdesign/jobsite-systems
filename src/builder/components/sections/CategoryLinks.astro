@@ -1,0 +1,40 @@
+---
+/**
+ * CategoryLinks (Pass 4) — homepage section: six category cards.
+ * Reads getAllCategories() and per-category post counts.
+ */
+import { getAllCategories, getAllPosts } from '../../lib/posts';
+
+interface Props { eyebrow?: string; heading: string; subhead?: string; }
+const { eyebrow, heading, subhead } = Astro.props;
+const cats = await getAllCategories();
+const posts = await getAllPosts();
+const counts = new Map<string, number>();
+for (const p of posts) counts.set(p.data.category, (counts.get(p.data.category) ?? 0) + 1);
+---
+<section
+  class="section category-links"
+  data-section-type="category-links"
+  data-section-label="Category links"
+  data-section-variants="A:Default"
+>
+  <div class="container">
+    {eyebrow && <span class="category-links__eyebrow">{eyebrow}</span>}
+    <h2 class="category-links__heading">{heading}</h2>
+    {subhead && <p class="category-links__subhead">{subhead}</p>}
+    <ul class="category-links__grid">
+      {cats.map((c) => {
+        const count = counts.get(c.data.id) ?? 0;
+        return (
+          <li class="category-links__item" data-category={c.data.id}>
+            <a class="category-links__card" href={`/category/${c.data.slug}/`} style={c.data.color ? `--cat-accent: ${c.data.color}` : undefined}>
+              <h3 class="category-links__name">{c.data.name}</h3>
+              <p class="category-links__desc">{c.data.description}</p>
+              <span class="category-links__count">{count} {count === 1 ? 'article' : 'articles'}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>

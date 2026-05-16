@@ -1,0 +1,27 @@
+{
+  "slug": "cedar-mill-plumbing",
+  "order": 1,
+  "title": "Cedar Mill Plumbing — Mike Hollister",
+  "shortTitle": "Cedar Mill Plumbing",
+  "client": "Cedar Mill Plumbing",
+  "cardSummary": "Solo licensed plumber, Portland OR. Phone-first homepage, real-job photo gallery, and a quick-quote estimate form that emails Mike directly.",
+  "category": "Sample Build",
+  "projectMeta": "Solo Plumber • Portland, OR • Sample Build",
+  "tags": ["Solo Plumber", "Portland, OR", "Sample Build"],
+  "gradientPreset": "g3",
+  "liveUrl": "/demo/cedar-mill-plumbing/",
+  "liveUrlLabel": "View live demo",
+  "image": null,
+  "imageAlt": null,
+  "comingSoon": false,
+  "keyFeatures": [
+    "Phone number front and center on every page",
+    "Real-job photo gallery with lightbox",
+    "Estimate-request form that emails Mike directly",
+    "Service-area page tuned for Westside Portland searches"
+  ],
+  "seo": {
+    "title": "Cedar Mill Plumbing — Sample Build",
+    "description": "A sample solo-plumber site built on the Jobsite Systems platform: phone-first homepage, photo gallery, estimate form, and local SEO."
+  }
+}

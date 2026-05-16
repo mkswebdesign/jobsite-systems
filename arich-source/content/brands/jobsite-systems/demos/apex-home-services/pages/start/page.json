@@ -1,0 +1,73 @@
+{
+  "slug": "start",
+  "path": "/start/",
+  "breadcrumbLabel": "Get a Quote",
+  "seo": {
+    "title": "Get a Quote — Apex Home Services",
+    "description": "Quick quote request form. The office reads every request and replies the same business day with a phone-quote or a window for a free in-home estimate.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/start/"
+  },
+  "header": {
+    "sectionLabel": "Get a quote",
+    "heading": "Tell us what you need.\nWe'll quote it.",
+    "lead": "About two minutes. The office reads every request, phone-quotes what we can from photos, and books a free in-home estimate for anything bigger. Same business day reply during weekday hours. Photos help — text them to (913) 555-0177 after submitting if it's faster."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New quote request from Apex Home Services",
+    "submitLabel": "Submit Quote Request",
+    "successMessage": "Got it — your request is in. The office will read it carefully and reply the same business day with a phone-quote or a window for a free in-home estimate.",
+    "errorMessage": "Something went wrong. Please try again or call us directly at (913) 555-0177.",
+    "steps": [
+      { "id": "trade", "eyebrow": "Trade", "title": "Which trade fits best?", "description": "Pick the closest fit. We'll route you appropriately when we call back.", "fields": [
+        { "id": "trade", "name": "trade", "type": "radio-cards", "required": true, "options": [
+          { "value": "handyman-services", "label": "Handyman", "description": "Drywall, doors, fixtures, mounting, punch lists." },
+          { "value": "electrical", "label": "Electrical", "description": "Outlets, fans, lighting, panels, EV chargers." },
+          { "value": "light-remodel", "label": "Light Remodel", "description": "Kitchen, bath, basement finish-out." },
+          { "value": "exterior-services", "label": "Exterior", "description": "Decks, fences, gutters, light siding." },
+          { "value": "second-opinion", "label": "Second opinion", "description": "Have a quote from another contractor — want a second look." },
+          { "value": "not-sure", "label": "Not sure yet", "description": "Tell us in the details step." },
+          { "value": "other", "label": "Something else", "description": "Tell us in the details step — we'll be honest about fit." }
+        ]}
+      ]},
+      { "id": "timing", "eyebrow": "Timing", "title": "How urgent is it?", "description": "Helps us route the dispatch.", "fields": [
+        { "id": "timing", "name": "timing", "type": "radio-cards", "required": true, "options": [
+          { "value": "asap", "label": "ASAP", "description": "Urgent — leak, broken door, exposed wire." },
+          { "value": "1-2-weeks", "label": "Next 1–2 weeks", "description": "Standard handyman / electrical scheduling." },
+          { "value": "month-plus", "label": "Within 1–2 months", "description": "Remodel projects typically 4–8 weeks out." },
+          { "value": "planning", "label": "Just planning", "description": "Pricing the job — no rush." }
+        ]}
+      ]},
+      { "id": "city", "eyebrow": "Service area", "title": "Where in the metro?", "description": "We cover the KC metro on the KS side and selected MO suburbs.", "fields": [
+        { "id": "city", "name": "city", "type": "radio-cards", "required": false, "options": [
+          { "value": "kansas-city-ks", "label": "Kansas City, KS", "description": "Core service area." },
+          { "value": "kansas-city-mo", "label": "Kansas City, MO", "description": "Selected MO suburbs covered." },
+          { "value": "overland-park", "label": "Overland Park", "description": "Core service area." },
+          { "value": "lenexa", "label": "Lenexa", "description": "Core service area — our shop is here." },
+          { "value": "shawnee", "label": "Shawnee", "description": "Core service area." },
+          { "value": "leawood", "label": "Leawood", "description": "Core service area." },
+          { "value": "olathe", "label": "Olathe", "description": "Core service area." },
+          { "value": "other-metro", "label": "Other KC suburb", "description": "Tell us where in the details step." },
+          { "value": "outside", "label": "Outside the metro", "description": "Worth a call — we'll be honest about whether it makes sense." }
+        ]}
+      ]},
+      { "id": "about-you", "eyebrow": "About you", "title": "How do we reach you?", "description": "First and last name, email, and phone. Phone is for quotes and scheduling.", "fields": [
+        { "id": "name", "name": "name", "label": "Your Name", "type": "text", "placeholder": "First and last name", "required": true, "row": 1 },
+        { "id": "email", "name": "email", "label": "Email Address", "type": "email", "placeholder": "you@example.com", "required": true, "row": 1 },
+        { "id": "phone", "name": "phone", "label": "Phone (for scheduling)", "type": "tel", "placeholder": "(913) 555-0177", "required": true, "row": 2, "autocomplete": "tel" },
+        { "id": "best_time", "name": "best_time", "label": "Best time to call?", "type": "select", "required": false, "row": 2, "options": [
+          { "value": "", "label": "Pick a window…", "disabled": true, "selected": true },
+          { "value": "morning", "label": "Weekday morning (7a–12p)" },
+          { "value": "afternoon", "label": "Weekday afternoon (12p–6p)" },
+          { "value": "evening", "label": "Early evening (5p–7p)" },
+          { "value": "anytime", "label": "Any weekday or Saturday morning" }
+        ]}
+      ]},
+      { "id": "details", "eyebrow": "Details", "title": "What needs doing?", "description": "Brief description and any details that help — photos can be texted to (913) 555-0177 after you submit.", "fields": [
+        { "id": "message", "name": "message", "label": "Note (optional)", "type": "textarea", "placeholder": "Anything for the office — scope of the job, gate codes, dogs, parking, second-opinion details, etc.", "required": false },
+        { "id": "terms", "name": "terms", "type": "checkbox", "label": "I understand this form is for requesting a quote, not for ordering work or making a binding commitment. Pricing is finalized only on a written quote. If I'm having a real emergency (fire, gas, active flooding, downed live wires), I will call 911 first. I agree to the <a href=\"/terms/\" target=\"_blank\" rel=\"noopener\">Terms</a> and <a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>.", "value": "accepted", "required": true }
+      ]}
+    ]
+  }
+}

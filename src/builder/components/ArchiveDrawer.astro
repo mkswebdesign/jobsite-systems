@@ -1,0 +1,180 @@
+---
+/**
+ * ArchiveDrawer — slide-in refine panel triggered by ArchiveToolbar's
+ * Refine button. Sections: search, tags (typeahead + multi-select),
+ * date range (presets + custom), reading time (dual-handle slider),
+ * author (only renders when authors.length >= 2).
+ *
+ * Drawer behavior (open/close, focus trap, Apply preview, etc.) is
+ * owned by the inline IIFE in ArchiveToolbar.astro. This component is
+ * pure markup.
+ */
+import type { Author, TagUsage } from '../lib/posts';
+
+interface Props {
+  tags: TagUsage[];
+  authors: Author[];
+}
+const { tags, authors } = Astro.props;
+const showAuthors = authors.length >= 2;
+---
+
+<div class="arch-drawer-back" id="arch-drawer-back" data-open="false" hidden></div>
+
+<aside
+  class="arch-drawer"
+  id="arch-drawer"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="arch-drawer-title"
+  data-open="false"
+  hidden
+  data-section-type="archive-drawer"
+  data-section-label="Refine drawer"
+  data-section-variants="A:Default"
+>
+  <header class="arch-drawer__head">
+    <h3 class="arch-drawer__title" id="arch-drawer-title">Refine</h3>
+    <button
+      class="arch-drawer__close"
+      id="arch-drawer-close"
+      type="button"
+      aria-label="Close refine panel"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="arch-drawer__body">
+    {/* --- Search --- */}
+    <section class="arch-section" data-open="true">
+      <button class="arch-section__head" type="button" aria-expanded="true">
+        Search in archive
+        <svg class="arch-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      <div class="arch-section__body">
+        <input
+          class="arch-drawer-search"
+          id="arch-q"
+          type="search"
+          placeholder="Search titles, summaries…"
+          aria-label="Search archive"
+          autocomplete="off"
+        />
+      </div>
+    </section>
+
+    {/* --- Tags --- */}
+    {tags.length > 0 && (
+      <section class="arch-section" data-open="true">
+        <button class="arch-section__head" type="button" aria-expanded="true">
+          Tags
+          <svg class="arch-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="arch-section__body">
+          <input
+            class="arch-tag-search"
+            type="search"
+            placeholder="Filter tags…"
+            aria-label="Filter tag list"
+            autocomplete="off"
+          />
+          <div class="arch-tag-grid" role="group" aria-label="Tags">
+            {tags.map(({ tag, count }) => (
+              <button
+                type="button"
+                class="arch-tag"
+                data-tag={tag}
+                data-on="false"
+                aria-pressed="false"
+              >
+                {tag} <span class="arch-tag-count">{count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {/* --- Date range --- */}
+    <section class="arch-section" data-open="true">
+      <button class="arch-section__head" type="button" aria-expanded="true">
+        Date range
+        <svg class="arch-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      <div class="arch-section__body">
+        <div class="arch-date-presets" role="group" aria-label="Date presets">
+          <button type="button" class="arch-preset" data-preset="today" aria-pressed="false">Today</button>
+          <button type="button" class="arch-preset" data-preset="7d"    aria-pressed="false">Last 7 days</button>
+          <button type="button" class="arch-preset" data-preset="30d"   aria-pressed="false">Last 30 days</button>
+          <button type="button" class="arch-preset" data-preset="ytd"   aria-pressed="false">This year</button>
+        </div>
+        <div class="arch-date-inputs">
+          <label>From <input type="date" id="arch-date-from" /></label>
+          <label>To   <input type="date" id="arch-date-to" /></label>
+        </div>
+      </div>
+    </section>
+
+    {/* --- Reading time --- */}
+    <section class="arch-section" data-open="true">
+      <button class="arch-section__head" type="button" aria-expanded="true">
+        Reading time
+        <svg class="arch-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      <div class="arch-section__body">
+        <div class="arch-rt-slider" role="group" aria-label="Reading time range">
+          <div class="arch-rt-track"><div class="arch-rt-fill"></div></div>
+          <input type="range" class="arch-rt-min" id="arch-rt-min" min="1" max="20" value="1"  aria-label="Minimum reading time" />
+          <input type="range" class="arch-rt-max" id="arch-rt-max" min="1" max="20" value="20" aria-label="Maximum reading time" />
+        </div>
+        <div class="arch-rt-readout"><span id="arch-rt-readout">1–20 min read</span></div>
+      </div>
+    </section>
+
+    {/* --- Author (only when 2+ authors) --- */}
+    {showAuthors && (
+      <section class="arch-section" data-open="false">
+        <button class="arch-section__head" type="button" aria-expanded="false">
+          Author
+          <svg class="arch-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="arch-section__body">
+          <div class="arch-author-grid" role="group" aria-label="Authors">
+            {authors.map((a) => (
+              <button
+                type="button"
+                class="arch-author"
+                data-author={a.data.id}
+                data-on="false"
+                aria-pressed="false"
+              >
+                {a.data.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+  </div>
+
+  <footer class="arch-drawer__foot">
+    <button class="arch-btn-ghost" id="arch-reset" type="button">Reset</button>
+    <button class="arch-btn-primary" id="arch-apply" type="button">
+      Apply (<span id="arch-apply-count">0</span> results)
+    </button>
+  </footer>
+</aside>

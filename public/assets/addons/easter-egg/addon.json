@@ -1,0 +1,28 @@
+{
+  "name": "easter-egg",
+  "assets": {
+    "css": ["easter-egg.css"],
+    "js":  ["easter-egg.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-easter-egg",
+        "description": "Hidden modal triggered by a key sequence (Konami, IDDQD, or a custom string/array).",
+        "required": true,
+        "fields": {
+          "emoji":           { "type": "string",                                                                               "description": "Emoji rendered above the headline (e.g. '🎉')." },
+          "headline":        { "type": "string", "required": true,                                                             "description": "Modal headline." },
+          "body":            { "type": "string",                                                                               "description": "Body copy." },
+          "primary.label":   { "type": "string",                                                                               "description": "Primary action label." },
+          "primary.href":    { "type": "string",                                                                               "description": "Primary action URL." },
+          "primary.target":  { "type": "string",                                                                               "description": "Primary action target attribute (e.g. '_blank')." },
+          "secondary.label": { "type": "string",                                                                               "description": "Secondary action label." },
+          "secondary.dismiss":{ "type": "boolean",                                                                             "description": "If true the secondary action just closes the modal." },
+          "sequence":        { "type": "string", "default": "konami", "enum": ["konami", "iddqd"],                             "description": "Trigger key sequence. Use a preset name, a literal string (e.g. 'arich'), or an array of KeyboardEvent.key values." },
+          "fireOnce":        { "type": "string", "default": "session","enum": ["session", "permanent", "never"],               "description": "How often the egg may fire. 'session' = once per visit; 'permanent' = once ever; 'never' = every successful sequence." }
+        }
+      }
+    ]
+  }
+}

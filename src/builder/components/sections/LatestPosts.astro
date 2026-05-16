@@ -1,0 +1,42 @@
+---
+/**
+ * LatestPosts (Pass 4) — homepage section: top N posts in a card grid + "View all" link.
+ * Reads getAllPosts() — empty grid + link only when no posts exist.
+ */
+import PostCard from '../PostCard.astro';
+import { getAllPosts, getAllCategories } from '../../lib/posts';
+
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  subhead?: string;
+  limit?: number;
+  viewAll?: { label: string; href: string };
+}
+const { eyebrow, heading, subhead, limit = 6, viewAll } = Astro.props;
+const posts = (await getAllPosts()).slice(0, limit);
+const cats = await getAllCategories();
+const catName = new Map(cats.map((c) => [c.data.id, c.data.name]));
+---
+<section
+  class="section latest-posts"
+  data-section-type="latest-posts"
+  data-section-label="Latest posts"
+  data-section-variants="A:Default"
+>
+  <div class="container">
+    {eyebrow && <span class="latest-posts__eyebrow">{eyebrow}</span>}
+    <h2 class="latest-posts__heading">{heading}</h2>
+    {subhead && <p class="latest-posts__subhead">{subhead}</p>}
+    {posts.length === 0
+      ? <p class="latest-posts__empty">No articles yet — check back soon.</p>
+      : (
+        <div class="latest-posts__grid">
+          {posts.map((p) => <PostCard post={p} categoryName={catName.get(p.data.category)} />)}
+        </div>
+      )}
+    {viewAll && posts.length > 0 && (
+      <a class="latest-posts__view-all" href={viewAll.href}>{viewAll.label} →</a>
+    )}
+  </div>
+</section>

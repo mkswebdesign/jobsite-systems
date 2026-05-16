@@ -1,0 +1,545 @@
+/* ============================================
+   Services page — showcase card grid
+   A richer, more visual card treatment used on /services/.
+   Homepage services grid still uses the simpler `.services-grid`.
+   ============================================ */
+
+.services-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem; margin-top: 3rem }
+
+.service-showcase-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 320ms cubic-bezier(.2, .8, .2, 1),
+    border-color 240ms ease,
+    box-shadow 320ms cubic-bezier(.2, .8, .2, 1);
+  isolation: isolate;
+}
+/* Unified hover treatment — applies to every card variant on this page
+   (slider tiles AND the flagship featured card). Recipe: 6px lift,
+   accent border, two-stop shadow (depth + accent glow). No top-edge
+   line effect. Featured card overrides only what its larger size needs
+   (a slightly stronger shadow, see below). */
+.service-showcase-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow:
+    0 22px 44px -18px rgba(0, 0, 0, 0.32),
+    0 32px 64px -22px rgba(var(--accent-rgb), 0.42);
+}
+.service-showcase-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Hero strip — gradient canvas with orbits + icon + number */
+.service-showcase-hero {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(circle at 75% 30%, rgba(var(--accent-rgb), 0.55) 0%, transparent 55%),
+    radial-gradient(circle at 20% 80%, rgba(var(--accent-rgb), 0.30) 0%, transparent 60%),
+    linear-gradient(135deg, rgba(var(--accent-rgb), 0.22) 0%, rgba(var(--accent-rgb), 0.06) 100%),
+    var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+/* Inner clip wrapper holds the photo + orbits so hover scale stays bounded.
+   Hero itself stays overflow:visible so the image-variant icon (bottom:-1.5rem)
+   can bridge the hero/body seam without being chopped off. */
+.service-showcase-hero-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.service-showcase-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(var(--accent-rgb), 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.service-showcase-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  border: 1px dashed rgba(var(--accent-rgb), 0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 8s linear;
+  animation: showcaseOrbit 22s linear infinite;
+  pointer-events: none;
+}
+.service-showcase-orbit--b {
+  width: 110px;
+  height: 110px;
+  border-style: solid;
+  border-color: rgba(var(--accent-rgb), 0.18);
+  animation-duration: 14s;
+  animation-direction: reverse;
+}
+@keyframes showcaseOrbit {
+  from { transform: translate(-50%, -50%) rotate(0deg) }
+  to   { transform: translate(-50%, -50%) rotate(360deg) }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-showcase-orbit,
+  .service-showcase-orbit--b { animation: none }
+}
+
+/* Number chip — sits lower-left over the hero photo. Dark translucent
+   pill so it stays legible across any photo / gradient backdrop. */
+.service-showcase-num {
+  position: absolute;
+  bottom: 0.9rem;
+  left: 1rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #fff;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(10, 25, 18, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 3;
+}
+
+.service-showcase-body {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.75rem 1.5rem;
+  flex: 1;
+}
+.service-showcase-body h3 {
+  font-size: 1.15rem;
+  line-height: 1.3;
+  margin: 0 0 0.6rem;
+  color: var(--text-primary);
+}
+.service-showcase-body p {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 1.25rem;
+  flex: 1;
+}
+.service-showcase-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: gap var(--transition), color var(--transition);
+}
+.service-showcase-link svg { width: 16px; height: 16px; transition: transform var(--transition) }
+.service-showcase-card:hover .service-showcase-link { gap: 0.75rem; color: var(--accent-hover) }
+.service-showcase-card:hover .service-showcase-link svg { transform: translateX(3px) }
+
+@media (max-width: 600px) {
+  .services-showcase { gap: 1.25rem }
+  .service-showcase-hero { aspect-ratio: 16 / 10 }
+  .service-showcase-body { padding: 1.25rem 1.25rem 1.25rem }
+}
+
+/* ============================================
+   Variants — switched by the visual editor via
+   <html data-services-showcase-variant="list|compact|...">.
+   Default ("grid") is the unscoped layout above.
+   ============================================ */
+
+/* List: single column, hero strip becomes a left-side thumbnail */
+html[data-services-showcase-variant="list"] .services-showcase {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+html[data-services-showcase-variant="list"] .service-showcase-card {
+  flex-direction: row;
+  align-items: stretch;
+}
+html[data-services-showcase-variant="list"] .service-showcase-hero {
+  flex: 0 0 34%;
+  aspect-ratio: auto;
+  border-right: 1px solid var(--border);
+  border-bottom: 0;
+}
+html[data-services-showcase-variant="list"] .service-showcase-body {
+  padding: 1.5rem 1.75rem;
+}
+@media (max-width: 720px) {
+  html[data-services-showcase-variant="list"] .service-showcase-card { flex-direction: column }
+  html[data-services-showcase-variant="list"] .service-showcase-hero {
+    flex: none;
+    aspect-ratio: 16 / 9;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* Photo element — always rendered when heroImage is set, shown only in image variant */
+.service-showcase-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  display: none;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter var(--transition);
+}
+
+/* Image: editorial photo card — large overlaid number, "bridge" icon tile
+   straddling hero/body boundary, single-direction overlay, equalized heights.
+   Reserves the brand accent for icon glyph + Learn-more link only, so the
+   photo stays the visual lead and brand-color cards don't fight green photos. */
+html[data-services-showcase-variant="image"] .service-showcase-photo { display: block }
+
+html[data-services-showcase-variant="image"] .service-showcase-card {
+  overflow: visible;
+}
+html[data-services-showcase-variant="image"] .service-showcase-hero {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+html[data-services-showcase-variant="image"] .service-showcase-photo {
+  filter: saturate(1.02);
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), filter var(--transition);
+}
+
+html[data-services-showcase-variant="image"] .service-showcase-hero::after { display: none }
+html[data-services-showcase-variant="image"] .service-showcase-orbit,
+html[data-services-showcase-variant="image"] .service-showcase-orbit--b { display: none }
+
+html[data-services-showcase-variant="image"] .service-showcase-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.34) 0%,
+    rgba(0, 0, 0, 0.06) 32%,
+    rgba(0, 0, 0, 0) 60%,
+    rgba(0, 0, 0, 0.18) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+html[data-services-showcase-variant="image"] .service-showcase-num {
+  bottom: 1rem;
+  left: 1.25rem;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.96);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html[data-services-showcase-variant="image"] .service-showcase-body {
+  padding: 1.5rem 1.5rem 1.5rem;
+}
+html[data-services-showcase-variant="image"] .service-showcase-body h3 {
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+html[data-services-showcase-variant="image"] .service-showcase-body p {
+  flex: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+html[data-services-showcase-variant="image"] .service-showcase-link {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+html[data-services-showcase-variant="image"] .service-showcase-card:hover .service-showcase-photo {
+  transform: scale(1.04);
+  filter: saturate(1.1);
+}
+
+@media (max-width: 600px) {
+  html[data-services-showcase-variant="image"] .service-showcase-num { font-size: 1.65rem }
+  html[data-services-showcase-variant="image"] .service-showcase-body { padding: 1.25rem 1.25rem 1.25rem }
+}
+
+/* Compact: denser grid, no hero image strip, text-forward */
+html[data-services-showcase-variant="compact"] .services-showcase {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+html[data-services-showcase-variant="compact"] .service-showcase-hero { display: none }
+html[data-services-showcase-variant="compact"] .service-showcase-body { padding: 1.25rem 1.25rem 1.25rem }
+html[data-services-showcase-variant="compact"] .service-showcase-body h3 { font-size: 1rem }
+html[data-services-showcase-variant="compact"] .service-showcase-body p {
+  font-size: 0.875rem;
+  margin-bottom: 0.9rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------
+   Featured variant — one hero card + horizontal scroll-snap rail
+   --------------------------------------------------------------
+   Rendered by src/pages/services.astro when `gridVariant === "featured"`.
+   The page template emits a different markup tree for this variant
+   (one top-level `.service-showcase-card--featured` + a sibling
+   `.services-showcase-slider` wrapping the rest), so these rules
+   don't depend on the `[data-services-showcase-variant]` attribute —
+   the structural classes themselves carry the meaning. */
+
+.service-showcase-card--featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 0;
+  margin: 1.5rem 0 2rem;
+  border-radius: calc(var(--radius-lg) + 4px);
+  overflow: hidden;
+  min-height: 360px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 30px 80px -32px rgba(0, 0, 0, 0.5),
+    0 10px 24px -14px rgba(var(--accent-rgb), 0.35);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.service-showcase-card--featured:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow:
+    0 32px 64px -22px rgba(0, 0, 0, 0.42),
+    0 44px 96px -28px rgba(var(--accent-rgb), 0.50);
+}
+.service-showcase-card--featured .service-showcase-hero {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  padding: 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+.service-showcase-card--featured .service-showcase-photo {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.service-showcase-card--featured:hover .service-showcase-photo { transform: scale(1.05) }
+.service-showcase-card--featured .service-showcase-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 45%,
+    color-mix(in srgb, var(--bg-card) 92%, transparent) 100%);
+  pointer-events: none;
+}
+.service-showcase-card--featured .service-showcase-orbit,
+.service-showcase-card--featured .service-showcase-orbit--b { display: none }
+/* Match the slider-card numeral treatment but scale up to suit the
+   featured card's larger hero area. We need to win specificity over
+   `html[data-services-showcase-variant="image"] .service-showcase-num`,
+   so we prefix the same html-level attr selector here. */
+.service-showcase-card--featured .service-showcase-num,
+html[data-services-showcase-variant="image"] .service-showcase-card--featured .service-showcase-num {
+  position: absolute;
+  top: auto;
+  right: auto;
+  bottom: 1.25rem;
+  left: 1.5rem;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: clamp(2.4rem, 3.6vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 3;
+}
+.service-showcase-card--featured::before {
+  content: 'Featured';
+  position: absolute;
+  top: 1rem;
+  right: 0;
+  z-index: 3;
+  padding: 0.3rem 0.85rem 0.3rem 0.95rem;
+  background: var(--accent);
+  color: var(--btn-primary-fg, #fff);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 999px 0 0 999px;
+  box-shadow: 0 10px 20px -10px rgba(var(--accent-rgb), 0.6);
+}
+.service-showcase-card--featured { position: relative }
+.service-showcase-card--featured .service-showcase-body {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.service-showcase-card--featured .service-showcase-body h3 {
+  font-size: clamp(1.4rem, 2.6vw, 1.95rem);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 0;
+}
+.service-showcase-card--featured .service-showcase-body p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 48ch;
+}
+.service-showcase-card--featured .service-showcase-link {
+  margin-top: 0.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Inclusion checklist — only used on the featured/flagship card today.
+   `flex: none` prevents the parent flex container from stretching the list,
+   and the bullets use the brand accent for the checkmark glyph only so the
+   list reads as substance without competing with the Learn-more link. */
+.service-showcase-bullets {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+  flex: none;
+}
+.service-showcase-bullets li {
+  display: grid;
+  grid-template-columns: 1.1rem 1fr;
+  align-items: start;
+  gap: 0.6rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.service-showcase-bullet-check {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.18rem;
+  color: var(--accent);
+  flex: none;
+}
+.service-showcase-card--featured .service-showcase-body { max-width: 100% }
+.service-showcase-card--featured .service-showcase-bullets {
+  margin-top: 0.5rem;
+  max-width: 48ch;
+}
+
+/* Featured card with bullets is taller — relax the min-height ceiling so
+   the body never has to fight justify-content:center against its own
+   content. The 2-col grid still aligns image height to body height. */
+.service-showcase-card--featured:has(.service-showcase-bullets) {
+  min-height: 0;
+}
+.service-showcase-card--featured:has(.service-showcase-bullets) .service-showcase-body {
+  justify-content: flex-start;
+  padding-top: clamp(2rem, 4.5vw, 3rem);
+  padding-bottom: clamp(2rem, 4.5vw, 3rem);
+}
+
+@media (max-width: 760px) {
+  .service-showcase-bullets li { font-size: 0.9rem }
+}
+
+/* Sliding rail — horizontal scroll-snap carousel for the remaining cards */
+.services-showcase-slider {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(260px, 320px);
+  gap: 1rem;
+  padding: 0.5rem 0.25rem 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.25rem;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text-primary) 25%, transparent) transparent;
+  margin: 0 calc(-1 * clamp(0.75rem, 2vw, 1.5rem));
+  padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+  scroll-snap-align: none;
+  /* Edge fade mask so the last card hints at more content */
+  mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 36px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 36px), transparent 100%);
+}
+.services-showcase-slider::-webkit-scrollbar { height: 8px }
+.services-showcase-slider::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-primary) 25%, transparent);
+  border-radius: 999px;
+}
+.services-showcase-slider::-webkit-scrollbar-track { background: transparent }
+.services-showcase-slider .service-showcase-card {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+.services-showcase-slider:focus-visible {
+  outline: 2px solid rgba(var(--accent-rgb), 0.5);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+@media (max-width: 760px) {
+  .service-showcase-card--featured {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .service-showcase-card--featured .service-showcase-hero { min-height: 220px }
+  .service-showcase-card--featured .service-showcase-hero::after {
+    background: linear-gradient(180deg,
+      transparent 55%,
+      color-mix(in srgb, var(--bg-card) 92%, transparent) 100%);
+  }
+  .services-showcase-slider {
+    grid-auto-columns: minmax(240px, 78vw);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-showcase-card--featured .service-showcase-photo { transition: none }
+  .service-showcase-card--featured:hover .service-showcase-photo { transform: none }
+  .services-showcase-slider { scroll-behavior: auto }
+}

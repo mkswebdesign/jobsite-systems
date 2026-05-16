@@ -1,0 +1,30 @@
+{
+  "name": "share",
+  "assets": {
+    "css": ["share.css"],
+    "js":  ["share.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:share-default",
+        "default": "twitter,bluesky,linkedin,copy",
+        "description": "Comma-separated default network list applied to share elements that don't override it. Available networks: twitter, bluesky, linkedin, facebook, reddit, hackernews, whatsapp, email, copy. No third-party scripts — URLs are built client-side."
+      }
+    ],
+    "data": [
+      {
+        "selector": "[data-aed-share]",
+        "description": "Per-element share button row. Renders one icon per requested network.",
+        "fields": {
+          "data-aed-share":       { "type": "string",                              "description": "Comma-separated network override (falls back to the page-level default). Empty = use default." },
+          "data-aed-share-url":   { "type": "string",                              "description": "URL to share. Defaults to the current page URL." },
+          "data-aed-share-title": { "type": "string",                              "description": "Title to share. Defaults to the document title." },
+          "data-aed-share-text":  { "type": "string",                              "description": "Body text (used by email, twitter, etc.)." },
+          "data-aed-share-label": { "type": "string",                              "description": "Optional prefix label rendered before the icons (e.g. 'Share:')." },
+          "data-aed-variant":     { "type": "string",  "enum": ["pill"],          "description": "Pill-shaped variant." }
+        }
+      }
+    ]
+  }
+}

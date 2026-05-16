@@ -1,0 +1,1025 @@
+/* Home (/) — editor session feedback, baked as shipped CSS. */
+/* Mobile nav open-sheet styles live in section-cascade-wins.css (site-wide). */
+
+/* Optional hero line: any <meta name="aed:…" data-hero> with content=on; label from data-hero-label or the meta name. */
+#hero .hero-meta {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+#heroAedOn.hero-aed-on {
+  flex: 1 1 100%;
+  margin: 0.75rem 0 0;
+  max-width: 32rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-muted, #a1a1aa);
+  letter-spacing: 0.02em;
+}
+#heroAedOn.hero-aed-on:empty {
+  display: none !important;
+}
+
+/* Hero h1: session position mc (middle-center) on most home heroes.
+   Split (B) is left-stacked in section-cascade-wins — do not force center here.
+   Terminal (F) overrides below — F uses a left stack (export position ml). */
+html:not([data-hero-variant]) #hero .hero-copy h1,
+html[data-hero-variant="a"] #hero .hero-copy h1,
+html[data-hero-variant="A"] #hero .hero-copy h1,
+html[data-hero-variant="C"] #hero .hero-copy h1,
+html[data-hero-variant="D"] #hero .hero-copy h1,
+html[data-hero-variant="E"] #hero .hero-copy h1 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Services: two columns on desktop for card-style grids. Variant E uses the
+   ship bundle tile/raster layout — #id + .class beats [data-*] if unscoped. */
+html:not([data-services-variant="E"]) #services .services-grid {
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+@media (min-width: 48rem) {
+  html:not([data-services-variant="E"]) #services .services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Process intro (label + heading + subtext + hint): centered in the container (matches session / middle-center as a group). */
+#process .container > .section-label,
+#process .container > .section-heading,
+#process .container > .section-subtext,
+#process .container > .process-hint {
+  text-align: center;
+}
+#process .container > .section-label {
+  display: block;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------
+   Capabilities — variant D:Quadrant (four-pillar bento, vs A–C marquees)
+   ------------------------------------------------------------------ */
+#capabilities .capabilities-pillars-board {
+  display: none;
+}
+#capabilities .capabilities-pillar-hint {
+  display: none;
+}
+
+html[data-capabilities-variant="D"] #capabilities .skills-carousel-wrapper,
+html[data-capabilities-variant="D"] #capabilities .skills-hint {
+  display: none;
+}
+
+html[data-capabilities-variant="D"] #capabilities .capabilities-pillars-board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.15rem;
+  margin-top: 2.75rem;
+}
+
+html[data-capabilities-variant="D"] #capabilities .capabilities-pillar-hint {
+  display: block;
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin: 0.5rem 0 0;
+}
+
+@media (min-width: 56rem) {
+  html[data-capabilities-variant="D"] #capabilities .capabilities-pillars-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1.35rem;
+  }
+}
+
+#capabilities .cap-pillar {
+  position: relative;
+  padding: 1.35rem 1.25rem 1.2rem;
+  border-radius: var(--radius-lg, 18px);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--bg-primary) 88%, var(--bg-card)) 0%,
+    color-mix(in srgb, var(--accent) 5%, var(--bg-card)) 100%
+  );
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 12%, transparent),
+    0 20px 48px -28px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+#capabilities .cap-pillar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(
+    circle at 100% 0%,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent 68%
+  );
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+#capabilities .cap-pillar-idx {
+  display: block;
+  font: 800 0.7rem/1.2 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+#capabilities .cap-pillar-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+}
+
+#capabilities .cap-pillar-desc {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+}
+
+#capabilities .cap-pillar-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.35rem;
+}
+
+#capabilities .cap-pillar-skill {
+  appearance: none;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+  background: color-mix(in srgb, var(--bg-primary) 40%, transparent);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+#capabilities .cap-pillar-skill:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-card));
+  transform: translateY(-1px);
+}
+
+#capabilities .cap-pillar-skill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+html[data-capabilities-variant="D"] #capabilities {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 3%, transparent) 42%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #capabilities .cap-pillar-skill {
+    transition: none;
+  }
+  #capabilities .cap-pillar-skill:hover {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Hero — variant D: Beam (rework + polish)
+   Feedback: “Beam needs totally reworked and polished”
+   ------------------------------------------------------------------ */
+html[data-hero-variant="D"] #hero {
+  min-height: 92vh;
+  padding-top: 7.25rem;
+  padding-bottom: 4.25rem;
+}
+
+/* Make the copy column feel intentional in Beam. */
+html[data-hero-variant="D"] #hero .hero-content {
+  max-width: 1120px;
+}
+html[data-hero-variant="D"] #hero .hero-copy {
+  max-width: 46rem;
+}
+
+/* Headline: clean 2-line lockup without relying on <br>. */
+html[data-hero-variant="D"] #hero .hero-copy h1 br.desktop-break {
+  display: none;
+}
+html[data-hero-variant="D"] #hero .hero-copy h1 {
+  text-wrap: balance;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  margin-bottom: 1.35rem;
+  font-size: clamp(2.8rem, 7.2vw, 6.6rem);
+}
+html[data-hero-variant="D"] #hero .hero-copy h1 .accent {
+  display: block;
+  margin-top: 0.22em;
+}
+
+html[data-hero-variant="D"] #hero .hero-lead {
+  max-width: 40rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+  margin-bottom: 2.1rem;
+  color: color-mix(in srgb, var(--text-secondary) 92%, #fff);
+}
+
+html[data-hero-variant="D"] #hero .hero-actions {
+  gap: 0.85rem;
+}
+
+/* Background: turn the “beam” into a designed layer (still lightweight). */
+html[data-hero-variant="D"] #hero .hero-grid {
+  opacity: 0.28;
+}
+/* Add a subtle glass panel so Beam reads as a distinct variant. */
+html[data-hero-variant="D"] #hero .hero-copy {
+  padding: 0.25rem 0.25rem 0.35rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.62), rgba(10, 10, 11, 0.22));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  box-shadow: 0 26px 70px -42px rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+html[data-hero-variant="D"] #hero .hero-copy > * {
+  padding-left: 1.15rem;
+  padding-right: 1.15rem;
+}
+html[data-hero-variant="D"] #hero .hero-copy > .hero-badge {
+  margin-top: 0.9rem;
+}
+html[data-hero-variant="D"] #hero .hero-copy > .hero-actions {
+  padding-bottom: 1.05rem;
+}
+html[data-hero-variant="D"] #hero .hero-badge {
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, rgba(255,255,255,0.10));
+  background: color-mix(in srgb, var(--accent) 10%, rgba(0,0,0,0.30));
+}
+html[data-hero-variant="D"] #hero .hero-actions .btn-primary {
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #fff));
+  border-color: transparent;
+}
+html[data-hero-variant="D"] #hero .hero-actions .btn-secondary {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: rgba(255,255,255,0.02);
+}
+html[data-hero-variant="D"] #hero .hero-bg::after {
+  content: "";
+  position: absolute;
+  left: -15%;
+  right: -15%;
+  top: 52%;
+  height: 220px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(var(--accent-rgb), 0.18) 18%,
+      rgba(var(--accent-rgb), 0.52) 50%,
+      rgba(var(--accent-rgb), 0.18) 82%,
+      transparent 100%
+    );
+  filter: blur(34px);
+  transform: translateY(-50%) rotate(-2.2deg);
+  opacity: 0.95;
+  pointer-events: none;
+}
+html[data-hero-variant="D"] #hero .hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle 900px at 50% 65%, rgba(var(--accent-rgb), 0.16), transparent 65%),
+    radial-gradient(circle 520px at 20% 20%, rgba(var(--accent-rgb), 0.10), transparent 60%);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-hero-variant="D"] #hero .hero-bg::after {
+    animation: aedBeamDrift 9.5s ease-in-out infinite alternate;
+  }
+  @keyframes aedBeamDrift {
+    0% { transform: translateY(-50%) rotate(-2.2deg) translateX(-10px); opacity: 0.82; }
+    100% { transform: translateY(-50%) rotate(-1.2deg) translateX(14px); opacity: 1; }
+  }
+}
+
+@media (max-width: 40rem) {
+  html[data-hero-variant="D"] #hero {
+    padding-top: 6.5rem;
+    padding-bottom: 3.5rem;
+  }
+  html[data-hero-variant="D"] #hero .hero-copy h1 {
+    font-size: clamp(2.35rem, 10vw, 3.4rem);
+    margin-bottom: 1.05rem;
+  }
+  html[data-hero-variant="D"] #hero .hero-bg::after {
+    top: 58%;
+    height: 190px;
+    left: -25%;
+    right: -25%;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Hero - variant F: Terminal (full rework)
+   Feedback: "Completely rework the design for this style"
+   ------------------------------------------------------------------ */
+html[data-hero-variant="F"] #hero {
+  min-height: 92vh;
+  padding-top: 7rem;
+  padding-bottom: 4.5rem;
+}
+
+html[data-hero-variant="F"] #hero .hero-network,
+html[data-hero-variant="F"] #hero .hero-aurora {
+  display: none;
+}
+
+html[data-hero-variant="F"] #hero .hero-gradient {
+  background:
+    radial-gradient(circle 900px at 50% 40%, rgba(var(--accent-rgb), 0.14), transparent 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, transparent 55%, rgba(0, 0, 0, 0.65) 100%);
+  animation: none;
+}
+
+html[data-hero-variant="F"] #hero .hero-grid {
+  background-size: 36px 36px;
+  opacity: 0.32;
+  mask-image: linear-gradient(180deg, transparent 0%, black 22%, black 76%, transparent 100%);
+  animation: none;
+}
+
+/* Terminal window wrapper */
+html[data-hero-variant="F"] #hero .hero-content {
+  max-width: 1120px;
+  align-items: flex-start;
+}
+html[data-hero-variant="F"] #hero .hero-copy {
+  max-width: 54rem;
+  width: 100%;
+  text-align: left;
+  padding: 1.1rem 1.1rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  background:
+    linear-gradient(180deg, rgba(10, 10, 11, 0.74), rgba(10, 10, 11, 0.58));
+  box-shadow: 0 26px 70px -36px rgba(0, 0, 0, 0.72);
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-hero-variant="F"] #hero .hero-copy::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 34px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+html[data-hero-variant="F"] #hero .hero-copy::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.10) inset;
+}
+
+/* Top "traffic lights" */
+html[data-hero-variant="F"] #hero .hero-badge {
+  margin-top: 0.25rem;
+  margin-bottom: 1.1rem;
+  font-family: ui-monospace, Menlo, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.82);
+}
+html[data-hero-variant="F"] #hero .hero-badge::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  margin-right: 0.55rem;
+  background: #ff5f56;
+  box-shadow: 16px 0 0 #ffbd2e, 32px 0 0 #27c93f;
+  vertical-align: -1px;
+  opacity: 0.92;
+}
+
+/* Prompt-style headline */
+html[data-hero-variant="F"] #hero .hero-copy h1 {
+  font-family: ui-monospace, Menlo, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(1.65rem, 4.6vw, 3.25rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.95rem;
+  margin-left: 0;
+  margin-right: 0;
+  text-align: left;
+  text-wrap: balance;
+}
+html[data-hero-variant="F"] #hero .hero-copy h1 .accent {
+  color: color-mix(in srgb, var(--accent) 92%, #fff);
+}
+html[data-hero-variant="F"] #hero .hero-copy h1::before {
+  content: "$ ";
+  color: rgba(255,255,255,0.72);
+}
+html[data-hero-variant="F"] #hero .hero-copy h1::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.95em;
+  margin-left: 0.25em;
+  background: var(--accent);
+  vertical-align: -0.10em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-hero-variant="F"] #hero .hero-copy h1::after {
+    animation: aedTermCursor 1.05s steps(1) infinite;
+  }
+  @keyframes aedTermCursor {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+}
+
+html[data-hero-variant="F"] #hero .hero-lead {
+  font-family: ui-monospace, Menlo, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.74);
+  max-width: 50rem;
+  margin-bottom: 1.6rem;
+}
+html[data-hero-variant="F"] #hero .hero-lead::before {
+  content: "> ";
+  color: rgba(255,255,255,0.58);
+}
+
+/* Meta row: keep pills and addon line in a clear left-aligned stack (editor session). */
+html[data-hero-variant="F"] #hero .hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem 0.85rem;
+  width: 100%;
+  text-align: left;
+}
+html[data-hero-variant="F"] #hero .hero-meta .hero-meta-pills {
+  flex: 0 1 auto;
+}
+
+html[data-hero-variant="F"] #hero .hero-actions {
+  gap: 0.75rem;
+}
+html[data-hero-variant="F"] #hero .hero-actions .btn {
+  font-family: ui-monospace, Menlo, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+@media (max-width: 40rem) {
+  html[data-hero-variant="F"] #hero .hero-copy {
+    padding: 0.95rem 0.9rem 1.05rem;
+    border-radius: 14px;
+  }
+  html[data-hero-variant="F"] #hero .hero-copy::before {
+    height: 30px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Capabilities — variant E:Atlas (multi-column card grid, calm UI)
+   Default home: data-capabilities-variant="E"
+   ------------------------------------------------------------------ */
+html[data-capabilities-variant="E"] #capabilities .skills-carousel-wrapper,
+html[data-capabilities-variant="E"] #capabilities .skills-hint {
+  display: none;
+}
+
+html[data-capabilities-variant="E"] #capabilities .capabilities-pillars-board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.15rem;
+  margin-top: 2.75rem;
+}
+
+@media (min-width: 56rem) {
+  html[data-capabilities-variant="E"] #capabilities .capabilities-pillars-board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem 1.35rem;
+  }
+}
+
+@media (min-width: 72rem) {
+  html[data-capabilities-variant="E"] #capabilities .capabilities-pillars-board {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar::before {
+  display: none;
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar-idx {
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar-skill {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 15%, var(--border));
+  color: var(--text-secondary);
+}
+
+html[data-capabilities-variant="E"] #capabilities .cap-pillar-skill:hover {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+html[data-capabilities-variant="E"] #capabilities {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 2.5%, transparent) 45%,
+    transparent 100%
+  );
+}
+
+/* Process — grid carousel keeps display:grid; only tune gap, type, and step badges */
+#process .process-track {
+  gap: clamp(1.35rem, 2.3vw, 2rem);
+  padding-bottom: 2.35rem;
+  scroll-padding: 0.4rem;
+}
+
+#process .process-track .step-num {
+  width: auto;
+  min-width: 2.9rem;
+  height: 2.75rem;
+  padding: 0 0.45rem;
+  border-radius: 12px;
+  font: 800 0.8rem/1 ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--border));
+  background: color-mix(in srgb, var(--accent) 7%, var(--bg-primary));
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+#process .process-slide.is-active .step-num {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 10px 28px -12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+#process .process-track .process-slide h3 {
+  letter-spacing: -0.02em;
+}
+
+#process .process-track .process-slide p {
+  line-height: 1.58;
+  color: color-mix(in srgb, var(--text-secondary) 94%, var(--text-primary));
+}
+
+#process .process-progress {
+  margin-bottom: 0.15rem;
+}
+
+/* Final CTA / #contact (home) */
+#contact .container {
+  display: grid;
+  gap: clamp(1.1rem, 2.4vw, 1.75rem);
+  justify-items: center;
+  text-align: center;
+  max-width: min(46rem, 100%);
+  margin-inline: auto;
+  padding-block: 0.35rem 0.6rem;
+}
+
+#contact .container h2 {
+  text-wrap: balance;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  margin: 0;
+  font-size: clamp(1.75rem, 2.2vw + 1.1rem, 2.4rem);
+}
+
+#contact .container .lead,
+#contact .container p {
+  color: var(--text-secondary, #a1a1aa);
+  line-height: 1.65;
+  max-width: 38rem;
+  margin: 0;
+}
+
+#contact .container svg {
+  max-width: min(280px, 72vw);
+  height: auto;
+}
+
+#contact .container .btn,
+#contact .container .button-group,
+#contact .container .links-row,
+#contact .container [class*="cta-"] a {
+  margin-top: 0.15rem;
+}
+
+/* ------------------------------------------------------------------
+   UX #2 — Hero (Split B): two-line title, no decorative “audience” tabs,
+   stronger scrim on photo, higher-contrast lead
+   ------------------------------------------------------------------ */
+html[data-hero-variant="B"] #hero .hero-copy h1 {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+}
+html[data-hero-variant="B"] #hero .hero-copy h1 .hero-title-line {
+  display: block;
+}
+html[data-hero-variant="B"] #hero .hero-copy h1 .hero-title-line--brand {
+  display: block;
+  margin-top: 0.15em;
+  font-size: 1em;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+html[data-hero-variant="B"] #hero .hero-copy h1 .hero-brand-words {
+  color: var(--accent);
+  font-weight: 800;
+}
+/* Darken left / copy side over the split photo (bundle sets .hero-gradient on .hero-bg) */
+html[data-hero-variant="B"] #hero .hero-bg.hero-bg-enhanced .hero-gradient {
+  background: linear-gradient(
+    100deg,
+    rgba(5, 5, 8, 0.94) 0%,
+    rgba(5, 5, 8, 0.72) 40%,
+    rgba(5, 5, 8, 0.38) 58%,
+    rgba(5, 5, 8, 0.1) 78%,
+    transparent 100%
+  );
+  opacity: 1;
+}
+html[data-hero-variant="B"] #hero .hero-lead {
+  font-size: clamp(1.02rem, 0.4vw + 0.95rem, 1.2rem);
+  line-height: 1.62;
+  color: color-mix(in srgb, var(--text-primary) 86%, var(--text-secondary) 14%);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.9), 0 2px 20px rgba(0, 0, 0, 0.55);
+  max-width: 40rem;
+}
+html[data-hero-variant="B"] #hero .hero-lead strong {
+  color: var(--text-primary);
+  font-weight: 650;
+}
+/* Pills row removed; keep editor slot with no extra vertical gap */
+html[data-hero-variant="B"] #hero .hero-meta {
+  display: block;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+html[data-hero-variant="B"] #hero .hero-meta .hero-aed-on[hidden] {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   UX #3 — Programs: ordered 01–05, quiz CTA card, link affordance
+   ------------------------------------------------------------------ */
+#services .service-link {
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+#services a.service-link:hover,
+#services a.service-link:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+#services a.service-link .arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+#services a.service-link:hover .arrow,
+#services a.service-link:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+#services .service-card--cta {
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-primary, #0a0a0b)) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border)) !important;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+html[data-services-variant="E"] #services .service-card--cta:hover {
+  background: color-mix(in srgb, var(--accent) 9%, var(--bg-primary, #0a0a0b)) !important;
+}
+
+#services .service-card--cta .service-icon {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+#services .service-num--muted {
+  color: var(--text-muted) !important;
+  letter-spacing: 0.05em;
+}
+
+#services a.service-link--cta {
+  font-weight: 650;
+  text-decoration: none;
+  color: var(--accent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  padding-bottom: 0.12em;
+}
+
+#services a.service-link--cta:hover,
+#services a.service-link--cta:focus-visible {
+  text-decoration: none;
+  color: var(--accent-hover, var(--accent));
+  border-bottom-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #services a.service-link .arrow,
+  #services a.service-link:hover .arrow,
+  #services a.service-link:focus-visible .arrow {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   UX #4 — Why: 01–04 labels, 2×2 grid, process CTA line
+   ------------------------------------------------------------------ */
+#why .why-grid {
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  #why .why-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+#why .why-card h3 {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+#why .why-idx {
+  display: block;
+  font: 800 0.65rem/1 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+#why .why-cta {
+  margin-top: 2.25rem;
+  text-align: center;
+}
+
+#why .why-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 650;
+  font-size: 0.9375rem;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  padding-bottom: 0.12em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+#why .why-cta-link:hover,
+#why .why-cta-link:focus-visible {
+  color: var(--accent-hover, var(--accent));
+  border-bottom-color: var(--accent);
+}
+
+#why .why-cta-link .arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+#why .why-cta-link:hover .arrow,
+#why .why-cta-link:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #why .why-cta-link .arrow,
+  #why .why-cta-link:hover .arrow,
+  #why .why-cta-link:focus-visible .arrow {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   UX #5 — Testimonials: CTA row under carousel
+   ------------------------------------------------------------------ */
+#testimonials .testimonials-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+#testimonials .testimonials-actions .btn {
+  min-width: 200px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------
+   UX #6 — Capabilities: hint readability, chip affordance
+   ------------------------------------------------------------------ */
+#capabilities .skills-hint {
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.55;
+  font-size: 0.875rem;
+}
+
+#capabilities button.skill-item {
+  cursor: pointer;
+}
+
+#capabilities .skill-item:hover .skill-name {
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------
+   UX #7 — Process: swipe/dots hint, dual CTAs under carousel
+   ------------------------------------------------------------------ */
+#process .process-hint {
+  max-width: 40rem;
+  margin: 0.35rem auto 0;
+  line-height: 1.55;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+#process .process-footer-cta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+}
+
+#process .process-footer-cta .btn {
+  min-width: 200px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------
+   UX #8 — Membership (#partnership): section hint, dual CTAs
+   ------------------------------------------------------------------ */
+#partnership .section-heading-group .partnership-section-hint {
+  max-width: 40rem;
+  margin: 0.75rem auto 0;
+  text-align: center;
+  line-height: 1.55;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+#partnership .partnership-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.1rem;
+  align-items: center;
+}
+
+#partnership .partnership-cta-group .btn {
+  min-width: 200px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------
+   UX #9 — FAQ: subtext, tap hint, CTA row
+   ------------------------------------------------------------------ */
+#faq .section-heading-group .section-subtext {
+  max-width: 40rem;
+  margin: 0.5rem auto 0;
+  line-height: 1.6;
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 0.9375rem;
+}
+
+#faq .section-heading-group .faq-section-hint {
+  max-width: 40rem;
+  margin: 0.4rem auto 0;
+  line-height: 1.55;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+#faq .faq-footer-cta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+#faq .faq-footer-cta .btn {
+  min-width: 200px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------
+   UX #10 — Final CTA: micro-hint under lead
+   ------------------------------------------------------------------ */
+#contact .container p.final-cta-hint {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  max-width: 36rem;
+}
+
+/* ------------------------------------------------------------------
+   UX #11 — Footer: tagline + meta (unicode fixes in HTML; no layout override required)
+   ------------------------------------------------------------------ */

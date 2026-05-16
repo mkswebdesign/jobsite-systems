@@ -1,0 +1,72 @@
+/*
+ * Text Gradient — drop-in brand-color gradient text.
+ *
+ * Pure CSS, no JS. Marker: data-aed-gradient[="static|shimmer|sweep"].
+ * Theme-aware via brand --accent + --accent-hover.
+ *
+ * See /text-gradient/README.md.
+ */
+
+[data-aed-gradient] {
+  background-image: linear-gradient(
+    100deg,
+    var(--accent, #6B00FF) 0%,
+    var(--accent-hover, #8b5cf6) 50%,
+    var(--accent, #6B00FF) 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-position: 0% 50%;
+  display: inline-block;
+}
+
+/* Animated shimmer — gradient drifts left/right slowly */
+[data-aed-gradient="shimmer"] {
+  animation: aed-tg-shimmer 6s ease-in-out infinite alternate;
+}
+@keyframes aed-tg-shimmer {
+  from { background-position:   0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+
+/* Sweep on hover (good for buttons / link highlights) */
+[data-aed-gradient="sweep"] {
+  background-position: 100% 50%;
+  transition: background-position 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-aed-gradient="sweep"]:hover { background-position: 0% 50%; }
+
+/* Multi-color preset */
+[data-aed-gradient][data-aed-gradient-palette="rainbow"] {
+  background-image: linear-gradient(
+    100deg,
+    var(--accent, #6B00FF),
+    #38bdf8,
+    #10b981,
+    #f59e0b,
+    var(--accent, #6B00FF));
+  background-size: 250% 100%;
+}
+
+/* Strong fallback for browsers without background-clip:text — show solid accent */
+@supports not (background-clip: text) {
+  [data-aed-gradient] {
+    color: var(--accent, #6B00FF);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-gradient="shimmer"] { animation: none; }
+  [data-aed-gradient="sweep"] { transition: none; }
+}
+
+@media print {
+  [data-aed-gradient] {
+    color: #18181b !important;
+    -webkit-text-fill-color: #18181b !important;
+    background: none !important;
+  }
+}

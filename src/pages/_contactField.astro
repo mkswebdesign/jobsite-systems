@@ -1,0 +1,72 @@
+---
+type ShowIf = {
+  field: string;
+  equals?: string;
+  in?: string[];
+  notEmpty?: boolean;
+};
+
+type FieldOption = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+  selected?: boolean;
+  description?: string;
+};
+
+interface Props {
+  f: {
+    id: string;
+    name: string;
+    label?: string;
+    type: string;
+    placeholder?: string;
+    required?: boolean;
+    value?: string;
+    options?: FieldOption[];
+    showIf?: ShowIf;
+  };
+}
+
+const { f } = Astro.props;
+const showIfAttr = f.showIf ? JSON.stringify(f.showIf) : undefined;
+---
+
+{f.type === 'checkbox' ? (
+  <div class="form-group form-group-checkbox" data-field-name={f.name} data-show-if={showIfAttr}>
+    <label class="checkbox-label" for={f.id}>
+      <input type="checkbox" id={f.id} name={f.name} value={f.value ?? 'yes'} required={f.required} />
+      <span class="checkbox-text" set:html={f.label} />
+    </label>
+  </div>
+) : f.type === 'radio-cards' || f.type === 'radio' ? (
+  <fieldset class="form-radio-cards" data-field-name={f.name} data-show-if={showIfAttr} data-required={f.required ? 'true' : undefined}>
+    {f.label && <legend class="form-radio-cards-legend">{f.label}</legend>}
+    <div class={f.type === 'radio' ? 'radio-card-grid radio-card-grid-tight' : 'radio-card-grid'}>
+      {f.options?.map((o) => (
+        <label class="radio-card">
+          <input type="radio" name={f.name} value={o.value} required={f.required} disabled={o.disabled} checked={o.selected} />
+          <span class="radio-card-body">
+            <span class="radio-card-title">{o.label}</span>
+            {o.description && <span class="radio-card-sub">{o.description}</span>}
+          </span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+) : (
+  <div class="form-group" data-field-name={f.name} data-show-if={showIfAttr}>
+    <label for={f.id}>{f.label}</label>
+    {f.type === 'textarea' ? (
+      <textarea id={f.id} name={f.name} placeholder={f.placeholder} required={f.required} />
+    ) : f.type === 'select' ? (
+      <select id={f.id} name={f.name} required={f.required}>
+        {f.options?.map((o) => (
+          <option value={o.value} disabled={o.disabled} selected={o.selected}>{o.label}</option>
+        ))}
+      </select>
+    ) : (
+      <input type={f.type as any} id={f.id} name={f.name} placeholder={f.placeholder} required={f.required} />
+    )}
+  </div>
+)}

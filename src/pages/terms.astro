@@ -1,0 +1,9 @@
+---
+import { getEntry } from 'astro:content';
+import LegalPage from '../builder/components/LegalPage.astro';
+
+const entry = await getEntry('pages', 'terms');
+if (!entry) throw new Error('pages/terms entry not found');
+---
+
+<LegalPage data={entry.data} />

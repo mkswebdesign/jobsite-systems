@@ -1,0 +1,17 @@
+{
+  "type": "versusBlock",
+  "sectionLabel": "Why trade businesses pick us",
+  "heading": "Built for the business. Not for the admin panel.",
+  "subtext": "Same five points the brochure sites bury in fine print — laid out the way a contractor reads a job spec.",
+  "leftLabel": "Most trade-business sites",
+  "rightLabel": "Jobsite Systems",
+  "rows": [
+    { "left": "Powered by WordPress and a stack of plugins (more for hackers to break into)", "right": "Hand-built. No CMS, no plugins, nothing for hackers to break into." },
+    { "left": "Loads in 4–8 seconds on a phone", "right": "Sub-second loads on every device." },
+    { "left": "Down for hours when a plugin breaks", "right": "Zero downtime. No plugin treadmill." },
+    { "left": "Surprise renewal bills and creeping fees", "right": "Flat, predictable monthly pricing." },
+    { "left": "You're on your own when something breaks", "right": "We host, monitor, and quietly maintain it." },
+    { "left": "Estimate requests get lost between a contact form, a CRM, and your inbox", "right": "More estimate requests. Fewer phone-tag chases." }
+  ],
+  "variant": "A"
+}

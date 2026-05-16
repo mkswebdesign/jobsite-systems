@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import SectionHeading from '../SectionHeading.astro';
+import WorkCard from '../WorkCard.astro';
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  workSlugs: string[];
+  viewAllLabel?: string;
+  viewAllHref?: string;
+}
+
+const { sectionLabel, heading, subtext, workSlugs, viewAllLabel, viewAllHref } = Astro.props;
+
+const all = await getCollection('work');
+const byId = new Map(all.map(w => [w.id, w.data]));
+const items = workSlugs
+  .map(slug => ({ slug, data: byId.get(slug) }))
+  .filter((x): x is { slug: string; data: NonNullable<typeof x.data> } => !!x.data);
+---
+
+<section
+  class="section"
+  id="work"
+  data-section-type="work"
+  data-section-label="Work"
+  data-section-variants="A:Default"
+>
+  <div class="container">
+    <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+    <div class="work-grid stagger-container reveal">
+      {items.map(({ data: w }) => (
+        <WorkCard
+          slug={w.slug}
+          title={w.title}
+          shortTitle={w.shortTitle}
+          cardSummary={w.cardSummary}
+          tags={w.tags}
+          gradientPreset={w.gradientPreset}
+          image={w.image}
+          imageAlt={w.imageAlt}
+          comingSoon={(w as any).comingSoon ?? false}
+        />
+      ))}
+    </div>
+    {viewAllHref && viewAllLabel && (
+      <div style="text-align:center;margin-top:3rem">
+        <a href={viewAllHref} class="btn btn-secondary">{viewAllLabel}</a>
+      </div>
+    )}
+  </div>
+</section>

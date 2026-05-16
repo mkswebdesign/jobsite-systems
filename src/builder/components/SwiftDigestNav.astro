@@ -1,0 +1,278 @@
+---
+/**
+ * SwiftDigestNav (Pass 6 — sd3 two-row scroll-adaptive header)
+ *
+ * Layout:
+ *   ROW 1 — brand + search + actions (theme group, RSS, latest, hamburger)
+ *   ROW 2 — horizontal category rail (collapses to 0 on scroll)
+ *
+ * Theme integration:
+ *   The 3-button #themeToggle group lives in row 1's actions cluster.
+ *   theme.js (public/assets/builder/theme/theme.js) auto-attaches click +
+ *   arrow-key handlers and writes <html data-theme>. We do not duplicate
+ *   that logic. The drawer's segmented Theme control forwards clicks to
+ *   the desktop .theme-opt buttons (which are display:none on mobile but
+ *   still in the DOM) so theme.js handles persistence + toast uniformly.
+ *
+ * Drawer placement:
+ *   The drawer is a top-level sibling of <nav> in this file. Astro emits
+ *   both as direct children of <body> via the layout slot, so the drawer
+ *   sits OUTSIDE the nav's backdrop-filter containing block (which would
+ *   otherwise trap a fixed-position descendant).
+ */
+
+interface Props { pathname: string; }
+const { pathname } = Astro.props;
+
+interface Cat { label: string; href: string; }
+const categories: Cat[] = [
+  { label: 'All',        href: '/archive/' },
+  { label: 'Politics',   href: '/category/politics/' },
+  { label: 'Technology', href: '/category/technology/' },
+  { label: 'Business',   href: '/category/business/' },
+  { label: 'Culture',    href: '/category/culture/' },
+  { label: 'World',      href: '/category/world/' },
+  { label: 'Science',    href: '/category/science/' },
+];
+
+function isActive(href: string): boolean {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(href);
+}
+---
+<nav class="sd3-nav" aria-label="Primary">
+  <div class="sd3-row1">
+    <a class="sd3-brand" href="/" aria-label="Swift Digest home">
+      <span class="sd3-brand__word">Swift<span class="accent">Digest</span></span>
+    </a>
+
+    <form class="sd3-search" role="search" action="/search/" method="get">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" name="q" placeholder="Search articles, topics, or tags…" aria-label="Search articles" autocomplete="off" />
+      <span class="sd3-search__shortcut" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </form>
+
+    <div class="sd3-actions">
+      <div class="sd3-themes" id="themeToggle" role="radiogroup" aria-label="Site theme">
+        <button class="sd3-iconbtn theme-opt" type="button" role="radio" data-mode="light" aria-label="Light theme" data-tooltip="Light">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="sd3-iconbtn theme-opt" type="button" role="radio" data-mode="dark" aria-label="Dark theme" data-tooltip="Dark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="sd3-iconbtn theme-opt" type="button" role="radio" data-mode="vibrant" aria-label="Vibrant theme" data-tooltip="Vibrant">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 4.6L18.5 8.4 14 11l-.8 5L12 13.4 10.8 16 10 11l-4.5-2.6L10.2 6.6 12 2z"/><path d="M19 14l.7 1.8L21.5 16.5l-1.8.7L19 19l-.7-1.8L16.5 16.5 18.3 15.8 19 14z"/></svg>
+        </button>
+      </div>
+
+      <span class="sd3-divider" aria-hidden="true"></span>
+
+      <a class="sd3-pill" href="/archive/" data-action="latest" aria-label="Latest articles">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span class="sd3-pill__label">Latest</span>
+      </a>
+
+      <button class="sd3-iconbtn sd3-menu-btn" type="button" aria-label="Open menu" aria-controls="sd3-drawer" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="sd3-row2" aria-label="Categories">
+    <div class="sd3-row2__inner">
+      {categories.map((cat) => (
+        <a class="sd3-cat" href={cat.href} aria-current={isActive(cat.href) ? 'page' : undefined}>
+          <span class="sd3-cat__dot" aria-hidden="true"></span>{cat.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<div class="sd3-drawer" id="sd3-drawer" hidden>
+  <div class="sd3-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="sd3-drawer__head">
+      <a class="sd3-brand" href="/">
+        <span class="sd3-brand__word">Swift<span class="accent">Digest</span></span>
+      </a>
+      <button class="sd3-iconbtn" type="button" data-close aria-label="Close menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="sd3-drawer__search">
+      <form class="sd3-search" role="search" action="/search/" method="get">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" name="q" placeholder="Search…" aria-label="Search articles" autocomplete="off" />
+      </form>
+    </div>
+
+    <div class="sd3-drawer__section">
+      <span class="sd3-drawer__label">Browse</span>
+      <nav class="sd3-drawer__nav" aria-label="Browse">
+        <a href="/archive/" aria-current={isActive('/archive/') ? 'page' : undefined}><span class="sd3-cat__dot" aria-hidden="true"></span>Latest</a>
+        <a href="/category/" aria-current={pathname === '/category/' ? 'page' : undefined}><span class="sd3-cat__dot" aria-hidden="true"></span>All categories</a>
+        <a href="/rss.xml"><span class="sd3-cat__dot" aria-hidden="true"></span>RSS feed</a>
+      </nav>
+    </div>
+
+    <div class="sd3-drawer__section">
+      <span class="sd3-drawer__label">Categories</span>
+      <nav class="sd3-drawer__nav" aria-label="Categories">
+        {categories.slice(1).map((cat) => (
+          <a href={cat.href} aria-current={isActive(cat.href) ? 'page' : undefined}>
+            <span class="sd3-cat__dot" aria-hidden="true"></span>{cat.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    <div class="sd3-drawer__section">
+      <span class="sd3-drawer__label">Theme</span>
+      <div class="sd3-drawer__theme" role="group" aria-label="Theme">
+        <button type="button" data-theme-forward data-mode="light">Light</button>
+        <button type="button" data-theme-forward data-mode="dark">Dark</button>
+        <button type="button" data-theme-forward data-mode="vibrant">Vibrant</button>
+      </div>
+    </div>
+
+    <div class="sd3-drawer__foot">
+      <span>© Swift Digest</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const nav = document.querySelector('.sd3-nav');
+    const drawer = document.getElementById('sd3-drawer');
+    if (!nav || !drawer) return;
+
+    /* Scroll-driven chrome:
+     *   .is-scrolled    — row 1 shrinks + bar gains shadow once user leaves the
+     *                     very top (>8px). Cheap visual anchor.
+     *   .row2-hidden    — category rail collapses ONLY when user scrolls
+     *                     downward past 120px. Reveals on scroll-up at any
+     *                     point past the threshold, or when near the top.
+     *                     Decoupled from .is-scrolled so the rail doesn't
+     *                     pop out the second the user nudges the wheel.
+     * Everything throttled with rAF to avoid scroll-handler thrash. */
+    const HIDE_AFTER = 120;
+    const DIR_THRESHOLD = 6;
+    let lastY = Math.max(0, window.scrollY);
+    let ticking = false;
+    let rowHidden = false;
+
+    const evaluate = () => {
+      ticking = false;
+      const y = Math.max(0, window.scrollY);
+      const delta = y - lastY;
+
+      nav.classList.toggle('is-scrolled', y > 8);
+
+      if (y <= HIDE_AFTER) {
+        if (rowHidden) {
+          rowHidden = false;
+          nav.classList.remove('row2-hidden');
+        }
+      } else if (Math.abs(delta) > DIR_THRESHOLD) {
+        const goingDown = delta > 0;
+        if (goingDown && !rowHidden) {
+          rowHidden = true;
+          nav.classList.add('row2-hidden');
+        } else if (!goingDown && rowHidden) {
+          rowHidden = false;
+          nav.classList.remove('row2-hidden');
+        }
+      }
+      lastY = y;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(evaluate);
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    /* When the drawer opens body scroll locks; reveal the rail so it returns
+     * cleanly once the drawer closes. */
+    evaluate();
+
+    /* Drawer open/close. */
+    const openBtn = nav.querySelector('.sd3-menu-btn');
+    const closeBtn = drawer.querySelector('[data-close]');
+    if (openBtn && closeBtn) {
+      const open = () => {
+        drawer.hidden = false;
+        requestAnimationFrame(() => drawer.classList.add('is-open'));
+        openBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      };
+      const close = () => {
+        drawer.classList.remove('is-open');
+        openBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        setTimeout(() => { drawer.hidden = true; }, 280);
+      };
+      openBtn.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      drawer.addEventListener('click', (e) => { if (e.target === drawer) close(); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('is-open')) close();
+      });
+    }
+
+    /* Drawer Theme buttons forward to the hidden desktop .theme-opt buttons,
+     * so theme.js handles applyMode + persistence + toast uniformly. We just
+     * mirror the active state visually on the drawer's segmented control. */
+    const drawerThemeBtns = drawer.querySelectorAll<HTMLButtonElement>('[data-theme-forward]');
+    const syncDrawerTheme = () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'vibrant';
+      drawerThemeBtns.forEach((b) => {
+        b.setAttribute('aria-pressed', b.dataset.mode === current ? 'true' : 'false');
+      });
+    };
+    drawerThemeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        if (!mode) return;
+        const target = document.querySelector<HTMLButtonElement>(
+          '#themeToggle .theme-opt[data-mode="' + mode + '"]'
+        );
+        if (target) target.click();
+        syncDrawerTheme();
+      });
+    });
+    syncDrawerTheme();
+    /* Re-sync if the user switches via the desktop pill while drawer is open. */
+    new MutationObserver(syncDrawerTheme).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+
+    /* Keyboard shortcuts:
+     *   /        — focus search (skipped if user is already typing in a field)
+     *   Cmd/Ctrl+K — focus search (matches the ⌘K hint in the bar)
+     */
+    const focusSearch = () => {
+      const input = nav.querySelector<HTMLInputElement>('.sd3-row1 .sd3-search input')
+        || drawer.querySelector<HTMLInputElement>('.sd3-search input');
+      if (input) input.focus();
+    };
+    document.addEventListener('keydown', (e) => {
+      const t = document.activeElement;
+      const tag = t && t.tagName;
+      const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        focusSearch();
+        return;
+      }
+      if (e.key === '/' && !typing) {
+        e.preventDefault();
+        focusSearch();
+      }
+    });
+  })();
+</script>

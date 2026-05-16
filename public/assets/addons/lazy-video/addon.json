@@ -1,0 +1,28 @@
+{
+  "name": "lazy-video",
+  "assets": {
+    "css": ["lazy-video.css"],
+    "js":  ["lazy-video.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "video[data-aed-lazy]",
+        "description": "Native `<video>` lazy loader. Defers source loading until the element scrolls into view. Use child `<source data-src='...'>` elements (note the `data-src`, not `src`) for the actual URLs.",
+        "fields": {
+          "data-aed-lazy": { "type": "boolean", "required": true, "description": "Opt-in marker on the <video> element." }
+        }
+      },
+      {
+        "selector": "[data-aed-video]",
+        "description": "Click-to-play iframe facade for hosted players. Renders a poster image with a play button; the real iframe loads only on click.",
+        "fields": {
+          "data-aed-video":        { "type": "string", "required": true, "description": "Provider token, formatted '<provider>:<id>'. Supported: 'youtube:VIDEO_ID', 'vimeo:VIDEO_ID', 'custom:FULL_URL'." },
+          "data-aed-video-title":  { "type": "string",                    "description": "Optional accessible title for the facade and resulting iframe." },
+          "data-aed-video-poster": { "type": "string",                    "description": "Poster image URL. YouTube auto-fetches `hqdefault.jpg` if omitted." },
+          "data-aed-video-start":  { "type": "string",                    "description": "YouTube start time (e.g. '90' for 1m30s into the video)." }
+        }
+      }
+    ]
+  }
+}

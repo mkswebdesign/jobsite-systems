@@ -1,0 +1,18 @@
+{
+  "name": "internal-versions",
+  "assets": {
+    "css": ["internal-versions.css"],
+    "js":  ["internal-versions.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "html[data-aed-versions]",
+        "description": "Dev overlay listing every loaded addon and its detected VERSION. Discovers <link> + <script> tags under /addons/, fetches each addon.json, and probes the addon's runtime VERSION export. Dev-only.",
+        "fields": {
+          "data-aed-versions": { "type": "boolean", "required": true, "description": "Opt-in marker on <html>." }
+        }
+      }
+    ]
+  }
+}

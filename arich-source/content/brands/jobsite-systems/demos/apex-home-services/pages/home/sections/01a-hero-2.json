@@ -1,0 +1,36 @@
+{
+  "type": "hero",
+  "id": "hero-2",
+  "variant": "G",
+  "badge": "Now booking — Kansas City metro and surrounding suburbs",
+  "badgeHref": "/demo/apex-home-services/contact/",
+  "headline": "Home services for",
+  "headlineAccent": "the Kansas City metro.",
+  "lead": "Multi-trade group covering handyman, electrical, light remodel, and exterior work across KC. Eight-person crew, branded trucks, written quotes before any work starts. Licensed, bonded, insured — and 800+ jobs shipped since 2014.",
+  "metaParts": [
+    "Apex Home Services",
+    "Four trades · One crew",
+    "KC · Overland Park · Lenexa · Shawnee · Leawood · Olathe"
+  ],
+  "ctaPrimary": {
+    "label": "Get a Quote",
+    "href": "/demo/apex-home-services/contact/"
+  },
+  "ctaSecondary": {
+    "label": "See What We Do",
+    "href": "#services"
+  },
+  "backgroundImages": [
+    "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "https://images.pexels.com/photos/35869441/pexels-photo-35869441.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "https://images.pexels.com/photos/4440214/pexels-photo-4440214.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "https://images.pexels.com/photos/7682201/pexels-photo-7682201.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop"
+  ],
+  "backgroundImageInterval": 9,
+  "imageCaption": "Branded Apex trucks and recent project photos from across the KC metro",
+  "trustMetrics": [
+    { "value": "800+ jobs", "label": "Shipped since 2014" },
+    { "value": "4.8 stars", "label": "250+ Google reviews · BBB A+" },
+    { "value": "Licensed", "label": "KS contractor + electrical license · bonded · insured" }
+  ]
+}

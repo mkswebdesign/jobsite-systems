@@ -1,0 +1,125 @@
+{
+  "slug": "process",
+  "path": "/process/",
+  "breadcrumbLabel": "How a Job Goes",
+  "seo": {
+    "title": "How a Job Goes — Cedar Mill Plumbing",
+    "description": "Six steps from first call to wrap-up: phone call, estimate visit, written quote, scheduled work, on-site execution, and warranty documentation.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/process/"
+  },
+  "header": {
+    "heading": "How a Job Goes.",
+    "lead": "Same path most of the time — phone call or contact form, estimate visit if it's a bigger job, written quote, scheduled work, photos and invoice at completion. No diagnostic fees, no surprise add-ons, no high-pressure pitch."
+  },
+  "timeline": [
+    {
+      "number": "01",
+      "title": "First Call or Contact Form",
+      "duration": "Same / next business day",
+      "lead": "Call (503) 555-0149 or use the contact form. Tell me briefly what's going on, where the house is, and how soon you need someone out. I'll tell you straight whether it's a flat-rate service call we can book directly or a bigger job that needs an estimate visit first.",
+      "items": [
+        "A few sentences on what's happening (slow drain, no hot water, leak, etc.)",
+        "Neighborhood or zip — confirms it's inside the service area",
+        "How urgent — same week, next week, just an estimate, or actively leaking now",
+        "Same / next business day reply on the form. Phone is faster"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "Either a service call on the calendar with a flat-rate quote, or an estimate visit booked at your convenience."
+      }
+    },
+    {
+      "number": "02",
+      "title": "Estimate Visit (if needed)",
+      "duration": "30 minutes, free for projects $500+",
+      "lead": "For bigger jobs — water heater swap, repipe, slab leak, tankless conversion — I come out, walk the scope with you, take a few measurements and photos, and ask about anything that affects the install (gas line size, panel capacity, access points). No diagnostic fee, no \"the price doubles if you don't sign today.\"",
+      "items": [
+        "Walk the job, measure, and photograph the scope",
+        "Confirm anything that affects the install (gas, panel, venting, access)",
+        "Discuss timing, what's included, what isn't, and any code/permit requirements",
+        "Honest yes/no on whether I'm the right plumber for the job"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A written estimate in your email by end of business that day — usually faster — with a flat number and a clear scope description."
+      }
+    },
+    {
+      "number": "03",
+      "title": "Written Quote & Scheduling",
+      "duration": "Same day, then a few business days to schedule",
+      "lead": "Once you sign off on the written estimate (a quick reply works — no portal logins), I put you on the schedule. Non-emergency work typically lands inside 3 to 5 business days. Bigger projects (full repipe, multi-day work) book a week or two out depending on the season.",
+      "items": [
+        "Estimate signed off via email — no portal account required",
+        "Deposit collected for projects over $2,500 (typically 30%)",
+        "Scheduled date confirmed, with a window — \"Tuesday morning\" or similar",
+        "Reminder text the day before, with an arrival time"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A confirmed date on the calendar with a written scope and a price you can hold me to."
+      }
+    },
+    {
+      "number": "04",
+      "title": "On-Site Work",
+      "duration": "From an hour to a few days, depending on scope",
+      "lead": "Show up on time, in the work truck. Boots come off at the door, drop cloths down on flooring, walk the scope with you one more time before we start. Service calls usually wrap inside the same visit. Multi-day jobs (repipes, tankless conversions) get a daily check-in so you know what's happening and what's next.",
+      "items": [
+        "Arrival inside the agreed window — text if running late",
+        "Worksite protected with drop cloths and shoe covers",
+        "Permit work coordinated with the city or county where required",
+        "Daily wrap-up on multi-day jobs so the house stays usable"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "Work done to the written scope, with any in-flight scope changes confirmed in writing before the price moves."
+      }
+    },
+    {
+      "number": "05",
+      "title": "Photos, Invoice, Walkthrough",
+      "duration": "End of the job",
+      "lead": "Before drywall closes (on bigger jobs) and at the end of every visit, I photograph the work — joints, runs, fittings, before-and-after on visible repairs. Walkthrough with you so you can see what was done, and the written invoice and photo report land in your email same day. Inspections (where required) scheduled and signed off by me, not subbed out.",
+      "items": [
+        "Photo report of every fitting, run, and repair",
+        "Written invoice with the same number as the estimate (or revised in writing earlier)",
+        "Walkthrough so you see what changed and how to operate any new fixtures",
+        "Permit inspection scheduled and attended where required"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "Documentation in your email — invoice, photos, warranty terms — kept on file for the duration of the warranty."
+      }
+    },
+    {
+      "number": "06",
+      "title": "Warranty & Follow-Up",
+      "duration": "1 year standard, 5 years on repipes",
+      "lead": "If anything I installed fails inside the warranty window, I come back and fix it free. Manufacturer warranty pass-through on water heaters, fixtures, and valves — I file the claim if a covered part fails. Most jobs don't need a follow-up; for ones that do, the call goes to the same plumber, not a warranty department.",
+      "items": [
+        "1-year workmanship warranty on standard service work",
+        "5-year workmanship warranty on whole-house repipes",
+        "Manufacturer warranty pass-through (typically 6-12 yrs water heaters, 25 yrs PEX)",
+        "Warranty calls handled by Mike directly — same number, same response time"
+      ],
+      "deliverable": {
+        "title": "What you'll get",
+        "body": "A plumber who picks up the phone next time something needs work — and remembers the house."
+      }
+    }
+  ],
+  "finalCta": {
+    "heading": "Sound like the kind of plumber you want?",
+    "body": "First step is short and free — phone call or contact form. I'll tell you straight whether it's a flat-rate service call, an estimate visit, or something I'd refer to a colleague who specializes.",
+    "ctaPrimary": {
+      "label": "Request a Service Call",
+      "href": "/demo/cedar-mill-plumbing/contact/"
+    },
+    "ctaSecondary": {
+      "label": "Call (503) 555-0149",
+      "href": "tel:+15035550149"
+    },
+    "headshot": null
+  }
+}

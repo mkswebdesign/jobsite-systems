@@ -1,0 +1,78 @@
+{
+  "slug": "terms",
+  "path": "/terms/",
+  "breadcrumbLabel": "Terms & Conditions",
+  "seo": {
+    "title": "Terms & Conditions — Jobsite Systems",
+    "description": "The ground rules for using jobsite.systems and submitting an inquiry.",
+    "canonical": "https://jobsite.systems/terms/"
+  },
+  "header": {
+    "heading": "Terms & Conditions",
+    "lead": "The ground rules for using jobsite.systems and submitting an inquiry. Plain-language, not lawyer-speak."
+  },
+  "lastUpdated": "April 2026",
+  "body": [
+    {
+      "heading": "1. About these terms",
+      "paragraphs": [
+        "By using jobsite.systems (\"the site\") or submitting an inquiry, you agree to these terms. If you don't agree, please don't use the site."
+      ]
+    },
+    {
+      "heading": "2. Nature of the site",
+      "paragraphs": [
+        "This site is the public-facing storefront for Jobsite Systems, a productized website service for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors. It exists to explain what we offer, answer questions, and let prospective clients reach out."
+      ]
+    },
+    {
+      "heading": "3. Intellectual property",
+      "paragraphs": [
+        "All content on this site — text, design, code, imagery — is owned by Jobsite Systems unless explicitly credited otherwise. Don't copy, redistribute, or republish without written permission.",
+        "Brand names and logos of clients are used with permission and remain the property of their respective owners."
+      ]
+    },
+    {
+      "heading": "4. Project inquiries",
+      "paragraphs": [
+        "Submitting the contact form (or emailing hello@jobsite.systems) is how you start a conversation — it is not a contract. No engagement exists until we both sign a separate project agreement that defines scope, timeline, deliverables, and fees."
+      ]
+    },
+    {
+      "heading": "5. Information you submit",
+      "paragraphs": [
+        "When you submit an inquiry, the information you provide (name, email, business name, service area, project details, message) is used only to respond to you and evaluate fit for a potential engagement. See the Privacy Policy for details on storage and handling."
+      ]
+    },
+    {
+      "heading": "6. No warranties",
+      "paragraphs": [
+        "The site is provided \"as is.\" We aim for accuracy but make no warranty that everything is up to date, error-free, or continuously available."
+      ]
+    },
+    {
+      "heading": "7. Limitation of liability",
+      "paragraphs": [
+        "To the fullest extent permitted by law, Jobsite Systems is not liable for any indirect, incidental, or consequential damages arising from your use of this site. Nothing here limits any liability that cannot legally be limited."
+      ]
+    },
+    {
+      "heading": "8. Changes to these terms",
+      "paragraphs": [
+        "These terms may be updated occasionally. The \"last updated\" date at the top reflects the most recent revision. Continued use of the site after changes means you accept them."
+      ]
+    },
+    {
+      "heading": "9. Governing law",
+      "paragraphs": [
+        "These terms are governed by the laws of the United States. Any disputes will be resolved in a venue appropriate to the principal place of business."
+      ]
+    },
+    {
+      "heading": "10. Contact",
+      "paragraphs": [
+        "Questions about these terms? Email hello@jobsite.systems."
+      ]
+    }
+  ]
+}

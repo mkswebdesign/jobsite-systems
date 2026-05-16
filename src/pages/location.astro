@@ -1,0 +1,254 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import FinalCta from '../builder/components/sections/FinalCta.astro';
+import DesignBreak from '../builder/components/sections/DesignBreak.astro';
+import ContentSection from '../builder/components/sections/ContentSection.astro';
+import PhotoGallery from '../builder/components/sections/PhotoGallery.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+import { brand, site } from '../builder/lib/brand';
+
+// Soft-fail when the brand has no `pages/location` entry (flat or folder
+// format). The page still compiles to dist/location/index.html as an empty
+// shell; scripts/prune-dist.mjs deletes the route post-build for those
+// brands. Mirrors how /best/ + /demo/ already work — keeps `npm run ship`
+// green for sibling brands without forcing every brand to author a
+// location page.
+const entry = await getEntry('pages', 'location');
+const d: any = entry?.data;
+
+// Per-instance variant pin for the locationDetails section. Sanitize to A–D
+// uppercase. When unset, no attribute is emitted and the default A layout
+// applies via CSS source order.
+const ldVariantRaw = d?.locationDetails?.variant;
+const ldVariantPin = (typeof ldVariantRaw === 'string' && /^[A-D]$/i.test(ldVariantRaw))
+  ? ldVariantRaw.toUpperCase()
+  : null;
+---
+
+{d && (
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Location' }]}
+    heading={d.header.heading}
+    lead={d.header.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {d.locationDetails && (
+    <section
+      class="location-details"
+      data-section-type="location-details"
+      data-section-label="Location details"
+      data-section-variants="A:Default,B:Map Left,C:Stacked,D:Map Hero"
+      data-location-details-variant={ldVariantPin}
+    >
+      <div class="container location-details__grid">
+        <div class="location-details__info">
+          {d.locationDetails.eyebrow && <p class="location-details__eyebrow">{d.locationDetails.eyebrow}</p>}
+          {d.locationDetails.heading && <h2 class="location-details__heading">{d.locationDetails.heading}</h2>}
+          {d.locationDetails.lead && <p class="location-details__lead">{d.locationDetails.lead}</p>}
+          <dl class="location-details__list">
+            {d.locationDetails.address && (
+              <>
+                <dt>Address</dt>
+                <dd set:html={d.locationDetails.address} />
+              </>
+            )}
+            {d.locationDetails.phone && (
+              <>
+                <dt>Phone</dt>
+                <dd><a href={`tel:${d.locationDetails.phone.replace(/[^\d+]/g, '')}`}>{d.locationDetails.phone}</a></dd>
+              </>
+            )}
+            {d.locationDetails.email && (
+              <>
+                <dt>Email</dt>
+                <dd><a href={`mailto:${d.locationDetails.email}`}>{d.locationDetails.email}</a></dd>
+              </>
+            )}
+            {d.locationDetails.hours && (
+              <>
+                <dt>Visit hours</dt>
+                <dd set:html={d.locationDetails.hours} />
+              </>
+            )}
+            {d.locationDetails.parking && (
+              <>
+                <dt>Parking</dt>
+                <dd>{d.locationDetails.parking}</dd>
+              </>
+            )}
+            {d.locationDetails.visitorPolicy && (
+              <>
+                <dt>Visitor policy</dt>
+                <dd>{d.locationDetails.visitorPolicy}</dd>
+              </>
+            )}
+          </dl>
+          {d.locationDetails.cta && (
+            <a class="btn btn-primary location-details__cta" href={d.locationDetails.cta.href}>{d.locationDetails.cta.label}</a>
+          )}
+        </div>
+        {d.locationDetails.mapEmbedSrc && (
+          <div class="location-details__map">
+            <iframe
+              src={d.locationDetails.mapEmbedSrc}
+              width="100%"
+              height="100%"
+              style="border:0;min-height:420px;border-radius:14px;"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title={d.locationDetails.mapTitle ?? 'Map'}
+            ></iframe>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="locationDetails" />
+
+  {d.photoGallery && Array.isArray(d.photoGallery.images) && d.photoGallery.images.length >= 2 && (
+    <PhotoGallery
+      sectionLabel={d.photoGallery.sectionLabel}
+      heading={d.photoGallery.heading}
+      subtext={d.photoGallery.subtext}
+      images={d.photoGallery.images}
+      cta={d.photoGallery.cta}
+      variant={d.photoGallery.variant}
+      perPage={d.photoGallery.perPage}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="photoGallery" />
+
+  {d.whyHere && d.whyHere.heading && d.whyHere.body && (
+    <ContentSection
+      sectionLabel={d.whyHere.sectionLabel}
+      heading={d.whyHere.heading}
+      body={d.whyHere.body}
+      cta={d.whyHere.cta}
+      variant={d.whyHere.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="whyHere" />
+
+  {d.designBreak && d.designBreak.cta && (
+    <DesignBreak
+      sectionLabel={d.designBreak.sectionLabel}
+      heading={d.designBreak.heading}
+      headingHtml={d.designBreak.headingHtml}
+      subtext={d.designBreak.subtext}
+      backgroundImage={d.designBreak.backgroundImage}
+      cta={d.designBreak.cta}
+      secondaryCta={d.designBreak.secondaryCta}
+      stats={d.designBreak.stats}
+      variant={d.designBreak.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="designBreak" />
+
+  {d.contentSection && d.contentSection.heading && d.contentSection.body && (
+    <ContentSection
+      sectionLabel={d.contentSection.sectionLabel}
+      heading={d.contentSection.heading}
+      body={d.contentSection.body}
+      cta={d.contentSection.cta}
+      variant={d.contentSection.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="contentSection" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="testimonials" />
+
+  {d.cta && d.cta.ctaPrimary && (
+    <FinalCta
+      heading={d.cta.heading}
+      body={d.cta.body ?? ''}
+      ctaPrimary={d.cta.ctaPrimary}
+      ctaSecondary={d.cta.ctaSecondary}
+      headshot={d.cta.headshot ?? null}
+    />
+  )}
+</Base>
+)}
+
+<style>
+  .location-details { padding: 4rem 0; }
+  .location-details__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .location-details__grid { grid-template-columns: 1fr; }
+  }
+  .location-details__eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-text, var(--accent));
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+  .location-details__heading {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.15;
+    margin: 0 0 1rem 0;
+  }
+  .location-details__lead {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 2rem 0;
+    max-width: 56ch;
+  }
+  .location-details__list {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.85rem 1.25rem;
+    margin: 0 0 2rem 0;
+  }
+  .location-details__list dt {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+  }
+  .location-details__list dd {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .location-details__list dd a {
+    color: var(--accent-text, var(--accent));
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .location-details__list dd a:hover { border-bottom-color: var(--accent); }
+  .location-details__cta { display: inline-flex; align-items: center; }
+  .location-details__map {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    box-shadow: 0 18px 40px -16px rgba(0,0,0,0.18), 0 6px 18px -6px rgba(0,0,0,0.10);
+  }
+  .location-details__map iframe { display: block; }
+</style>

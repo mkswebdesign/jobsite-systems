@@ -1,0 +1,28 @@
+{
+  "type": "why",
+  "sectionLabel": "Why Jobsite Systems",
+  "heading": "Built for the business, not for a CMS.",
+  "subtext": "Most web options for trade businesses are either cheap templates that look it, or heavy WordPress builds that need constant care. There's a better middle.",
+  "cards": [
+    {
+      "iconKey": "layers",
+      "title": "Simple by design",
+      "body": "A focused website with the pages homeowners actually want — services / trades, crew, licensed-and-insured trust signals, service area, and an easy way to request an estimate. No bloat."
+    },
+    {
+      "iconKey": "zap",
+      "title": "Fast to launch",
+      "body": "Most sites go live in about two weeks. Send us your license info, services, and a few jobsite photos, and we handle the rest — you don't need to learn a builder."
+    },
+    {
+      "iconKey": "check-circle",
+      "title": "Zero maintenance",
+      "body": "No plugins to update, no PHP versions to chase, no security patches to worry about. Hosting, SSL, backups, and uptime are all handled — and there's no CMS attack surface."
+    },
+    {
+      "iconKey": "monitor",
+      "title": "Built on solid systems",
+      "body": "Static-site architecture, edge caching, and managed hosting mean your site loads fast and stays up — even when a storm hits and the phones start ringing."
+    }
+  ]
+}

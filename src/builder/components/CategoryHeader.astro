@@ -1,0 +1,31 @@
+---
+/**
+ * CategoryHeader — section header for /category/<slug>/ pages.
+ * Breadcrumbs (Home > Categories > Name), title, description, post count.
+ * RSS link is intentionally omitted this pass — feed routes don't exist
+ * until Pass 3, and a live <a> to a 404 dings SEO crawls.
+ */
+import type { Category } from '../lib/posts';
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props { category: Category; postCount: number; }
+const { category, postCount } = Astro.props;
+const c = category.data;
+---
+<header
+  class="category-header"
+  data-category={c.id}
+  style={c.color ? `--cat-accent: ${c.color}` : undefined}
+  data-section-type="category-header"
+  data-section-label="Category header"
+  data-section-variants="A:Default,B:Compact"
+>
+  <Breadcrumbs items={[
+    { label: 'Home', href: '/' },
+    { label: 'Categories', href: '/category/' },
+    { label: c.name },
+  ]} />
+  <h1 class="category-header__title">{c.name}</h1>
+  <p class="category-header__desc">{c.description}</p>
+  <p class="category-header__count">{postCount} {postCount === 1 ? 'article' : 'articles'}</p>
+</header>

@@ -1,0 +1,51 @@
+{
+  "slug": "water-heaters",
+  "order": 2,
+  "number": "02",
+  "iconKey": "layers",
+  "heroImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "New 50-gallon gas water heater installed in a NW Portland garage",
+  "title": "Water Heaters — Tank, Tankless, Service & Replace",
+  "headline": "A clean install.\nDone the way it should be.",
+  "shortDescription": "Gas and electric tank water heaters, tankless conversions, anode-rod service, full flushes, expansion tanks, and code-correct venting — installed by the same plumber who'll service it later.",
+  "lead": "If your water heater is ten or more years old, the question isn't whether it'll fail — it's whether you'd rather replace it on a Tuesday or wake up to a flooded utility room. I install a few water heaters every week across NW Portland and the Westside: standard 40 and 50-gallon tanks, condensing tankless units, and the occasional electric heat-pump retrofit. Pricing is flat per scope of work — no hidden permit fees, no surprise venting upcharges, no \"that valve isn't included.\"",
+  "seo": {
+    "title": "Water Heater Install & Repair — Cedar Mill Plumbing · Portland, OR",
+    "description": "Tank and tankless water heater installation, replacement, and maintenance in Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland. Licensed Oregon plumber, transparent flat-rate pricing.",
+    "schemaName": "Water Heater Installation",
+    "schemaDescription": "Residential water heater installation, replacement, tankless conversion, and annual maintenance."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "variant": "showcase",
+      "heading": "What's covered",
+      "intro": "Common scopes priced flat. Anything outside the standard install gets a written estimate before we start.",
+      "items": [
+        { "label": "50-gal gas tank — $1,650 installed", "body": "Standard atmospheric vent, includes new T&P valve, drip pan, expansion tank if required, and haul-off of the old unit" },
+        { "label": "50-gal electric tank — $1,890 installed", "body": "Includes new shutoffs, expansion tank, and haul-off. Most NW Portland panels handle this without an upgrade" },
+        { "label": "Tankless gas conversion — $4,800–$6,400", "body": "Condensing tankless unit, gas line resize if needed, PVC venting, condensate drain, and isolation valves. Free written estimate" },
+        { "label": "Heat-pump water heater — $3,400–$4,200", "body": "Electric heat-pump retrofit for a garage or basement install. Big efficiency gains; PGE rebates often apply" },
+        { "label": "Inspect-and-flush service — $329 flat", "body": "Annual maintenance: full flush, anode check, T&P test, expansion-tank pressure check, written report. Adds years to a tank" },
+        { "label": "Same-day failure replacement", "body": "If your heater fails before noon and I've got a unit in the truck, you're in hot water by dinner. Same-day fee is $150 over standard install" }
+      ]
+    },
+    {
+      "type": "feature",
+      "theme": "white",
+      "heading": "How a replacement goes",
+      "body": "A standard 50-gallon swap is usually a 3 to 4 hour job from arrival to hot water on the tap.",
+      "items": [
+        "Drain and disconnect the old unit — water, gas or electrical, venting",
+        "Set the new heater on a fresh drip pan, square to the wall, with new shutoffs and supply lines",
+        "Install or replace the expansion tank if the home has a backflow preventer (most do)",
+        "Re-vent and re-gas (or rewire), pressure-test, and pull a permit through the city or county where required",
+        "Flush, fill, and verify the burner cycles through to a clean shutoff. Photos and the written invoice before I leave. 1-year workmanship warranty plus full manufacturer warranty pass-through"
+      ]
+    }
+  ],
+  "cta": {
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "announcement-bar",
+  "assets": {
+    "css": ["announcement-bar.css"],
+    "js":  ["announcement-bar.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-announcement-bar",
+        "description": "Single announcement displayed at the top or bottom of every page. Omit the block (or unset `text`) to disable.",
+        "required": true,
+        "fields": {
+          "text":                { "type": "string",   "required": true,           "description": "Body copy. Supports **bold** via Markdown-style **emphasis**." },
+          "cta.label":           { "type": "string",                                "description": "Optional call-to-action button label." },
+          "cta.href":            { "type": "string",                                "description": "Optional call-to-action URL." },
+          "kind":                { "type": "string",   "default": "promo",         "enum": ["promo", "info", "warn", "success"], "description": "Visual style." },
+          "icon":                { "type": "string",   "default": "sparkle",       "enum": ["sparkle", "bell", "bolt", "info", "warn", "calendar", "star"], "description": "Leading icon." },
+          "position":            { "type": "string",   "default": "top",           "enum": ["top", "bottom"], "description": "Where the bar attaches." },
+          "dismissable":         { "type": "boolean",  "default": true,            "description": "Show the close button." },
+          "dismissCooldownDays": { "type": "number",   "default": 0,               "description": "Days before a dismissed bar reappears. 0 = permanent dismiss." },
+          "start":               { "type": "string",                                "description": "ISO date — hide before this." },
+          "end":                 { "type": "string",                                "description": "ISO date — hide after this." },
+          "hideOnPaths":         { "type": "string[]", "default": [],              "description": "Paths to suppress the bar on (e.g. ['/contact/'])." },
+          "showOnlyOnPaths":     { "type": "string[]",                             "description": "If set, only show the bar on these paths." },
+          "id":                  { "type": "string",                                "description": "Stable id used for the dismiss flag. Auto-derived from text if omitted." }
+        }
+      }
+    ]
+  }
+}

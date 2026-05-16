@@ -1,0 +1,32 @@
+{
+  "type": "why",
+  "sectionLabel": "What I do",
+  "heading": "Four things, done well.",
+  "subtext": "Residential plumbing across NW Portland and the Westside — drains, water heaters, repipe and leak repair, and 24/7 emergency dispatch. Flat rates on the common stuff, written estimates on the bigger projects.",
+  "cards": [
+    {
+      "iconKey": "monitor",
+      "title": "Drain Cleaning & Hydro Jetting",
+      "body": "Branch drains, mainlines, and root-intruded sewer lines. Cabled, jetted, and scoped — so you actually see what was wrong. Branch drains $189 flat.",
+      "cta": { "label": "Read more", "href": "/demo/cedar-mill-plumbing/services/drain-cleaning/" }
+    },
+    {
+      "iconKey": "layers",
+      "title": "Water Heaters",
+      "body": "Tank, tankless, and heat-pump. Same-day failure replacement when I have a unit in the truck. Standard 50-gal gas install $1,650, electric $1,890, code-correct.",
+      "cta": { "label": "Read more", "href": "/demo/cedar-mill-plumbing/services/water-heaters/" }
+    },
+    {
+      "iconKey": "check-circle",
+      "title": "Repipe & Leak Detection",
+      "body": "Acoustic, infrared, and moisture mapping to find the leak before any drywall comes out. Targeted repairs and full PEX repipes on older Westside homes.",
+      "cta": { "label": "Read more", "href": "/demo/cedar-mill-plumbing/services/repipe-and-leaks/" }
+    },
+    {
+      "iconKey": "zap",
+      "title": "24/7 Emergency Service",
+      "body": "Burst pipes, mainline backups, water heater failures. Direct line to me — typical 30 to 60 minute arrival inside Cedar Mill, Bethany, Beaverton, and NW Portland.",
+      "cta": { "label": "Read more", "href": "/demo/cedar-mill-plumbing/services/emergency-service/" }
+    }
+  ]
+}

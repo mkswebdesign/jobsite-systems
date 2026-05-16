@@ -1,0 +1,33 @@
+/* ============================================
+   Global stylesheet entry point.
+   Base.astro imports this file. The portable theme system at
+   /theme/theme.css (linked from Base.astro's <head>) owns :root tokens
+   for both modes. Per-brand :root overrides and @font-face are injected
+   by Base.astro after this file, via lib/brand.ts.
+   Import order matters — it preserves cascade and specificity.
+   ============================================ */
+
+@import './base.css';
+@import './sections.css';
+@import './decorations.css';
+@import './pages/services-showcase.css';
+@import './pages/service-detail.css';
+@import './pages/work-detail.css';
+@import './pages/about.css';
+@import './pages/pricing.css';
+@import './pages/checkout.css';
+@import './pages/process.css';
+@import './pages/contact.css';
+@import './pages/faq.css';
+@import './pages/legal.css';
+@import './pages/start.css';
+@import './pages/post-single.css';
+@import './pages/archive.css';
+@import './section-variants.css';
+
+/* Per-brand override layer. _current.css is generated at build time by
+   scripts/write-brand-stylesheet.mjs based on $BRAND — it resolves to a
+   single `@import './brands/<brand>.css'` so the active brand's overrides
+   win the cascade. Everything above this line is shared across brands;
+   everything a brand wants to customize should go in its per-brand file. */
+@import './brands/_current.css';

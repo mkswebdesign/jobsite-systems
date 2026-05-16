@@ -1,0 +1,235 @@
+---
+/**
+ * Support Request — hidden from indexing, shareable by direct link.
+ *
+ * Single-step form (vs. /onboard/'s 14-step wizard). Reuses WizardField
+ * and the .start-wizard chassis CSS so it visually matches /onboard/ and
+ * /start/, but skips the multi-step navigation, progress bar, and step
+ * persistence — when something's broken the operator wants one screen,
+ * not seven clicks.
+ *
+ * Subject is rewritten on submit to `[PRIORITY] Support — <issue title>`
+ * so urgent requests are spottable at a glance in the inbox.
+ *
+ * Same defenses as /onboard/:
+ *   - <meta robots> noindex via Base.astro `indexable={false}`
+ *   - sitemap.xml.ts EXCLUDED_PAGE_PATHS includes /support/ and /support/success/
+ *   - robots.txt.ts has Disallow: /support/
+ *   - random-number client-side honeypot before submit
+ *
+ * Sibling brands without a `support` page entry render an empty doc
+ * instead of throwing, so this brand-specific route doesn't break their
+ * builds.
+ */
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import WizardField from '../builder/components/WizardField.astro';
+
+const entry = await getEntry('pages', 'support');
+const d: any = entry?.data;
+
+const fields = entry ? ((d.form?.fields ?? []) as any[]) : [];
+
+function fieldsByRow(items: any[]) {
+  const rows = new Map<number, any[]>();
+  for (const f of items ?? []) {
+    const r = f.row ?? 0;
+    if (!rows.has(r)) rows.set(r, []);
+    rows.get(r)!.push(f);
+  }
+  return [...rows.entries()].sort((a, b) => a[0] - b[0]).map(([, fs]) => fs);
+}
+
+const standardFieldTypes = new Set(['text', 'email', 'url', 'tel']);
+const standardFields = fields.filter((f: any) => standardFieldTypes.has(f.type));
+const otherFields = fields.filter((f: any) => !standardFieldTypes.has(f.type));
+const standardRows = fieldsByRow(standardFields);
+---
+
+{entry && (
+  <Base
+    title={d.seo.title}
+    description={d.seo.description}
+    canonical={d.seo.canonical}
+    skipTarget="#main"
+    indexable={false}
+  >
+    <PageHeader
+      crumbs={[{ label: d.breadcrumbLabel ?? 'Support' }]}
+      sectionLabel={d.header?.sectionLabel}
+      heading={d.header?.heading ?? 'Support'}
+      lead={d.header?.lead}
+    />
+
+    <section
+      class="section start-wizard-section"
+      data-section-type="support-form"
+      data-section-label="Support form"
+    >
+      <div class="container">
+        <div class="start-wizard">
+          <form id="supportForm" action={d.form.action} method={d.form.method ?? 'POST'} enctype="multipart/form-data" novalidate>
+            {d.form.subject && <input type="hidden" name="_subject" value={d.form.subject} />}
+            {/* contact-proxy worker requires `message` — built dynamically on
+             * submit from the issue_title + description so the worker check
+             * passes AND the email body still reads naturally. */}
+            <input type="hidden" name="message" value="See support details below." />
+            <input type="hidden" name="brand" value={import.meta.env.PUBLIC_BRAND} />
+            <input type="hidden" name="form_source" value="support" />
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
+
+            <div class="wizard-step is-active">
+              <div class="wizard-step-fields">
+                {standardRows.map((row: any[]) => (
+                  row.length > 1 ? (
+                    <div class="form-row">
+                      {row.map((f: any) => <WizardField field={f} />)}
+                    </div>
+                  ) : (
+                    row.map((f: any) => <WizardField field={f} />)
+                  )
+                ))}
+                {otherFields.map((f: any) => <WizardField field={f} />)}
+              </div>
+            </div>
+
+            <div class="wizard-nav">
+              <button type="submit" class="btn btn-primary wizard-submit" id="supportSubmit">
+                {d.form.submitLabel ?? 'Send Support Request'}
+              </button>
+            </div>
+
+            <p class="wizard-error-hint" id="supportErrorHint" role="alert" aria-live="polite"></p>
+          </form>
+
+          <div class="form-status" id="supportFormSuccess">
+            <strong>Thanks!</strong> {d.form.successMessage}
+          </div>
+          <div class="form-status" id="supportFormError">
+            <strong>Something went wrong.</strong> {d.form.errorMessage}
+          </div>
+
+          <p class="wizard-footnote">
+            Onboarding a new site instead? <a href="/onboard/">Use the onboarding form.</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </Base>
+
+  <script is:inline define:vars={{ successUrl: '/support/success/' }}>
+  (function(){
+    const form = document.getElementById('supportForm');
+    if (!form) return;
+    const submitBtn = document.getElementById('supportSubmit');
+    const errorHint = document.getElementById('supportErrorHint');
+    const successEl = document.getElementById('supportFormSuccess');
+    const errorEl = document.getElementById('supportFormError');
+
+    /* Random-number honeypot. Same pattern as /onboard/: generate N digits
+     * client-side on load, store the expected answer in a paired hidden
+     * input, validate the typed value matches before submit. */
+    function initHumanChecks(){
+      const checks = form.querySelectorAll('[data-wizard-human-check]');
+      checks.forEach((check) => {
+        const digits = parseInt(check.dataset.digits || '4', 10);
+        const min = Math.pow(10, digits - 1);
+        const max = Math.pow(10, digits) - 1;
+        const num = Math.floor(min + Math.random() * (max - min + 1));
+        const numStr = String(num);
+        const display = check.querySelector('[data-wizard-human-check-number]');
+        const expected = check.querySelector('[data-wizard-human-check-expected]');
+        if (display) display.textContent = numStr;
+        if (expected) expected.value = numStr;
+      });
+    }
+
+    function validate(){
+      errorHint.textContent = '';
+      const fields = Array.from(form.querySelectorAll('input, textarea, select'));
+      let firstInvalid = null;
+      let customError = '';
+      const radioGroups = new Set();
+      for (const f of fields) {
+        if (!f.required) continue;
+        if (f.type === 'radio' || f.type === 'checkbox') {
+          if (!f.name) continue;
+          if (radioGroups.has(f.name)) continue;
+          radioGroups.add(f.name);
+          const group = form.querySelectorAll(`[name="${CSS.escape(f.name)}"]`);
+          const anyChecked = Array.from(group).some(g => g.checked);
+          if (!anyChecked && !firstInvalid) firstInvalid = f;
+        } else {
+          if (!f.value || !f.checkValidity()) {
+            if (!firstInvalid) firstInvalid = f;
+          } else if (f.dataset.wizardHumanCheckInput !== undefined) {
+            const expectedEl = form.querySelector('[data-wizard-human-check-expected]');
+            if (expectedEl && f.value.trim() !== expectedEl.value.trim()) {
+              if (!firstInvalid) {
+                firstInvalid = f;
+                customError = "That number doesn't match. Try again.";
+              }
+            }
+          }
+        }
+      }
+      if (firstInvalid) {
+        errorHint.textContent = customError ||
+          (firstInvalid.validationMessage && firstInvalid.value
+            ? firstInvalid.validationMessage
+            : 'Please complete the required field(s) before sending.');
+        firstInvalid.focus({ preventScroll: false });
+        return false;
+      }
+      return true;
+    }
+
+    /* Rewrite the _subject hidden input just before submit so urgent
+     * requests jump out in the inbox preview. Format:
+     *   [URGENT] Support — Estimate form not sending
+     *   [Normal] Support — Update phone number
+     *   [Whenever] Support — Add a blog page */
+    function buildSubject(){
+      const priorityEl = form.querySelector('input[name="priority"]:checked');
+      const issueEl = form.querySelector('input[name="issue_title"]');
+      const subjectEl = form.querySelector('input[name="_subject"]');
+      if (!subjectEl) return;
+      const priority = priorityEl ? priorityEl.value : '';
+      const issue = issueEl && issueEl.value ? issueEl.value.trim() : '';
+      const tag = priority === 'urgent' ? '[URGENT]'
+        : priority === 'normal' ? '[Normal]'
+        : priority === 'whenever' ? '[Whenever]'
+        : '[Support]';
+      const tail = issue ? ` — ${issue}` : '';
+      subjectEl.value = `${tag} Support${tail}`;
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!validate()) return;
+      buildSubject();
+      submitBtn.disabled = true;
+      submitBtn.setAttribute('aria-busy', 'true');
+      const origLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Sending…';
+      successEl.className = 'form-status';
+      errorEl.className = 'form-status';
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+        .then(r => {
+          if (!r.ok) throw new Error('fail');
+          if (window.plausible) window.plausible('Support Submit');
+          window.location.assign(successUrl);
+        })
+        .catch(() => {
+          errorEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.removeAttribute('aria-busy');
+          submitBtn.textContent = origLabel;
+        });
+    });
+
+    initHumanChecks();
+  })();
+  </script>
+)}

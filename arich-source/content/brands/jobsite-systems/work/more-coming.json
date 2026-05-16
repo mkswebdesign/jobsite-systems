@@ -1,0 +1,14 @@
+{
+  "slug": "more-coming",
+  "order": 99,
+  "title": "Onboarding now — your site here",
+  "shortTitle": "Onboarding now",
+  "cardSummary": "Pilot cohort active. Real client sites — with city, state, and the owner's name — will replace this card as they go live.",
+  "category": "Coming soon",
+  "projectMeta": "Onboarding now",
+  "tags": ["Onboarding"],
+  "gradientPreset": "g2",
+  "image": null,
+  "imageAlt": "Site mockup placeholder for an upcoming pilot client launch",
+  "comingSoon": true
+}

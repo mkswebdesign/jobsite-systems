@@ -1,0 +1,99 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import { resolveFaqs } from '../../lib/brand';
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  faqIds?: string[];
+  groupIds?: string[];
+  faqs?: Array<{ question: string; answer: string }>;
+  /** When true, the highest-intent FAQ (first item) is pre-expanded so users
+   *  see an answer without an extra click. The shared FAQ click handler still
+   *  closes/opens normally; this only changes initial render state. */
+  openFirst?: boolean;
+  /** Specific FAQ ids to render pre-expanded (defaults to none). Useful when
+   *  the highest-anxiety question isn't first in the list. Items are matched
+   *  against the resolved faqs' `id` field, which the brand's faq.json keeps
+   *  on every entry. Inline `faqs` (from authors who pass questions directly)
+   *  don't carry an id and are skipped. */
+  openIds?: string[];
+}
+
+const { sectionLabel, heading, subtext, faqIds, groupIds, faqs: inlineFaqs, openFirst = false, openIds } = Astro.props;
+const faqs = inlineFaqs && inlineFaqs.length ? inlineFaqs : resolveFaqs({ faqIds, groupIds });
+const openIdSet = new Set(openIds ?? []);
+
+/* FAQPage JSON-LD — emitted once per FAQ section render so Google can pull
+ * rich-result snippets. Strips HTML tags from answers (set:html-rendered)
+ * since acceptedAnswer.text wants plain text. Skipped when no faqs are
+ * resolved (empty section, prevents an empty Question[] array). */
+const faqLd = faqs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: String(faq.answer ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(),
+    },
+  })),
+} : null;
+---
+
+<section
+  class="section"
+  id="faq"
+  data-section-type="faq"
+  data-section-label="FAQ"
+  data-section-variants="a:Default,B:Minimal,C:Narrow,D:Columns,E:Editorial,F:List,G:Featured"
+  data-faq-open-first={openFirst ? '1' : null}
+  data-faq-has-default-open={openFirst || openIdSet.size > 0 ? '1' : null}
+>
+  <div class="container">
+    <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} centered />
+    <div class="faq-list">
+      {faqs.map((faq, i) => {
+        const fid = (faq as any).id as string | undefined;
+        const isOpen = (openFirst && i === 0) || (fid != null && openIdSet.has(fid));
+        return (
+          <div class={`faq-item reveal${isOpen ? ' open' : ''}`} data-reveal-delay={i * 100}>
+            <button class="faq-question" aria-expanded={isOpen ? 'true' : 'false'}>
+              <span>{faq.question}</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg class="faq-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect class="faq-icon-stroke faq-icon-stroke--h" x="5" y="11" width="14" height="2" rx="1"></rect>
+                  <rect class="faq-icon-stroke faq-icon-stroke--v" x="11" y="5" width="2" height="14" rx="1"></rect>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-answer"><div class="faq-answer-inner" set:html={faq.answer}></div></div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+{faqLd && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqLd)}></script>
+)}
+
+{(openFirst || openIdSet.size > 0) && (
+  <script is:inline>
+    (function () {
+      function init() {
+        document.querySelectorAll('[data-faq-has-default-open="1"] .faq-item.open').forEach(function (item) {
+          var ans = item.querySelector('.faq-answer');
+          var inner = item.querySelector('.faq-answer-inner');
+          if (ans && inner) ans.style.maxHeight = inner.scrollHeight + 'px';
+        });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+      window.addEventListener('load', init);
+    })();
+  </script>
+)}

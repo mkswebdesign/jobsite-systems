@@ -1,0 +1,26 @@
+---
+/**
+ * RelatedPosts — up to 3 PostCards under a "Related" heading.
+ * Hidden entirely when posts[] is empty.
+ */
+import type { Post } from '../lib/posts';
+import PostCard from './PostCard.astro';
+import { getAllCategories } from '../lib/posts';
+
+interface Props { posts: Post[]; }
+const { posts } = Astro.props;
+
+/* Map category id -> display name once for badge labels in nested PostCards. */
+const cats = await getAllCategories();
+const catName = new Map(cats.map((c) => [c.data.id, c.data.name]));
+---
+{posts.length > 0 && (
+  <section class="related-posts" aria-labelledby="related-heading">
+    <h2 id="related-heading" class="related-posts__heading">Related</h2>
+    <div class="related-posts__grid">
+      {posts.map((p) => (
+        <PostCard post={p} categoryName={catName.get(p.data.category)} />
+      ))}
+    </div>
+  </section>
+)}

@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "description": "Session export field `position` (and `positionLabel`) come from the gomks builder 3x3 'position' control on the comment/floating toolbar. In the app they describe where the note UI is anchored; for static-site implementation, use them as layout intent for the target element in its container context—see .cursor/rules/aed-editor-session-exports.mdc.",
+    "source": "edit.js: POS_LABEL, state.positions, getPatch()",
+    "version": 1,
+    "noteKind": "Optional per-entry `noteKind` (e.g. `design` from the brush on the floating toolbar) signals a visual/CSS review, distinct from `position` layout intent. See .cursor/rules/aed-editor-session-exports.mdc."
+  },
+  "keys": {
+    "tl": {
+      "label": "top-left",
+      "frontEndIntent": "Anchor content to the start (block flow: top/left; text: left; flex/grid: start/start)."
+    },
+    "tc": {
+      "label": "top-center",
+      "frontEndIntent": "Center along the top band of the block: text-align center and/or full-width block with margin auto; flex: justify center on the row, align start vertically if horizontal layout."
+    },
+    "tr": {
+      "label": "top-right",
+      "frontEndIntent": "End-align on the top band: text-align right; or margin-inline-start auto in flex rows."
+    },
+    "ml": {
+      "label": "middle-left",
+      "frontEndIntent": "Vertically middle row, start edge: in multi-row layouts align-self center with justify-self start; for simple blocks often text-align left with surrounding vertical centering on parent."
+    },
+    "mc": {
+      "label": "middle-center",
+      "frontEndIntent": "Center in both axes in the available container: text-align center for text nodes; display block + width 100% for inline labels; flex/grid: place-items or justify/align center. Prefer the smallest change (often text-align + optional width on the target, not rewiring the whole section)."
+    },
+    "mr": {
+      "label": "middle-right",
+      "frontEndIntent": "Vertically middle, trailing edge: text-align right or self-end in flex."
+    },
+    "bl": {
+      "label": "bottom-left",
+      "frontEndIntent": "Bottom band, start: align-self end in column flex, or place in last row grid cell at start."
+    },
+    "bc": {
+      "label": "bottom-center",
+      "frontEndIntent": "Bottom band, centered: text-align center with margin-top auto in flex columns, or last row center in grid."
+    },
+    "br": {
+      "label": "bottom-right",
+      "frontEndIntent": "Bottom band, end: text-align right or self-end in last row."
+    }
+  }
+}

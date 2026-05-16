@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "Ready to start?",
+  "heading": "Step one is short:\nsend a quick request.",
+  "subtext": "Tell us what you need, where you are in the metro, and add a couple of photos if you can. We read every request, phone-quote what we can, and book the in-home estimate for anything bigger. You'll hear back the same business day.",
+  "backgroundImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+  "cta": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" }
+}

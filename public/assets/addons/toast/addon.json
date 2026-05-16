@@ -1,0 +1,24 @@
+{
+  "name": "toast",
+  "assets": {
+    "css": ["toast.css"],
+    "js":  ["toast.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:toast",
+        "default": "top-right",
+        "description": "Default position for toasts created without an explicit position option.",
+        "enum": ["top-right", "top-left", "top-center", "bottom-right", "bottom-left", "bottom-center"],
+        "attrs": {
+          "data-bridge": {
+            "type": "string",
+            "description": "Comma-separated auto-bridge list. 'form' surfaces aed:form:success/error events as toasts. 'copy' surfaces native clipboard copy events. Combine: data-bridge='form,copy'.",
+            "enum": ["form", "copy", "form,copy"]
+          }
+        }
+      }
+    ]
+  }
+}

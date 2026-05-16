@@ -1,0 +1,93 @@
+{
+  "slug": "about",
+  "path": "/about/",
+  "breadcrumbLabel": "About",
+  "seo": {
+    "title": "About — Apex Home Services · Kansas City Metro",
+    "description": "Family-owned multi-trade home services group in the Kansas City metro. Founded 2014. Eight-person crew covering handyman, electrical, light remodel, and exterior work.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/about/"
+  },
+  "header": {
+    "heading": "About Apex Home Services",
+    "lead": "Family-owned, four-trade home services group in the Kansas City metro. Founded in 2014 by Dave Reichert and his brother Tim, who started with one truck doing handyman work and grew the company into a multi-trade crew without losing the small-business operating habits that made the early years work."
+  },
+  "intro": {
+    "headshot": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1200&auto=format&fit=crop",
+    "heading": "A small business that grew into a team — without losing the small-business habits.",
+    "paragraphs": [
+      "Apex Home Services is a family-owned multi-trade group based in Lenexa, KS, serving the Kansas City metro. I started the company in 2014 with one truck, working solo doing drywall patches, door repairs, fixture swaps — the small jobs nobody else wanted to send a crew for. My brother Tim joined the next year, and somewhere around year three we hired our first full-time crew member. Today we're eight people, four trucks, and four trades: handyman, electrical, light remodel, and exterior. — Dave Reichert, co-owner",
+      "What \"family-owned\" actually means here: Tim and I are still on every estimate walkthrough. We still answer the phone in the evenings when the office is closed. The supervisor on your remodel reports to one of us, not to a regional manager who reports to a private-equity holding company. Decisions about scheduling, crew, pricing, and whether or not we take a job are made by the people who'll be standing in your kitchen. That's the operating model and we've held the line on it on purpose.",
+      "What that means for our customers: continuity. The crew member who showed up to swap your ceiling fan two years ago is probably the same person showing up for your bath remodel today. Our turnover is low, which is rare in the trades. When a job touches more than one of our four trades — a remodel that needs new electrical, a deck repair that surfaces a gutter problem — the conversation happens at the morning huddle, not across phone tag between three contractors.",
+      "Our crew is licensed, bonded, and insured. KS contractor license on file. KS electrical contractor license #E-19842 covering our electrical work, with our licensed electrician on staff signing off on every electrical job. We carry $2M general liability, $1M workers' comp, and we're bonded for project work. We're at 4.8 stars on Google with 250+ reviews and BBB A+ accredited. Eleven years in, 800+ jobs shipped."
+    ],
+    "stats": [
+      { "value": "2014", "label": "Founded — family-owned since" },
+      { "value": "800+", "label": "Jobs shipped in 11 years" },
+      { "value": "4 trades", "label": "Handyman · Electrical · Remodel · Exterior" },
+      { "value": "Lenexa, KS", "label": "Serving the KC metro" }
+    ]
+  },
+  "philosophy": {
+    "sectionLabel": "Principles",
+    "heading": "How we work.",
+    "cards": [
+      {
+        "title": "One crew, four trades.",
+        "body": "Sharing one shop, one schedule, and one set of trucks lets us move between trades when a job needs more than one. The right crew member gets pulled in at the morning huddle — not after a referral round-trip with another contractor."
+      },
+      {
+        "title": "Family-owned, on purpose.",
+        "body": "Tim and I are still on every estimate. We answer the phone after-hours. Decisions about how the company runs are made by the people doing the work — not by a regional manager or an investor's quarterly numbers."
+      },
+      {
+        "title": "Written quotes, before any work.",
+        "body": "Every job — from a one-hour fixture install to a $60k basement — gets a written scope and price before the crew arrives. The price is the price unless we hit something hidden in the walls, and if we do, we tell you immediately."
+      },
+      {
+        "title": "Honest about scope.",
+        "body": "We don't do major plumbing, HVAC, re-roofing, or full siding replacement. Trying to be everything to everyone is how trades businesses go bad. We refer to two trusted partners for plumbing and HVAC and we'll point you to specialists for the rest."
+      }
+    ]
+  },
+  "designBreak": {
+    "type": "designBreak",
+    "sectionLabel": "Sound about right?",
+    "heading": "If this fits what you're looking for —",
+    "subtext": "The next step is short. Send a quick request and we'll phone-quote or book the in-home estimate, depending on the job.",
+    "backgroundImage": "https://images.pexels.com/photos/35869441/pexels-photo-35869441.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+    "cta": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" }
+  },
+  "contentSection": {
+    "type": "contentSection",
+    "sectionLabel": "Why family-owned",
+    "heading": "What stays different when the owners are still on the trucks.",
+    "body": [
+      "Most of the home services market in the KC metro now belongs to either huge multi-state franchises or to private-equity-rolled-up local brands. The economics that follow are predictable: pricing creeps because the head office needs margin, the crew turns over every six months because nobody on-site has equity in the outcome, and the customer ends up with a different supervisor on every visit.",
+      "We've held the line on independent family ownership because we've watched the alternative degrade other companies in our market. Our pricing stays honest because we don't have a corporate parent to feed. Our crew stays because the people who hire and pay them are the people working alongside them. The visible result for our customers is consistency — the same crew member showing up year after year, the same number to call, and a company that knows your house by name once we've been there a couple of times.",
+      "We share this not because every home services company has to be family-owned to be good, but so customers know what they're choosing when they choose us. Different ownership models produce different cultures, and the difference shows up on the truck and on the invoice."
+    ],
+    "variant": "C"
+  },
+  "capabilities": {
+    "sectionLabel": "Across the crew",
+    "heading": "Trades and licenses.",
+    "useSkillsCarousel": true
+  },
+  "cta": {
+    "heading": "Want to know more about a specific trade?",
+    "body": "Each trade page goes deeper into scope, pricing, and how the crew is structured. Or skip the pages — get a quote and we'll route you to the right crew member.",
+    "ctaPrimary": {
+      "label": "Get a Quote",
+      "href": "/demo/apex-home-services/contact/"
+    },
+    "ctaSecondary": {
+      "label": "See what we do",
+      "href": "/demo/apex-home-services/services/"
+    }
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

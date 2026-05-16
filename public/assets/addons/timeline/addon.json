@@ -1,0 +1,27 @@
+{
+  "name": "timeline",
+  "assets": {
+    "css": ["timeline.css"],
+    "js":  ["timeline.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "ol[data-aed-timeline]",
+        "description": "Container ordered-list rendered as a vertical timeline. Each <li> becomes one event.",
+        "fields": {
+          "data-aed-timeline": { "type": "boolean","required": true,            "description": "Opt-in marker." },
+          "data-aed-variant":  { "type": "string", "enum": ["two-col"],          "description": "Two-column layout (alternating left/right). Defaults to single-column." }
+        }
+      },
+      {
+        "selector": "[data-aed-timeline] li",
+        "description": "Individual timeline events.",
+        "fields": {
+          "data-when":         { "type": "string",                                                       "description": "Date / time label rendered in the gutter (free-form string)." },
+          "data-aed-tl-state": { "type": "string", "enum": ["done", "muted", "alert"],                  "description": "Visual state. 'done' = filled dot, 'muted' = gray, 'alert' = warning color." }
+        }
+      }
+    ]
+  }
+}

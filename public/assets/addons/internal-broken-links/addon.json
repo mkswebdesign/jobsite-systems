@@ -1,0 +1,18 @@
+{
+  "name": "internal-broken-links",
+  "assets": {
+    "css": ["internal-broken-links.css"],
+    "js":  ["internal-broken-links.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "html[data-aed-broken-links]",
+        "description": "Dev-only crawler. When enabled, the page crawls one level deep from the current URL and surfaces any non-200 internal links in an overlay. Use only in dev/staging; do not enable in prod.",
+        "fields": {
+          "data-aed-broken-links": { "type": "boolean", "required": true, "description": "Opt-in marker on <html>. Compile-time constants: MAX_DEPTH=1, CONCURRENCY=6." }
+        }
+      }
+    ]
+  }
+}

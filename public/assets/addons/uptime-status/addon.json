@@ -1,0 +1,27 @@
+{
+  "name": "uptime-status",
+  "assets": {
+    "css": ["uptime-status.css"],
+    "js":  ["uptime-status.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:uptime",
+        "required": true,
+        "default": "instatus:yoursubdomain",
+        "description": "Provider token, formatted '<provider>:<identifier>'. Supported: 'instatus:subdomain', 'statuspage:page-id', 'custom:https://your-api-endpoint'. The custom endpoint must return JSON: { status: 'operational'|'degraded'|'outage'|'maintenance', label?, pageUrl? }. Results cached for 60s in sessionStorage."
+      }
+    ],
+    "data": [
+      {
+        "selector": "[data-aed-uptime]",
+        "description": "Per-element status pill. If the element is an <a>, it links to the provider status page. 'unknown' status hides the element.",
+        "fields": {
+          "data-aed-uptime":  { "type": "boolean","required": true,         "description": "Opt-in marker." },
+          "data-aed-variant": { "type": "string", "enum": ["bare"],          "description": "Strip background/border for inline placement (e.g. inside a footer copyright line)." }
+        }
+      }
+    ]
+  }
+}

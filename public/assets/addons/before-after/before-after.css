@@ -1,0 +1,90 @@
+/*
+ * Before/After — drop-in image comparison slider.
+ *
+ * Wraps two <img> children of [data-aed-before-after] in a container
+ * with a draggable divider. Theme-aware. See /before-after/README.md.
+ */
+
+.aed-ba {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  user-select: none;
+  border-radius: 12px;
+  border: 1px solid var(--border, #27272a);
+  background: var(--bg-card, #18181b);
+  --aed-ba-pos: 50%;
+}
+
+.aed-ba-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aed-ba-after {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: inset(0 0 0 var(--aed-ba-pos));
+  -webkit-clip-path: inset(0 0 0 var(--aed-ba-pos));
+}
+
+/* Divider */
+.aed-ba-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--aed-ba-pos);
+  width: 2px;
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  z-index: 2;
+}
+.aed-ba-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  color: #18181b;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
+  cursor: ew-resize;
+  pointer-events: none;
+}
+.aed-ba-handle svg { width: 18px; height: 18px; }
+
+/* Labels */
+.aed-ba-label {
+  position: absolute;
+  top: 12px;
+  padding: 0.25rem 0.55rem;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font: 700 0.65rem ui-monospace, Menlo, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+.aed-ba-label-before { left: 12px; }
+.aed-ba-label-after  { right: 12px; }
+
+@media print {
+  .aed-ba { border: 1px solid #d4d4d8; }
+  .aed-ba-divider, .aed-ba-handle { display: none; }
+  .aed-ba-after { clip-path: none; -webkit-clip-path: none; }
+}

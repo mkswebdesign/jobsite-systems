@@ -1,0 +1,57 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+
+interface Props {
+  sectionLabel?: string;
+  heading: string;
+  subtext?: string;
+  cta: { label: string; href: string };
+}
+
+const { sectionLabel = 'History', heading, subtext, cta } = Astro.props;
+---
+
+<section
+  class="section history-teaser"
+  data-section-type="history-teaser"
+  data-section-label="History teaser"
+  data-section-variants="A:Default"
+  data-aed-cursor-spotlight
+>
+  <div class="container">
+    <div class="history-teaser-row">
+      <div class="history-teaser-copy">
+        <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+      </div>
+      <a href={cta.href} class="btn btn-primary history-teaser-cta">{cta.label}</a>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .history-teaser {
+    background: var(--bg-secondary, #111113);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .history-teaser-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+  @media (min-width: 768px) {
+    .history-teaser-row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .history-teaser-copy {
+      flex: 1 1 min(100%, 42rem);
+    }
+    .history-teaser-cta {
+      flex-shrink: 0;
+    }
+  }
+</style>

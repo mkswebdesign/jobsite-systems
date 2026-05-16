@@ -1,0 +1,20 @@
+{
+  "name": "expandable",
+  "assets": {
+    "css": ["expandable.css"],
+    "js":  ["expandable.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-expand-after]",
+        "description": "Truncate long copy with a 'Read more' / 'Read less' toggle. Uses CSS line-clamp so it works without measuring text height.",
+        "fields": {
+          "data-aed-expand-after": { "type": "number", "default": 4,            "description": "Number of lines visible before truncation." },
+          "data-aed-expand-more":  { "type": "string", "default": "Read more",  "description": "Label of the expand button." },
+          "data-aed-expand-less":  { "type": "string", "default": "Read less",  "description": "Label of the collapse button." }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "slug": "local-seo",
+  "order": 3,
+  "number": "03",
+  "iconKey": "search",
+  "inclusionLabel": "Included on Complete & up",
+  "heroImage": "https://images.pexels.com/photos/30413428/pexels-photo-30413428.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "heroImageAlt": "Search interface on a laptop — the moment a homeowner searches for help",
+  "title": "Search & AI Engine Optimization",
+  "headline": "Found by Search\nand by AI.",
+  "shortDescription": "The fundamentals that get trade businesses found — by traditional search engines and by the new generation of AI answer engines. Location-aware pages, LocalBusiness schema, clean structure, and content written to be quotable.",
+  "lead": "Search has two halves now: traditional engines (Google, Bing) and AI answer engines (ChatGPT, Perplexity, Claude, Google's AI Overviews). Both read your site — differently. We build the technical foundation and the content structure that makes trade-business websites legible to both, so when someone searches or asks \"who fixes water heaters in Denver,\" your site is the one cited.",
+  "pricingCallout": "Sites from $129/mo · See full pricing →",
+  "anchorNav": [
+    { "label": "Overview", "href": "#main" },
+    { "label": "What You Get", "href": "#what-you-get" },
+    { "label": "Why Both Engines", "href": "#why-both-engines" },
+    { "label": "Pricing", "href": "/pricing/" },
+    { "label": "FAQ", "href": "#faq" }
+  ],
+  "inlineTestimonial": {
+    "id": "maria-s",
+    "placeAfter": 0
+  },
+  "seo": {
+    "title": "SEO & AI Engine Optimization for Trade-Business Websites",
+    "description": "Technical SEO and AI-ready content structure for trade-business sites — LocalBusiness schema, service pages, quotable copy, and clean architecture so both Google and AI answer engines find you.",
+    "schemaName": "Search & AI Engine Optimization",
+    "schemaDescription": "Search engine optimization and AI engine optimization (AEO) for trade-business websites — LocalBusiness schema, service pages, content structure, and technical fundamentals for both traditional search and AI answer engines."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "id": "what-you-get",
+      "variant": "showcase",
+      "heading": "What You Get",
+      "intro": "Foundational SEO plus AI engine optimization, baked into your site from day one.",
+      "items": [
+        { "label": "LocalBusiness & service-area schema", "body": "Structured data so search engines and AI models can read your name, location, services, license info, and hours cleanly" },
+        { "label": "Service / trade page architecture", "body": "One page per service line or trade — real pages with unique content, not doorway templates" },
+        { "label": "Content written to be quotable", "body": "Short, factual lines that AI answer engines can lift as direct quotes when someone asks about a trade or service in your area" },
+        { "label": "Clean heading hierarchy", "body": "Proper H1/H2/H3 structure so both crawlers and LLMs can parse what each page is actually about" },
+        { "label": "AI engine summary file (llms.txt)", "body": "A short, plain-English summary of your business written specifically for ChatGPT-style search engines — we maintain it as your services change" },
+        { "label": "Sitemap & robots.txt", "body": "Auto-generated, submitted to Google and Bing at launch, and kept in sync when pages change" },
+        { "label": "Title tags & meta descriptions", "body": "Written for every page — clean snippets for search results and AI citations" },
+        { "label": "Image alt text", "body": "Every photo described properly — accessibility, SEO, and context for multimodal AI" }
+      ]
+    },
+    {
+      "type": "feature",
+      "id": "why-both-engines",
+      "theme": "white",
+      "heading": "Why AI Search Optimization Matters Now",
+      "body": "More homeowners are asking ChatGPT, Perplexity, and Google's AI Overviews before they click into a results page at all. A site that only optimizes for 2015-era SEO gets skipped:",
+      "items": [
+        "AI answer engines quote sites that are factually structured — not sites stuffed with repetitive keyword filler",
+        "Pages structured for Google to read also help AI engines cite you confidently; prose-only pages get paraphrased past",
+        "Our short AI-engine summary file lets ChatGPT-style engines understand your services without having to crawl every page",
+        "Traditional SEO fundamentals still matter — this adds to them, not replaces them"
+      ]
+    },
+    {
+      "type": "feature",
+      "theme": "white",
+      "heading": "What This Is Not",
+      "body": "We don't sell \"SEO packages\" that promise the top of Google or guarantee AI citations. Those are almost always scams. What we do:",
+      "items": [
+        "The technical fundamentals every site should have",
+        "A site structure that makes your services and service area legible to both search crawlers and LLMs",
+        "Content patterns that hold up as search continues to shift toward answers",
+        "A strong foundation for any future SEO or content work"
+      ]
+    },
+    {
+      "type": "list",
+      "heading": "Perfect For",
+      "intro": "AI changed search faster than most trade businesses adapted. If any of these is you, the foundation we install closes that gap.",
+      "variant": "grid",
+      "cols": 2,
+      "items": [
+        {
+          "label": "Riding directories, ready to be found",
+          "body": "Your work fills through Angi, HomeAdvisor, and referrals — you've never really competed in search. New homeowners find competitors first and you want a foundation that shows up.",
+          "iconKey": "trending-up"
+        },
+        {
+          "label": "Built before AI search mattered",
+          "body": "Your current site was launched in 2018 and was \"SEO-optimized\" for a Google that doesn't exist anymore. ChatGPT and Perplexity now answer queries about local trade work and skip you entirely.",
+          "iconKey": "monitor"
+        },
+        {
+          "label": "Burned by an SEO contract",
+          "body": "Some agency charged $1,200/mo for 18 months, sent monthly PDF reports full of green arrows, and the estimate-request inbox stayed empty. You're done with promises and want the technical fundamentals done once, properly.",
+          "iconKey": "shield"
+        },
+        {
+          "label": "Adding service areas",
+          "body": "You're now covering a new town or county and need real, distinct location pages — not five copies of the same page with the city name swapped.",
+          "iconKey": "home"
+        },
+        {
+          "label": "Half-set-up Google Business profile",
+          "body": "Your GBP exists but the categories are wrong, the service list is incomplete, and there's no LocalBusiness schema on your site connecting the dots. We tighten the whole chain so Google trusts what it sees.",
+          "iconKey": "sparkle"
+        }
+      ]
+    }
+  ],
+  "serviceFaq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions about Search & AI Optimization",
+    "faqs": [
+      {
+        "question": "How long until I rank for my trade in my city?",
+        "answer": "Foundational ranking signals (schema, sitemap, location pages) start working within days of indexing. Competing for a top spot in a contested area takes months and depends on backlinks and reviews — not just on-site SEO. We install the foundation; ongoing content and reputation work builds on top of it."
+      },
+      {
+        "question": "Do I have to write the SEO content myself?",
+        "answer": "No. We draft the location pages, service descriptions, and AI-quotable summaries from your intake. You review and tweak. If you'd rather lead the writing, we leave the structure ready for your copy."
+      },
+      {
+        "question": "What's actually different about AI engine optimization?",
+        "answer": "AI engines (ChatGPT, Perplexity, Google's AI Overviews) cite sites that are factually structured — short, declarative lines, pages structured for Google to read, and a maintained AI-engine summary file. We bake those patterns into every page, alongside the traditional SEO fundamentals."
+      },
+      {
+        "question": "Will you set up structured data (schema)?",
+        "answer": "Yes. LocalBusiness, Service, and FAQ schema are wired in at build time. Search engines and LLMs both use this — it's how your services, hours, and service area show up cleanly in results and citations."
+      },
+      {
+        "question": "Do I need a separate SEO retainer on top of this?",
+        "answer": "No, not for the technical fundamentals. If you want ongoing content marketing or backlink building, that's a separate scope — we'll point you to honest options if it's a fit. Most solo operators don't need it."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Want to get found — by Google and by AI?",
+    "body": "Search and AI engine optimization basics are included with every Complete and Growth plan.",
+    "label": "See What's Included",
+    "href": "/pricing/",
+    "actions": [
+      { "label": "Start Your Site", "href": "/contact/", "variant": "primary" },
+      { "label": "See Pricing", "href": "/pricing/", "variant": "secondary" },
+      { "label": "See Examples", "href": "/work/", "variant": "tertiary" }
+    ]
+  }
+}

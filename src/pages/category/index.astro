@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../builder/layouts/Base.astro';
+import Breadcrumbs from '../../builder/components/Breadcrumbs.astro';
+import CategoryIndex from '../../builder/components/CategoryIndex.astro';
+import { brand } from '../../builder/lib/brand';
+import { getAllCategories, getAllPosts } from '../../builder/lib/posts';
+
+/* Convert this otherwise-static page into a dynamic route. Returning [] when
+ * the active brand has no categories means the page is omitted from the
+ * build entirely for sibling brands without a categories.json — keeping
+ * arich/gomks/landscape-systems/etc. byte-identical. */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const cats = await getAllCategories();
+  return cats.length > 0 ? [{ params: {} }] : [];
+};
+
+const categories = await getAllCategories();
+const posts = await getAllPosts();
+const counts = new Map<string, number>();
+for (const p of posts) counts.set(p.data.category, (counts.get(p.data.category) ?? 0) + 1);
+
+const title = `Categories — ${brand.name}`;
+const description = `Browse ${brand.name} by category.`;
+---
+<Base title={title} description={description} skipTarget="#main">
+  <main id="main" class="container category-page">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Categories' }]} />
+    <header
+      class="category-page__header"
+      data-section-type="category-index-header"
+      data-section-label="Category page header"
+      data-section-variants="A:Default,B:Compact"
+    >
+      <h1 class="category-page__title">Categories</h1>
+    </header>
+    <CategoryIndex categories={categories} counts={counts} />
+  </main>
+</Base>

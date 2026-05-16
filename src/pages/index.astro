@@ -1,0 +1,76 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import Hero from '../builder/components/sections/Hero.astro';
+import ServicesGrid from '../builder/components/sections/ServicesGrid.astro';
+import WorkGrid from '../builder/components/sections/WorkGrid.astro';
+import Why from '../builder/components/sections/Why.astro';
+import Capabilities from '../builder/components/sections/Capabilities.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import ProcessSteps from '../builder/components/sections/ProcessSteps.astro';
+import Partnership from '../builder/components/sections/Partnership.astro';
+import FAQ from '../builder/components/sections/FAQ.astro';
+import FinalCta from '../builder/components/sections/FinalCta.astro';
+import HistoryTeaser from '../builder/components/sections/HistoryTeaser.astro';
+import DesignBreak from '../builder/components/sections/DesignBreak.astro';
+import AboutSplit from '../builder/components/sections/AboutSplit.astro';
+import ContentSection from '../builder/components/sections/ContentSection.astro';
+import StatRibbon from '../builder/components/sections/StatRibbon.astro';
+import PhotoGallery from '../builder/components/sections/PhotoGallery.astro';
+import PhotoSlider from '../builder/components/sections/PhotoSlider.astro';
+import VersusBlock from '../builder/components/sections/VersusBlock.astro';
+import Divider from '../builder/components/sections/Divider.astro';
+import TrustBand from '../builder/components/sections/TrustBand.astro';
+import LatestPosts from '../builder/components/sections/LatestPosts.astro';
+import CategoryLinks from '../builder/components/sections/CategoryLinks.astro';
+import TagCloudSection from '../builder/components/sections/TagCloudSection.astro';
+import AboutStrip from '../builder/components/sections/AboutStrip.astro';
+import NewsroomHero from '../builder/components/sections/NewsroomHero.astro';
+import HomeArchive from '../builder/components/sections/HomeArchive.astro';
+
+const home = await getEntry('pages', 'home');
+if (!home) throw new Error('pages/home entry not found in arich-source/content/pages/home.json');
+
+const { seo, sections = [], variants } = home.data;
+
+// Inject the brand's trust band directly after the first hero section.
+// Brand-driven (brand.json `trustBand` field) — when unset, the component
+// renders nothing, so this is a no-op for brands that haven't opted in.
+// Keeping the injection here (vs. a section-type entry in page.json) means
+// every brand's homepage gets the band in the right position automatically.
+const firstHeroIdx = sections.findIndex((s: any) => s?.type === 'hero');
+---
+
+<Base title={seo.title} description={seo.description} canonical={seo.canonical} variants={variants}>
+  {sections.map((section, i) => (
+    <>
+      {section.type === 'hero' && <Hero {...section} />}
+      {section.type === 'services' && <ServicesGrid {...section} />}
+      {section.type === 'work' && <WorkGrid {...section} />}
+      {section.type === 'why' && <Why {...section} />}
+      {section.type === 'capabilities' && <Capabilities {...section} />}
+      {section.type === 'testimonials' && <Testimonials {...section} />}
+      {section.type === 'process' && <ProcessSteps {...section} />}
+      {section.type === 'partnership' && <Partnership {...section} />}
+      {section.type === 'faq' && <FAQ {...section} />}
+      {section.type === 'historyTeaser' && <HistoryTeaser {...section} />}
+      {section.type === 'designBreak' && <DesignBreak {...section} />}
+      {section.type === 'aboutSplit' && <AboutSplit {...section} />}
+      {section.type === 'contentSection' && <ContentSection {...section} />}
+      {section.type === 'statRibbon' && <StatRibbon {...section} />}
+      {section.type === 'photoGallery' && <PhotoGallery {...section} />}
+      {section.type === 'photoSlider' && <PhotoSlider {...section} />}
+      {section.type === 'versusBlock' && <VersusBlock {...section} />}
+      {section.type === 'trustBand' && <TrustBand items={section.items} cta={section.cta} />}
+      {section.type === 'finalCta' && <FinalCta {...section} />}
+      {section.type === 'divider' && <Divider color={section.color} />}
+      {section.type === 'latestPosts' && <LatestPosts {...section} />}
+      {section.type === 'categoryLinks' && <CategoryLinks {...section} />}
+      {section.type === 'tagCloud' && <TagCloudSection {...section} />}
+      {section.type === 'aboutStrip' && <AboutStrip {...section} />}
+      {section.type === 'newsroomHero' && <NewsroomHero {...section} />}
+      {section.type === 'homeArchive' && <HomeArchive {...section} />}
+      {i === firstHeroIdx && <TrustBand />}
+    </>
+  ))}
+</Base>

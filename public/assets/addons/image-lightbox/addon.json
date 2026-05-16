@@ -1,0 +1,31 @@
+{
+  "name": "image-lightbox",
+  "assets": {
+    "css": ["image-lightbox.css"],
+    "js":  ["image-lightbox.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:lightbox",
+        "default": "auto",
+        "description": "Optional auto-mode. Set content to 'auto' or 'all' to make every image inside `data-scope` lightbox-clickable without per-image markup.",
+        "enum": ["auto", "all"],
+        "attrs": {
+          "data-scope": { "type": "string", "default": "article, main", "description": "CSS selector for the auto-opt-in container." }
+        }
+      }
+    ],
+    "data": [
+      {
+        "selector": "img[data-aed-lightbox]",
+        "description": "Per-image opt-in (used when auto-mode is off, or for images outside the auto-scope).",
+        "fields": {
+          "data-aed-lightbox":         { "type": "string",                                       "description": "Marker. Optional value = URL of a higher-resolution version to show in the lightbox; empty/omitted = use the image's own src." },
+          "data-aed-lightbox-caption": { "type": "string",                                       "description": "Caption shown beneath the lightbox image. Falls back to the image's alt text." },
+          "data-aed-lightbox-group":   { "type": "string",                                       "description": "Group name. Images sharing a group are navigable as a gallery (prev/next). Defaults to all images on the page." }
+        }
+      }
+    ]
+  }
+}

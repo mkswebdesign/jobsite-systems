@@ -1,0 +1,1296 @@
+---
+/**
+ * Demo catch-all route — every page under a demo's tree gets rendered here.
+ *
+ * URL pattern:   /demo/<demo>/                 (home)
+ *                /demo/<demo>/<slug>/          (any other page)
+ *                /demo/<demo>/<slug>/<sub>/    (nested — e.g. services/starter-site)
+ *
+ * Source tree:   arich-source/content/brands/<brand>/demos/<demo>/pages/...
+ *                (loaded into the `demoPages` content collection by
+ *                 demo-folder-loader.ts; entry ids are `<demo>/<slug>`)
+ *
+ * Two render modes:
+ *   1. SECTIONS-FORMAT (page.json has a `sections` array) — full fidelity
+ *      with the production homepage. Dispatches each section to its
+ *      component, identical switch to src/pages/index.astro.
+ *   2. NAMED-KEY FORMAT (page.json uses `header`, `intro`, `philosophy`,
+ *      etc) — renders a header-only fallback so the URL exists and the
+ *      demo's structure is navigable. To get rich rendering of a named-
+ *      key demo page, EITHER add `sections` to the demo's page.json (the
+ *      portable format) OR create a per-page demo route alongside this
+ *      catch-all (mirror the production page's .astro file under
+ *      src/pages/demo/[demo]/<slug>.astro and load via getEntry('demoPages',
+ *      `${Astro.params.demo}/<slug>`)).
+ *
+ * Hidden from search via `indexable={false}` (noindex meta + robots disallow
+ * + sitemap exclusion) — demos are internal staging surfaces, not public
+ * brand content.
+ */
+import { getCollection, getEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { brand } from '../../../builder/lib/brand';
+import Base from '../../../builder/layouts/Base.astro';
+import Hero from '../../../builder/components/sections/Hero.astro';
+import ServicesGrid from '../../../builder/components/sections/ServicesGrid.astro';
+import WorkGrid from '../../../builder/components/sections/WorkGrid.astro';
+import Why from '../../../builder/components/sections/Why.astro';
+import Capabilities from '../../../builder/components/sections/Capabilities.astro';
+import Testimonials from '../../../builder/components/sections/Testimonials.astro';
+import ProcessSteps from '../../../builder/components/sections/ProcessSteps.astro';
+import Partnership from '../../../builder/components/sections/Partnership.astro';
+import FAQ from '../../../builder/components/sections/FAQ.astro';
+import FinalCta from '../../../builder/components/sections/FinalCta.astro';
+import HistoryTeaser from '../../../builder/components/sections/HistoryTeaser.astro';
+import DesignBreak from '../../../builder/components/sections/DesignBreak.astro';
+import AboutSplit from '../../../builder/components/sections/AboutSplit.astro';
+import ContentSection from '../../../builder/components/sections/ContentSection.astro';
+import StatRibbon from '../../../builder/components/sections/StatRibbon.astro';
+import PhotoGallery from '../../../builder/components/sections/PhotoGallery.astro';
+import PhotoSlider from '../../../builder/components/sections/PhotoSlider.astro';
+import VersusBlock from '../../../builder/components/sections/VersusBlock.astro';
+import Divider from '../../../builder/components/sections/Divider.astro';
+import { demoDisplayName } from '../../../lib/demo-names';
+
+export async function getStaticPaths() {
+  const all = await getCollection('demoPages');
+  return all.map((entry) => {
+    const [demo, ...slugParts] = entry.id.split('/');
+    const slug = slugParts.join('/');
+    // Astro maps `slug: undefined` → /demo/<demo>/ (the index path).
+    // Anything else becomes /demo/<demo>/<slug>/.
+    return {
+      params: { demo, slug: slug === 'home' ? undefined : slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const data: any = entry.data;
+const seo = data.seo || {};
+const sections = Array.isArray(data.sections) ? data.sections : null;
+const pageVariants = (data.variants && typeof data.variants === 'object') ? data.variants : undefined;
+const demo = Astro.params.demo;
+const slug = Astro.params.slug || 'home';
+
+/* Eager-load testimonials so the per-section resolver below doesn't await
+ * inside the JSX map. Demo testimonials are namespaced as `demos/<demo>/<id>`
+ * by testimonials-loader.ts; the resolver translates back to natural ids
+ * for demo authors and supplies a featured-fallback when none specified. */
+const allTestimonials = await getCollection('testimonials');
+
+function resolveDemoTestimonials(
+  section: any,
+  demoId: string | undefined,
+  all: CollectionEntry<'testimonials'>[],
+) {
+  if (!demoId) return section;
+  if (Array.isArray(section.items) && section.items.length) return section;
+
+  const prefix = `demos/${demoId}/`;
+  const inDemo = all.filter(t => t.id.startsWith(prefix));
+
+  if (Array.isArray(section.testimonialIds) && section.testimonialIds.length) {
+    return { ...section, testimonialIds: section.testimonialIds.map((id: string) => `${prefix}${id}`) };
+  }
+  /* Fallback: featured testimonials WITHIN this demo's namespace. The
+   * Testimonials component's default-featured filter excludes demo-prefixed
+   * entries to keep main-brand pages clean, so the route has to compute
+   * the demo-scoped featured list itself and pass it as `items`. */
+  const items = inDemo.filter(t => t.data.featured).map(t => t.data);
+  return { ...section, items };
+}
+
+const demoName = demoDisplayName(demo);
+
+// Single-pager demos: every in-content CTA on every page of a flagged
+// demo opens a modal explaining this is a sample and pointing the visitor
+// to the AGENCY's pricing (root /pricing/) — not the demo's fictional
+// pricing page. The modal's job is "the form on this page is a prop,
+// here's how to actually hire us"; agency pricing is the real answer
+// to that question. Keyed by demo id so the modal applies on home AND
+// every sub-page (services, pricing, about, etc.) — visitors who land
+// on a sub-page need the same framing as visitors on the home.
+const SINGLE_PAGER_DEMOS: Record<string, string> = {
+  flinthills: '/pricing/',
+  'kc-snowplowing': '/pricing/',
+  'stillwater-therapy': '/pricing/',
+  'anchor-counseling': '/pricing/',
+  'summit-direct-care': '/pricing/',
+  'meridian-surgical-group': '/pricing/',
+  'cedar-mill-plumbing': '/pricing/',
+  'apex-home-services': '/pricing/',
+};
+const singlePagerTarget = SINGLE_PAGER_DEMOS[demo] || null;
+
+// Niche descriptor used in demo footer + modal copy
+// ("This is a demo site … built to show what's possible for a {niche}.").
+// Brands set `niche` in their brand.json; fall back to a generic "business"
+// so a missing field doesn't read awkwardly.
+const niche = (brand as any).niche || 'business';
+const nichePossessive = (brand as any).nichePossessive || `your ${niche}`;
+
+// Pull the live promo from /pricing/ so the demo modal can surface a real,
+// time-bound offer ("Photo gallery free, ends in N days") instead of stale
+// hard-coded copy. Reads page.json `promo.endsAt` + `featureMatch`; if no
+// promo is configured or the deadline has passed, the chip silently hides.
+let modalPromo: { label: string; daysRemaining: number } | null = null;
+if (singlePagerTarget) {
+  try {
+    const pricingEntry = await getEntry('pages', 'pricing');
+    const p: any = pricingEntry?.data?.promo;
+    if (p?.endsAt && p?.featureMatch) {
+      const days = Math.ceil((new Date(p.endsAt).getTime() - Date.now()) / 86400000);
+      if (days > 0) {
+        const featureName = String(p.featureMatch).replace(/^./, (c: string) => c.toUpperCase());
+        modalPromo = {
+          label: `${featureName} free on every plan — ends in ${days} day${days === 1 ? '' : 's'}`,
+          daysRemaining: days,
+        };
+      }
+    }
+  } catch {
+    // Brand has no pricing page (or schema mismatch) — drop the chip silently.
+  }
+}
+// Pull the brand's homepage scrolling banner (hero `trustMetrics`) so the
+// modal can carry the same trust strip the front door uses, instead of a
+// shipped-project count we don't want to advertise. Brands without a home
+// hero or without `trustMetrics` simply skip the marquee — no fallback.
+let modalMarqueeMetrics: { value: string; label: string }[] | null = null;
+if (singlePagerTarget) {
+  try {
+    const homeEntry = await getEntry('pages', 'home');
+    const heroSection = (homeEntry?.data as any)?.sections?.find?.(
+      (s: any) => s?.type === 'hero',
+    );
+    const metrics = Array.isArray(heroSection?.trustMetrics) ? heroSection.trustMetrics : null;
+    if (metrics && metrics.length > 0) modalMarqueeMetrics = metrics;
+  } catch {
+    // Brand has no home page or schema mismatch — drop the marquee silently.
+  }
+}
+---
+
+<Base
+  title={seo.title}
+  description={seo.description}
+  indexable={false}
+  skipTarget="#main"
+  hideHeader={true}
+  hideFooter={true}
+  variants={pageVariants}
+>
+  <!-- Demo nav — floating top pill that replaces the site header on demo pages.
+       Two zones:
+         LEFT  — informational badge: a SAMPLE chip + the demo's display name.
+                 Clicking it lands on the demo home (lets visitors who landed
+                 on a sub-page get back to the demo's start).
+         RIGHT — actionable nav: "All demos" sends visitors to the /demo/
+                 archive (the lobby that lists every sample); "Pricing" exits
+                 the demo entirely and lands on the agency's pricing page.
+                 The strategy: in-content CTAs continue to open the single-
+                 pager modal that talks about THIS sample; the floating nav
+                 is the "out of this demo" path — either to another demo via
+                 the archive, or out to real agency content via Pricing. The
+                 "↩ Exit" eyebrow telegraphs that these links leave the demo.
+                 data-spd-allow opts every link out of the single-pager modal
+                 interception so the meta-nav always navigates cleanly. -->
+  <nav class="demo-nav" role="navigation" aria-label="Demo navigation">
+    <a
+      class="demo-nav__badge"
+      href={`/demo/${demo}/`}
+      aria-label={`${demoName} — demo, back to demo home`}
+    >
+      <span class="demo-nav__name">{demoName}</span>
+    </a>
+    <div class="demo-nav__divider" aria-hidden="true"></div>
+    <div class="demo-nav__actions">
+      <a class="demo-nav__link" href="/demo/" aria-label="See all demos">All demos</a>
+      <a class="demo-nav__link demo-nav__link--cta" href="/pricing/" aria-label={`See ${brand.name} pricing`}>Pricing</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    {sections ? (
+      sections.map((section: any) => {
+        switch (section.type) {
+          case 'hero':           return <Hero {...section} />;
+          case 'services':       return <ServicesGrid {...section} />;
+          case 'work':           return <WorkGrid {...section} />;
+          case 'why':            return <Why {...section} />;
+          case 'capabilities':   return <Capabilities {...section} />;
+          case 'testimonials':   return <Testimonials {...resolveDemoTestimonials(section, demo, allTestimonials)} />;
+          case 'process':        return <ProcessSteps {...section} />;
+          case 'partnership':    return <Partnership {...section} />;
+          case 'faq':            return <FAQ {...section} />;
+          case 'historyTeaser':  return <HistoryTeaser {...section} />;
+          case 'designBreak':    return <DesignBreak {...section} />;
+          case 'aboutSplit':     return <AboutSplit {...section} />;
+          case 'contentSection': return <ContentSection {...section} />;
+          case 'statRibbon':     return <StatRibbon {...section} />;
+          case 'photoGallery':   return <PhotoGallery {...section} />;
+          case 'photoSlider':    return <PhotoSlider {...section} />;
+          case 'versusBlock':    return <VersusBlock {...section} />;
+          case 'finalCta':       return <FinalCta {...section} />;
+          case 'divider':        return <Divider color={section.color} />;
+          default:               return null;
+        }
+      })
+    ) : (
+      <section class="container demo-fallback">
+        <p class="demo-fallback__eyebrow">Named-key page</p>
+        <h1>{data.header?.heading || seo.title || 'Demo page'}</h1>
+        {data.header?.lead && <p class="demo-fallback__lead">{data.header.lead}</p>}
+        <div class="demo-fallback__note">
+          <p>This demo page uses the legacy named-key layout (it has fields like <code>header</code>, <code>intro</code>, <code>philosophy</code>, etc., but no <code>sections</code> array).</p>
+          <p>To render it richly in the demo, either:</p>
+          <ul>
+            <li>Promote it to <code>sections</code> format by composing the same content out of section components in <code>{`demos/${demo}/pages/${slug}/page.json`}</code>, OR</li>
+            <li>Create a per-page demo route at <code>{`src/pages/demo/[demo]/${slug}.astro`}</code> that mirrors the production <code>{`src/pages/${slug}.astro`}</code> file (swap <code>getEntry('pages', '${slug}')</code> for <code>getEntry('demoPages', `${'${'}Astro.params.demo${'}'}/${slug}`)</code>).</li>
+          </ul>
+        </div>
+      </section>
+    )}
+  </main>
+
+  <!-- Demo footer — replaces the agency footer on demo pages. Mirrors the
+       floating nav's badge so visitors land at the bottom of the demo and
+       see the same "this is a sample" framing — but here it converts:
+       the CTAs ask the visitor to do something (see pricing / browse other
+       samples). On the home page, the single-pager modal still intercepts
+       these clicks the first time (the modal's "See pricing" primary still
+       wins), but the footer also stands on its own as a destination. -->
+  <footer class="demo-footer" aria-labelledby="demo-footer-title">
+    <div class="demo-footer__inner">
+      <div class="demo-footer__badge">
+        <span class="demo-footer__name">{demoName}</span>
+      </div>
+      <h2 id="demo-footer-title" class="demo-footer__heading">Like what you see?</h2>
+      <p class="demo-footer__lead">
+        This is a demo site {brand.name} built to show what's possible for a {niche}.
+        The forms above are demo props — but if you want a real site like it for
+        your business, here's what it costs to build and ship.
+      </p>
+      <div class="demo-footer__actions">
+        <a class="demo-footer__cta demo-footer__cta--primary" href="/pricing/">
+          See pricing
+          <span class="demo-footer__cta-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="demo-footer__cta demo-footer__cta--secondary" href="/demo/">
+          Browse all demos
+        </a>
+      </div>
+      <p class="demo-footer__attr">
+        <span class="demo-footer__attr-label">Demo by</span>
+        <a href="/" class="demo-footer__attr-link">{brand.name}</a>
+      </p>
+    </div>
+  </footer>
+
+  {singlePagerTarget && (
+    <div class="demo-spd-modal" data-target={singlePagerTarget} data-demo={demo} hidden>
+      <div class="demo-spd-modal__backdrop" data-spd-close></div>
+      <div class="demo-spd-modal__panel" role="dialog" aria-modal="true" aria-labelledby="demo-spd-title">
+        <div class="demo-spd-modal__stripe" aria-hidden="true"></div>
+        <button type="button" class="demo-spd-modal__close" aria-label="Close" data-spd-close>×</button>
+
+        <p class="demo-spd-modal__eyebrow">
+          <span class="demo-spd-modal__eyebrow-dot" aria-hidden="true"></span>
+          Demo site
+        </p>
+
+        <h2 id="demo-spd-title" class="demo-spd-modal__heading">
+          This isn't a real business — <span class="demo-spd-modal__heading-accent">yours could be.</span>
+        </h2>
+
+        <p class="demo-spd-modal__body">
+          Forms here go nowhere. The same site, branded for {nichePossessive}, is what {brand.name || 'we'} build, host, and maintain — month-to-month.
+        </p>
+
+        {modalPromo && (
+          <div class="demo-spd-modal__promo" role="note" aria-label="Limited-time offer">
+            <span class="demo-spd-modal__promo-chip">Limited time</span>
+            <span class="demo-spd-modal__promo-text">{modalPromo.label}</span>
+          </div>
+        )}
+
+        {modalMarqueeMetrics && (
+          <div class="demo-spd-modal__marquee hero-trust-marquee" aria-label="At a glance" role="region">
+            <ul class="hero-trust hero-trust--marquee" data-trust-marquee>
+              {modalMarqueeMetrics.map((m) => (
+                <li>
+                  <span class="hero-trust-value">{m.value}</span>
+                  <span class="hero-trust-label">{m.label}</span>
+                </li>
+              ))}
+              {modalMarqueeMetrics.map((m) => (
+                <li aria-hidden="true">
+                  <span class="hero-trust-value">{m.value}</span>
+                  <span class="hero-trust-label">{m.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="demo-spd-modal__actions">
+          <a href={singlePagerTarget} class="demo-spd-modal__primary">
+            <span>See plans &amp; pricing</span>
+            <span class="demo-spd-modal__primary-arrow" aria-hidden="true">→</span>
+          </a>
+          <button type="button" class="demo-spd-modal__secondary" data-spd-close>Keep browsing demo</button>
+        </div>
+      </div>
+    </div>
+  )}
+</Base>
+
+{singlePagerTarget && (
+  <script is:inline>
+    (function () {
+      const main = document.getElementById('main');
+      const modal = document.querySelector('.demo-spd-modal');
+      if (!main || !modal) return;
+      const target = modal.getAttribute('data-target') || '/';
+      const demoId = modal.getAttribute('data-demo') || 'unknown';
+      // Once-per-session dismissal: ONLY the explicit "Keep browsing demo"
+      // button (data-spd-close on the secondary action) sets this flag.
+      // ESC / backdrop / X / primary-CTA navigations are ambiguous —
+      // could be accidental, could be the visitor heading off-demo — and
+      // should NOT permanently silence the modal. The previous broader
+      // policy meant a single test-close (or anyone hitting ESC by reflex)
+      // killed the modal for the rest of the session, making the feature
+      // look broken on the second click. Scoped per-demo so different
+      // samples re-prompt independently.
+      const SS_KEY = 'aed:demo-spd:' + demoId + ':dismissed';
+      function isDismissed() {
+        try { return sessionStorage.getItem(SS_KEY) === '1'; } catch (_) { return false; }
+      }
+      function markDismissed() {
+        try { sessionStorage.setItem(SS_KEY, '1'); } catch (_) {}
+      }
+      let lastFocused = null;
+
+      function open() {
+        lastFocused = document.activeElement;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        const primary = modal.querySelector('.demo-spd-modal__primary');
+        if (primary) primary.focus();
+        startMarquee();
+      }
+      function close(opts) {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+        if (opts && opts.dismiss) markDismissed();
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+        stopMarquee();
+      }
+
+      // ----- Marquee auto-scroller -----
+      // Drives a JS-controlled translateX on the inner ul. Earlier
+      // versions used native scrollLeft on the outer container, which
+      // STALLED on hi-refresh displays: at 60 px/s ÷ 144 Hz = ~0.42 px
+      // per frame, the browser rounds the per-frame delta away to zero
+      // and the strip appears frozen. Transform handles sub-pixel motion
+      // natively and stays smooth at any refresh rate.
+      //
+      // The track is rendered with content duplicated (see Hero pattern):
+      // we translate from 0 → -halfTrack and snap back to 0, where
+      // halfTrack = first-copy width = track.scrollWidth / 2. The seam
+      // is invisible at any viewport width.
+      //
+      // Interaction model:
+      //   - hover (mouseenter)    → pause while pointer is over the strip
+      //   - wheel (incl. trackpad)→ scrub by deltaX/deltaY; pause briefly
+      //   - pointerdown + drag    → real drag-to-scrub (the cursor:ew-resize
+      //                             promise becomes real); pause briefly
+      //                             after release
+      //   - touch swipe           → same as drag via pointer events
+      const marquee = modal.querySelector('.demo-spd-modal__marquee');
+      const track = marquee && marquee.querySelector('.hero-trust--marquee');
+      const SPEED_PX_PER_SEC = 60;
+      const PAUSE_AFTER_INTERACT_MS = 2500;
+      let raf = 0;
+      let lastTs = 0;
+      let pauseUntil = 0;
+      let hovering = false;
+      let dragging = false;
+      let dragStartX = 0;
+      let dragStartOffset = 0;
+      let offset = 0;          // current track translation (px, positive = scrolled right)
+      let halfTrack = 0;       // single-copy width = scrollWidth / 2
+
+      function measureTrack() {
+        if (!track) return;
+        halfTrack = track.scrollWidth / 2;
+      }
+      function applyTransform() {
+        if (!track) return;
+        track.style.transform = 'translate3d(' + (-offset) + 'px, 0, 0)';
+      }
+      function wrapOffset() {
+        if (halfTrack <= 0) return;
+        // Modulo to handle large jumps (drag/wheel can produce > halfTrack
+        // deltas; a single subtraction would leave offset out of range).
+        while (offset < 0) offset += halfTrack;
+        while (offset >= halfTrack) offset -= halfTrack;
+      }
+
+      function tickMarquee(now) {
+        if (!track || modal.hidden) {
+          raf = 0;
+          return;
+        }
+        if (halfTrack <= 0) measureTrack();
+        if (lastTs > 0 && !hovering && !dragging && now > pauseUntil) {
+          const dt = Math.min(now - lastTs, 100);
+          offset += (SPEED_PX_PER_SEC * dt) / 1000;
+          wrapOffset();
+          applyTransform();
+        }
+        lastTs = now;
+        raf = requestAnimationFrame(tickMarquee);
+      }
+      function startMarquee() {
+        if (!track || raf) return;
+        measureTrack();
+        // If the modal was opened mid-session and never measured before,
+        // start with offset = 0 the first time, then resume from wherever
+        // we left off on subsequent opens (visitors who close + reopen
+        // shouldn't see the strip jump back to the start).
+        lastTs = 0;
+        pauseUntil = 0;
+        applyTransform();
+        raf = requestAnimationFrame(tickMarquee);
+      }
+      function stopMarquee() {
+        if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      }
+      if (marquee && track) {
+        const bumpPause = function () { pauseUntil = performance.now() + PAUSE_AFTER_INTERACT_MS; };
+
+        // Wheel: scrub by horizontal delta when present (trackpad / shift+wheel),
+        // otherwise treat vertical delta as horizontal scrub. The page is locked
+        // (body overflow:hidden) while the modal is open, so vertical wheel has
+        // nothing else to do — repurposing it for the marquee is the right call.
+        marquee.addEventListener('wheel', function (e) {
+          bumpPause();
+          const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+          offset += delta;
+          wrapOffset();
+          applyTransform();
+        }, { passive: true });
+
+        // Drag-to-scrub via pointer events (unifies mouse / pen / touch).
+        marquee.addEventListener('pointerdown', function (e) {
+          dragging = true;
+          dragStartX = e.clientX;
+          dragStartOffset = offset;
+          bumpPause();
+          try { marquee.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        marquee.addEventListener('pointermove', function (e) {
+          if (!dragging) return;
+          offset = dragStartOffset - (e.clientX - dragStartX);
+          wrapOffset();
+          applyTransform();
+        });
+        function endDrag(e) {
+          if (!dragging) return;
+          dragging = false;
+          pauseUntil = performance.now() + PAUSE_AFTER_INTERACT_MS;
+          if (e && e.pointerId != null) {
+            try { marquee.releasePointerCapture(e.pointerId); } catch (_) {}
+          }
+        }
+        marquee.addEventListener('pointerup', endDrag);
+        marquee.addEventListener('pointercancel', endDrag);
+
+        marquee.addEventListener('mouseenter', function () { hovering = true; });
+        marquee.addEventListener('mouseleave', function () {
+          hovering = false;
+          pauseUntil = performance.now() + 250;
+        });
+
+        // Re-measure on viewport changes (the duplicated track width can
+        // shift when chips reflow). Cheap to call; we throttle naturally
+        // since resize fires far below the rAF rate.
+        window.addEventListener('resize', measureTrack);
+      }
+
+      // Classify a link's href as IN-DEMO (sample / fictional content —
+      // modal fires so the visitor knows the form they're about to engage
+      // with isn't real) vs EXIT (the agency's real content — navigate
+      // cleanly so the modal doesn't get in the way of the visitor leaving
+      // the sample). Rule: anything inside this demo's path tree
+      // (/demo/<demoId>/...) plus same-page hash/query anchors are in-demo;
+      // everything else (agency root /, /pricing/, the demos index /demo/,
+      // /work/, /about/, mailto:, tel:, http(s)://...) is an exit. The
+      // previous "intercept everything" policy meant the demo nav's
+      // "Pricing" link popped a modal whose primary CTA also pointed to
+      // /pricing/ — redundant friction. Path-based classify removes that
+      // without per-link attrs.
+      const demoHomePath = '/demo/' + demoId + '/';
+      function isDemoInternal(href) {
+        if (!href) return false;
+        if (href.charAt(0) === '#') return true;       // same-page hash jumps
+        if (href.charAt(0) === '?') return true;       // same-page query-only
+        if (href === demoHomePath) return true;
+        if (href === demoHomePath.slice(0, -1)) return true;  // /demo/<id>
+        if (href.startsWith(demoHomePath)) return true;
+        return false;
+      }
+
+      // Explicit "open this modal" hook — `href="#demo-spd-modal"` (or any
+      // element with [data-spd-open]) ALWAYS pops the demo modal, even after
+      // the session has been dismissed. Used for in-demo CTAs whose entire
+      // job is to surface the demo framing (e.g. a Walk-Through "How it
+      // works" button on a sample brand site, where the answer to "how
+      // does this work?" IS the modal's content). Runs before the dismissal
+      // bailout on purpose — these triggers don't respect the session opt-out.
+      document.addEventListener('click', function (e) {
+        const t = e.target && e.target.closest && e.target.closest('a[href="#demo-spd-modal"], [data-spd-open]');
+        if (!t) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        open();
+      }, true);
+
+      // Capture phase so we run before any other click handler — the
+      // anchor-headings / scrollspy addons attach their own listeners
+      // and would otherwise smooth-scroll a hash link before this fires.
+      document.addEventListener('click', function (e) {
+        // Once dismissed for this session, every link navigates freely.
+        // We bail out fast so this handler stays cheap on repeat clicks.
+        if (isDismissed()) return;
+        const a = e.target.closest && e.target.closest('a[href]');
+        if (!a) return;
+        // Modal's own buttons/links — let them navigate freely. This is
+        // load-bearing: the modal's primary CTA needs to actually go to
+        // /pricing/ when clicked. Without this bypass, the modal would
+        // intercept itself and we'd ping-pong forever. We do NOT mark
+        // dismissed on the primary CTA — if the visitor back-buttons
+        // into the demo, the modal firing again is appropriate (they
+        // saw the message but never explicitly opted out).
+        if (modal.contains(a)) return;
+        // Modifier-clicks / non-primary buttons: leave them alone so
+        // power users can still cmd-click to open in a new tab.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        const href = a.getAttribute('href') || '';
+        if (!href) return;
+        // Exit links — anywhere outside the demo's path tree. Navigate
+        // cleanly; the modal would only re-route to /pricing/ which is
+        // often where the visitor was already heading.
+        if (!isDemoInternal(href)) return;
+        // Explicit per-link opt-out kept as an escape hatch for the rare
+        // case where an in-demo link genuinely needs to navigate (e.g.
+        // an anchor that triggers its own JS interaction).
+        if (a.hasAttribute('data-spd-allow')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        open();
+      }, true);
+
+      // Only the explicit "Keep browsing demo" secondary button counts as
+      // a dismissal — that's the unambiguous "I understand the framing,
+      // stop showing me this" gesture. The X button, backdrop, and ESC
+      // simply close the modal without setting the flag, so the next
+      // in-demo link click re-prompts as expected.
+      modal.addEventListener('click', function (e) {
+        const t = e.target;
+        if (!t || !t.closest) return;
+        const closer = t.closest('[data-spd-close]');
+        if (!closer) return;
+        const dismiss = closer.classList.contains('demo-spd-modal__secondary');
+        close({ dismiss: dismiss });
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.hidden) close({ dismiss: false });
+      });
+    })();
+  </script>
+)}
+
+<style>
+  /* Demo nav — floating glass pill anchored top-center. Replaces the site
+     header on demo pages; pairs with the bottom-right color-roll pill so
+     navigation lives top, palette controls live bottom. Backdrop-blur keeps
+     it legible over both dark and light hero treatments.
+
+     Two-zone layout: LEFT badge (demo name, identifies what visitors
+     are looking at) + DIVIDER + RIGHT actions ("↩ Site"
+     eyebrow + Home/Pricing links pointing back to the agency root). The
+     visual gap between zones makes the role of each side legible at a
+     glance — left is "you're here", right is "go back to the real site". */
+  .demo-nav {
+    position: fixed;
+    top: 0.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.55rem 0.4rem 0.45rem;
+    max-width: calc(100vw - 1.5rem);
+    background: rgba(20, 22, 24, 0.92);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    font: 600 0.82rem/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow:
+      0 12px 32px -10px rgba(0, 0, 0, 0.55),
+      0 2px 6px rgba(0, 0, 0, 0.25);
+  }
+
+  /* LEFT zone — informational badge. Whole thing is a link back to the
+     demo home so a visitor on a sub-page can return without leaving. */
+  .demo-nav__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background-color 0.15s ease;
+  }
+  .demo-nav__badge:hover { background: rgba(255, 255, 255, 0.06); }
+  .demo-nav__badge:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+  .demo-nav__name {
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+  }
+
+  .demo-nav__divider {
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.16);
+    flex: none;
+  }
+
+  /* RIGHT zone — actions back to the agency root. "↩ Site" eyebrow runs
+     vertically under the back-arrow concept: the links don't go back to
+     the demo, they exit it entirely. */
+  .demo-nav__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  .demo-nav__link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.38rem 0.85rem;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .demo-nav__link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .demo-nav__link:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+  .demo-nav__link--cta {
+    color: var(--brand-on-surface, #0b2f08);
+    background: var(--accent, #b3d855);
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+  }
+  .demo-nav__link--cta:hover {
+    color: var(--brand-on-surface, #0b2f08);
+    background: var(--accent-hover, var(--accent, #b3d855));
+    transform: translateY(-1px);
+  }
+
+  /* Mobile: tighten everything; ellipsis the demo name so a long title
+     (e.g. "Flinthills Landscaping Co. of Manhattan") still fits. */
+  @media (max-width: 540px) {
+    .demo-nav {
+      top: 0.6rem;
+      padding: 0.32rem 0.45rem 0.32rem 0.35rem;
+      gap: 0.4rem;
+    }
+    .demo-nav__badge {
+      padding: 0.25rem 0.5rem;
+    }
+    .demo-nav__name {
+      max-width: 9rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.78rem;
+    }
+    .demo-nav__divider { height: 18px; }
+    .demo-nav__link {
+      padding: 0.32rem 0.65rem;
+      font-size: 0.76rem;
+    }
+  }
+
+  /* Very narrow: shrink the name and drop the divider so the bail-out
+     path on the right still fits. */
+  @media (max-width: 400px) {
+    .demo-nav__name { font-size: 0.72rem; max-width: 7rem; }
+    .demo-nav__divider { display: none; }
+    .demo-nav__badge { padding: 0.25rem 0.5rem; }
+  }
+
+  @media print {
+    .demo-nav { display: none !important; }
+  }
+
+  /* Demo footer — replaces the agency footer at the bottom of every demo
+     page. Read order:
+       1. Demo name pill (mirror of the floating nav badge — same
+          visual identity at top and bottom of the page).
+       2. "Like what you see?" — heading that frames the CTAs as the answer
+          to the implied question the page just spent itself answering.
+       3. Lead paragraph — re-states the sample framing for visitors who
+          dismissed the modal early.
+       4. Two CTAs — primary "See pricing" (accent fill, exits demo to
+          /pricing/), secondary "Browse all samples" (ghost, goes to /demo/).
+       5. Soft "Sample by Landscape Systems" attribution that closes the
+          loop on whose site they were just looking at.
+     Visual: a soft accent gradient at the top edge so the footer reads
+     as connected to the rolled palette, then a near-black surface for
+     legibility regardless of the section above. Centered max-width inner
+     so on wide screens the text doesn't sprawl. */
+  .demo-footer {
+    position: relative;
+    padding: clamp(3.5rem, 7vw, 6rem) clamp(1rem, 4vw, 2rem) clamp(2.5rem, 5vw, 4rem);
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent, #b3d855) 14%, transparent) 0%,
+        color-mix(in srgb, var(--accent, #b3d855) 4%, transparent) 22%,
+        rgba(15, 17, 19, 1) 60%
+      ),
+      rgba(15, 17, 19, 1);
+    color: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid color-mix(in srgb, var(--accent, #b3d855) 22%, transparent);
+    margin-top: clamp(2rem, 5vw, 4rem);
+  }
+
+  .demo-footer__inner {
+    max-width: 44rem;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+  }
+
+  /* Mirror of the floating-nav badge, slightly larger so it reads as a
+     destination marker. */
+  .demo-footer__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    font: 600 0.88rem/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  .demo-footer__name {
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    color: #ffffff;
+  }
+
+  .demo-footer__heading {
+    margin: 0;
+    font-size: clamp(1.85rem, 3.6vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+
+  .demo-footer__lead {
+    margin: 0;
+    max-width: 36rem;
+    font-size: clamp(1rem, 1.3vw, 1.08rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .demo-footer__actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem 0.85rem;
+    margin-top: 0.4rem;
+  }
+
+  .demo-footer__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    font: 700 0.95rem/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+    text-decoration: none;
+    letter-spacing: -0.005em;
+    transition:
+      transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+      background-color 0.18s ease,
+      color 0.18s ease,
+      border-color 0.18s ease;
+  }
+
+  .demo-footer__cta--primary {
+    background: var(--accent, #b3d855);
+    color: var(--brand-on-surface, #0b2f08);
+    box-shadow:
+      0 14px 32px -12px color-mix(in srgb, var(--accent, #b3d855) 65%, transparent),
+      0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  .demo-footer__cta--primary:hover {
+    background: var(--accent-hover, var(--accent, #b3d855));
+    transform: translateY(-2px);
+    box-shadow:
+      0 18px 38px -12px color-mix(in srgb, var(--accent, #b3d855) 75%, transparent),
+      0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+  .demo-footer__cta-arrow {
+    transition: transform 0.18s ease;
+  }
+  .demo-footer__cta--primary:hover .demo-footer__cta-arrow {
+    transform: translateX(3px);
+  }
+
+  .demo-footer__cta--secondary {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .demo-footer__cta--secondary:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.32);
+    transform: translateY(-2px);
+  }
+
+  .demo-footer__cta:focus-visible {
+    outline: 2px solid var(--accent, #b3d855);
+    outline-offset: 3px;
+  }
+
+  .demo-footer__attr {
+    margin: 1.2rem 0 0;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.4);
+  }
+  .demo-footer__attr-label {
+    margin-right: 0.35rem;
+  }
+  .demo-footer__attr-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .demo-footer__attr-link:hover {
+    color: #ffffff;
+    border-bottom-color: var(--accent, #b3d855);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-footer__cta,
+    .demo-footer__cta:hover,
+    .demo-footer__cta-arrow,
+    .demo-footer__cta--primary:hover .demo-footer__cta-arrow {
+      transition: none;
+      transform: none;
+    }
+  }
+
+  .demo-fallback {
+    padding-block: clamp(3rem, 6vw, 5rem);
+    max-width: 56rem;
+  }
+  .demo-fallback__eyebrow {
+    margin: 0 0 0.6rem;
+    font: 700 0.78rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .demo-fallback h1 {
+    margin: 0 0 0.85rem;
+    font-size: clamp(2rem, 4vw, 2.85rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  .demo-fallback__lead {
+    margin: 0 0 2rem;
+    font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .demo-fallback__note {
+    padding: 1.25rem 1.4rem;
+    border: 1px dashed color-mix(in srgb, var(--text-secondary) 35%, transparent);
+    border-radius: 10px;
+    background: var(--bg-secondary, transparent);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  .demo-fallback__note p { margin: 0 0 0.65rem; }
+  .demo-fallback__note p:last-child { margin: 0; }
+  .demo-fallback__note ul { margin: 0.4rem 0 0; padding-left: 1.4rem; }
+  .demo-fallback__note li { margin-bottom: 0.55rem; }
+  .demo-fallback__note code {
+    font: 0.85em ui-monospace, Menlo, monospace;
+    background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  /* Single-pager demo modal — fires on every link click in a flagged
+     demo (until dismissed once). Job: tell the visitor the form they
+     were about to use isn't real, then route them to the agency's
+     actual pricing page. Design tone: brand-confident, not pop-up-spammy.
+
+     Visual structure:
+       1. Accent stripe at the top edge — brand signal that ties the
+          modal to the rolled palette.
+       2. Eyebrow (with pulsing dot) — quiet "this is a sample" framing.
+       3. Heading — punchy "yours could be" hook with accented tail.
+       4. Body — single-sentence positioning.
+       5. Promo chip — REAL countdown pulled from /pricing/ promo.endsAt
+          at build time, hidden when no promo is active.
+       6. Stats row — three proof points (yrs / sites / cancel terms)
+          pulled from brand.json. Loss-aversion balanced with risk-
+          reversal so the FOMO doesn't read sleazy.
+       7. Actions — accent-filled primary CTA (contrast: brand-on-surface
+          which is AA-tested against the rolled accent per the brand's
+          contrast token system; the previous --accent-text token was
+          theme-switching to a NEAR-accent color and went invisible on
+          accent surfaces); ghost secondary "Keep browsing".
+  */
+  .demo-spd-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 2rem);
+  }
+  .demo-spd-modal[hidden] { display: none; }
+  .demo-spd-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, #000 78%, transparent);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: demoSpdBackdropIn 240ms ease-out;
+  }
+  .demo-spd-modal__panel {
+    position: relative;
+    max-width: 32rem;
+    width: 100%;
+    padding: clamp(1.6rem, 3vw, 2.35rem) clamp(1.4rem, 3vw, 2.2rem) clamp(1.4rem, 3vw, 1.85rem);
+    border-radius: 16px;
+    background: var(--bg-primary, #0e1110);
+    color: var(--text-primary, #f5f6f5);
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    box-shadow:
+      0 30px 80px color-mix(in srgb, #000 60%, transparent),
+      0 6px 18px color-mix(in srgb, #000 35%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 14%, transparent);
+    overflow: hidden;
+    animation: demoSpdPanelIn 320ms cubic-bezier(0.22, 0.78, 0.36, 1);
+  }
+  /* Accent stripe — colored top edge, makes the panel feel like a
+     "tab" pulled from the rolled palette. */
+  .demo-spd-modal__stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--accent) 0%,
+      color-mix(in srgb, var(--accent) 65%, #fff) 50%,
+      var(--accent) 100%
+    );
+  }
+  @keyframes demoSpdBackdropIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes demoSpdPanelIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .demo-spd-modal__backdrop,
+    .demo-spd-modal__panel { animation: none; }
+  }
+
+  .demo-spd-modal__close {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.6rem;
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: var(--text-secondary, #b8bcb8);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: color 120ms ease, background-color 120ms ease;
+  }
+  .demo-spd-modal__close:hover {
+    color: var(--text-primary, #fff);
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+  .demo-spd-modal__close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .demo-spd-modal__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0 0 0.7rem;
+    font: 700 0.72rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-text, var(--accent));
+  }
+  .demo-spd-modal__eyebrow-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
+    animation: demoSpdPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes demoSpdPulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+    50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .demo-spd-modal__eyebrow-dot { animation: none; }
+  }
+
+  .demo-spd-modal__heading {
+    margin: 0 0 0.7rem;
+    font-size: clamp(1.55rem, 2.6vw, 1.85rem);
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+    font-weight: 800;
+  }
+  .demo-spd-modal__heading-accent {
+    color: var(--accent-text, var(--accent));
+    white-space: nowrap;
+  }
+
+  .demo-spd-modal__body {
+    margin: 0 0 1.1rem;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--text-secondary, #c2c6c2);
+  }
+
+  /* FOMO promo chip — only renders when /pricing/ has a live promo
+     with endsAt in the future. The chip itself is a small "Limited
+     time" pill (accent-filled), the body of the message is the
+     countdown. Keep visual weight modest: this is a reason, not a
+     scream. */
+  .demo-spd-modal__promo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem 0.75rem;
+    margin: 0 0 1.1rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+  .demo-spd-modal__promo-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.6rem;
+    background: var(--accent);
+    color: var(--brand-on-surface, #0b2f08);
+    border-radius: 999px;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1;
+    flex: none;
+  }
+  .demo-spd-modal__promo-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary, #f5f6f5);
+    line-height: 1.35;
+  }
+
+  /* Trust marquee — pulls the brand's hero `trustMetrics` from the homepage
+     so the modal carries the same scrolling banner the front door does.
+     Renders via the shared `.hero-trust-marquee` / `.hero-trust--marquee`
+     classes the brand stylesheet already styles (animation, mask gradient,
+     reduced-motion handling); these modal-scoped overrides reset the
+     hero-tuned spacing for the tighter modal-panel context and keep the
+     track inside the panel's max-width on every viewport. */
+  .demo-spd-modal__marquee.hero-trust-marquee {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 0 1.4rem;
+    padding: 0.55rem 0;
+    border-block: 1px solid color-mix(in srgb, var(--text-primary) 12%, transparent);
+
+    /* Modal-scoped: drive the marquee with JS-controlled translateX on
+       the inner ul instead of native scrollLeft. Earlier scroll-based
+       impls stalled on hi-refresh displays — scrollLeft is rounded to
+       integers and a 60 px/s feed at 144Hz produces a per-frame delta
+       of ~0.42 px that the browser rounds away to zero. Transform
+       handles sub-pixel motion natively and stays smooth at any rate.
+       Hide overflow (rather than scroll) so the JS owns position, and
+       keep cursor + user-select hints because pointer drag-to-scrub is
+       wired up in the inline script. `touch-action: pan-y` preserves
+       vertical page scroll on touch even when a finger lands here. */
+    overflow: hidden;
+    overscroll-behavior-x: contain;
+    cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+  }
+
+  .demo-spd-modal__marquee .hero-trust.hero-trust--marquee {
+    /* Cancel the brand stylesheet's CSS keyframe animation; JS translateX
+       drives motion in this context. Composing both would scroll at ~2×
+       the intended speed and the seam wraparound would drift over time.
+       The brand rule sets `width: max-content` on this ul so the duplicated
+       chip list naturally exceeds the panel width — that overflow is what
+       we translate. The outer container clips it (overflow:hidden above);
+       panel width remains bounded by its own max-width (32rem). */
+    animation: none !important;
+    will-change: transform;
+  }
+
+  .demo-spd-modal__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem 0.65rem;
+  }
+  .demo-spd-modal__primary,
+  .demo-spd-modal__secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 10px;
+    font: 700 0.95rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 140ms ease, background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+  }
+  /* PRIMARY — accent fill. Foreground uses --brand-on-surface (the AA-
+     tested text color the brand pre-tunes for the accent), NOT
+     --accent-text (which is the accent-as-TEXT color and reads near-
+     invisible when set against the accent surface itself). The previous
+     fallback to #0b0d0c also failed when the accent rolled to a darker
+     hue. */
+  .demo-spd-modal__primary {
+    flex: 1 1 auto;
+    background: var(--accent);
+    color: var(--brand-on-surface, #0b2f08);
+    box-shadow:
+      0 8px 18px -8px color-mix(in srgb, var(--accent) 65%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 20%, transparent);
+  }
+  .demo-spd-modal__primary:hover {
+    transform: translateY(-1px);
+    background: var(--accent-hover, var(--accent));
+    color: var(--brand-on-surface, #0b2f08);
+    box-shadow:
+      0 12px 26px -10px color-mix(in srgb, var(--accent) 75%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 28%, transparent);
+  }
+  .demo-spd-modal__primary:focus-visible {
+    outline: 2px solid var(--brand-on-surface, #0b2f08);
+    outline-offset: 2px;
+  }
+  .demo-spd-modal__primary-arrow {
+    transition: transform 140ms ease;
+  }
+  .demo-spd-modal__primary:hover .demo-spd-modal__primary-arrow {
+    transform: translateX(3px);
+  }
+
+  .demo-spd-modal__secondary {
+    background: transparent;
+    color: var(--text-primary, #f5f6f5);
+    border-color: color-mix(in srgb, var(--text-primary) 22%, transparent);
+  }
+  .demo-spd-modal__secondary:hover {
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    border-color: color-mix(in srgb, var(--text-primary) 38%, transparent);
+  }
+  .demo-spd-modal__secondary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Narrow screens — stack actions full-width so the primary CTA
+     stays a clear primary target instead of fighting the secondary
+     for space. The marquee handles its own narrow-screen rhythm
+     via the brand stylesheet's @media (max-width: 899px) block. */
+  @media (max-width: 520px) {
+    .demo-spd-modal__panel {
+      padding: 1.4rem 1.2rem 1.2rem;
+    }
+    .demo-spd-modal__marquee.hero-trust-marquee {
+      margin-bottom: 1.1rem;
+    }
+    .demo-spd-modal__actions {
+      flex-direction: column-reverse;
+      gap: 0.5rem;
+    }
+    .demo-spd-modal__primary,
+    .demo-spd-modal__secondary {
+      width: 100%;
+    }
+  }
+</style>

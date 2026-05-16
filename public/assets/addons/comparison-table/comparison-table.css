@@ -1,0 +1,104 @@
+/*
+ * Comparison Table — drop-in JSON-driven you-vs-them matrix.
+ *
+ * Renders a clean comparison table with a highlighted "you" column.
+ * Theme-aware. See /comparison-table/README.md.
+ */
+
+.aed-cmp {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.aed-cmp thead th {
+  padding: 0.95rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+  border-bottom: 1px solid var(--border, #27272a);
+  background: var(--bg-secondary, #111113);
+  text-align: center;
+}
+.aed-cmp thead th:first-child {
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted, #9a9aa2);
+}
+
+.aed-cmp thead th[data-aed-cmp-you] {
+  background: color-mix(in srgb, var(--accent, #6B00FF) 10%, var(--bg-card, #18181b));
+  color: var(--accent, #6B00FF);
+  border-bottom-color: var(--accent, #6B00FF);
+  position: relative;
+}
+
+.aed-cmp tbody tr td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border, #27272a);
+  text-align: center;
+  vertical-align: middle;
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 0.875rem;
+}
+.aed-cmp tbody tr td:first-child {
+  text-align: left;
+  color: var(--text-primary, #fafafa);
+  font-weight: 500;
+}
+.aed-cmp tbody tr:last-child td { border-bottom: 0; }
+
+.aed-cmp td[data-aed-cmp-you] {
+  background: color-mix(in srgb, var(--accent, #6B00FF) 5%, transparent);
+  color: var(--text-primary, #fafafa);
+}
+
+.aed-cmp tbody tr.is-section td {
+  background: var(--bg-secondary, #111113);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+  text-align: left;
+  padding: 0.6rem 1rem;
+}
+
+/* Cell value glyphs */
+.aed-cmp-yes,
+.aed-cmp-no,
+.aed-cmp-partial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+.aed-cmp-yes svg,
+.aed-cmp-no svg,
+.aed-cmp-partial svg { width: 12px; height: 12px; }
+
+.aed-cmp-yes     { background: color-mix(in srgb, #10b981 18%, transparent); color: #10b981; }
+.aed-cmp-no      { background: color-mix(in srgb, var(--border, #27272a) 70%, transparent); color: var(--text-muted, #9a9aa2); }
+.aed-cmp-partial { background: color-mix(in srgb, #f59e0b 18%, transparent); color: #f59e0b; }
+
+/* Mobile: horizontal scroll if too wide */
+@media (max-width: 640px) {
+  .aed-cmp { font-size: 0.8rem; }
+  .aed-cmp thead th, .aed-cmp tbody tr td { padding: 0.6rem 0.5rem; }
+}
+
+@media print {
+  .aed-cmp { border-color: #d4d4d8; }
+  .aed-cmp thead th, .aed-cmp td[data-aed-cmp-you] { background: transparent; color: #18181b; }
+}

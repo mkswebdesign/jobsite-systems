@@ -1,0 +1,474 @@
+{
+  "slug": "pricing",
+  "path": "/pricing/",
+  "breadcrumbLabel": "Pricing",
+  "variants": {
+    "faq": "B"
+  },
+  "dividers": [
+    { "after": "header", "color": "primary" },
+    { "after": "pricing", "color": "primary" },
+    { "after": "compare", "color": "primary" },
+    { "after": "faq", "color": "primary" }
+  ],
+  "seo": {
+    "title": "Pricing — Feature-Based Plans for Trade Businesses | Jobsite Systems",
+    "description": "Pick a multi-page brochure or a single-page site. Every plan priced by the features it includes — no guessing what's in the bundle. Month-to-month.",
+    "canonical": "https://jobsite.systems/pricing/"
+  },
+  "header": {
+    "sectionLabel": "Pricing",
+    "heading": "Priced by features,\nnot by guesswork.",
+    "lead": "Pick the site style that fits — a multi-page brochure or a single focused page — then pick the feature set. Every plan includes managed hosting, security, and direct support. Month-to-month, no long contracts."
+  },
+  "priceAnchor": "Comparable agency builds: $5,000+ upfront + separate hosting.",
+  "hideExcludedFeatures": true,
+  "billing": {
+    "default": "yearly",
+    "discount": 0.3,
+    "savePill": "Save 30%",
+    "monthlyLabel": "Monthly",
+    "yearlyLabel": "Yearly",
+    "monthlyNote": "billed monthly, cancel anytime",
+    "yearlyNote": "Annual billing — saves 30% vs. monthly.",
+    "storageKey": "hs:billing"
+  },
+  "promo": {
+    "featureMatch": "photo gallery",
+    "permanent": true,
+    "chipLabel": "Included on every plan",
+    "bannerLabel": "Always included",
+    "bannerMessage": "Photo gallery is included free on every plan.",
+    "forceIncluded": true
+  },
+  "tierGroups": {
+    "defaultId": "brochure",
+    "toggleLabel": "Site style",
+    "groups": [
+      {
+        "id": "brochure",
+        "label": "Multi Page Website",
+        "blurb": "The full site — about, services / trades, licensed-and-insured trust signals, crew bios, service area, contact. Best for multi-crew shops, multi-trade solo operators, or remodelers and GCs.",
+        "tiers": [
+          {
+            "id": "brochure-essential",
+            "name": "Essential",
+            "price": "$427",
+            "priceSuffix": "/month",
+            "yearlyTotal": "$3,588/yr total",
+            "description": "A clean, multi-page site with the pages a homeowner expects — about, services, contact. Best for solo handymen, HVAC techs, plumbers, or carpenters with a focused offering.",
+            "roiNote": "Pays for itself with one new ongoing customer.",
+            "ctaLabel": "Get Started",
+            "ctaHref": "/contact/",
+            "ctaVariant": "secondary",
+            "upgradeNote": "Upgrade anytime, pro-rated.",
+            "upsellHint": "Want reviews, SEO, and a licensed-and-insured trust page? <a href=\"#tier-brochure-complete\" data-pricing-upsell>See Complete →</a>",
+            "featured": false,
+            "features": [
+              {
+                "name": "Service / trade pages",
+                "included": true
+              },
+              {
+                "name": "Estimate-request form",
+                "included": true
+              },
+              {
+                "name": "About / owner bio page",
+                "included": true
+              },
+              {
+                "name": "Domain / email setup",
+                "included": true
+              },
+              {
+                "name": "Analytics setup",
+                "included": true
+              },
+              {
+                "name": "Photo gallery",
+                "included": false
+              },
+              {
+                "name": "SEO & AI engine optimization",
+                "included": false
+              },
+              {
+                "name": "Customer reviews",
+                "included": false
+              },
+              {
+                "name": "Licensed & insured trust page",
+                "included": false
+              },
+              {
+                "name": "Service-area callout",
+                "included": false
+              },
+              {
+                "name": "Move content from old site",
+                "included": false
+              },
+              {
+                "name": "Project portfolio / blog section",
+                "included": false
+              }
+            ]
+          },
+          {
+            "id": "brochure-complete",
+            "name": "Complete",
+            "price": "$570",
+            "priceSuffix": "/month",
+            "yearlyTotal": "$4,788/yr total",
+            "description": "The full productized site — service pages, photos, customer reviews, local SEO, and a licensed-and-insured trust page. The right default for most trade businesses.",
+            "roiNote": "One ongoing customer at $200/job covers a full year.",
+            "ctaLabel": "Get Started",
+            "ctaHref": "/contact/",
+            "ctaVariant": "primary",
+            "upgradeNote": "Upgrade anytime, pro-rated.",
+            "upsellHint": "Need a project portfolio and multi-crew bio pages? <a href=\"#tier-brochure-growth\" data-pricing-upsell>See Growth →</a>",
+            "featured": true,
+            "badge": "Most Popular",
+            "features": [
+              {
+                "name": "Service / trade pages",
+                "included": true
+              },
+              {
+                "name": "Estimate-request form",
+                "included": true
+              },
+              {
+                "name": "About / owner bio page",
+                "included": true
+              },
+              {
+                "name": "Domain / email setup",
+                "included": true
+              },
+              {
+                "name": "Analytics setup",
+                "included": true
+              },
+              {
+                "name": "Photo gallery",
+                "included": true
+              },
+              {
+                "name": "SEO & AI engine optimization",
+                "included": true
+              },
+              {
+                "name": "Customer reviews",
+                "included": true
+              },
+              {
+                "name": "Licensed & insured trust page",
+                "included": true
+              },
+              {
+                "name": "Service-area callout",
+                "included": true
+              },
+              {
+                "name": "Move content from old site",
+                "included": false
+              },
+              {
+                "name": "Project portfolio / blog section",
+                "included": false
+              }
+            ]
+          },
+          {
+            "id": "brochure-growth",
+            "name": "Growth",
+            "price": "$713",
+            "priceSuffix": "/month",
+            "yearlyTotal": "$5,988/yr total",
+            "description": "Every feature, plus per-crew bio pages for multi-crew shops, content migration from your old site, and a project portfolio / blog section for SEO.",
+            "roiNote": "Designed for multi-crew shops and remodelers.",
+            "ctaLabel": "Get Started",
+            "ctaHref": "/contact/",
+            "ctaVariant": "secondary",
+            "upgradeNote": "Upgrade anytime, pro-rated.",
+            "featured": false,
+            "features": [
+              {
+                "name": "Service / trade pages",
+                "included": true
+              },
+              {
+                "name": "Estimate-request form",
+                "included": true
+              },
+              {
+                "name": "About / owner bio page",
+                "included": true
+              },
+              {
+                "name": "Domain / email setup",
+                "included": true
+              },
+              {
+                "name": "Analytics setup",
+                "included": true
+              },
+              {
+                "name": "Photo gallery",
+                "included": true
+              },
+              {
+                "name": "SEO & AI engine optimization",
+                "included": true
+              },
+              {
+                "name": "Customer reviews",
+                "included": true
+              },
+              {
+                "name": "Per-crew bio pages (multi-crew shops)",
+                "included": true
+              },
+              {
+                "name": "Service-area callout",
+                "included": true
+              },
+              {
+                "name": "Move content from old site",
+                "included": true
+              },
+              {
+                "name": "Project portfolio / blog section",
+                "included": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "single",
+        "label": "Single Page Website",
+        "blurb": "Everything on one focused page. Best for solo handymen, HVAC techs, plumbers, or carpenters with a focused trade who want a solid web presence without page-by-page upkeep.",
+        "tiers": [
+          {
+            "id": "single-basic",
+            "name": "Basic",
+            "price": "$184",
+            "priceSuffix": "/month",
+            "yearlyTotal": "$1,548/yr total",
+            "description": "A one-page trade-business site with the essentials — about, services, and a working estimate-request form. Practical, secure, online.",
+            "roiNote": "Pays for itself with one new ongoing customer.",
+            "ctaLabel": "Get Started",
+            "ctaHref": "/contact/",
+            "ctaVariant": "secondary",
+            "upgradeNote": "Upgrade anytime, pro-rated.",
+            "upsellHint": "Want reviews, SEO, and a licensed-and-insured trust block? <a href=\"#tier-single-standard\" data-pricing-upsell>See Standard →</a>",
+            "featured": false,
+            "features": [
+              {
+                "name": "Service / trade list (on-page)",
+                "included": true
+              },
+              {
+                "name": "Estimate-request form",
+                "included": true
+              },
+              {
+                "name": "About / owner bio block",
+                "included": true
+              },
+              {
+                "name": "Analytics setup",
+                "included": true
+              },
+              {
+                "name": "Domain / email setup",
+                "included": false
+              },
+              {
+                "name": "Photo gallery",
+                "included": false
+              },
+              {
+                "name": "Customer reviews block",
+                "included": false
+              },
+              {
+                "name": "SEO & AI engine optimization",
+                "included": false
+              },
+              {
+                "name": "Licensed & insured trust callout",
+                "included": false
+              },
+              {
+                "name": "Service-area callout",
+                "included": false
+              },
+              {
+                "name": "Move content from old site",
+                "included": false
+              }
+            ]
+          },
+          {
+            "id": "single-standard",
+            "name": "Standard",
+            "price": "$241",
+            "priceSuffix": "/month",
+            "yearlyTotal": "$2,028/yr total",
+            "description": "The single-page site with photos, customer reviews, and local SEO wired up. Enough for most solo operators serving one city or county.",
+            "roiNote": "One ongoing customer at $200/job covers a full year.",
+            "ctaLabel": "Get Started",
+            "ctaHref": "/contact/",
+            "ctaVariant": "primary",
+            "upgradeNote": "Upgrade anytime, pro-rated.",
+            "upsellHint": "Want a licensed-and-insured callout, service-area callout, and content migration? <a href=\"#tier-single-plus\" data-pricing-upsell>See Plus →</a>",
+            "featured": true,
+            "badge": "Most Popular",
+            "features": [
+              {
+                "name": "Service / trade list (on-page)",
+                "included": true
+              },
+              {
+                "name": "Estimate-request form",
+                "included": true
+              },
+              {
+                "name": "About / owner bio block",
+                "included": true
+              },
+              {
+                "name": "Analytics setup",
+                "included": true
+              },
+              {
+                "name": "Domain / email setup",
+                "included": true
+              },
+              {
+                "name": "Photo gallery",
+                "included": true
+              },
+              {
+                "name": "Customer reviews block",
+                "included": true
+              },
+              {
+                "name": "SEO & AI engine optimization",
+                "included": true
+              },
+              {
+                "name": "Licensed & insured trust callout",
+                "included": false
+              },
+              {
+                "name": "Service-area callout",
+                "included": false
+              },
+              {
+                "name": "Move content from old site",
+                "included": false
+              }
+            ]
+          },
+          {
+            "id": "single-plus",
+            "name": "Plus",
+            "price": "$284",
+            "priceSuffix": "/month",
+            "yearlyTotal": "$2,388/yr total",
+            "description": "Everything the single-page format can hold — licensed-and-insured trust callout, service-area block, and content migrated from your existing site.",
+            "roiNote": "Designed for operators serving multiple counties or service lines.",
+            "ctaLabel": "Get Started",
+            "ctaHref": "/contact/",
+            "ctaVariant": "secondary",
+            "upgradeNote": "Upgrade anytime, pro-rated.",
+            "featured": false,
+            "features": [
+              {
+                "name": "Service / trade list (on-page)",
+                "included": true
+              },
+              {
+                "name": "Estimate-request form",
+                "included": true
+              },
+              {
+                "name": "About / owner bio block",
+                "included": true
+              },
+              {
+                "name": "Analytics setup",
+                "included": true
+              },
+              {
+                "name": "Domain / email setup",
+                "included": true
+              },
+              {
+                "name": "Photo gallery",
+                "included": true
+              },
+              {
+                "name": "Customer reviews block",
+                "included": true
+              },
+              {
+                "name": "SEO & AI engine optimization",
+                "included": true
+              },
+              {
+                "name": "Licensed & insured trust callout",
+                "included": true
+              },
+              {
+                "name": "Service-area callout",
+                "included": true
+              },
+              {
+                "name": "Move content from old site",
+                "included": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "comparison": {
+    "sectionLabel": "Which style fits",
+    "heading": "Multi-page brochure vs. single-page — side by side.",
+    "subtext": "The feature set, the price range, and the kind of trade business each style is built for. When you're not sure which one to pick, this is where to look.",
+    "sourceId": "aed-compare-pricing",
+    "afterNote": "Prefer to own the files outright? We also do <a href=\"/start/\">one-time builds</a> — request a quote."
+  },
+  "faq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Pricing Questions",
+    "faqIds": [
+      "pricing-contract-length",
+      "pricing-whats-included",
+      "pricing-switch-plans",
+      "pricing-business-email",
+      "pricing-one-time-vs-monthly",
+      "pricing-refunds"
+    ]
+  },
+  "cta": {
+    "heading": "Not sure which fits?",
+    "body": "Tell us about your business — solo or multi-crew, trades, how customers find you today. We'll recommend the right site style and tier honestly.",
+    "label": "Start a Conversation",
+    "href": "/contact/"
+  },
+  "_TODO_testimonialsScoped": "P3 #22 — Pricing testimonials filtered to the single ROI/value quote (Amanda R., second-crew/office-manager flow) so the page reinforces the buying decision instead of repeating Home's full set.",
+  "testimonials": {
+    "sectionLabel": "What it changed",
+    "heading": "What pilot clients say about the value.",
+    "variant": "carousel",
+    "testimonialIds": ["amanda-r"]
+  }
+}

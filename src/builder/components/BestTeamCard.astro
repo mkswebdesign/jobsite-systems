@@ -1,0 +1,63 @@
+---
+interface Props {
+  /** Season calendar year, e.g. 2014 for `/best/2014/...` */
+  year: number;
+  slug: string;
+  title: string;
+  shortTitle?: string;
+  cardSummary: string;
+  tags?: string[];
+  gradientPreset: string;
+  staggered?: boolean;
+}
+
+const {
+  year,
+  slug,
+  title,
+  shortTitle,
+  cardSummary,
+  tags = [],
+  gradientPreset,
+  staggered = true,
+} = Astro.props;
+
+const classes = ['best-team-card', 'work-card'];
+if (staggered) classes.push('stagger-item');
+---
+
+<a href={`/best/${year}/${slug}/`} class={classes.join(' ')} data-best-team-card>
+  <div class="work-thumb best-team-card__thumb" aria-hidden="true">
+    <div class={`work-gradient ${gradientPreset}`}></div>
+    <span class="best-team-card__stat">{year}</span>
+  </div>
+  <div class="work-body">
+    <h3>{shortTitle ?? title}</h3>
+    <p>{cardSummary}</p>
+    {tags.length > 0 && (
+      <div class="work-tags">
+        {tags.map(t => <span class="work-tag">{t}</span>)}
+      </div>
+    )}
+  </div>
+</a>
+
+<style is:global>
+  [data-best-team-card] .best-team-card__thumb {
+    position: relative;
+    min-height: 140px;
+  }
+  [data-best-team-card] .best-team-card__stat {
+    position: absolute;
+    bottom: 0.65rem;
+    right: 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--bg-primary) 72%, transparent);
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+</style>

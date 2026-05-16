@@ -1,0 +1,53 @@
+/*
+ * Cursor Spotlight — drop-in soft radial highlight that follows the cursor.
+ *
+ * The JS sets --aed-cs-x and --aed-cs-y on the element. CSS draws the
+ * spotlight as a radial gradient ::before. Theme-aware via brand
+ * --accent.
+ *
+ * See /cursor-spotlight/README.md.
+ */
+
+[data-aed-cursor-spotlight] {
+  position: relative;
+  isolation: isolate;
+  --aed-cs-x: 50%;
+  --aed-cs-y: 50%;
+  --aed-cs-size: 320px;
+  --aed-cs-opacity: 0.18;
+}
+
+[data-aed-cursor-spotlight]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    var(--aed-cs-size) circle at var(--aed-cs-x) var(--aed-cs-y),
+    color-mix(in srgb, var(--accent, #6B00FF) 40%, transparent) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  mix-blend-mode: screen;
+}
+[data-aed-cursor-spotlight].is-hovered::before {
+  opacity: var(--aed-cs-opacity);
+}
+
+/* Light theme: switch blend so the orb darkens slightly instead of brightening */
+:root[data-theme="light"] [data-aed-cursor-spotlight]::before {
+  mix-blend-mode: multiply;
+}
+
+@media (hover: none) {
+  /* Touch devices: no spotlight */
+  [data-aed-cursor-spotlight]::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-cursor-spotlight]::before { transition: none; }
+}
+@media print {
+  [data-aed-cursor-spotlight]::before { display: none; }
+}

@@ -1,0 +1,35 @@
+/*
+ * Typewriter — drop-in cycling-text effect.
+ *
+ * Theme-aware caret. See /typewriter/README.md.
+ */
+
+[data-aed-typewriter] {
+  display: inline;
+  font-variant-ligatures: none; /* prevent half-rendered ligatures during reveal */
+}
+
+.aed-tw-text { display: inline; }
+
+.aed-tw-caret {
+  display: inline-block;
+  width: 0.08em;
+  height: 1em;
+  background: currentColor;
+  vertical-align: -0.12em;
+  margin-left: 0.05em;
+  animation: aed-tw-blink 0.9s steps(1) infinite;
+}
+
+@keyframes aed-tw-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-tw-caret { animation: none; opacity: 1; }
+}
+
+@media print {
+  .aed-tw-caret { display: none; }
+}

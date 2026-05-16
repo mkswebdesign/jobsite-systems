@@ -1,0 +1,26 @@
+{
+  "name": "before-after",
+  "assets": {
+    "css": ["before-after.css"],
+    "js":  ["before-after.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-before-after]",
+        "description": "Per-element image-comparison slider. Markup expects two stacked images (or any nodes) inside the container, and an optional pair of label children.",
+        "fields": {
+          "data-aed-before-after": { "type": "boolean", "required": true, "description": "Opt-in marker." },
+          "data-aed-ba-start":     { "type": "number",  "default": 50,    "description": "Initial reveal position 0–100 (% of width shown for the 'after' image)." }
+        }
+      },
+      {
+        "selector": "[data-aed-ba-label]",
+        "description": "Optional labels rendered as small badges over the image. Place inside the container.",
+        "fields": {
+          "data-aed-ba-label": { "type": "string", "enum": ["before", "after"], "required": true, "description": "Which side this label belongs to. Text content of the element becomes the badge text." }
+        }
+      }
+    ]
+  }
+}

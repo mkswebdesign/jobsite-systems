@@ -1,0 +1,31 @@
+{
+  "name": "figure-caption",
+  "assets": {
+    "css": ["figure-caption.css"],
+    "js":  ["figure-caption.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:figure-caption",
+        "default": "auto",
+        "description": "Auto-mode. When set, every <img> with a `data-caption` attribute inside `data-scope` is wrapped in a <figure> with a styled <figcaption>.",
+        "enum": ["auto"],
+        "attrs": {
+          "data-scope": { "type": "string", "default": "article, main", "description": "CSS selector for the auto-wrap container." }
+        }
+      }
+    ],
+    "data": [
+      {
+        "selector": "img[data-caption]",
+        "description": "Caption + variant controls. Add to images that should be wrapped in a figure.",
+        "fields": {
+          "data-caption":           { "type": "string",  "required": true,                         "description": "Caption text rendered beneath the image." },
+          "data-aed-fig-variant":   { "type": "string",  "default": "default", "enum": ["default", "side", "quote"], "description": "Layout variant." },
+          "data-aed-fig-skip":      { "type": "boolean",                                            "description": "Skip wrapping this image (useful inside auto-scope)." }
+        }
+      }
+    ]
+  }
+}

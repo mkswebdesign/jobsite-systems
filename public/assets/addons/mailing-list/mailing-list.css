@@ -1,0 +1,103 @@
+/*
+ * Mailing List — drop-in newsletter signup.
+ *
+ * Hydrates [data-aed-mailing-list] placeholders with an inline email
+ * form wired to a configured provider (ConvertKit, Beehiiv, Buttondown,
+ * MailerLite, Formspree, custom).
+ *
+ * See /mailing-list/README.md.
+ */
+
+.aed-ml {
+  display: block;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+}
+.aed-ml[data-aed-ml-variant="bare"] {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.aed-ml-headline {
+  margin: 0 0 0.3rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--text-primary, #fafafa);
+}
+.aed-ml-body {
+  margin: 0 0 1rem;
+  color: var(--text-secondary, #a1a1aa);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.aed-ml-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.aed-ml-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-secondary, #111113);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.aed-ml-input:focus {
+  border-color: var(--accent, #6B00FF);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #6B00FF) 18%, transparent);
+}
+
+.aed-ml-btn {
+  flex: 0 0 auto;
+  padding: 0.65rem 1.1rem;
+  background: var(--accent, #6B00FF);
+  color: #ffffff;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.aed-ml-btn:hover { background: var(--accent-hover, var(--accent, #6B00FF)); }
+.aed-ml-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.aed-ml-foot {
+  margin: 0.55rem 0 0;
+  font-size: 0.72rem;
+  color: var(--text-muted, #9a9aa2);
+}
+
+.aed-ml-status {
+  margin-top: 0.65rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+.aed-ml-status[hidden] { display: none; }
+.aed-ml-status[data-aed-ml-state="success"] {
+  background: color-mix(in srgb, #10b981 12%, var(--bg-card, #18181b));
+  color: #10b981;
+  border: 1px solid color-mix(in srgb, #10b981 30%, var(--border, #27272a));
+}
+.aed-ml-status[data-aed-ml-state="error"] {
+  background: color-mix(in srgb, #ef4444 12%, var(--bg-card, #18181b));
+  color: #ef4444;
+  border: 1px solid color-mix(in srgb, #ef4444 30%, var(--border, #27272a));
+}
+
+@media (max-width: 480px) {
+  .aed-ml-row { flex-direction: column; }
+  .aed-ml-btn { width: 100%; }
+}

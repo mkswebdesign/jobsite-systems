@@ -1,0 +1,154 @@
+{
+  "slug": "support",
+  "path": "/support/",
+  "breadcrumbLabel": "Support Request",
+  "seo": {
+    "title": "Support Request — Jobsite Systems",
+    "description": "Quick support form for current Jobsite Systems clients. Tell us what's going on with your site and we'll triage your request.",
+    "canonical": "https://jobsite.systems/support/"
+  },
+  "header": {
+    "sectionLabel": "Need a hand?",
+    "heading": "Support Request",
+    "lead": "Site acting up? Need a content edit? Tell us what's going on. Urgent issues get same-day replies during business hours; everything else lands within one business day."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "Support request — jobsite.systems",
+    "submitLabel": "Send Support Request",
+    "successMessage": "Got it. We'll triage and reply — urgent issues are same-day during business hours.",
+    "errorMessage": "Something went wrong. Please try again or email us directly at hello@jobsite.systems.",
+    "fields": [
+      {
+        "id": "name",
+        "name": "name",
+        "label": "Your Name",
+        "type": "text",
+        "placeholder": "Jane Smith",
+        "required": true,
+        "row": 1,
+        "autocomplete": "name",
+        "autocapitalize": "words"
+      },
+      {
+        "id": "email",
+        "name": "email",
+        "label": "Email Address",
+        "type": "email",
+        "placeholder": "jane@yourbusiness.com",
+        "required": true,
+        "row": 1,
+        "autocomplete": "email"
+      },
+      {
+        "id": "company",
+        "name": "company",
+        "label": "Business Name",
+        "type": "text",
+        "placeholder": "Your business name",
+        "required": false,
+        "row": 2,
+        "autocomplete": "organization"
+      },
+      {
+        "id": "website",
+        "name": "website",
+        "label": "Your Website",
+        "type": "url",
+        "placeholder": "https://yourbusiness.com",
+        "required": true,
+        "row": 2
+      },
+      {
+        "id": "issue_title",
+        "name": "issue_title",
+        "label": "What's the issue?",
+        "type": "text",
+        "placeholder": "Short name — e.g. \"Estimate form not sending emails\" or \"Update service area on home page\"",
+        "required": true
+      },
+      {
+        "id": "category",
+        "name": "category",
+        "type": "radio-cards",
+        "required": true,
+        "options": [
+          {
+            "value": "broken",
+            "label": "Something's broken",
+            "description": "Site is down, a feature stopped working, error showing up."
+          },
+          {
+            "value": "content-edit",
+            "label": "Content edit",
+            "description": "Update copy, swap a photo, change a service-area town, fix a typo."
+          },
+          {
+            "value": "feature-request",
+            "label": "Feature request",
+            "description": "Want to add something new — a page, section, or capability."
+          },
+          {
+            "value": "billing",
+            "label": "Billing question",
+            "description": "Invoice, plan change, payment method, cancellation."
+          },
+          {
+            "value": "other",
+            "label": "Other",
+            "description": "Doesn't fit the buckets above. Describe in the notes below."
+          }
+        ]
+      },
+      {
+        "id": "priority",
+        "name": "priority",
+        "type": "radio-cards",
+        "required": true,
+        "options": [
+          {
+            "value": "urgent",
+            "label": "Urgent",
+            "description": "Site is down or it's actively losing estimate requests. Same-day during business hours."
+          },
+          {
+            "value": "normal",
+            "label": "Normal",
+            "description": "Soon would be great, but not on fire. Within one business day."
+          },
+          {
+            "value": "whenever",
+            "label": "Whenever",
+            "description": "No rush. Get to it when you can."
+          }
+        ]
+      },
+      {
+        "id": "description",
+        "name": "description",
+        "label": "Tell us more",
+        "type": "textarea",
+        "placeholder": "What were you trying to do, what happened instead, what device/browser you're on if it's a bug. The more context, the faster we can fix it.",
+        "required": true,
+        "rows": 6
+      },
+      {
+        "id": "human_check",
+        "name": "human_check",
+        "type": "human-check",
+        "label": "Type the number above to confirm you're human",
+        "required": true,
+        "digits": 4
+      },
+      {
+        "id": "terms",
+        "name": "terms",
+        "type": "checkbox",
+        "label": "I agree to the <a href=\"/terms/\" target=\"_blank\" rel=\"noopener\">Terms &amp; Conditions</a> and <a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>, and consent to being contacted about this support request.",
+        "value": "accepted",
+        "required": true
+      }
+    ]
+  }
+}

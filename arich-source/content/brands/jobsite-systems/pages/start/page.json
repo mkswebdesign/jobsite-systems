@@ -1,0 +1,321 @@
+{
+  "slug": "start",
+  "path": "/start/",
+  "breadcrumbLabel": "Start Your Site",
+  "seo": {
+    "title": "Start Your Site — Jobsite Systems",
+    "description": "A short guided walkthrough to tell us about your trade business so we can recommend the right plan.",
+    "canonical": "https://jobsite.systems/start/"
+  },
+  "header": {
+    "sectionLabel": "Let's Begin",
+    "heading": "Start Your Site",
+    "lead": "A short guided walkthrough — about 2 minutes. Six quick steps so we understand your business and can give you a real, considered recommendation. Most trade businesses land on the Complete Site at $399/mo — this confirms it's the right call for yours."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New site start from jobsite.systems",
+    "submitLabel": "Submit Site Details",
+    "successMessage": "Got it — your details are in. We'll review everything and get back to you within one business day with a real response, not an auto-reply.",
+    "errorMessage": "Something went wrong. Please try again or email us directly at hello@jobsite.systems.",
+    "steps": [
+      {
+        "id": "project-type",
+        "eyebrow": "Situation",
+        "title": "Where are you starting from?",
+        "description": "Pick the option that best fits. Don't worry about getting it perfect — we can refine on the call.",
+        "fields": [
+          {
+            "id": "project_type",
+            "name": "project_type",
+            "type": "radio-cards",
+            "required": true,
+            "options": [
+              {
+                "value": "no-site",
+                "label": "No website yet",
+                "description": "Starting from scratch."
+              },
+              {
+                "value": "directory-only",
+                "label": "Directory listing only",
+                "description": "Angi / HomeAdvisor / Houzz / similar — and that's it."
+              },
+              {
+                "value": "diy-site",
+                "label": "DIY site that isn't working",
+                "description": "Built it myself and want to replace it."
+              },
+              {
+                "value": "old-wordpress",
+                "label": "Old WordPress site",
+                "description": "Neglected, broken, or hasn't been updated in years."
+              },
+              {
+                "value": "refresh",
+                "label": "Site needs a refresh",
+                "description": "Works fine, but looks outdated."
+              },
+              {
+                "value": "something-else",
+                "label": "Something Else",
+                "description": "Tell us in the details step."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "scope",
+        "eyebrow": "What You Need",
+        "title": "What does your site need?",
+        "description": "Select everything that applies. The Complete Site at $399/mo bundles all of these — picking helps us confirm which matter most for your business.",
+        "fields": [
+          {
+            "id": "scope",
+            "name": "scope",
+            "type": "checkbox-grid",
+            "required": false,
+            "options": [
+              {
+                "value": "specialties-page",
+                "label": "Service / trade pages"
+              },
+              {
+                "value": "photos",
+                "label": "Photo gallery (before-and-after / jobsite)"
+              },
+              {
+                "value": "fees-insurance",
+                "label": "Licensed & insured trust page"
+              },
+              {
+                "value": "inquiry-form",
+                "label": "Estimate-request form"
+              },
+              {
+                "value": "seo-aeo",
+                "label": "SEO and AI engine optimization"
+              },
+              {
+                "value": "testimonials",
+                "label": "Customer reviews"
+              },
+              {
+                "value": "about",
+                "label": "About / owner bio page"
+              },
+              {
+                "value": "service-area",
+                "label": "Service-area callout"
+              },
+              {
+                "value": "resources",
+                "label": "Project portfolio / blog section"
+              },
+              {
+                "value": "migration",
+                "label": "Move content from old site"
+              },
+              {
+                "value": "domain-setup",
+                "label": "Domain setup"
+              },
+              {
+                "value": "analytics",
+                "label": "Analytics setup"
+              },
+              {
+                "value": "not-sure",
+                "label": "Not sure what I need",
+                "description": "Skip this step — we'll figure out the right features together on the call.",
+                "exclusive": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "email",
+        "eyebrow": "Business Email",
+        "title": "Want business email on your domain?",
+        "description": "Real email like you@yourbusiness.com — $10/mo per address. Setup, DNS, spam protection, and ongoing support included. Completely optional.",
+        "fields": [
+          {
+            "id": "email_mgmt",
+            "name": "email_mgmt",
+            "type": "radio-cards",
+            "required": false,
+            "options": [
+              {
+                "value": "no",
+                "label": "No, skip",
+                "description": "Not interested in business email right now."
+              },
+              {
+                "value": "1",
+                "label": "Yes — 1 address",
+                "description": "One mailbox on my domain (e.g., hello@yourbusiness.com)."
+              },
+              {
+                "value": "2-3",
+                "label": "Yes — 2 or 3 addresses",
+                "description": "A couple of mailboxes for different roles or crew leads."
+              },
+              {
+                "value": "4-plus",
+                "label": "Yes — 4 or more",
+                "description": "Multiple mailboxes for crew, dispatch, or separate inboxes."
+              },
+              {
+                "value": "unsure",
+                "label": "Tell me more first",
+                "description": "I'd like to hear the details before deciding."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "timeline",
+        "eyebrow": "Timeline",
+        "title": "When do you need it?",
+        "description": "An honest answer helps us plan. We don't penalize tight timelines — we just need to know.",
+        "fields": [
+          {
+            "id": "timeline",
+            "name": "timeline",
+            "type": "radio-cards",
+            "required": true,
+            "options": [
+              {
+                "value": "asap",
+                "label": "ASAP",
+                "description": "Within the next 1–2 weeks."
+              },
+              {
+                "value": "this-month",
+                "label": "This month",
+                "description": "Before the month ends."
+              },
+              {
+                "value": "before-launch",
+                "label": "Before busy season",
+                "description": "Lining up alongside spring or fall demand."
+              },
+              {
+                "value": "this-quarter",
+                "label": "This quarter",
+                "description": "Roughly 3 months out."
+              },
+              {
+                "value": "flexible",
+                "label": "Flexible",
+                "description": "No fixed deadline."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "budget",
+        "eyebrow": "Plan",
+        "title": "Which plan looks right?",
+        "description": "Most trade businesses pick the Complete Site at $399/mo — bundles all six systems on yearly billing, 30% off the launch price. Rough sense is fine here; we'll confirm on the call.",
+        "fields": [
+          {
+            "id": "budget",
+            "name": "budget",
+            "type": "radio-cards",
+            "required": true,
+            "source": "pricing-tiers",
+            "extraOptions": [
+              {
+                "value": "one-time",
+                "label": "One-Time Build",
+                "description": "One-off build — see the pricing page for current options. You own the files."
+              },
+              {
+                "value": "not-sure",
+                "label": "Not Sure Yet",
+                "description": "Let us recommend on the call."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "about-you",
+        "eyebrow": "About You",
+        "title": "How do we reach you?",
+        "description": "The basics — so we can follow up personally.",
+        "fields": [
+          {
+            "id": "name",
+            "name": "name",
+            "label": "Your Name",
+            "type": "text",
+            "placeholder": "Jane Smith",
+            "required": true,
+            "row": 1,
+            "autocomplete": "name",
+            "autocapitalize": "words"
+          },
+          {
+            "id": "email",
+            "name": "email",
+            "label": "Email Address",
+            "type": "email",
+            "placeholder": "jane@yourbusiness.com",
+            "required": true,
+            "row": 1
+          },
+          {
+            "id": "company",
+            "name": "company",
+            "label": "Business Name",
+            "type": "text",
+            "placeholder": "Your business name",
+            "required": true,
+            "row": 2,
+            "autocomplete": "organization"
+          },
+          {
+            "id": "current_url",
+            "name": "current_url",
+            "label": "Current Website (if any)",
+            "type": "url",
+            "placeholder": "https://",
+            "required": false,
+            "row": 2
+          }
+        ]
+      },
+      {
+        "id": "details",
+        "eyebrow": "Details",
+        "title": "Tell us more.",
+        "description": "Trades you focus on, certifications or specialties, towns or counties you cover — the more context, the sharper our response.",
+        "fields": [
+          {
+            "id": "message",
+            "name": "message",
+            "label": "About Your Business",
+            "type": "textarea",
+            "placeholder": "Trades, specialties, towns or counties covered, anything else we should know about the business.",
+            "required": true
+          },
+          {
+            "id": "terms",
+            "name": "terms",
+            "type": "checkbox",
+            "label": "I agree to the <a href=\"/terms/\" target=\"_blank\" rel=\"noopener\">Terms &amp; Conditions</a> and <a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>, and consent to being contacted about my inquiry.",
+            "value": "accepted",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

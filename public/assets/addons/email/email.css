@@ -1,0 +1,6 @@
+/*
+ * Email addon has no UI of its own. This file exists to satisfy the
+ * addon contract (every addon ships CSS alongside JS so the loader
+ * order stays uniform). If we ever add a visible status pill / debug
+ * overlay, it lands here.
+ */

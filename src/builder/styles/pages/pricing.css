@@ -1,0 +1,345 @@
+/* ============================================
+   Pricing page
+   ============================================ */
+
+.pricing-single { max-width: 480px; margin: 0 auto }
+.pricing-single [hidden] { display: none !important }
+.billing-toggle { display: flex; width: fit-content; gap: 0.25rem; padding: 0.35rem; margin: 0 auto 2.25rem; border-radius: 999px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: inset 0 1px 2px rgba(0,0,0,0.04) }
+.billing-toggle-option { display: inline-flex; flex-direction: column; align-items: center; gap: 0.15rem; padding: 0.6rem 1.4rem; border-radius: 999px; border: none; background: transparent; color: var(--text-muted); font: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background var(--transition), color var(--transition), box-shadow var(--transition), transform var(--transition) }
+.billing-toggle-option:hover { color: var(--text-primary) }
+.billing-toggle-option.is-active { background: var(--accent); color: var(--btn-primary-fg, #fff); box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.35) }
+.billing-toggle-label { line-height: 1 }
+.billing-toggle-note { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9 }
+.pricing-billed-note { font-size: 0.8125rem; color: var(--text-muted); margin: 0 0 1.25rem; line-height: 1.5 }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; max-width: 1120px; margin: 1.5rem auto 0; padding-top: 1rem; align-items: stretch; overflow: visible }
+.pricing-card { display: flex; flex-direction: column; padding: 2.75rem 2rem 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); transition: all var(--transition); position: relative; overflow: visible }
+.pricing-card:hover { border-color: var(--border-light); transform: translateY(-4px); box-shadow: var(--shadow-card) }
+.pricing-card.featured { border-color: var(--accent); background: linear-gradient(135deg, var(--bg-card), var(--bg-primary)); box-shadow: 0 20px 60px rgba(var(--accent-rgb), 0.15); transform: translateY(-12px); padding-top: 3.25rem }
+.pricing-card.featured:hover { transform: translateY(-16px); box-shadow: 0 30px 80px rgba(var(--accent-rgb), 0.25) }
+.pricing-card.featured::before { content: ''; position: absolute; inset: 0; border-radius: var(--radius-lg); padding: 1px; background: linear-gradient(135deg, var(--accent), transparent 50%, var(--accent)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none }
+.pricing-badge { position: absolute; top: -0.9rem; left: 50%; transform: translateX(-50%); padding: 0.4rem 1rem; border-radius: 999px; background: var(--accent); color: var(--btn-primary-fg, #fff); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.45); white-space: nowrap; z-index: 2 }
+.pricing-tier { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem }
+.pricing-price { font-size: clamp(2.25rem, 5vw, 3rem); font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: -0.02em; margin-bottom: 0.5rem; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap }
+.pricing-price-was { font-size: 1.125rem; font-weight: 600; color: var(--text-muted); text-decoration: line-through; text-decoration-thickness: 2px; letter-spacing: 0; opacity: 0.7 }
+.pricing-price-now { display: inline-flex; align-items: baseline }
+.pricing-price-suffix { font-size: 0.9375rem; font-weight: 500; color: var(--text-muted); letter-spacing: 0 }
+.pricing-desc { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border) }
+.pricing-features { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 2rem; flex: 1 }
+.pricing-feature { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.5 }
+.pricing-feature svg { flex-shrink: 0; width: 18px; height: 18px; margin-top: 0.15rem; color: var(--accent) }
+/* Excluded features stay in the list so every card shows the full feature
+   universe — upgrade path is legible at a glance. Muted text + minus glyph
+   reads as "not in this tier" without breaking the card rhythm. */
+.pricing-feature--excluded { color: var(--text-muted); opacity: 0.55 }
+.pricing-feature--excluded svg { color: var(--border-light); opacity: 0.9 }
+.pricing-card .btn { width: 100%; margin-top: auto }
+
+/* --- Feature-based tier toggle (tierGroups) --------------------------
+   Segmented switch + JS-swapped panels. Only rendered when pricing.json
+   supplies a `tierGroups` with 2+ groups; otherwise the page renders a
+   single grid and these rules sit unused. */
+.pricing-toggle-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; margin: 0.5rem auto 1.75rem }
+.pricing-toggle {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+}
+.pricing-toggle-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.6rem 1.35rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.pricing-toggle-btn:hover { color: var(--text-primary) }
+.pricing-toggle-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.pricing-toggle-btn.is-active {
+  background: var(--accent);
+  color: var(--btn-primary-fg, #fff);
+  box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.35);
+}
+
+/* Any brand-specific variants of .pricing-toggle (e.g. the segmented
+   underline "site-style" treatment) live in brands/<id>.css. */
+
+.pricing-group-blurb {
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+/* Variant placement (e.g. blurb-below-cards) and the floating
+   billing-chip rail are brand-specific — see brands/<id>.css. */
+
+.pricing-group[hidden] { display: none }
+.pricing-group:not(.is-active) { display: none }
+
+/* --- Billing-cycle toggle (opt-in via page JSON `billing` block) -----
+   Pairs with the Site-style toggle above it. Yearly tab carries an
+   inline "Save 30%" pill so the discount reads from the control even
+   before the user scans a card. Per-card save pill + billed note render
+   below each price; the inline script toggles their [hidden] attribute
+   when the user swaps cycles. */
+.pricing-toggle--billing .pricing-toggle-btn { display: inline-flex; align-items: center; gap: 0.5rem }
+.pricing-toggle-save {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background var(--transition), color var(--transition);
+}
+.pricing-toggle-btn.is-active .pricing-toggle-save {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.pricing-save-pill {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 0.22rem 0.65rem;
+  margin: 0 0 0.6rem;
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.pricing-save-pill[hidden],
+.pricing-price-was[hidden] { display: none }
+
+@media (max-width: 1060px) {
+  .pricing-grid { grid-template-columns: 1fr; max-width: 480px }
+  .pricing-card.featured { transform: translateY(0) }
+  .pricing-card.featured:hover { transform: translateY(-4px) }
+}
+
+/* --- Limited-time feature promo (opt-in via page JSON `promo`) -------
+   Two surfaces: a slim banner above each tier grid that carries the
+   "Ends in N days" headline, and a per-feature chip that highlights
+   the promoted feature inside each card. Both update client-side so
+   cached HTML doesn't lock in a stale countdown across midnight. */
+/* Wrapper row forces centering in all parent contexts (block, grid, flex) —
+   the banner itself is `width: fit-content`, which relies on the parent's
+   auto-margins resolving, and this dedicated flex row guarantees that. */
+.pricing-promo-banner-row {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1.5rem;
+}
+.pricing-promo-banner {
+  display: inline-flex;
+  width: fit-content;
+  max-width: min(680px, 100%);
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.14), rgba(var(--accent-rgb), 0.06));
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.12);
+  justify-content: center;
+  text-align: center;
+}
+.pricing-promo-banner-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.18);
+  animation: pricingPromoPulse 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.pricing-promo-banner-label {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.pricing-promo-banner-text { color: var(--text-secondary) }
+.pricing-promo-banner[hidden] { display: none }
+
+.pricing-feature--promo { align-items: center; opacity: 1 !important; color: var(--text-secondary) !important }
+.pricing-feature--promo svg { color: var(--accent) !important; opacity: 1 !important }
+.pricing-feature--promo .pricing-feature-name { font-weight: 600; color: var(--text-primary) }
+
+.pricing-feature-promo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--btn-primary-fg, #fff);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.35);
+  white-space: nowrap;
+  animation: pricingPromoPulse 2.4s ease-in-out infinite;
+}
+.pricing-feature-promo[hidden] { display: none }
+.pricing-feature-promo-sep { opacity: 0.75 }
+.pricing-feature-promo-countdown { font-weight: 700; letter-spacing: 0.06em }
+
+@keyframes pricingPromoPulse {
+  0%, 100% { box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.35) }
+  50% { box-shadow: 0 4px 18px rgba(var(--accent-rgb), 0.55) }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pricing-feature-promo,
+  .pricing-promo-banner-dot { animation: none }
+}
+
+@media (max-width: 520px) {
+  .pricing-feature-promo {
+    margin-left: 0;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .pricing-feature--promo { flex-wrap: wrap; row-gap: 0.35rem }
+  .pricing-feature--promo .pricing-feature-name { flex: 1 1 auto }
+}
+
+/* ============================================================
+   One-time build section (.pricing-section--oneoff)
+   ------------------------------------------------------------
+   Variant A (default): centered, airy — same visual weight as
+     the original inline-styled block.
+   Variant B (Card):   wraps the content in a bordered card for
+     more emphasis when the oneoff offer is a secondary CTA on
+     the page and needs to feel like a distinct option, not an
+     afterthought.
+   ============================================================ */
+.pricing-section--oneoff { padding: 4rem 0 }
+.pricing-oneoff-inner { max-width: 600px; margin: 0 auto; text-align: center }
+.pricing-oneoff-heading { max-width: 600px; margin: 0 auto 1rem }
+.pricing-oneoff-body { max-width: 550px; margin: 0 auto 2rem; color: var(--text-secondary); line-height: 1.65 }
+.pricing-oneoff-cta { display: inline-flex }
+
+html[data-pricing-oneoff-variant="B"] .pricing-oneoff-inner {
+  max-width: 720px;
+  padding: 2.75rem 2.25rem 2.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+html[data-pricing-oneoff-variant="B"] .pricing-oneoff-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+html[data-pricing-oneoff-variant="B"] .pricing-oneoff-heading {
+  font-size: clamp(1.35rem, 2.25vw, 1.65rem);
+  margin: 0 auto 0.85rem;
+}
+html[data-pricing-oneoff-variant="B"] .pricing-oneoff-body {
+  margin: 0 auto 1.75rem;
+  font-size: 0.9375rem;
+}
+html[data-pricing-oneoff-variant="B"] .pricing-oneoff-cta {
+  padding: 0.6rem 1.4rem;
+  font-size: 0.8125rem;
+}
+
+/* ---- Compare section ---------------------------------------- */
+/* Label: centered on all breakpoints (variant A only). Variant B
+   overrides this to left-align the label alongside the heading. */
+#compare > .container > .section-label { display: flex; justify-content: center }
+
+/* Mobile: label sits centered on its own line above the heading, rather
+   than picking up the inline-flex baseline behavior that can push the
+   leading accent bar off-axis in narrow viewports. */
+@media (max-width: 640px) {
+  #compare > .container { text-align: center }
+  #compare > .container > .section-label {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.75rem;
+  }
+  #compare > .container > h2,
+  #compare > .container > p {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* Variant B (Minimal) — left-aligned heading, no centered section label
+   treatment, and a tighter compare table so the page reads as a reference
+   page rather than a marketing spread. */
+html[data-pricing-compare-variant="B"] #compare > .container > .section-label {
+  display: inline-flex;
+  justify-content: flex-start;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+html[data-pricing-compare-variant="B"] #compare > .container > h2 {
+  text-align: left !important;
+  margin: 0 0 0.75rem !important;
+  max-width: none !important;
+  font-size: clamp(1.4rem, 2.75vw, 1.875rem);
+}
+html[data-pricing-compare-variant="B"] #compare > .container > p {
+  text-align: left !important;
+  margin: 0 0 2rem !important;
+  max-width: 640px !important;
+}
+html[data-pricing-compare-variant="B"] #compare [data-aed-compare] table,
+html[data-pricing-compare-variant="B"] #compare [data-aed-compare] .compare-table {
+  font-size: 0.875rem;
+}
+html[data-pricing-compare-variant="B"] #compare [data-aed-compare] th,
+html[data-pricing-compare-variant="B"] #compare [data-aed-compare] td {
+  padding: 0.65rem 0.85rem;
+}
+html[data-pricing-compare-variant="B"] .pricing-section--compare {
+  padding-top: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+/* ---- Print button (drop-in slot styled here) -------------------------- */
+.pricing-print-row { display: flex; justify-content: center; align-items: center; text-align: center; margin: -1rem 0 0.5rem }
+.pricing-print-row > [data-print-button] { display: inline-flex; justify-content: center; margin: 0 auto }
+.print-button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; font: inherit; font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border); border-radius: 999px; cursor: pointer; transition: color var(--transition), border-color var(--transition), background var(--transition) }
+.print-button:hover { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--bg-card)) }
+.print-button svg { flex-shrink: 0 }

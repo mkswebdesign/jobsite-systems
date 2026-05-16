@@ -1,0 +1,37 @@
+---
+interface Props {
+  /** Ordered breadcrumb trail. Home is prepended automatically; pass only interior crumbs. */
+  crumbs?: Array<{ label: string; href?: string }>;
+  sectionLabel?: string;
+  heading: string;
+  lead?: string;
+}
+
+const { crumbs = [], sectionLabel, heading, lead } = Astro.props;
+const headingLines = heading.split('\n');
+---
+
+<header
+  class="page-header"
+  id="main"
+  data-section-type="page-header"
+  data-section-label="Page header"
+  data-section-variants="A:Default,B:Minimal,C:Gradient"
+>
+  <div class="container">
+    {crumbs.length > 0 && (
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        {crumbs.map(c => (
+          <>
+            <span>/</span>
+            {c.href ? <a href={c.href}>{c.label}</a> : <span>{c.label}</span>}
+          </>
+        ))}
+      </nav>
+    )}
+    {sectionLabel && <span class="section-label reveal">{sectionLabel}</span>}
+    <h1>{headingLines.map((line, i) => <>{i > 0 && <br class="page-header-break" />}{line}</>)}</h1>
+    {lead && <p class="lead">{lead}</p>}
+  </div>
+</header>

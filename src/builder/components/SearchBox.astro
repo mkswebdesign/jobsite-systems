@@ -1,0 +1,39 @@
+---
+/**
+ * SearchBox — magnifying-glass + inline input that submits to /search/?q=.
+ * Pass 3 makes the component functional (Pass 2 shipped a stub icon-link).
+ *
+ * Behavior:
+ *   - On wide screens, renders an icon button + input. Pressing Enter (or
+ *     submitting the form) navigates to /search/?q=<value>.
+ *   - On mobile/narrow screens, the form is hidden and the icon falls back
+ *     to a plain link to /search/.
+ *
+ * Mounting: NOT added to nav this pass. Pass 4 wires it into Nav for swift-digest.
+ */
+interface Props { href?: string; label?: string; }
+const { href = '/search/', label = 'Search' } = Astro.props;
+---
+<form class="searchbox searchbox--wide" role="search" action={href} method="get">
+  <button class="searchbox__btn" type="submit" aria-label={label}>
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  </button>
+  <input
+    class="searchbox__input"
+    type="search"
+    name="q"
+    placeholder="Search…"
+    aria-label={label}
+    autocomplete="off"
+  />
+</form>
+<a class="searchbox searchbox--narrow" href={href} aria-label={label}>
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+  <span class="searchbox__label">{label}</span>
+</a>

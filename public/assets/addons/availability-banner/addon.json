@@ -1,0 +1,29 @@
+{
+  "name": "availability-banner",
+  "assets": {
+    "css": ["availability-banner.css"],
+    "js":  ["availability-banner.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:availability",
+        "description": "Optional. URL to a JSON file matching the inline schema below. If set, the addon fetches state from this URL instead of reading the inline block — useful for backend-driven updates without rebuild.",
+        "default": "/data/availability.json"
+      }
+    ],
+    "json": [
+      {
+        "id": "aed-availability",
+        "description": "Inline state for every <div data-aed-availability> on the page. Use this OR the meta-fetched JSON, not both. Omit entirely to silently hide every availability slot.",
+        "fields": {
+          "status":     { "type": "string", "default": "open", "enum": ["open", "limited", "booked"],          "description": "Drives the dot color and ARIA label." },
+          "text":       { "type": "string", "required": true,                                                  "description": "Headline copy. Supports **bold** via Markdown-style **emphasis** (e.g. '**3 spots remaining** for May launches')." },
+          "footnote":   { "type": "string",                                                                    "description": "Small print under the headline (e.g. 'Updated April 19, 2026')." },
+          "cta.label":  { "type": "string",                                                                    "description": "Optional CTA button label." },
+          "cta.href":   { "type": "string",                                                                    "description": "Optional CTA URL." }
+        }
+      }
+    ]
+  }
+}

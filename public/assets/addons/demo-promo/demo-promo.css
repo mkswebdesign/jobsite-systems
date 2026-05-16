@@ -1,0 +1,227 @@
+/*
+ * Demo Promo — small bottom-right toast that appears after a scroll
+ * threshold and points visitors to a sample demo page.
+ *
+ * Goals:
+ *   - Quiet, non-intrusive: small, unobtrusive position, gentle entry.
+ *   - Themed via brand tokens (--bg-card, --text-primary, --accent, etc.)
+ *     so it adapts across vibrant / dark / bright modes without
+ *     per-mode overrides.
+ *   - Respects prefers-reduced-motion (no slide-in, no fade transitions).
+ */
+
+.aed-demo-promo {
+  position: fixed;
+  z-index: 80; /* below modals (~90), above body content */
+  bottom: 1rem;
+  right: 1rem;
+  width: 340px;
+  max-width: calc(100vw - 2rem);
+  padding: 1rem 1.1rem 1.1rem;
+  background: var(--bg-card, #ffffff);
+  color: var(--text-primary, #111827);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+  border-radius: 14px;
+  box-shadow:
+    0 18px 40px -12px rgba(0, 0, 0, 0.28),
+    0 4px 10px -2px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Hidden until JS toggles `data-show="true"`. We use opacity + transform
+     instead of display:none so the entry transition can animate. */
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.aed-demo-promo[data-show="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Position variants */
+.aed-demo-promo[data-position="bottom-left"] {
+  right: auto;
+  left: 1rem;
+}
+.aed-demo-promo[data-position="bottom-center"] {
+  right: auto;
+  left: 50%;
+  transform: translate(-50%, 12px);
+}
+.aed-demo-promo[data-position="bottom-center"][data-show="true"] {
+  transform: translate(-50%, 0);
+}
+
+/* Eyebrow — tiny accent-colored label above the heading. */
+.aed-demo-promo__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* --accent-text is theme-aware on brands that define it (auto-flips to
+     a readable shade on light surfaces); fall back to --accent. */
+  color: var(--accent-text, var(--accent, #2563eb));
+}
+.aed-demo-promo__eyebrow-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.aed-demo-promo__heading {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  /* Reserve space for the close button so heading wrapping doesn't
+     crash into it. */
+  padding-right: 1.75rem;
+}
+
+.aed-demo-promo__body {
+  margin: 0 0 0.85rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #111827) 75%, transparent));
+}
+
+.aed-demo-promo__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.aed-demo-promo__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.95rem;
+  background: var(--brand-surface, var(--accent, #2563eb));
+  color: var(--brand-on-surface, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--brand-on-surface, #ffffff) 18%, transparent);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.83rem;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+}
+.aed-demo-promo__cta:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 6px 14px -4px color-mix(in srgb, var(--accent, #2563eb) 35%, transparent);
+}
+.aed-demo-promo__cta:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
+}
+.aed-demo-promo__cta-arrow {
+  display: inline-block;
+  transition: transform 180ms ease;
+}
+.aed-demo-promo__cta:hover .aed-demo-promo__cta-arrow {
+  transform: translateX(2px);
+}
+
+.aed-demo-promo__secondary {
+  font-size: 0.78rem;
+  color: var(--text-muted, color-mix(in srgb, var(--text-primary, #111827) 60%, transparent));
+  background: transparent;
+  border: 0;
+  padding: 0.5rem 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 140ms ease, color 140ms ease;
+}
+.aed-demo-promo__secondary:hover {
+  color: var(--text-primary, #111827);
+  background: color-mix(in srgb, var(--text-primary, #111827) 6%, transparent);
+}
+.aed-demo-promo__secondary:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Close (X) — top-right corner, doesn't trigger the dismiss flag if
+   the user just wants to dismiss this visit. The 'No thanks' secondary
+   IS the explicit-dismiss path; X is a softer "close for now" — but
+   to keep this addon predictable, both currently set the dismiss flag.
+   Future tweak: differentiate the two if user feedback warrants. */
+.aed-demo-promo__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.55rem;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-muted, color-mix(in srgb, var(--text-primary, #111827) 50%, transparent));
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: background 140ms ease, color 140ms ease;
+}
+.aed-demo-promo__close:hover {
+  color: var(--text-primary, #111827);
+  background: color-mix(in srgb, var(--text-primary, #111827) 8%, transparent);
+}
+.aed-demo-promo__close:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Reduced-motion — drop the slide; just fade. */
+@media (prefers-reduced-motion: reduce) {
+  .aed-demo-promo {
+    transform: none;
+    transition: opacity 200ms ease;
+  }
+  .aed-demo-promo[data-show="true"] {
+    transform: none;
+  }
+  .aed-demo-promo[data-position="bottom-center"],
+  .aed-demo-promo[data-position="bottom-center"][data-show="true"] {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile — full-bleed at the bottom with a tighter padding so the
+   toast doesn't crowd the viewport but still reads as a separate
+   surface from the page content. */
+@media (max-width: 480px) {
+  .aed-demo-promo {
+    width: auto;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.85rem 0.95rem 1rem;
+  }
+  .aed-demo-promo[data-position="bottom-left"],
+  .aed-demo-promo[data-position="bottom-center"] {
+    left: 0.75rem;
+    right: 0.75rem;
+    transform: translateY(12px);
+  }
+  .aed-demo-promo[data-position="bottom-left"][data-show="true"],
+  .aed-demo-promo[data-position="bottom-center"][data-show="true"] {
+    transform: translateY(0);
+  }
+}

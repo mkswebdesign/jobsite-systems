@@ -1,0 +1,396 @@
+---
+/**
+ * /demo/ — sample-site lobby. Lists every demo on the current brand
+ * (one card per demo, sourced from each demo's `home` page entry in the
+ * `demoPages` collection). Reachable from the floating "All demos" link
+ * inside any demo's nav pill.
+ *
+ * Hidden from search the same way demo pages are: `indexable={false}`
+ * (noindex meta) and the existing `Disallow: /demo/` line in robots.txt
+ * (covers this index path automatically).
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../builder/layouts/Base.astro';
+import { demoDisplayName } from '../../lib/demo-names';
+import { brand } from '../../builder/lib/brand';
+
+const all = await getCollection('demoPages');
+const demos = all
+  .filter((entry) => entry.id.endsWith('/home'))
+  .map((entry) => {
+    const demoId = entry.id.split('/')[0];
+    const data: any = entry.data;
+    return {
+      id: demoId,
+      name: demoDisplayName(demoId),
+      description: (data.seo && data.seo.description) || '',
+      href: `/demo/${demoId}/`,
+    };
+  })
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const brandName = brand.name;
+const niche = (brand as any).niche || 'business';
+---
+
+<Base
+  title="Demo sites"
+  description={`A lobby of working demo sites built on the ${brandName} platform.`}
+  indexable={false}
+  skipTarget="#main"
+>
+  <main id="main" class="demo-archive">
+    <section class="demo-archive__hero" data-section-type="demo-archive-hero" data-section-label="Demo archive hero">
+      <div class="container">
+        <div class="demo-archive__hero-copy">
+          <p class="demo-archive__eyebrow">
+            <span class="demo-archive__eyebrow-dot" aria-hidden="true"></span>
+            Demo sites
+          </p>
+          <h1 class="demo-archive__heading">Working demos, end&#8209;to&#8209;end.</h1>
+          <p class="demo-archive__lead">
+            Each card opens a complete demo site — every page, every section, every interaction. The businesses are made up; the build is real, and it&rsquo;s the same stack {brandName} ships to clients.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-archive__list-wrap" data-section-type="demo-archive-list" data-section-label="Demo archive list">
+      <div class="container">
+        {demos.length === 0 ? (
+          <p class="demo-archive__empty">No demos staged yet — check back soon.</p>
+        ) : (
+          <ul class="demo-archive__grid" role="list">
+            {demos.map((demo, i) => {
+              const num = String(i + 1).padStart(2, '0');
+              return (
+                <li class="demo-archive__card">
+                  <a class="demo-archive__link" href={demo.href}>
+                    <span class="demo-archive__num" aria-hidden="true">{num}</span>
+                    <div class="demo-archive__body">
+                      <span class="demo-archive__chip">Demo</span>
+                      <span class="demo-archive__name">{demo.name}</span>
+                      {demo.description && <span class="demo-archive__desc">{demo.description}</span>}
+                    </div>
+                    <span class="demo-archive__cta" aria-hidden="true">
+                      <span>View demo</span>
+                      <span class="demo-archive__cta-arrow">→</span>
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </section>
+
+    <section class="demo-archive__footer" data-section-type="demo-archive-footer" data-section-label="Demo archive footer">
+      <div class="container">
+        <div class="demo-archive__footer-copy">
+          <p class="demo-archive__footer-meta">More demos shipping over the season.</p>
+          <p class="demo-archive__footer-text">
+            Each demo is a fully-styled {niche} site — services pages, pricing, work showcase, contact form, the whole build. Walk through one to see what your site could look like; it&rsquo;s the easiest way to decide if {brandName} is a fit.
+          </p>
+          <div class="demo-archive__footer-actions">
+            <a class="demo-archive__footer-cta" href="/start/">
+              <span>Start your site</span>
+              <span class="demo-archive__cta-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="demo-archive__footer-link" href="/contact/">Or talk to us first</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style is:global>
+  /* /demo/ lobby — hidden from search, comfortable padding, mobile-first.
+     Three vertical bands: hero (intro), grid (cards), footer (framing).
+     Each band uses the brand's `.container` for max-width + side padding,
+     and clamp()-based block padding so the rhythm scales smoothly from
+     mobile to desktop without media-query churn. */
+
+  .demo-archive {
+    min-height: 60vh;
+    background: var(--bg-primary, #0d1410);
+    color: var(--text-primary, #f5f6f5);
+  }
+
+  /* HERO BAND ------------------------------------------------------- */
+  /* All three bands inherit the same `.container` width (var(--max-w),
+     which is 1200px on landscape-systems) so the bands align edge-to-edge
+     down the page. Inside each band, the COPY block gets a narrower
+     readable max-width — that constrains line length without making the
+     band itself feel narrower than the grid. */
+  .demo-archive__hero {
+    padding: clamp(3rem, 7vw, 141px) 0 clamp(1.75rem, 4vw, 2.75rem);
+    border-bottom: 1px solid color-mix(in srgb, var(--text-primary, #f5f6f5) 8%, transparent);
+  }
+  .demo-archive__hero-copy {
+    max-width: 44rem;
+  }
+  .demo-archive__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1.1rem;
+    font: 700 0.78rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-text, var(--accent, #b3d855));
+  }
+  .demo-archive__eyebrow-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent);
+  }
+  .demo-archive__heading {
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 4.6vw, 3.25rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: var(--text-primary, #f5f6f5);
+  }
+  .demo-archive__lead {
+    margin: 0;
+    font-size: clamp(1.05rem, 1.45vw, 1.22rem);
+    line-height: 1.55;
+    color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #f5f6f5) 70%, transparent));
+  }
+
+  /* GRID BAND ------------------------------------------------------- */
+  .demo-archive__list-wrap {
+    padding: clamp(2rem, 4.5vw, 3.25rem) 0 clamp(2.5rem, 5vw, 4rem);
+  }
+  .demo-archive__empty {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #f5f6f5) 70%, transparent));
+    padding: 2.5rem 0;
+    text-align: center;
+    border: 1px dashed color-mix(in srgb, var(--text-primary, #f5f6f5) 18%, transparent);
+    border-radius: 14px;
+  }
+
+  .demo-archive__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  }
+  .demo-archive__card {
+    display: flex;
+  }
+  .demo-archive__link {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr auto;
+    column-gap: 1.1rem;
+    row-gap: 0;
+    width: 100%;
+    padding: clamp(1.4rem, 2.4vw, 1.85rem);
+    border-radius: 16px;
+    text-decoration: none;
+    background: color-mix(in srgb, var(--text-primary, #f5f6f5) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-primary, #f5f6f5) 12%, transparent);
+    color: var(--text-primary, #f5f6f5);
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 180ms ease,
+                background-color 180ms ease,
+                box-shadow 220ms ease;
+  }
+  .demo-archive__link:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent, #b3d855) 55%, transparent);
+    background: color-mix(in srgb, var(--accent, #b3d855) 7%, color-mix(in srgb, var(--text-primary, #f5f6f5) 4%, transparent));
+    box-shadow: 0 14px 32px -16px color-mix(in srgb, var(--accent, #b3d855) 55%, transparent);
+  }
+  .demo-archive__link:focus-visible {
+    outline: 2px solid var(--accent, #b3d855);
+    outline-offset: 3px;
+  }
+
+  /* Numbered marker on the left — gives the cards a "curated index" feel
+     instead of a generic grid. */
+  .demo-archive__num {
+    grid-row: 1 / span 3;
+    align-self: start;
+    font: 800 1.65rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    color: color-mix(in srgb, var(--accent, #b3d855) 60%, transparent);
+    /* Hairline beneath aligns to the chip baseline on the right column. */
+    padding-top: 0.18rem;
+  }
+
+  .demo-archive__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .demo-archive__chip {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.22rem 0.6rem;
+    background: var(--accent, #b3d855);
+    color: var(--brand-on-surface, #0b2f08);
+    border-radius: 999px;
+    font: 800 0.62rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+  .demo-archive__name {
+    font-size: clamp(1.2rem, 1.85vw, 1.45rem);
+    font-weight: 700;
+    letter-spacing: -0.012em;
+    line-height: 1.22;
+  }
+  .demo-archive__desc {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #f5f6f5) 70%, transparent));
+  }
+
+  .demo-archive__cta {
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent-text, var(--accent, #b3d855));
+  }
+  .demo-archive__cta-arrow {
+    display: inline-block;
+    transition: transform 180ms ease;
+  }
+  .demo-archive__link:hover .demo-archive__cta-arrow {
+    transform: translateX(3px);
+  }
+
+  /* FOOTER BAND ----------------------------------------------------- */
+  .demo-archive__footer {
+    padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(3.5rem, 7vw, 6rem);
+    border-top: 1px solid color-mix(in srgb, var(--text-primary, #f5f6f5) 8%, transparent);
+  }
+  .demo-archive__footer-copy {
+    max-width: 44rem;
+  }
+  .demo-archive__footer-meta {
+    margin: 0 0 0.85rem;
+    font: 700 0.72rem/1 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted, color-mix(in srgb, var(--text-primary, #f5f6f5) 55%, transparent));
+  }
+  .demo-archive__footer-text {
+    margin: 0 0 1.5rem;
+    font-size: clamp(0.98rem, 1.25vw, 1.08rem);
+    line-height: 1.6;
+    color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #f5f6f5) 70%, transparent));
+  }
+  .demo-archive__footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.25rem;
+  }
+  .demo-archive__footer-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.78rem 1.35rem;
+    background: var(--brand-surface, var(--accent, #b3d855));
+    color: var(--brand-on-surface, #0b2f08);
+    border: 1px solid color-mix(in srgb, var(--brand-on-surface, #0b2f08) 16%, transparent);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: transform 180ms ease, filter 180ms ease, box-shadow 220ms ease;
+  }
+  .demo-archive__footer-cta:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+    box-shadow: 0 10px 22px -8px color-mix(in srgb, var(--accent, #b3d855) 50%, transparent);
+  }
+  .demo-archive__footer-cta:hover .demo-archive__cta-arrow {
+    transform: translateX(3px);
+  }
+  .demo-archive__footer-cta:focus-visible {
+    outline: 2px solid var(--accent, #b3d855);
+    outline-offset: 3px;
+  }
+  .demo-archive__footer-link {
+    color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #f5f6f5) 70%, transparent));
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    font-size: 0.92rem;
+  }
+  .demo-archive__footer-link:hover {
+    color: var(--text-primary, #f5f6f5);
+  }
+  .demo-archive__footer-link:focus-visible {
+    outline: 2px solid var(--accent, #b3d855);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* MOBILE TIGHTENING ---------------------------------------------- */
+  @media (max-width: 480px) {
+    /* On the smallest screens, the numbered marker reads cleaner above
+       the body than to its left — gives the chip room to breathe. */
+    .demo-archive__link {
+      grid-template-columns: 1fr;
+      row-gap: 0.4rem;
+    }
+    .demo-archive__num {
+      grid-row: auto;
+      grid-column: 1;
+      font-size: 1.4rem;
+      padding: 0;
+    }
+    .demo-archive__body {
+      grid-row: auto;
+      grid-column: 1;
+    }
+    .demo-archive__cta {
+      grid-row: auto;
+      grid-column: 1;
+      margin-top: 0.85rem;
+    }
+  }
+
+  /* REDUCED MOTION ------------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    .demo-archive__link,
+    .demo-archive__cta-arrow,
+    .demo-archive__footer-cta {
+      transition: none;
+    }
+    .demo-archive__link:hover {
+      transform: none;
+    }
+    .demo-archive__link:hover .demo-archive__cta-arrow,
+    .demo-archive__footer-cta:hover .demo-archive__cta-arrow {
+      transform: none;
+    }
+  }
+</style>

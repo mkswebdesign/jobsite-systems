@@ -1,0 +1,185 @@
+{
+  "slug": "start",
+  "path": "/start/",
+  "breadcrumbLabel": "Request a Service Call",
+  "seo": {
+    "title": "Request a Service Call — Cedar Mill Plumbing",
+    "description": "Tell me what's going on with the plumbing — about 2 minutes to fill out. I'll respond personally inside a few hours during business days with scheduling options.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/start/"
+  },
+  "header": {
+    "sectionLabel": "Request a service call",
+    "heading": "Tell me what's going on with the plumbing.",
+    "lead": "About two minutes. I'll reach out personally within a few hours during business days with scheduling options. If it's an active emergency right now (burst pipe, sewage backup, no hot water tonight, gas smell), please call (503) 555-0149 instead — the form is checked during business hours; the phone is checked 24/7."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New service request from Cedar Mill Plumbing",
+    "submitLabel": "Submit Request",
+    "successMessage": "Got it — your request is in. I'll reach out within a few hours with scheduling options.",
+    "errorMessage": "Something went wrong. Please try again or call directly: (503) 555-0149.",
+    "steps": [
+      {
+        "id": "topic",
+        "eyebrow": "What's the job",
+        "title": "What's going on with the plumbing?",
+        "description": "Pick the closest fit. We'll go deeper at the visit — this is just so I bring the right gear in the truck.",
+        "fields": [
+          {
+            "id": "topic",
+            "name": "topic",
+            "type": "radio-cards",
+            "required": true,
+            "options": [
+              { "value": "drain", "label": "Drain or backup", "description": "Slow, gurgling, or fully backed up — branch drain or mainline." },
+              { "value": "water-heater", "label": "Water heater", "description": "No hot water, leaking tank, or planning a replacement." },
+              { "value": "leak", "label": "Leak repair / detection", "description": "Visible drip, hidden leak, slab leak, or unexplained water bill." },
+              { "value": "repipe", "label": "Repipe or larger project", "description": "Galvanized or polybutylene replacement, or a planned remodel rough-in." },
+              { "value": "fixture", "label": "Fixture work", "description": "Faucet, toilet, hose bib, or shutoff replacement." },
+              { "value": "other", "label": "Something else", "description": "Tell me at the details step — I'll be honest about whether I'm the right plumber for the job." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "urgency",
+        "eyebrow": "How urgent",
+        "title": "How soon do you need someone out?",
+        "description": "No wrong answer — this just helps me get you on the right slot. If it's actively leaking right now, please call (503) 555-0149 instead.",
+        "fields": [
+          {
+            "id": "urgency",
+            "name": "urgency",
+            "type": "radio-cards",
+            "required": true,
+            "options": [
+              { "value": "emergency", "label": "Emergency right now", "description": "Active leak, sewage backup, no hot water tonight — please call (503) 555-0149 instead." },
+              { "value": "this-week", "label": "This week if possible", "description": "Working but want it handled soon." },
+              { "value": "next-week", "label": "Next week is fine", "description": "Routine — book it at my convenience." },
+              { "value": "estimate", "label": "Estimate for a project", "description": "Planning ahead, looking for a written quote." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "location",
+        "eyebrow": "Where",
+        "title": "Where's the house?",
+        "description": "I cover Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland (97225, 97229, 97006, 97005, 97124, 97210, 97231). Outside that radius I usually decline so I can hit response times inside it.",
+        "fields": [
+          {
+            "id": "location",
+            "name": "location",
+            "type": "radio-cards",
+            "required": true,
+            "options": [
+              { "value": "cedar-mill", "label": "Cedar Mill (97229)", "description": "" },
+              { "value": "bethany", "label": "Bethany (97229)", "description": "" },
+              { "value": "beaverton", "label": "Beaverton (97005, 97006, 97225)", "description": "" },
+              { "value": "hillsboro", "label": "Hillsboro (97124)", "description": "" },
+              { "value": "nw-portland", "label": "NW Portland (97210, 97231)", "description": "" },
+              { "value": "other", "label": "Somewhere else", "description": "I'll tell you straight whether it's inside the service radius." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "property",
+        "eyebrow": "Property type",
+        "title": "What kind of property?",
+        "description": "Most of my work is single-family residential. I do small property-management portfolios but not new commercial construction.",
+        "fields": [
+          {
+            "id": "property_type",
+            "name": "property_type",
+            "type": "radio-cards",
+            "required": false,
+            "options": [
+              { "value": "owner-occupied", "label": "Owner-occupied home", "description": "Living in it." },
+              { "value": "rental", "label": "Rental I own", "description": "I'll work directly with you or with the tenant." },
+              { "value": "property-manager", "label": "Property manager", "description": "Multiple units, ongoing relationship." },
+              { "value": "remodel", "label": "Remodel / new build", "description": "Working with a GC or doing it yourself." },
+              { "value": "other", "label": "Something else", "description": "Tell me at the details step." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "about-you",
+        "eyebrow": "About you",
+        "title": "How do I reach you?",
+        "description": "First name is fine. Phone is the fastest way for scheduling — I'll text or call back, your preference.",
+        "fields": [
+          {
+            "id": "name",
+            "name": "name",
+            "label": "Your Name",
+            "type": "text",
+            "placeholder": "First name is fine",
+            "required": true,
+            "row": 1
+          },
+          {
+            "id": "email",
+            "name": "email",
+            "label": "Email Address",
+            "type": "email",
+            "placeholder": "you@example.com",
+            "required": true,
+            "row": 1
+          },
+          {
+            "id": "phone",
+            "name": "phone",
+            "label": "Phone (best for scheduling)",
+            "type": "tel",
+            "placeholder": "(503) 555-0149",
+            "required": true,
+            "row": 2,
+            "autocomplete": "tel"
+          },
+          {
+            "id": "best_time",
+            "name": "best_time",
+            "label": "Best time to reach you?",
+            "type": "select",
+            "required": false,
+            "row": 2,
+            "options": [
+              { "value": "", "label": "Pick a window…", "disabled": true, "selected": true },
+              { "value": "morning", "label": "Weekday morning (7a-11a)" },
+              { "value": "afternoon", "label": "Weekday afternoon (11a-4p)" },
+              { "value": "evening", "label": "Weekday evening (4p-7p)" },
+              { "value": "anytime", "label": "Any weekday" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "details",
+        "eyebrow": "Details",
+        "title": "Anything else I should know?",
+        "description": "What's happening, when it started, where in the house. Any unusual access — crawlspace, finished ceiling, pets that need to be put away. The more I know up front, the more efficient the visit.",
+        "fields": [
+          {
+            "id": "message",
+            "name": "message",
+            "label": "Note (optional)",
+            "type": "textarea",
+            "placeholder": "What's going on, when it started, where in the house. Anything weird about access. Photos welcome at the visit — no need to attach here.",
+            "required": false
+          },
+          {
+            "id": "terms",
+            "name": "terms",
+            "type": "checkbox",
+            "label": "I understand this form is for non-emergency requests. If I have an active emergency right now (burst pipe, sewage backup, no hot water tonight, gas smell), I will call (503) 555-0149 directly. I agree to the <a href=\"/terms/\" target=\"_blank\" rel=\"noopener\">Terms</a> and <a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>.",
+            "value": "accepted",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

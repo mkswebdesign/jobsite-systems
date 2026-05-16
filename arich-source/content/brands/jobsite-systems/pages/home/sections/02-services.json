@@ -1,0 +1,15 @@
+{
+  "type": "services",
+  "variant": "a",
+  "sectionLabel": "Services",
+  "heading": "Everything a trade business needs. Nothing it doesn't.",
+  "subtext": "A complete website plus the practical add-ons trade businesses actually use — estimate-request forms, crew bios, local SEO, and hands-off hosting. Skip the WordPress maintenance trap.",
+  "serviceSlugs": [
+    "starter-site",
+    "lead-forms",
+    "local-seo",
+    "photo-galleries",
+    "hosting-care",
+    "email-management"
+  ]
+}

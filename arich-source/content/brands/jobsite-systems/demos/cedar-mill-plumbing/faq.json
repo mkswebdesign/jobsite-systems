@@ -1,0 +1,97 @@
+{
+  "groups": [
+    {
+      "id": "how-we-work",
+      "title": "How We Work",
+      "faqs": [
+        {
+          "id": "what-we-do",
+          "question": "What kinds of jobs do you take?",
+          "answer": "Residential plumbing across NW Portland and the Westside — drain cleaning, water heater install and repair, leak detection, repipe, and 24/7 emergency dispatch. I take small repairs and bigger projects up through full whole-house repipes. I don't do new commercial construction, septic, or well work — for those I refer to a colleague who specializes."
+        },
+        {
+          "id": "service-area",
+          "question": "Where do you work?",
+          "answer": "Cedar Mill, Bethany, Beaverton, Hillsboro, and most of NW Portland — 97225, 97229, 97006, 97005, 97124, 97210, 97231. Outside that radius I'll usually decline so I can hit my service-time commitments inside it. If you're close to the edge, call and ask."
+        },
+        {
+          "id": "free-estimate",
+          "question": "Are estimates free?",
+          "answer": "Free written estimates on projects $500 and up — water heater replacements, repipes, slab leak repairs, larger jobs. For service calls under $500 (drain cleaning, faucet swap, leak repair) I quote a flat rate over the phone or arrive with the price published, no diagnostic fee."
+        },
+        {
+          "id": "first-visit",
+          "question": "What happens on the first visit?",
+          "answer": "I show up in the work truck — boots come off at the door, drop cloths down on flooring, walk the job with you. For estimate visits, I leave with the scope and you get a written quote in your email by end of business that day, usually faster. For service calls, I diagnose and fix the issue same visit if I have the parts, or schedule the return promptly if I don't."
+        }
+      ]
+    },
+    {
+      "id": "pricing-billing",
+      "title": "Pricing & Payment",
+      "faqs": [
+        {
+          "id": "how-pricing-works",
+          "question": "How does pricing work?",
+          "answer": "Flat-rate on common service calls (e.g., $189 drain cleaning, $329 water heater inspect-and-flush, $189 leak detection visit). Bigger projects get a written, per-job estimate before any work starts. No hourly meter running, no surprise add-ons after the fact, no diagnostic fee on top of repair."
+        },
+        {
+          "id": "common-rates",
+          "question": "What does this fix usually cost?",
+          "answer": "A few real ranges: branch drain cleaning $189 flat. Mainline clear $289 flat. 50-gal gas water heater installed $1,650, electric $1,890. Tankless gas conversion $4,800 to $6,400. Toilet replacement $295 plus parts. Hydro jetting $499 to $799 by line length. Whole-house PEX repipe $7,500 to $14,500 depending on house size and access."
+        },
+        {
+          "id": "payment-methods",
+          "question": "How do I pay?",
+          "answer": "Card, ACH, check, or cash on completion for service calls. Larger projects (over $2,500) take a deposit at scheduling — typically 30% — with the balance on completion. Invoices are emailed and paid through a secure link. No paper-only nonsense."
+        },
+        {
+          "id": "after-hours",
+          "question": "What about after-hours pricing?",
+          "answer": "Standard rates plus a $125 after-hours fee for evenings, overnights, weekends, and holidays. No additional dispatch or trip fee on top of that. Saturday morning calls (8am to noon) are sometimes treated as standard hours during heavy seasons — call and ask."
+        },
+        {
+          "id": "warranty",
+          "question": "Do you warranty your work?",
+          "answer": "1-year workmanship warranty on standard service work. 5-year workmanship warranty on whole-house repipes. Manufacturer warranty pass-through on water heaters, fixtures, and valves — I file the claim if a covered part fails inside the manufacturer window. If something I installed fails, I come back. No charge."
+        }
+      ]
+    },
+    {
+      "id": "logistics",
+      "title": "Scheduling & Trust",
+      "faqs": [
+        {
+          "id": "how-soon",
+          "question": "How soon can you come out?",
+          "answer": "Non-emergency service calls usually inside 3 to 5 business days, sometimes same-week. Emergency dispatch (burst pipe, mainline backup, water heater failure) is 24/7 within the service area, with 30 to 60 minute typical arrival. Estimate visits for projects book at your convenience, often within a week."
+        },
+        {
+          "id": "messaging",
+          "question": "What's the best way to reach you?",
+          "answer": "Phone first — (503) 555-0149. I answer when I can. Text and email reach me too, and I respond personally, usually inside the same business day. No call center, no triage line, no \"someone will be in touch.\" If I can't talk in the moment I'll text back with a real ETA."
+        },
+        {
+          "id": "license-insurance",
+          "question": "Are you licensed, bonded, and insured?",
+          "answer": "Yes. Licensed Oregon plumber, Oregon CCB # (placeholder), full general liability, workers' comp, and bonded. License and insurance certificates available on request before any work starts. 18 years in the trade, 6 years running Cedar Mill Plumbing."
+        },
+        {
+          "id": "after-hours-emergency",
+          "question": "What counts as an emergency?",
+          "answer": "Anything where shutting the main off won't hold until morning, or a situation that's actively damaging the house — burst supply line, mainline backup with sewage in the house, water heater leaking through a ceiling, gas smell at a fixture. If you're not sure, call. I'll tell you straight whether it can wait or whether I'm coming out tonight."
+        },
+        {
+          "id": "permits",
+          "question": "Do you pull permits?",
+          "answer": "Yes — water heater replacements, gas line work, repipes, and any work the city or county requires. The permit is part of the written estimate; you don't get a separate bill for it. Inspections scheduled and signed off by me, not subbed out."
+        },
+        {
+          "id": "small-shop",
+          "question": "Why book a one-truck shop instead of a big company?",
+          "answer": "You get the same plumber every time. The person on the phone is the person under the sink. There's no upsell quota, no commission structure, no \"my supervisor recommended\" pitches. The tradeoff is scheduling — I can't be in two places at once, so non-emergency work books out a few days. For most homeowners that tradeoff is the right one."
+        }
+      ]
+    }
+  ]
+}

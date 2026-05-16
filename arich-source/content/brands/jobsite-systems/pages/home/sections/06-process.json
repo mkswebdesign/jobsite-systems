@@ -1,0 +1,40 @@
+{
+  "type": "process",
+  "sectionLabel": "How It Works",
+  "heading": "Simple process.\nReliable result.",
+  "subtext": "No long discovery phase, no mystery invoices. Here's how we go from call to live site.",
+  "steps": [
+    {
+      "number": "01",
+      "title": "Intro Call",
+      "body": "A short call to cover your trades, service area, and what you want the site to do. No pitch, just listening."
+    },
+    {
+      "number": "02",
+      "title": "Content Handoff",
+      "body": "Send us your license info, headshot or crew photo, services, and pricing notes — as much or as little as you have on hand. We organize what you send and fill in the rest, so there's no builder to learn."
+    },
+    {
+      "number": "03",
+      "title": "Design & Build",
+      "body": "We build your site on our trade-business template system — brand-matched, mobile-first, and credible by design."
+    },
+    {
+      "number": "04",
+      "title": "Review",
+      "body": "You review a staging link. One round of revisions is included — we adjust wording, photos, and sections until it's right."
+    },
+    {
+      "number": "05",
+      "title": "Launch",
+      "body": "We point your domain, turn on SSL and analytics, register the site with Google and the AI answer engines — then it's live and findable everywhere."
+    },
+    {
+      "number": "06",
+      "title": "Hands-Off Ongoing",
+      "body": "Your site stays up and updated. Need a new service page or a service-area change? Send a note and we handle it."
+    }
+  ],
+  "ctaLabel": "See Full Process",
+  "ctaHref": "/process/"
+}

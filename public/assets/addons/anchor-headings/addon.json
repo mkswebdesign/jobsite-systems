@@ -1,0 +1,21 @@
+{
+  "name": "anchor-headings",
+  "assets": {
+    "css": ["anchor-headings.css"],
+    "js":  ["anchor-headings.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:anchor-headings",
+        "default": "on",
+        "required": true,
+        "description": "Master switch. Set content to 'on'/'true'/'1' to inject permalink anchors next to headings. Per-page opt-out: data-aed-anchor-headings='off' on <html>.",
+        "attrs": {
+          "data-scope":  { "type": "string",   "default": "main, article", "description": "CSS selector for the container holding processable headings." },
+          "data-levels": { "type": "string[]", "default": "2,3,4",         "description": "Comma-separated heading levels to process (e.g. '2,3,4' = h2/h3/h4)." }
+        }
+      }
+    ]
+  }
+}

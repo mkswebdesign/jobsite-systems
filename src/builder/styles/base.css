@@ -1,0 +1,757 @@
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+
+/* ---- Skip to Content ---- */
+.skip-to-content { position: absolute; top: -100%; left: 50%; transform: translateX(-50%); padding: 0.75rem 1.5rem; background: var(--accent); color: var(--btn-primary-fg, #fff); border-radius: 0 0 var(--radius) var(--radius); font-weight: 600; font-size: 0.875rem; z-index: 10001; transition: top 0.2s }
+.skip-to-content:focus { top: 0 }
+
+/* ---- Focus ---- */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px }
+:focus:not(:focus-visible) { outline: none }
+
+/* ---- Reduced Motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important }
+  /* Bypass the initial opacity:0/transform of scroll-reveal so reduced-motion users see all content. */
+  .reveal, .reveal-fade, .reveal-scale, .reveal-left, .reveal-right, .reveal-rotate,
+  .slide-reveal-left, .slide-reveal-right, .scale-reveal, .flip-reveal, .blur-reveal,
+  .icon-pop, .count-up, .stagger-container .stagger-item,
+  .hero-reveal-1, .hero-reveal-2, .hero-reveal-3, .hero-reveal-4, .hero-reveal-5 {
+    opacity: 1 !important; transform: none !important; filter: none !important;
+  }
+}
+
+/* ---- No-JS fallback: if the reveal IntersectionObserver never runs, content must still be visible. ---- */
+.no-js .reveal, .no-js .reveal-fade, .no-js .reveal-scale, .no-js .reveal-left, .no-js .reveal-right,
+.no-js .reveal-rotate, .no-js .slide-reveal-left, .no-js .slide-reveal-right, .no-js .scale-reveal,
+.no-js .flip-reveal, .no-js .blur-reveal, .no-js .icon-pop, .no-js .count-up,
+.no-js .stagger-container .stagger-item {
+  opacity: 1; transform: none; filter: none;
+}
+
+/* ---- Base ---- */
+html { scroll-behavior: smooth; font-size: 16px }
+body { font-family: var(--font-family); background: var(--bg-primary); color: var(--text-secondary); line-height: 1.6; -webkit-font-smoothing: antialiased }
+img { max-width: 100%; display: block }
+a { color: inherit; text-decoration: none }
+button { font-family: inherit; cursor: pointer; border: none; background: none }
+ul, ol { list-style: none }
+h1, h2, h3, h4 { color: var(--text-primary); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em }
+h1 { max-width: 550px; font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 800; overflow-wrap: break-word; text-wrap: balance }
+h2 { max-width: 550px; font-size: clamp(1.75rem, 3.5vw, 2.75rem) }
+h3 { max-width: 550px; font-size: clamp(1.1rem, 2vw, 1.35rem) }
+p { color: var(--text-secondary); line-height: 1.7 }
+.container { width: 100%; max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem }
+
+/* ---- Page Transitions ----
+   Durations + easing flow from the animations addon config via CSS
+   vars on <html>:
+     --body-fade-in-duration     (data-body-fade-in-ms)
+     --page-transition-duration  (data-page-transition-duration-ms)
+     --page-transition-easing    (data-page-transition-easing)
+   Fallbacks match the legacy hard-coded values so sites without the
+   animations addon active keep rendering identically. The addon sets
+   these to 0ms when data-page-transitions="false" — effectively a
+   kill-switch that also zeroes body fade-in. */
+body { opacity: 0; animation: bodyFadeIn var(--body-fade-in-duration, 0.5s) var(--page-transition-easing, ease) forwards }
+@keyframes bodyFadeIn { from { opacity: 0 } to { opacity: 1 } }
+.page-transition { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10000; display: block; opacity: 0; pointer-events: none }
+.page-transition.fade-out { animation: pageFadeOut var(--page-transition-duration, 0.6s) var(--page-transition-easing, ease) forwards }
+.page-transition.fade-in { animation: pageFadeIn var(--page-transition-duration, 0.4s) var(--page-transition-easing, ease) forwards }
+@keyframes pageFadeOut { from { opacity: 1 } to { opacity: 0 } }
+@keyframes pageFadeIn { from { opacity: 0 } to { opacity: 1 } }
+/* When the addon opt-out kill-switch is set, skip body fade-in
+   entirely — no flash, no animation, just paint. */
+html.aed-no-page-transitions body { animation: none; opacity: 1 }
+
+/* ---- Layout ---- */
+.section { padding: 7rem 0 }
+.section-label { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem }
+.section-label::before { content: ''; width: 24px; height: 2px; background: var(--accent); border-radius: 2px }
+.section-heading { margin-bottom: 1rem }
+.section-subtext { max-width: 600px; font-size: 1.1rem }
+.section-heading-group.is-centered { text-align: center; display: flex; flex-direction: column; align-items: center }
+.section-heading-group.is-centered .section-heading { margin-left: auto; margin-right: auto }
+.section-heading-group.is-centered .section-subtext { margin: 0 auto }
+
+/* ---- Buttons ---- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; padding: var(--btn-pad-y, 0.875rem) var(--btn-pad-x, 1.75rem); font-size: 0.9375rem; font-weight: var(--btn-font-weight, 600); letter-spacing: var(--btn-letter, normal); text-transform: var(--btn-transform, none); border: var(--btn-border-w, 0) solid transparent; border-radius: var(--btn-radius, var(--radius)); transition: all var(--transition); white-space: nowrap; cursor: pointer }
+.btn-primary, .btn-primary:link, .btn-primary:visited { background: var(--accent); color: var(--btn-primary-fg, #ffffff); box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.3); border: none; position: relative; overflow: hidden }
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active { background: var(--accent-hover); color: var(--btn-primary-fg, #ffffff); box-shadow: 0 8px 30px rgba(var(--accent-rgb),0.4); transform: translateY(-2px) }
+.btn-primary::after { content: ''; position: absolute; inset: -2px; background: linear-gradient(90deg, var(--accent), var(--accent-hover), var(--accent)); background-size: 200% 100%; z-index: -1; filter: blur(8px); opacity: 0; transition: opacity 0.3s ease; animation: glowShift 3s ease infinite }
+@keyframes glowShift { 0%, 100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }
+.btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-light) }
+.btn-secondary:hover { border-color: var(--accent); background: rgba(var(--accent-rgb),0.05); transform: translateY(-2px) }
+.text-link { color: var(--accent); font-weight: 500 }
+.text-link:hover { color: var(--accent-hover); text-decoration: underline }
+
+/* ---- Navigation ---- */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.25rem 0; transition: all var(--transition) }
+.nav.scrolled { background: var(--nav-scrolled-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 1rem 0 }
+.nav-inner { display: flex; align-items: center; justify-content: space-between }
+.nav-logo { display: inline-flex; align-items: center; gap: 0.6rem; font-size: clamp(1.2rem, 1.05rem + 0.45vw, 1.42rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em }
+.nav-logo-mark { flex-shrink: 0; display: inline-block; line-height: 0 }
+/* Clamp the mark on small viewports so a larger logo never crowds the toggle */
+@media (max-width: 480px) {
+  .nav-logo-mark { width: 28px !important; height: 28px !important; }
+  .site-footer-brand .nav-logo-mark { width: 34px !important; height: 34px !important; }
+}
+.nav-logo-text { display: inline-flex; align-items: baseline; gap: 0.28ch; min-width: 0 }
+.nav-logo-text span { color: var(--accent) }
+/* Fallback for any historical markup without .nav-logo-text wrapper */
+.nav-logo > span:not(.nav-logo-text):not(.nav-logo-mark) { color: var(--accent) }
+.nav-links { display: flex; gap: 2.5rem; align-items: center }
+.nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); transition: color var(--transition); position: relative }
+/* Icon + chevron slots exist in markup for mobile; hidden on desktop */
+.nav-link-icon, .nav-link-chev { display: none }
+.nav-cta .nav-cta-arrow { display: none }
+.nav-links a:not(.nav-cta)::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width var(--transition) }
+.nav-links a:not(.nav-cta):hover { color: var(--text-primary) }
+.nav-links a:not(.nav-cta):hover::after { width: 100% }
+.nav-links a.active:not(.nav-cta) { color: var(--accent); font-weight: 600 }
+.nav-links a.active:not(.nav-cta)::after { width: 100% }
+.nav-cta, .nav-cta:link, .nav-cta:visited { background: var(--accent); color: var(--btn-primary-fg, #ffffff); padding: 0.625rem 1.25rem; border-radius: var(--radius); font-weight: 600; font-size: 0.8125rem; box-shadow: 0 4px 15px rgba(var(--accent-rgb),0.3); transition: all var(--transition) }
+.nav-cta:hover, .nav-cta:focus, .nav-cta:active { background: var(--accent-hover); color: var(--btn-primary-fg, #ffffff); box-shadow: 0 6px 20px rgba(var(--accent-rgb),0.4); transform: translateY(-2px) }
+.nav-toggle { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 44px; min-height: 44px; padding: 0.75rem; background: none; border: none; cursor: pointer; z-index: 10002 }
+.nav-toggle span { display: block; width: 24px; height: 2px; background: var(--text-primary); transition: all var(--transition); border-radius: 2px; transform-origin: center }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: rotate(45deg) translate(5px,5px) }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0) }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px) }
+.nav-overlay { position: fixed; pointer-events: none; inset: 0; background: var(--scrim-bg); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 999 }
+.nav-overlay.active { opacity: 1; visibility: visible; pointer-events: auto }
+.nav-back { font-size: 0.8125rem; color: var(--text-secondary) }
+.nav-back:hover { color: var(--text-primary) }
+
+/* Editor-mode nav: previously this block translated the nav off-screen
+   (`translateY(-100%)` + `pointer-events: none`) to keep it from painting
+   over per-section variant chips inside the first section's stacking
+   context (chip z-index is bounded by `isolation: isolate` and can't
+   outrank the nav globally). Reported 2026-05-06: that fix made the
+   global header un-viewable / un-clickable while logged into the editor,
+   which broke the navigation use-case for editors who need to jump
+   between pages. The body-padding-top mitigation
+   (`html.aed-editor-loaded body { padding-top: var(--aed-nav-clearance) }`
+   in edit.js) already lifts every section's top edge below the nav, so
+   the chip at `top: .55rem` of the first section paints below the nav
+   rather than under it — no occlusion in practice. Keeping the nav
+   visible and interactive while editing. If chip occlusion regresses for
+   a brand whose nav becomes transparent or overlaps the hero, address
+   it by tightening that brand's nav-clearance measurement, not by
+   hiding the nav. */
+
+@media (max-width: 900px) {
+  .nav-links {
+    position: fixed; top: 0; right: -100%;
+    width: min(360px, 92vw); height: 100vh;
+    flex-direction: column; justify-content: flex-start;
+    padding: 5.5rem 1.25rem 1.5rem;
+    background:
+      radial-gradient(ellipse 90% 40% at 100% 0%, rgba(var(--accent-rgb), 0.18), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 0% 100%, rgba(var(--accent-rgb), 0.12), transparent 70%),
+      var(--bg-secondary);
+    gap: 0.15rem;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-drawer);
+    z-index: 10001;
+    display: flex !important;
+    overflow-y: auto;
+  }
+  .nav-links::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 35%, transparent), transparent);
+    opacity: 0;
+    transition: opacity 0.5s ease 0.15s;
+  }
+  .nav-links.open::before { opacity: 1; }
+
+  .nav-links a {
+    display: flex !important;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.95rem 0.85rem;
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    opacity: 0;
+    transform: translateX(18px);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, opacity 0.4s ease, padding 0.2s ease;
+  }
+  .nav-links a::after { display: none }
+  .nav-links.open > a {
+    opacity: 1;
+    transform: translateX(0);
+    transition-delay: calc(120ms + var(--nav-stagger, 0) * 55ms);
+  }
+  .nav-link-icon {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--accent);
+    flex: 0 0 34px;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  }
+  .nav-link-label { flex: 1 1 auto }
+  .nav-link-chev {
+    display: inline-flex !important;
+    color: var(--text-muted);
+    font-size: 1.35rem;
+    line-height: 1;
+    transform: translateX(-4px);
+    opacity: 0.6;
+    transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+  }
+  .nav-links a:hover {
+    background: rgba(var(--accent-rgb), 0.06);
+    border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+    color: var(--text-primary);
+  }
+  .nav-links a:hover .nav-link-icon {
+    background: rgba(var(--accent-rgb), 0.22);
+    transform: translateX(2px) rotate(-6deg);
+  }
+  .nav-links a:hover .nav-link-chev {
+    transform: translateX(0);
+    opacity: 1;
+    color: var(--accent);
+  }
+  .nav-links a.active {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+    color: var(--text-primary);
+  }
+  .nav-links a.active .nav-link-icon {
+    background: var(--accent);
+    color: var(--btn-primary-fg, #ffffff);
+    box-shadow: 0 6px 16px -6px rgba(var(--accent-rgb), 0.5);
+  }
+  .nav-links a.active .nav-link-chev { color: var(--accent); opacity: 1 }
+
+  /* Promote CTA into a prominent hero button at drawer foot */
+  .nav-cta {
+    margin: 1.25rem 0 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover, var(--accent)));
+    box-shadow: 0 12px 32px -10px rgba(var(--accent-rgb), 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.2s ease;
+  }
+  .nav-links.open .nav-cta {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(180ms + (var(--nav-link-count, 7) * 55ms));
+  }
+  .nav-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+    animation: navCtaShimmer 3.2s ease-in-out infinite;
+  }
+  .nav-cta .nav-cta-arrow {
+    display: inline-block !important;
+    font-size: 1.15rem;
+    transition: transform 0.2s ease;
+    animation: navCtaPulse 2.4s ease-in-out infinite;
+  }
+  .nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -10px rgba(var(--accent-rgb), 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .nav-cta:hover .nav-cta-arrow { transform: translateX(4px); }
+
+  @keyframes navCtaShimmer {
+    0%   { left: -60%; }
+    55%  { left: 120%; }
+    100% { left: 120%; }
+  }
+  @keyframes navCtaPulse {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(3px); }
+  }
+
+  .nav-links.open { right: 0; pointer-events: auto }
+  .nav-toggle {
+    display: flex;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  /* When drawer is open, the X reads as a close-chip seated on the drawer's
+     top-right: same surface, same accent corner, same border treatment. */
+  .nav-toggle[aria-expanded="true"] {
+    background:
+      radial-gradient(ellipse 140% 140% at 100% 0%, rgba(var(--accent-rgb), 0.22), transparent 70%),
+      var(--bg-secondary);
+    border-color: var(--border);
+    box-shadow:
+      0 8px 22px -10px rgba(0, 0, 0, 0.45),
+      inset 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .nav-links a { opacity: 1 !important; transform: none !important; transition: background 0.2s ease, color 0.2s ease !important }
+  .nav-cta { opacity: 1 !important; transform: none !important }
+  .nav-cta::before, .nav-cta-arrow { animation: none !important }
+}
+
+/* ---- Honeypot (form anti-bot) ----
+ * Visually hidden but discoverable by bots scanning the DOM. Matches
+ * the forms addon's rule so forms can include a honeypot without
+ * depending on that addon being enabled. */
+.aed-form-honeypot {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px; height: 1px;
+  opacity: 0; pointer-events: none;
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb { font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; row-gap: 0.25rem; gap: 0.5rem }
+.breadcrumb a { color: var(--text-secondary); transition: color 0.3s }
+.breadcrumb a:hover { color: var(--accent) }
+.breadcrumb span { color: var(--text-muted) }
+
+/* ---- Page Header ---- */
+.page-header { padding: 10rem 0 3rem; text-align: center; position: relative; overflow: hidden }
+.page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% 30%, rgba(var(--accent-rgb),0.1), transparent 60%) }
+.page-header .container { position: relative; z-index: 2 }
+.page-header h1 { margin: 0 auto 1rem; max-width: 820px; font-size: clamp(2.25rem, 4.5vw, 3.5rem); line-height: 1.1 }
+.page-header h1 br.page-header-break { display: none }
+@media (min-width: 768px) { .page-header h1 br.page-header-break { display: inline } }
+.page-header-lead { font-size: 1.15rem; max-width: 560px; margin: 0 auto; color: var(--text-secondary) }
+.lead { font-size: 1.15rem; color: var(--text-secondary); max-width: 600px }
+.page-header .lead { margin-left: auto; margin-right: auto }
+
+/* ---- Footer ---- */
+.site-footer {
+  position: relative;
+  border-top: 1px solid var(--border);
+  padding: 4.5rem 0 2rem;
+  background: var(--bg-secondary);
+}
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.4), transparent);
+  pointer-events: none;
+}
+.site-footer a { color: var(--text-secondary); transition: color 0.2s ease }
+.site-footer a:hover { color: var(--accent) }
+.site-footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+.site-footer-brand .nav-logo { display: inline-flex; margin-bottom: 0.9rem; font-size: clamp(1.35rem, 1.15rem + 0.6vw, 1.6rem); gap: 0.7rem }
+.site-footer-tagline {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  max-width: 34ch;
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+}
+.site-footer-col h4 {
+  position: relative;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 1.125rem;
+  padding-bottom: 0.6rem;
+}
+.site-footer-col h4::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.55;
+  border-radius: 1px;
+}
+.site-footer-col ul { display: flex; flex-direction: column; gap: 0.625rem }
+.site-footer-col a {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.site-footer-col a:hover { color: var(--accent); transform: translateX(2px) }
+.site-footer-meta {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.site-footer-meta + .site-footer-meta { margin-top: 0.9rem }
+.site-footer-meta-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin-bottom: 0.2rem;
+}
+.site-footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.site-footer-bottom p { font-size: 0.8125rem; color: var(--text-muted); margin: 0 }
+.site-footer-credit { display: flex; flex-direction: column; gap: 0.35rem; }
+.site-footer-powered-by { display: inline-flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+.site-footer-powered-by .site-footer-credit-link strong { font-weight: 700; color: var(--text-primary); }
+.site-footer-powered-by .site-footer-credit-link:hover strong { color: var(--accent); }
+.site-footer-mks-mark { width: 14px; height: 14px; vertical-align: -2px; opacity: 0.92; flex: 0 0 auto; }
+.site-footer-credit-link--owner { display: inline-flex; align-items: center; gap: 0.3rem; }
+.site-footer-credit-link { color: var(--text-secondary); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent); text-decoration-thickness: 1.5px; text-underline-offset: 3px; transition: color 0.2s ease, text-decoration-color 0.2s ease }
+.site-footer-credit-link:hover { color: var(--accent); text-decoration-color: var(--accent) }
+.site-footer-legal { display: flex; gap: 1.25rem; flex-wrap: wrap }
+.site-footer-legal a { font-size: 0.8125rem; color: var(--text-muted); transition: color 0.2s ease }
+.site-footer-legal a:hover { color: var(--accent) }
+.external-link-glyph {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-left: 0.3em;
+  vertical-align: -0.05em;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  flex: none;
+}
+.site-footer a:hover .external-link-glyph { opacity: 1; transform: translate(1px, -1px) }
+@media (max-width: 960px) {
+  .site-footer { padding: 4rem 0 2rem }
+  .site-footer-top { grid-template-columns: repeat(3, 1fr); gap: 2.5rem 2rem }
+  .site-footer-brand { grid-column: 1 / -1 }
+}
+@media (max-width: 640px) {
+  .site-footer-top { grid-template-columns: 1fr 1fr; gap: 2rem 1.5rem; margin-bottom: 2.5rem }
+  .site-footer-tagline { max-width: none }
+  .site-footer-bottom { flex-direction: column; align-items: flex-start; gap: 0.85rem }
+}
+@media (max-width: 420px) {
+  .site-footer { padding: 3.5rem 0 1.75rem }
+  .site-footer-top { grid-template-columns: 1fr; gap: 1.75rem }
+  .site-footer-brand { grid-column: auto }
+}
+
+/* ---- Scroll Reveal ---- */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1) }
+.reveal.revealed { opacity: 1; transform: translateY(0) }
+.reveal-fade { opacity: 0; transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1) }
+.reveal-fade.revealed { opacity: 1 }
+.reveal-scale { opacity: 0; transform: scale(0.95); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1) }
+.reveal-scale.revealed { opacity: 1; transform: scale(1) }
+.reveal-left { opacity: 0; transform: translateX(-30px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1) }
+.reveal-left.revealed { opacity: 1; transform: translateX(0) }
+.reveal-right { opacity: 0; transform: translateX(30px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1) }
+.reveal-right.revealed { opacity: 1; transform: translateX(0) }
+.reveal-rotate { opacity: 0; transform: translateY(20px) rotate(-2deg); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1) }
+.reveal-rotate.revealed { opacity: 1; transform: translateY(0) rotate(0) }
+.slide-reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1) }
+.slide-reveal-left.revealed { opacity: 1; transform: translateX(0) }
+.slide-reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1) }
+.slide-reveal-right.revealed { opacity: 1; transform: translateX(0) }
+.scale-reveal { opacity: 0; transform: scale(0.9); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1) }
+.scale-reveal.revealed { opacity: 1; transform: scale(1) }
+.flip-reveal { opacity: 0; transform: perspective(800px) rotateY(15deg); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1) }
+.flip-reveal.revealed { opacity: 1; transform: perspective(800px) rotateY(0) }
+.blur-reveal { opacity: 0; filter: blur(8px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), filter 0.8s cubic-bezier(0.16,1,0.3,1) }
+.blur-reveal.revealed { opacity: 1; filter: blur(0) }
+.icon-pop { opacity: 0; transform: scale(0.5); transition: opacity 0.5s cubic-bezier(0.34,1.56,0.64,1), transform 0.5s cubic-bezier(0.34,1.56,0.64,1) }
+.icon-pop.revealed { opacity: 1; transform: scale(1) }
+.line-draw { position: relative }
+.line-draw::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--accent); transition: width 0.8s cubic-bezier(0.16,1,0.3,1) }
+.line-draw.revealed::after { width: 100% }
+
+[data-reveal-delay="100"] { transition-delay: 0.1s }
+[data-reveal-delay="200"] { transition-delay: 0.2s }
+[data-reveal-delay="300"] { transition-delay: 0.3s }
+[data-reveal-delay="400"] { transition-delay: 0.4s }
+[data-reveal-delay="500"] { transition-delay: 0.5s }
+[data-reveal-delay="600"] { transition-delay: 0.6s }
+
+/* ---- Stagger Container ---- */
+.stagger-container .stagger-item { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease }
+.stagger-container.revealed .stagger-item { opacity: 1; transform: translateY(0) }
+.stagger-container.revealed .stagger-item:nth-child(1) { transition-delay: 0s }
+.stagger-container.revealed .stagger-item:nth-child(2) { transition-delay: 0.1s }
+.stagger-container.revealed .stagger-item:nth-child(3) { transition-delay: 0.2s }
+.stagger-container.revealed .stagger-item:nth-child(4) { transition-delay: 0.3s }
+.stagger-container.revealed .stagger-item:nth-child(5) { transition-delay: 0.4s }
+.stagger-container.revealed .stagger-item:nth-child(6) { transition-delay: 0.5s }
+.stagger-container.revealed .stagger-item:nth-child(7) { transition-delay: 0.6s }
+.stagger-container.revealed .stagger-item:nth-child(8) { transition-delay: 0.7s }
+
+/* ---- CTA Section (shared) ----
+   Site-wide CTA block rendered by src/builder/components/sections/SiteCta.astro.
+   Variant picked via site.json → cta.variant:
+     A (default): full-bleed muted band
+     B: framed accent card inside the container
+   Consumed by /services, /work, /pricing, /faq. */
+.cta-section { text-align: center; background: var(--bg-secondary); padding: 5rem 0 }
+.cta-section h2 { margin: 0 auto 1rem }
+.cta-section p { max-width: 500px; margin: 0 auto 2rem }
+.cta-section .cta-inner { display: flex; flex-direction: column; align-items: center }
+.cta-section .section-label { margin-bottom: 0.75rem }
+.cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap }
+
+/* Variant B — "Framed": accent-bordered card centered in the container. */
+.cta-section[data-cta-variant="B"] { background: transparent; padding: 3rem 0 4rem }
+.cta-section[data-cta-variant="B"] .cta-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: calc(var(--radius-lg) + 4px);
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--accent) 10%, var(--bg-card)) 0%,
+      var(--bg-card) 60%);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow:
+    0 24px 60px -28px rgba(var(--accent-rgb), 0.35),
+    0 8px 20px -12px rgba(0, 0, 0, 0.25);
+}
+.cta-section[data-cta-variant="B"] h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.015em;
+}
+.cta-section[data-cta-variant="B"] p {
+  color: var(--text-secondary);
+  margin-bottom: 1.75rem;
+}
+
+/* Leave room at the end of every page so floating UI never sits over real content (FAQ toggles, avatars, footer links). */
+body { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) }
+@media (max-width: 640px) { body { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) } }
+
+/* ---- Base responsive ---- */
+@media (max-width: 768px) {
+  .page-header { padding: 8rem 0 2rem }
+  .section { padding: 4rem 0 }
+}
+@media (max-width: 480px) {
+  .container { padding: 0 1rem }
+}
+
+/* ============================================================
+   Mobile drawer — DARK mode tonal hierarchy
+   ------------------------------------------------------------
+   Lifted from per-brand stylesheets (clinician-systems, helping-systems,
+   jobsite-systems, landscape-systems, smokey-hill-retrievers — all forks
+   carried bit-identical copies of this 174-line block, derived from
+   the original landscape-systems source). Hosting it here means new
+   brands automatically inherit a legible mobile drawer in dark mode
+   without each fork needing to redo the contrast math.
+
+   Editor follow-up (2026-04-25, /, pageNote):
+     "on dark mode ensure to have the mobile menu effected
+      differently (buttons, toggles, some areas can be darker
+      than others and also bg can be too) — review whole
+      concept of dark mode for mobile menu"
+
+   The base ≤900px block above paints both Vibrant and Dark with
+   the same slab — drawer floor #111113, tiles a 70%-alpha mix of
+   #18181b (≈#15151a, 1.1:1 against the floor), mega-scope and
+   theme toggle inheriting the same flat chrome. Visually one big
+   gray smear. Vibrant tolerates that because the rest of the page
+   is authored with section rhythm; Dark is the UNIFORM mode and
+   has no other rhythm to lean on, so the menu has to carry it.
+
+   This block is scoped to :root[data-theme="dark"] only and
+   establishes a 5-layer tonal stack so the eye reads each surface
+   distinctly — drawer is the deepest anchor, mega-scope is mid,
+   tiles are raised, theme toggle is its own elevated chrome, and
+   the active states pop with saturated brand accent.
+
+   Tonal stack (lightness ascending, all anchored against #08080a):
+     1. Drawer floor       #07070a  — the deepest surface
+     2. Mega-scope row     #0e0e12  — secondary panel tier
+     3. Tile (idle)        #1a1a20 → #14141a  gradient, raised
+     4. Tile (hover)       #23232b → #1c1c24  + accent border
+     5. Tile / mega-scope active → accent-tinted with glow
+     · Theme toggle pill   #1d1d24 → #16161c  with crisp accent ring
+   ============================================================ */
+@media (max-width: 900px) {
+  /* Drawer floor — drop a full step below --bg-secondary so the
+     tiles above genuinely RISE off the surface. Brand-accent
+     radials become the only color in the bg, no neutral blur. */
+  :root[data-theme="dark"] .nav-links {
+    background-color: #07070a !important;
+    background-image:
+      radial-gradient(ellipse 85% 42% at 0% 0%,   rgba(var(--accent-rgb), 0.20), transparent 62%),
+      radial-gradient(ellipse 60% 55% at 100% 100%, rgba(var(--accent-rgb), 0.08), transparent 75%) !important;
+    border-right-color: rgba(var(--accent-rgb), 0.18) !important;
+    box-shadow:
+      24px 0 60px -20px rgba(0, 0, 0, 0.7),
+      inset -1px 0 0 rgba(255, 255, 255, 0.025) !important;
+  }
+
+  /* Eyebrow "Navigate" — accent-tint so it reads as a label, not
+     just dim text against a now-deeper floor. */
+  :root[data-theme="dark"] .nav-links::after {
+    color: color-mix(in srgb, var(--accent) 70%, #d4d4d8);  /* on #07070a: ≥10:1 */
+  }
+
+  /* Tile cards — solid + raised. Replaces the translucent
+     color-mix bg with a true gradient surface above the floor;
+     inset highlight on top edge sells the "raised" read. */
+  :root[data-theme="dark"] .nav-links > a:not(.nav-cta) {
+    background: linear-gradient(180deg, #1a1a20 0%, #14141a 100%) !important;
+    border-color: #2a2a32 !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.045),
+      0 2px 6px rgba(0, 0, 0, 0.45) !important;
+  }
+  :root[data-theme="dark"] .nav-links > a:not(.nav-cta):hover {
+    background: linear-gradient(180deg, #23232b 0%, #1c1c24 100%) !important;
+    border-color: rgba(var(--accent-rgb), 0.34) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  }
+  :root[data-theme="dark"] .nav-links > a:not(.nav-cta).active {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 18%, #1a1a20) 0%,
+      color-mix(in srgb, var(--accent) 9%, #14141a) 100%) !important;
+    border-color: rgba(var(--accent-rgb), 0.45) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(var(--accent-rgb), 0.12),
+      0 6px 18px -6px rgba(var(--accent-rgb), 0.4) !important;
+  }
+
+  /* Tile label / chev sit above #14-1c surfaces — keep the
+     base.css tokens (--text-primary fafafa = 17:1, --text-muted
+     = 6:1+). Active-state chev gets the brighter on-dark accent. */
+
+  /* Mega-scope rows — sit on a SEPARATE tier between drawer floor
+     and tile, so the "Services / Work / Pricing" rows read as
+     their own panel, not just stretched tiles. */
+  :root[data-theme="dark"] [data-nav-variant="G"] .nav-mega-scope {
+    background: #0e0e12 !important;
+    border-color: #1d1d23 !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  }
+  :root[data-theme="dark"] [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 14%, #14141a),
+      color-mix(in srgb, var(--accent) 7%, #0e0e12)) !important;
+    border-color: rgba(var(--accent-rgb), 0.42) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(var(--accent-rgb), 0.1),
+      0 4px 14px -6px rgba(var(--accent-rgb), 0.32) !important;
+  }
+  /* Mega-toggle caret button — dark mode refinement. Slightly stronger
+     resting fill (white@5 over the deep #07070a drawer floor) and the
+     accent-on-dark token at open so the lime reads ≥12:1 against the
+     dark chip. Inherits dimensions from the base mobile rule above. */
+  :root[data-theme="dark"] [data-nav-variant="G"] .nav-mega-toggle {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #d4d4d8 !important;
+  }
+  :root[data-theme="dark"] [data-nav-variant="G"] .nav-mega-toggle:hover {
+    background: color-mix(in srgb, var(--accent) 18%, rgba(255, 255, 255, 0.05)) !important;
+    border-color: color-mix(in srgb, var(--accent) 40%, rgba(255, 255, 255, 0.08)) !important;
+    color: var(--brand-accent-on-dark) !important;
+  }
+  :root[data-theme="dark"] [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-toggle {
+    background: color-mix(in srgb, var(--accent) 28%, rgba(255, 255, 255, 0.05)) !important;
+    border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.08)) !important;
+    color: var(--brand-accent-on-dark) !important;  /* lime on near-black: 12:1 */
+  }
+
+  /* Theme toggle pill — lifts off the drawer floor as its own
+     piece of chrome. base.css paints it with bg-card@72% which on
+     #07070a reads almost identical to the floor. Solid gradient
+     surface + accent-tinted ring + crisp shadow give it presence. */
+  :root[data-theme="dark"] .theme-toggle {
+    background: linear-gradient(180deg, #1d1d24 0%, #16161c 100%) !important;
+    border-color: rgba(var(--accent-rgb), 0.22) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 4px 14px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(0, 0, 0, 0.4) !important;
+  }
+  /* Inactive options dimmer in dark — pulls focus to the lime
+     thumb without losing legibility. #878790 is the lowest neutral
+     that passes AA (4.71:1 on #1d1d24, 5.06:1 on the gradient's
+     darker end #16161c) for the 11.5px label text. Hover brightens. */
+  :root[data-theme="dark"] .theme-toggle .theme-opt:not(.is-active) {
+    color: #878790;  /* on pill #1d1d24→#16161c: 4.71–5.06:1 */
+  }
+  :root[data-theme="dark"] .theme-toggle .theme-opt:not(.is-active):hover {
+    color: #d0d0d6;  /* on pill #1d1d24→#16161c: ~10.9–11.7:1 */
+  }
+  /* Active option keeps its dark-green-on-lime treatment; thumb
+     gradient is already authored by theme.css. */
+
+  /* Nav CTA — already a lime hero from base.css; in dark mode add
+     an outer accent glow so it reads as the drawer's primary call,
+     not just another card. */
+  :root[data-theme="dark"] .nav-cta {
+    box-shadow:
+      0 8px 28px -8px rgba(var(--accent-rgb), 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  }
+
+  /* Hamburger toggle — when the drawer is open, the bars sit over
+     the (now darker) drawer-edge gradient. Pin to ink-light so they
+     stay crisp across the open/closed state transition. */
+  :root[data-theme="dark"] .nav-toggle[aria-expanded="true"] span {
+    background: var(--ink-light);
+  }
+
+  /* Overlay backdrop — deepen the scrim in dark mode so the drawer
+     reads as a clearly elevated layer rather than blending into the
+     blurred page behind it. base.css uses --scrim-bg which is
+     rgba(0,0,0,0.6); pushing to 0.78 + a touch more blur sells the
+     focus shift on a uniformly dark page. */
+  :root[data-theme="dark"] .nav-overlay {
+    background: rgba(0, 0, 0, 0.78) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+  }
+}

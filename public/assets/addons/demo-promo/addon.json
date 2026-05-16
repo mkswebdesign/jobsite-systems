@@ -1,0 +1,30 @@
+{
+  "name": "demo-promo",
+  "assets": {
+    "css": ["demo-promo.css"],
+    "js":  ["demo-promo.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-demo-promo",
+        "description": "Small bottom-right toast that appears after a scroll threshold and points visitors to a sample demo page. Dismissable; dismissal persists in localStorage so visitors don't see it twice.",
+        "required": true,
+        "fields": {
+          "id":                  { "type": "string",   "required": true,           "description": "Stable id used for the dismiss flag. Bump when the copy changes if you want everyone to see the new message." },
+          "eyebrow":             { "type": "string",   "default": "See it live",   "description": "Tiny label above the heading." },
+          "heading":             { "type": "string",   "required": true,           "description": "One-line headline. Keep under ~50 chars for readable wrapping at 340px width." },
+          "body":                { "type": "string",   "required": true,           "description": "1-2 sentence body copy." },
+          "cta.label":           { "type": "string",   "required": true,           "description": "CTA button label, e.g. 'View demo'." },
+          "cta.href":            { "type": "string",   "required": true,           "description": "CTA URL — typically the demo's home path." },
+          "scrollThreshold":     { "type": "number",   "default": 0.3,             "description": "Fraction of full document scroll before the toast appears. 0.3 = 30%." },
+          "minDelayMs":          { "type": "number",   "default": 1500,            "description": "Minimum ms to wait after page load before showing (prevents flash on tall pages where 30% is at the fold)." },
+          "position":            { "type": "string",   "default": "bottom-right",  "enum": ["bottom-right", "bottom-left", "bottom-center"], "description": "Toast anchor." },
+          "dismissCooldownDays": { "type": "number",   "default": 0,               "description": "Days before a dismissed toast reappears. 0 = permanent dismiss." },
+          "hideOnPaths":         { "type": "string[]", "default": ["/demo/*", "/contact/", "/start/"], "description": "Paths to suppress on. Trailing '*' = prefix match." },
+          "showOnlyOnPaths":     { "type": "string[]",                             "description": "If set, only show on these paths." }
+        }
+      }
+    ]
+  }
+}

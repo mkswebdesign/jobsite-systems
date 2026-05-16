@@ -1,0 +1,48 @@
+---
+/**
+ * ArchiveList — grid of PostCards + Pagination.
+ * Props: posts (current page), page, totalPages, baseUrl.
+ * Empty state when posts.length === 0.
+ */
+import type { Post } from '../lib/posts';
+import PostCard from './PostCard.astro';
+import Pagination from './Pagination.astro';
+import { getAllCategories } from '../lib/posts';
+
+interface Props { posts: Post[]; page: number; totalPages: number; baseUrl: string; }
+const { posts, page, totalPages, baseUrl } = Astro.props;
+
+const cats = await getAllCategories();
+const catName = new Map(cats.map((c) => [c.data.id, c.data.name]));
+
+/* Derive a per-scope RSS URL from baseUrl when applicable, so the empty-state
+ * Subscribe CTA points at the right feed (e.g. /category/world/rss.xml). */
+const rssUrl = baseUrl.startsWith('/category/')
+  ? `${baseUrl.replace(/\/$/, '')}/rss.xml`
+  : '/rss.xml';
+---
+<div
+  class="archive-list"
+  data-section-type="archive-list"
+  data-section-label="Archive list"
+  data-section-variants="A:Grid,B:List"
+>
+  {posts.length === 0
+    ? (
+      <div class="archive-list__empty">
+        <p class="archive-list__empty-message">No posts yet — check back soon.</p>
+        <div class="archive-list__empty-ctas">
+          <a class="archive-list__empty-cta" href="/archive/">Browse all articles →</a>
+          <a class="archive-list__empty-cta archive-list__empty-cta--rss" href={rssUrl}>Subscribe via RSS</a>
+        </div>
+      </div>
+    )
+    : (
+      <div class="archive-list__grid">
+        {posts.map((p) => (
+          <PostCard post={p} categoryName={catName.get(p.data.category)} />
+        ))}
+      </div>
+    )}
+  <Pagination currentPage={page} totalPages={totalPages} baseUrl={baseUrl} />
+</div>

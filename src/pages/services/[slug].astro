@@ -1,0 +1,794 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../../builder/layouts/Base.astro';
+import PageHeader from '../../builder/components/PageHeader.astro';
+import SectionHeading from '../../builder/components/SectionHeading.astro';
+import ProcessSteps from '../../builder/components/sections/ProcessSteps.astro';
+import FAQ from '../../builder/components/sections/FAQ.astro';
+import Icon from '../../builder/components/Icon.astro';
+import TrustBand from '../../builder/components/sections/TrustBand.astro';
+import DividerSlot from '../../builder/components/DividerSlot.astro';
+import { brand, site } from '../../builder/lib/brand';
+
+const sT: any = (brand as any).serviceTerms ?? {};
+const browseAllLabel = sT.browseAllLabel ?? 'Browse All Services';
+const browseAllHref = sT.browseAllHref ?? '/services/';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  const sorted = [...services].sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+  return sorted.map((s, i) => {
+    const prev = i > 0 ? sorted[i - 1] : null;
+    const next = i < sorted.length - 1 ? sorted[i + 1] : null;
+    return {
+      params: { slug: s.id },
+      props: {
+        service: s,
+        prev: prev ? { slug: prev.id, title: prev.data.title } : null,
+        next: next ? { slug: next.id, title: next.data.title } : null,
+      },
+    };
+  });
+}
+
+const { service, prev, next } = Astro.props;
+const d: any = service.data;
+const title = d.seo?.title ?? `${d.title} — Services`;
+const description = d.seo?.description ?? d.shortDescription;
+
+const allWork = await getCollection('work');
+const workBySlug = new Map(allWork.map(w => [w.id, w.data]));
+
+const allTestimonials = await getCollection('testimonials');
+const testimonialById = new Map(allTestimonials.map(t => [t.id, t.data]));
+
+const sections: any[] = d.sections ?? [];
+
+// Optional in-page anchor nav (item 9). Items: [{ label, href }].
+const anchorNav: Array<{ label: string; href: string }> | null = Array.isArray(d.anchorNav)
+  ? d.anchorNav
+  : null;
+
+// Optional inline testimonial (item 11). { id, placeAfter? }
+const inlineTestimonialId: string | null = d.inlineTestimonial?.id ?? null;
+const inlineTestimonial = inlineTestimonialId ? testimonialById.get(inlineTestimonialId) : null;
+const inlinePlaceAfter: number = typeof d.inlineTestimonial?.placeAfter === 'number'
+  ? d.inlineTestimonial.placeAfter
+  : 0; // default: after first section
+
+// Optional case-study link (item 12). { slug, label?, placeAfter? }
+const caseStudyLinkRaw = d.caseStudyLink ?? null;
+const caseStudyWork = caseStudyLinkRaw?.slug ? workBySlug.get(caseStudyLinkRaw.slug) : null;
+const caseStudyPlaceAfter: number = typeof caseStudyLinkRaw?.placeAfter === 'number'
+  ? caseStudyLinkRaw.placeAfter
+  : 0;
+
+// Optional service-scoped FAQ (item 10). { sectionLabel?, heading?, faqs: [{question, answer}] }
+const serviceFaq = d.serviceFaq && Array.isArray(d.serviceFaq.faqs) && d.serviceFaq.faqs.length
+  ? d.serviceFaq
+  : null;
+
+// Optional pricing callout pill (item 6).
+const pricingCallout: string | null = typeof d.pricingCallout === 'string' && d.pricingCallout.trim()
+  ? d.pricingCallout
+  : null;
+
+// Promo echo from site.addons.announcement-bar.json[0].data.text (item 14).
+// Strips markdown bold (**...**) so it renders cleanly as a plain caption.
+function extractPromoText(): string | null {
+  try {
+    const ab = (site as any)?.addons?.['announcement-bar'];
+    if (!ab || ab.enabled === false) return null;
+    const json = Array.isArray(ab.json) ? ab.json[0] : null;
+    const txt = json?.data?.text;
+    if (typeof txt !== 'string' || !txt.trim()) return null;
+    return txt.replace(/\*\*([^*]+)\*\*/g, '$1').trim();
+  } catch { return null; }
+}
+const promoEcho = extractPromoText();
+
+// CTA actions (item 13). cta.actions = [{ label, href, variant?: 'primary' | 'secondary' | 'tertiary' }]
+const ctaActions: Array<{ label: string; href: string; variant?: string }> | null =
+  Array.isArray(d.cta?.actions) && d.cta.actions.length ? d.cta.actions : null;
+---
+
+<Base title={title} description={description} canonical={d.seo?.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: 'Services', href: '/services/' }, { label: d.title }]}
+    sectionLabel={d.number ? `Service ${d.number}` : undefined}
+    heading={d.headline ?? d.title}
+    lead={d.lead ?? d.shortDescription}
+  />
+
+  {/* Trust band — surfaces brand-level HIPAA / PHI / BAA framing right
+      after the header on services where PHI handling matters most.
+      Currently scoped to lead-forms (where the form mechanics call out
+      non-PHI by design); extend the slug list as more services warrant it. */}
+  {d.slug === 'lead-forms' && <TrustBand />}
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {pricingCallout && (
+    <div class="service-pricing-callout-wrap">
+      <div class="container">
+        <span class="service-pricing-callout reveal">{pricingCallout}</span>
+      </div>
+    </div>
+  )}
+
+  {anchorNav && anchorNav.length > 0 && (
+    <>
+      <div class="service-anchornav-sentinel" data-anchornav-sentinel aria-hidden="true"></div>
+      <nav class="service-anchornav" data-service-anchornav aria-label="On this page">
+        <div class="container service-anchornav-inner">
+          <ul class="service-anchornav-list" role="list">
+            {anchorNav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="service-anchornav-link"
+                  data-anchornav-target={item.href.startsWith('#') ? item.href.slice(1) : null}
+                >{item.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+    </>
+  )}
+
+  <div class="service-detail" id="main">
+    {d.heroImage && (
+      <section
+        class="service-hero-image"
+        data-section-type="service-hero"
+        data-section-label="Hero Image"
+        data-section-variants="A:Default,B:Fullbleed,C:Poster"
+      >
+        <div class="container">
+          <div class="service-hero-frame reveal-scale">
+            <img
+              src={d.heroImage}
+              alt={d.heroImageAlt ?? d.title}
+              width="1600"
+              height="900"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        </div>
+      </section>
+    )}
+    {sections.map((sec: any, idx: number) => {
+      const sectionId = sec.id || undefined;
+
+      // Inline insertions that follow a particular section index.
+      const trailingForThisSection: any[] = [];
+      if (inlineTestimonial && inlinePlaceAfter === idx) {
+        trailingForThisSection.push(
+          <section
+            class="section service-section service-inline-testimonial-section"
+            data-section-type="service-section"
+            data-section-label="Inline Testimonial"
+            data-section-variants="A:Default,B:Editorial,C:Bold"
+          >
+            <div class="container">
+              <figure class="service-inline-testimonial reveal">
+                <span class="service-inline-testimonial-mark" aria-hidden="true">&ldquo;</span>
+                <blockquote class="service-inline-testimonial-quote">{inlineTestimonial.quote}</blockquote>
+                <figcaption class="service-inline-testimonial-author">
+                  <span class="service-inline-testimonial-name">{inlineTestimonial.authorName}</span>
+                  {inlineTestimonial.authorRole && (
+                    <span class="service-inline-testimonial-role">{inlineTestimonial.authorRole}</span>
+                  )}
+                </figcaption>
+              </figure>
+            </div>
+          </section>
+        );
+      }
+      if (caseStudyWork && caseStudyPlaceAfter === idx) {
+        const csLabel = caseStudyLinkRaw.label ?? 'See it live';
+        const csTitle = caseStudyWork.shortTitle ?? caseStudyWork.title;
+        trailingForThisSection.push(
+          <section
+            class="section service-section service-casestudy-link-section"
+            data-section-type="service-section"
+            data-section-label="Case Study Link"
+            data-section-variants="A:Default,B:Editorial,C:Bold"
+          >
+            <div class="container">
+              <a href={`/work/${caseStudyLinkRaw.slug}/`} class="service-casestudy-link reveal">
+                <span class="service-casestudy-link-label">{csLabel}</span>
+                <span class="service-casestudy-link-title">{csTitle}</span>
+                <span class="service-casestudy-link-arrow arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+          </section>
+        );
+      }
+
+      const renderSection = (() => {
+        if (sec.type === 'list') {
+          const items = sec.items ?? [];
+          const isLabeled = items.length > 0 && typeof items[0] !== 'string';
+          const variant = sec.variant;
+          return (
+            <section
+              class="section service-section"
+              id={sectionId}
+              data-section-type="service-section"
+              data-section-label={sec.sectionLabel ?? (variant === 'persona' ? 'Who this is for' : 'List')}
+              data-section-variants="A:Default,B:Editorial,C:Bold"
+            >
+              <div class="container">
+                {sec.heading && variant !== 'slider' && (
+                  <SectionHeading
+                    label={sec.sectionLabel}
+                    heading={sec.heading}
+                    subtext={sec.intro}
+                  />
+                )}
+                {variant === 'persona' ? (
+                  <div class="service-persona-grid stagger-container reveal">
+                    {items.map((it: any, i: number) => (
+                      <div class="service-persona-card stagger-item" style={`--persona-i:${i}`}>
+                        {it.iconKey && (
+                          <div class="service-persona-icon" aria-hidden="true">
+                            <Icon name={it.iconKey} size={22} />
+                          </div>
+                        )}
+                        <div class="service-persona-body">
+                          <h3 class="service-persona-label">{it.label}</h3>
+                          {it.body && <p>{it.body}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : variant === 'showcase' ? (
+                  <div class="service-list-showcase-grid stagger-container reveal">
+                    {items.map((it: any, i: number) => {
+                      const showcaseLabel = typeof it === 'string' ? null : it?.label;
+                      const showcaseBody = typeof it === 'string' ? it : it?.body;
+                      const showcaseIcon = typeof it === 'string' ? null : it?.iconKey;
+                      return (
+                        <article
+                          class={`service-list-showcase-card stagger-item${i === 0 ? ' is-featured' : ''}`}
+                          style={`--showcase-i:${i}`}
+                        >
+                          <span class="service-list-showcase-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                          {showcaseIcon && (
+                            <span class="service-list-showcase-icon" aria-hidden="true">
+                              <Icon name={showcaseIcon} size={20} />
+                            </span>
+                          )}
+                          <div class="service-list-showcase-body">
+                            {showcaseLabel && <h3 class="service-list-showcase-label">{showcaseLabel}</h3>}
+                            {showcaseBody && <p>{showcaseBody}</p>}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                ) : variant === 'grid' ? (
+                  <div class="service-list-static-grid stagger-container reveal" data-static-cols={sec.cols ?? null}>
+                    {items.map((it: any, i: number) => (
+                      <div class="service-list-static-card stagger-item" style={`--static-i:${i}`}>
+                        {isLabeled && it?.iconKey ? (
+                          <div class="service-persona-icon" aria-hidden="true">
+                            <Icon name={it.iconKey} size={22} />
+                          </div>
+                        ) : null}
+                        {isLabeled ? (
+                          <div class="service-list-static-body">
+                            <h3 class="service-list-static-label">{it.label}</h3>
+                            {it.body && <p>{it.body}</p>}
+                          </div>
+                        ) : (
+                          <p class="service-list-static-bare">{it}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : variant === 'slider' ? (
+                  <div class="service-list-slider-layout">
+                    <div class="service-list-slider-intro">
+                      {sec.heading && (
+                        <SectionHeading
+                          label={sec.sectionLabel}
+                          heading={sec.heading}
+                          subtext={sec.intro}
+                        />
+                      )}
+                    </div>
+                    <div
+                      class="service-list-slider reveal"
+                      data-slider
+                      data-slider-interval={sec.sliderInterval ?? 6500}
+                      aria-roledescription="carousel"
+                      aria-label={sec.heading ?? 'Slider'}
+                    >
+                    <div class="service-list-slider-viewport">
+                      <div class="service-list-slider-track">
+                        {items.map((it: any, i: number) => (
+                          <div
+                            class={`service-list-slide${i === 0 ? ' is-active' : ''}`}
+                            role="group"
+                            aria-roledescription="slide"
+                            aria-label={`${i + 1} of ${items.length}`}
+                            aria-hidden={i === 0 ? 'false' : 'true'}
+                          >
+                            {isLabeled ? (
+                              <div class="service-list-slide-card">
+                                {it.iconKey ? (
+                                  <div class="service-persona-icon" aria-hidden="true">
+                                    <Icon name={it.iconKey} size={22} />
+                                  </div>
+                                ) : (
+                                  <span class="service-list-check" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                      <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                  </span>
+                                )}
+                                <div class="service-list-slide-body">
+                                  <h3 class="service-list-label">{it.label}</h3>
+                                  {it.body && <p>{it.body}</p>}
+                                </div>
+                              </div>
+                            ) : (
+                              <div class="service-list-slide-card service-list-slide-card--bare">
+                                <p>{it}</p>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div class="service-list-slider-controls">
+                      <button type="button" class="service-list-slider-arrow" data-slider-prev aria-label="Previous slide">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                      </button>
+                      <span class="service-list-slider-counter" aria-hidden="true"><b data-slider-current>01</b> / {String(items.length).padStart(2, '0')}</span>
+                      <div class="service-list-slider-dots" role="tablist" aria-label="Choose slide">
+                        {items.map((it: any, i: number) => {
+                          const slideLabel = typeof it === 'string'
+                            ? `Slide ${i + 1}`
+                            : (it?.label ?? `Slide ${i + 1}`);
+                          return (
+                            <button
+                              type="button"
+                              class={`service-list-slider-dot${i === 0 ? ' is-active' : ''}`}
+                              data-slider-to={i}
+                              data-slide-label={slideLabel}
+                              data-slide-index={String(i + 1).padStart(2, '0')}
+                              role="tab"
+                              aria-label={`Go to slide ${i + 1}: ${slideLabel}`}
+                              aria-selected={i === 0 ? 'true' : 'false'}
+                            ></button>
+                          );
+                        })}
+                      </div>
+                      <button type="button" class="service-list-slider-arrow" data-slider-next aria-label="Next slide">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </button>
+                    </div>
+                      <span class="service-list-slider-status" aria-live="polite" aria-atomic="true"></span>
+                    </div>
+                  </div>
+                ) : isLabeled ? (
+                  <div class="service-list-grid stagger-container reveal">
+                    {items.map((it: any, i: number) => (
+                      <div class="service-list-card stagger-item" style={`--check-i:${i}`}>
+                        <span class="service-list-check" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </span>
+                        <div>
+                          <h3 class="service-list-label">{it.label}</h3>
+                          {it.body && <p>{it.body}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul class="service-bullet-list stagger-container reveal">
+                    {items.map((it: string) => (
+                      <li class="stagger-item">{it}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+          );
+        }
+
+        if (sec.type === 'feature') {
+          const items: string[] = sec.items ?? [];
+          const itemsLabeled = sec.itemsLabeled ?? [];
+          return (
+            <section
+              class="section service-section service-section--alt"
+              id={sectionId}
+              data-section-type="service-section"
+              data-section-label={sec.sectionLabel ?? 'Feature'}
+              data-section-variants="A:Default,B:Editorial,C:Bold"
+              data-sec-theme={sec.theme ?? null}
+            >
+              <div class="container">
+                <div class="service-feature reveal">
+                  {sec.heading && <h2 class="service-feature-heading">{sec.heading}</h2>}
+                  {sec.body && <p class="service-feature-body">{sec.body}</p>}
+                  {items.length > 0 && (
+                    <ul class="service-check-list">
+                      {items.map((it: string) => <li>{it}</li>)}
+                    </ul>
+                  )}
+                  {itemsLabeled.length > 0 && (
+                    <div class="service-feature-grid">
+                      {itemsLabeled.map((it: any) => (
+                        <div class="service-feature-item">
+                          <h3>{it.label}</h3>
+                          {it.body && <p>{it.body}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          );
+        }
+
+        if (sec.type === 'process') {
+          const steps = (sec.steps ?? []).map((s: any, i: number) => ({
+            number: s.number ?? String(i + 1).padStart(2, '0'),
+            title: s.title,
+            body: s.body,
+          }));
+          return (
+            <div id={sectionId}>
+              <ProcessSteps
+                sectionLabel={sec.sectionLabel ?? 'Process'}
+                heading={sec.heading ?? 'The Process'}
+                subtext={sec.intro}
+                steps={steps}
+                asService
+              />
+            </div>
+          );
+        }
+
+        if (sec.type === 'metrics') {
+          const items = sec.items ?? [];
+          return (
+            <section
+              class="section service-section service-metrics-section"
+              id={sectionId}
+              data-section-type="service-section"
+              data-section-label={sec.sectionLabel ?? 'Metrics'}
+              data-section-variants="A:Default,B:Editorial,C:Bold"
+            >
+              <div class="container">
+                {sec.heading && (
+                  <SectionHeading
+                    label={sec.sectionLabel}
+                    heading={sec.heading}
+                    subtext={sec.intro}
+                    centered
+                  />
+                )}
+                <div class="service-metrics-grid reveal">
+                  {items.map((m: any) => (
+                    <div class="service-metric">
+                      <span class="service-metric-value">{m.value}</span>
+                      <span class="service-metric-label">{m.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        }
+
+        if (sec.type === 'prose') {
+          return (
+            <section
+              class="section service-section service-prose-section"
+              id={sectionId}
+              data-section-type="service-section"
+              data-section-label={sec.sectionLabel ?? 'Prose'}
+              data-section-variants="A:Default,B:Editorial,C:Bold"
+            >
+              <div class="container">
+                <div class="service-prose reveal">
+                  {sec.heading && <h2>{sec.heading}</h2>}
+                  {sec.body && <p>{sec.body}</p>}
+                </div>
+              </div>
+            </section>
+          );
+        }
+
+        if (sec.type === 'relatedWork') {
+          const items = (sec.items ?? [])
+            .map((it: any) => {
+              const w = workBySlug.get(it.slug);
+              return w ? { ...it, work: w } : null;
+            })
+            .filter(Boolean);
+          if (items.length === 0) return null;
+          return (
+            <section
+              class="section service-section service-related-section"
+              id={sectionId}
+              data-section-type="service-section"
+              data-section-label={sec.sectionLabel ?? 'Related Work'}
+              data-section-variants="A:Default,B:Editorial,C:Bold"
+            >
+              <div class="container">
+                <SectionHeading
+                  label={sec.sectionLabel ?? 'Selected Work'}
+                  heading={sec.heading ?? 'See It in Action'}
+                  subtext={sec.intro}
+                />
+                <div class="service-related-grid reveal">
+                  {items.map((it: any) => (
+                    <a href={`/work/${it.slug}/`} class="service-related-card">
+                      <div class={`service-related-thumb work-gradient ${it.work.gradientPreset ?? 'g1'}`}></div>
+                      <div class="service-related-body">
+                        <h3>{it.work.shortTitle ?? it.work.title}</h3>
+                        {it.note && <p>{it.note}</p>}
+                        <span class="service-related-link">View case study <span class="arrow">&rarr;</span></span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        }
+
+        return null;
+      })();
+
+      return (
+        <>
+          {renderSection}
+          {trailingForThisSection}
+          {sec.heading && <DividerSlot dividers={d.dividers} after={sec.heading} />}
+        </>
+      );
+    })}
+
+    {serviceFaq && (
+      <FAQ
+        sectionLabel={serviceFaq.sectionLabel ?? 'FAQ'}
+        heading={serviceFaq.heading ?? 'Frequently Asked'}
+        subtext={serviceFaq.subtext}
+        faqs={serviceFaq.faqs}
+      />
+    )}
+
+    {d.cta && (
+      <section
+        class="section service-cta cta-bg"
+        id="cta"
+        aria-labelledby="service-cta-heading"
+        data-section-type="service-section"
+        data-section-label="Service CTA"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <div class="service-cta-card reveal-scale">
+            <h2 id="service-cta-heading">{d.cta.heading}</h2>
+            {d.cta.body && <p>{d.cta.body}</p>}
+            {promoEcho && (
+              <p class="service-cta-promo">{promoEcho}</p>
+            )}
+            <div class={`service-cta-actions${ctaActions ? ' service-cta-actions--multi' : ''}`}>
+              {ctaActions ? (
+                ctaActions.map((a) => {
+                  const v = a.variant ?? 'primary';
+                  const cls = v === 'tertiary'
+                    ? 'service-cta-link'
+                    : v === 'secondary'
+                      ? 'btn btn-secondary'
+                      : 'btn btn-primary';
+                  return (
+                    <a href={a.href} class={cls}>
+                      {a.label}
+                      {v === 'tertiary' && <span class="arrow" aria-hidden="true"> →</span>}
+                    </a>
+                  );
+                })
+              ) : (
+                <>
+                  <a href={d.cta.href} class="btn btn-primary">{d.cta.label}</a>
+                  <a href={browseAllHref} class="btn btn-secondary">{browseAllLabel}</a>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {(prev || next) && (
+      <nav class="service-pager" aria-label="Other services">
+        <div class="container service-pager-inner">
+          {prev ? (
+            <a href={`/services/${prev.slug}/`} class="service-pager-link service-pager-prev">
+              <span class="service-pager-label">Previous Service</span>
+              <span class="service-pager-title"><span class="arrow">&larr;</span> {prev.title}</span>
+            </a>
+          ) : <span class="service-pager-spacer"></span>}
+          <a href="/services/" class="service-pager-link service-pager-all">
+            <span class="service-pager-label">All Services</span>
+            <span class="service-pager-title"><span class="arrow" aria-hidden="true">↑</span> Back to overview</span>
+          </a>
+          {next ? (
+            <a href={`/services/${next.slug}/`} class="service-pager-link service-pager-next">
+              <span class="service-pager-label">Next Service</span>
+              <span class="service-pager-title">{next.title} <span class="arrow">&rarr;</span></span>
+            </a>
+          ) : <span class="service-pager-spacer"></span>}
+        </div>
+      </nav>
+    )}
+  </div>
+
+  {anchorNav && anchorNav.length > 0 && (
+    <script is:inline>
+      (function () {
+        var nav = document.querySelector('[data-service-anchornav]');
+        if (!nav) return;
+        var links = Array.prototype.slice.call(nav.querySelectorAll('[data-anchornav-target]'));
+        if (!links.length) return;
+        var byId = {};
+        links.forEach(function (lnk) {
+          var id = lnk.getAttribute('data-anchornav-target');
+          if (id) {
+            var el = document.getElementById(id);
+            if (el) byId[id] = lnk;
+          }
+        });
+        if (!Object.keys(byId).length) return;
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              var lnk = byId[e.target.id];
+              if (!lnk) return;
+              if (e.isIntersecting) {
+                links.forEach(function (l) { l.classList.remove('is-active'); });
+                lnk.classList.add('is-active');
+              }
+            });
+          }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+          Object.keys(byId).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) io.observe(el);
+          });
+        }
+
+        // Pin-to-bottom-on-scroll-past. Observe a sentinel placed where
+        // the nav originally sits; when it leaves viewport upward, the
+        // nav locks to the bottom of the screen. When the sentinel
+        // returns into view, the nav drops back into flow.
+        var sentinel = document.querySelector('[data-anchornav-sentinel]');
+        if (sentinel && 'IntersectionObserver' in window) {
+          var pinObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              var pastSentinel = !e.isIntersecting && e.boundingClientRect.top < 0;
+              nav.classList.toggle('is-pinned', pastSentinel);
+            });
+          }, { threshold: 0 });
+          pinObserver.observe(sentinel);
+        }
+      })();
+    </script>
+  )}
+
+  <script is:inline>
+    (function () {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll('[data-slider]').forEach(function (root) {
+        const track = root.querySelector('.service-list-slider-track');
+        const slides = Array.prototype.slice.call(root.querySelectorAll('.service-list-slide'));
+        const dots = Array.prototype.slice.call(root.querySelectorAll('[data-slider-to]'));
+        const prev = root.querySelector('[data-slider-prev]');
+        const next = root.querySelector('[data-slider-next]');
+        const status = root.querySelector('.service-list-slider-status');
+        const counter = root.querySelector('[data-slider-current]');
+        if (!track || !slides.length) return;
+        const interval = Math.max(2000, parseInt(root.getAttribute('data-slider-interval') || '6500', 10));
+        let i = 0;
+        let timer = null;
+        let userPaused = false;
+
+        function perView() {
+          const v = parseFloat(getComputedStyle(root).getPropertyValue('--slider-per-view'));
+          return Math.max(1, Math.round(v || 3));
+        }
+        function maxIndex() { return Math.max(0, slides.length - perView()); }
+        function step() {
+          const slideW = slides[0].getBoundingClientRect().width;
+          const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
+          return slideW + gap;
+        }
+
+        function syncDots() {
+          const m = maxIndex();
+          dots.forEach(function (d, idx) { d.style.display = idx > m ? 'none' : ''; });
+        }
+        function go(n) {
+          const m = maxIndex();
+          const range = m + 1;
+          i = ((n % range) + range) % range;
+          track.style.transform = 'translateX(' + (-i * step()) + 'px)';
+          slides.forEach(function (s, idx) {
+            const visible = idx >= i && idx < i + perView();
+            s.classList.toggle('is-active', visible);
+            s.setAttribute('aria-hidden', visible ? 'false' : 'true');
+          });
+          dots.forEach(function (d, idx) {
+            d.classList.toggle('is-active', idx === i);
+            d.setAttribute('aria-selected', idx === i ? 'true' : 'false');
+          });
+          if (counter) counter.textContent = String(i + 1).padStart(2, '0');
+          if (status) status.textContent = 'Slide ' + (i + 1) + ' of ' + slides.length;
+        }
+        function start() {
+          stop();
+          if (reduced || userPaused) return;
+          timer = setInterval(function () { go(i + 1); }, interval);
+        }
+        function stop() {
+          if (timer) { clearInterval(timer); timer = null; }
+        }
+        function refresh() {
+          syncDots();
+          if (i > maxIndex()) i = maxIndex();
+          // recompute translate without animation on layout changes
+          const prevTransition = track.style.transition;
+          track.style.transition = 'none';
+          go(i);
+          // restore transition on next frame
+          requestAnimationFrame(function () { track.style.transition = prevTransition; });
+        }
+
+        if (prev) prev.addEventListener('click', function () { userPaused = true; stop(); go(i - 1); });
+        if (next) next.addEventListener('click', function () { userPaused = true; stop(); go(i + 1); });
+        dots.forEach(function (d) {
+          d.addEventListener('click', function () {
+            const to = parseInt(d.getAttribute('data-slider-to') || '0', 10);
+            userPaused = true; stop(); go(to);
+          });
+        });
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', function () { if (!userPaused) start(); });
+        root.addEventListener('focusin', stop);
+        root.addEventListener('focusout', function () { if (!userPaused) start(); });
+
+        let resizeRaf = 0;
+        window.addEventListener('resize', function () {
+          if (resizeRaf) cancelAnimationFrame(resizeRaf);
+          resizeRaf = requestAnimationFrame(refresh);
+        });
+
+        syncDots();
+        go(0);
+
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) { if (e.isIntersecting) start(); else stop(); });
+          }, { threshold: 0.25 });
+          io.observe(root);
+        } else {
+          start();
+        }
+      });
+    })();
+  </script>
+</Base>

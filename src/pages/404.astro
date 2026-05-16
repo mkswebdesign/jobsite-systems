@@ -1,0 +1,60 @@
+---
+import Base from '../builder/layouts/Base.astro';
+import { brand, site } from '../builder/lib/brand';
+
+const err = site.errorPage;
+const title = `${err.heading} — ${brand.name}`;
+---
+
+<Base title={title} description={err.body} indexable={false}>
+  <main class="error-page">
+    <div class="error-inner">
+      <div class="error-code">{err.code}</div>
+      <h1 class="error-heading">{err.heading}</h1>
+      <p class="error-body">{err.body}</p>
+      <div class="error-ctas">
+        <a class="btn btn-primary" href={err.primaryCta.href}>{err.primaryCta.label}</a>
+        {err.secondaryCta && (
+          <a class="btn btn-secondary" href={err.secondaryCta.href}>{err.secondaryCta.label}</a>
+        )}
+      </div>
+    </div>
+  </main>
+</Base>
+
+<style>
+.error-page {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+  text-align: center;
+}
+.error-inner { max-width: 560px; }
+.error-code {
+  font-size: clamp(4rem, 12vw, 7rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+.error-heading {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+.error-body {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+}
+.error-ctas {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+</style>

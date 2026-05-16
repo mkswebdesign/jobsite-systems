@@ -1,0 +1,33 @@
+{
+  "name": "segmented-control",
+  "assets": {
+    "css": ["segmented-control.css"],
+    "js":  ["segmented-control.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-segmented]",
+        "description": "Container for an iOS-style segmented control. Direct child <button> elements become the segments. Dispatches `aed:segmented:change` events.",
+        "fields": {
+          "data-aed-segmented":      { "type": "boolean","required": true,                                "description": "Opt-in marker." },
+          "data-aed-segmented-name": { "type": "string",                                                   "description": "Group name passed in change events. Useful when multiple controls coexist on the page." },
+          "data-aed-variant":        { "type": "string", "enum": ["compact", "ghost"],                    "description": "Visual variant." }
+        }
+      },
+      {
+        "selector": "[data-aed-segmented] [data-aed-value]",
+        "description": "Each segment button.",
+        "fields": {
+          "data-aed-value":   { "type": "string",  "required": true, "description": "Value emitted in change events when this segment is selected." },
+          "data-aed-default": { "type": "boolean",                    "description": "Mark this segment as initially active. If no segment has the flag, the first one wins." }
+        }
+      }
+    ],
+    "api": {
+      "global": "document event: aed:segmented:change",
+      "description": "Dispatched on the container. detail = { name, value, previous }.",
+      "fields": {}
+    }
+  }
+}

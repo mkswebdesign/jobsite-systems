@@ -1,0 +1,88 @@
+---
+/**
+ * HomeArchive — embeds the full /archive/ filtering UI inline below
+ * the homepage hero. Composes ArchiveToolbar + ArchiveList +
+ * ArchiveDrawer (the same trio /archive/ uses) wrapped in a section
+ * root carrying `.home-archive` so the toolbar JS recognizes it.
+ *
+ * Top-N cap: passes `posts.slice(0, limit)` to ArchiveList for the
+ * server-rendered grid AND sets `data-result-limit` on the section
+ * root so client-mode filtering (drawer-driven) stays capped to
+ * `limit` results too. The truncation CTA ("View all N matching →")
+ * is appended by the toolbar JS when filtered matches exceed the cap.
+ *
+ * No pagination: passing totalPages=1 makes Pagination.astro
+ * self-suppress (`{totalPages > 1 && …}`). The "View the full archive →"
+ * CTA below the grid is the homepage's pagination affordance.
+ */
+import ArchiveToolbar from '../ArchiveToolbar.astro';
+import ArchiveList from '../ArchiveList.astro';
+import ArchiveDrawer from '../ArchiveDrawer.astro';
+import { getAllPosts, getAllCategories, getAllTags, getAllAuthors } from '../../lib/posts';
+
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  subhead?: string;
+  limit?: number;
+  viewAll?: { label: string; href: string };
+  variant?: string;
+}
+const {
+  eyebrow,
+  heading,
+  subhead,
+  limit = 12,
+  viewAll,
+  variant,
+} = Astro.props;
+const variantKey = typeof variant === 'string' && /^[a-zA-Z]$/.test(variant) ? variant : null;
+
+const allPosts = await getAllPosts();
+const categories = await getAllCategories();
+const tags = await getAllTags();
+const authors = await getAllAuthors();
+
+/* Per-category counts feed the segmented control's "Politics 12 / All 128"
+ * labels. Computed across the FULL corpus so the totals match what users
+ * see on /archive/ — the segmented is a "drill into the full archive"
+ * affordance, not a "what's on this homepage embed" affordance. */
+const categoryCounts: Record<string, number> = {};
+for (const p of allPosts) {
+  const id = p.data.category;
+  categoryCounts[id] = (categoryCounts[id] ?? 0) + 1;
+}
+
+const visiblePosts = allPosts.slice(0, limit);
+---
+
+<section
+  class="section home-archive"
+  data-section-type="home-archive"
+  data-section-label="Home archive"
+  data-section-variants="A:Default"
+  data-result-limit={String(limit)}
+  {...(variantKey ? { 'data-home-archive-variant': variantKey } : {})}
+>
+  <div class="container">
+    {eyebrow && <span class="home-archive__eyebrow">{eyebrow}</span>}
+    <h2 class="home-archive__heading">{heading}</h2>
+    {subhead && <p class="home-archive__subhead">{subhead}</p>}
+
+    <ArchiveToolbar
+      categories={categories}
+      categoryCounts={categoryCounts}
+      totalCount={allPosts.length}
+    />
+    <ArchiveList
+      posts={visiblePosts}
+      page={1}
+      totalPages={1}
+      baseUrl="/archive"
+    />
+    {viewAll && allPosts.length > 0 && (
+      <a class="home-archive__view-all" href={viewAll.href}>{viewAll.label}</a>
+    )}
+  </div>
+  <ArchiveDrawer tags={tags} authors={authors} />
+</section>

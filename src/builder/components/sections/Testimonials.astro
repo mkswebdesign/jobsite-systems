@@ -1,0 +1,344 @@
+---
+import { getCollection } from 'astro:content';
+import SectionHeading from '../SectionHeading.astro';
+
+interface InlineItem {
+  quote: string;
+  authorName: string;
+  authorRole?: string;
+  authorInitials?: string;
+  avatar?: string;
+}
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  /** Explicit ordered IDs. If omitted/empty, falls back to all `featured: true` testimonials. */
+  testimonialIds?: string[];
+  /** Inline items — takes precedence over testimonialIds when provided. */
+  items?: InlineItem[];
+  variant?: 'grid' | 'carousel' | 'slider';
+}
+
+const { sectionLabel, heading, subtext, testimonialIds, items: inlineItems, variant = 'grid' } = Astro.props;
+
+const all = await getCollection('testimonials');
+const items: InlineItem[] = inlineItems && inlineItems.length
+  ? inlineItems
+  : testimonialIds && testimonialIds.length
+    ? (() => {
+        const byId = new Map(all.map(t => [t.id, t.data]));
+        return testimonialIds
+          .map(id => byId.get(id))
+          .filter((t): t is NonNullable<typeof t> => !!t);
+      })()
+    /* Default fallback: featured testimonials from the MAIN brand only.
+     * Demo testimonials live in the same collection but have ids prefixed
+     * with `demos/<demo>/` (see testimonials-loader.ts). Excluding the
+     * prefixed entries here prevents a demo's featured quotes from leaking
+     * into the main brand homepage when a Testimonials section is rendered
+     * without explicit testimonialIds. Demo pages get their own featured
+     * fallback resolved at the route level. */
+    : all.filter(t => t.data.featured && !t.id.startsWith('demos/')).map(t => t.data);
+
+// Generate stable id for slider scoping (so multiple sliders on a page don't collide).
+const sliderId = `tslider-${Math.random().toString(36).slice(2, 9)}`;
+
+// Suppress the entire section when no testimonials resolve. A brand whose
+// `testimonials.json` is empty (interim state until real client quotes exist)
+// shouldn't render an empty heading + container — and must NOT render
+// fabricated placeholder quotes. Pages that include this section by reference
+// will simply render nothing where the testimonials would appear.
+const hasItems = items.length > 0;
+---
+
+{hasItems && (
+<section
+  class="section"
+  id="testimonials"
+  data-section-type="testimonials"
+  data-section-label="Testimonials"
+  data-section-variants="a:Default,B:Plain,C:Carousel,D:Detailed,E:Editorial,F:Large,G:Slider"
+>
+  <div class="container">
+    {variant === 'slider' ? (
+      <div class="testimonials-slider-frame">
+        <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+        <div class="testimonials-slider reveal" data-testimonials-slider id={sliderId} data-reveal-delay="200">
+        <div class="testimonials-slider__viewport" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Client testimonials">
+          <ul class="testimonials-slider__track" role="list">
+            {items.map((t, i) => (
+              <li
+                class={`testimonials-slider__slide${i === 0 ? ' is-active' : ''}`}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} of ${items.length}`}
+                aria-hidden={i === 0 ? 'false' : 'true'}
+                data-index={i}
+              >
+                <figure class="testimonials-slider__card">
+                  <span class="testimonials-slider__mark" aria-hidden="true">&ldquo;</span>
+                  <blockquote class="testimonials-slider__quote">{t.quote}</blockquote>
+                  <figcaption class="testimonials-slider__author">
+                    {t.avatar || t.authorInitials ? (
+                      <span class={`testimonials-slider__avatar${t.avatar ? ' has-image' : ''}`} aria-hidden="true">
+                        {t.avatar ? (
+                          <img src={t.avatar} alt="" loading="lazy" width="44" height="44" />
+                        ) : (
+                          <span class="testimonials-slider__avatar-initials">{t.authorInitials}</span>
+                        )}
+                      </span>
+                    ) : null}
+                    <span class="testimonials-slider__meta">
+                      <span class="testimonials-slider__name">{t.authorName}</span>
+                      {t.authorRole ? <span class="testimonials-slider__role">{t.authorRole}</span> : null}
+                    </span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="testimonials-slider__controls">
+          <button type="button" class="testimonials-slider__btn testimonials-slider__btn--prev" aria-label="Previous testimonial" data-slider-prev>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <ol class="testimonials-slider__dots" role="tablist" aria-label="Select testimonial">
+            {items.map((_, i) => (
+              <li role="presentation">
+                <button
+                  type="button"
+                  class={`testimonials-slider__dot${i === 0 ? ' is-active' : ''}`}
+                  role="tab"
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                  data-slider-goto={i}
+                ></button>
+              </li>
+            ))}
+          </ol>
+          <button type="button" class="testimonials-slider__btn testimonials-slider__btn--next" aria-label="Next testimonial" data-slider-next>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+
+        <div class="testimonials-slider__progress" aria-hidden="true">
+          <span class="testimonials-slider__progress-fill" data-slider-progress></span>
+        </div>
+        </div>
+      </div>
+    ) : variant === 'carousel' ? (
+      <>
+      <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+      <div class="testimonials-carousel-wrapper reveal" data-reveal-delay="300">
+        <div class="testimonials-carousel-track" data-direction="left">
+          <div class="testimonials-carousel-inner">
+            {items.map(t => (
+              <div class="testimonial-card">
+                <p class="testimonial-text">{t.quote}</p>
+                <div class="testimonial-author">
+                  {t.authorInitials || t.avatar ? (
+                    <div class={`testimonial-avatar${t.avatar ? ' testimonial-avatar--has-image' : ''}`}>
+                      <span class="testimonial-avatar-initials">{t.authorInitials}</span>
+                      {t.avatar && (
+                        <img class="testimonial-avatar-img" src={t.avatar} alt={t.authorName} loading="lazy" width="40" height="40" />
+                      )}
+                    </div>
+                  ) : null}
+                  <div class="testimonial-meta">
+                    <span class="testimonial-name">{t.authorName}</span>
+                    <span class="testimonial-role">{t.authorRole}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      </>
+    ) : (
+      <>
+      <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+      <div class="testimonials-grid stagger-container reveal">
+        {items.map(t => (
+          <div class="testimonial-card stagger-item">
+            <p class="testimonial-text">{t.quote}</p>
+            <div class="testimonial-author">
+              {t.avatar ? (
+                <div class="testimonial-avatar testimonial-avatar--image">
+                  <img src={t.avatar} alt={t.authorName} loading="lazy" width="40" height="40" />
+                </div>
+              ) : t.authorInitials ? (
+                <div class="testimonial-avatar">{t.authorInitials}</div>
+              ) : null}
+              <div class="testimonial-meta">
+                <span class="testimonial-name">{t.authorName}</span>
+                <span class="testimonial-role">{t.authorRole}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      </>
+    )}
+  </div>
+</section>
+)}
+
+{hasItems && variant === 'slider' && (
+  <script is:inline>
+    (function () {
+      function init(root) {
+        if (!root || root.__tsliderInit) return;
+        root.__tsliderInit = true;
+
+        var slides = Array.from(root.querySelectorAll('.testimonials-slider__slide'));
+        var dots = Array.from(root.querySelectorAll('[data-slider-goto]'));
+        var prevBtn = root.querySelector('[data-slider-prev]');
+        var nextBtn = root.querySelector('[data-slider-next]');
+        var viewport = root.querySelector('.testimonials-slider__viewport');
+        var progressFill = root.querySelector('[data-slider-progress]');
+        if (slides.length === 0) return;
+
+        var current = 0;
+        var autoplayMs = 6500;
+        var autoplayTimer = null;
+        var paused = false;
+        var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function setActive(next) {
+          next = (next + slides.length) % slides.length;
+          if (next === current) return;
+          var prev = current;
+          current = next;
+          slides.forEach(function (s, i) {
+            var active = i === next;
+            var leaving = i === prev;
+            s.classList.toggle('is-active', active);
+            s.classList.toggle('is-leaving', leaving && !active);
+            s.setAttribute('aria-hidden', active ? 'false' : 'true');
+            if (!active && !leaving) s.classList.remove('is-leaving');
+          });
+          dots.forEach(function (d, i) {
+            var on = i === next;
+            d.classList.toggle('is-active', on);
+            d.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          restartProgress();
+        }
+
+        function next() { setActive(current + 1); }
+        function prev() { setActive(current - 1); }
+
+        function restartProgress() {
+          if (!progressFill) return;
+          progressFill.style.transition = 'none';
+          progressFill.style.transform = 'scaleX(0)';
+          // force reflow so the next transition runs
+          void progressFill.offsetWidth;
+          if (paused || prefersReducedMotion) return;
+          progressFill.style.transition = 'transform ' + autoplayMs + 'ms linear';
+          progressFill.style.transform = 'scaleX(1)';
+        }
+
+        function startAutoplay() {
+          stopAutoplay();
+          if (prefersReducedMotion) return;
+          autoplayTimer = window.setInterval(function () {
+            if (!paused && !document.hidden) next();
+          }, autoplayMs);
+          restartProgress();
+        }
+        function stopAutoplay() {
+          if (autoplayTimer) { window.clearInterval(autoplayTimer); autoplayTimer = null; }
+        }
+        function pauseAutoplay() { paused = true; if (progressFill) { progressFill.style.transition = 'none'; } }
+        function resumeAutoplay() { paused = false; restartProgress(); }
+
+        if (prevBtn) prevBtn.addEventListener('click', function () { prev(); });
+        if (nextBtn) nextBtn.addEventListener('click', function () { next(); });
+        dots.forEach(function (d) {
+          d.addEventListener('click', function () {
+            var i = parseInt(d.getAttribute('data-slider-goto') || '0', 10);
+            setActive(i);
+          });
+        });
+
+        // Keyboard nav when viewport is focused.
+        if (viewport) {
+          viewport.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+            else if (e.key === 'Home') { e.preventDefault(); setActive(0); }
+            else if (e.key === 'End') { e.preventDefault(); setActive(slides.length - 1); }
+          });
+        }
+
+        // Pause-on-hover / focus-within.
+        root.addEventListener('mouseenter', pauseAutoplay);
+        root.addEventListener('mouseleave', resumeAutoplay);
+        root.addEventListener('focusin', pauseAutoplay);
+        root.addEventListener('focusout', function (e) {
+          if (!root.contains(e.relatedTarget)) resumeAutoplay();
+        });
+
+        // Touch / pointer swipe.
+        var startX = 0, startY = 0, dx = 0, dy = 0, swiping = false;
+        function onPointerDown(e) {
+          var p = e.touches ? e.touches[0] : e;
+          startX = p.clientX; startY = p.clientY; dx = 0; dy = 0; swiping = true;
+          pauseAutoplay();
+        }
+        function onPointerMove(e) {
+          if (!swiping) return;
+          var p = e.touches ? e.touches[0] : e;
+          dx = p.clientX - startX; dy = p.clientY - startY;
+        }
+        function onPointerUp() {
+          if (!swiping) return;
+          swiping = false;
+          var threshold = 50;
+          if (Math.abs(dx) > threshold && Math.abs(dx) > Math.abs(dy)) {
+            if (dx < 0) next(); else prev();
+          }
+          resumeAutoplay();
+        }
+        viewport.addEventListener('touchstart', onPointerDown, { passive: true });
+        viewport.addEventListener('touchmove', onPointerMove, { passive: true });
+        viewport.addEventListener('touchend', onPointerUp);
+
+        // Pause when tab is hidden.
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) { pauseAutoplay(); }
+          else { resumeAutoplay(); }
+        });
+
+        // Only start autoplay when the slider is in view (saves CPU + respects RM).
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) startAutoplay();
+              else stopAutoplay();
+            });
+          }, { threshold: 0.25 });
+          io.observe(root);
+        } else {
+          startAutoplay();
+        }
+      }
+
+      function bootAll() {
+        document.querySelectorAll('[data-testimonials-slider]').forEach(init);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootAll);
+      } else {
+        bootAll();
+      }
+      // Re-init on view-transition swaps (Astro client router).
+      document.addEventListener('astro:page-load', bootAll);
+    })();
+  </script>
+)}

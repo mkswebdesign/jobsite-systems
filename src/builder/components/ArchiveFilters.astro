@@ -1,0 +1,186 @@
+---
+/**
+ * ArchiveFilters — filter bar above ArchiveList on /archive/, /category/<slug>/,
+ * and /tag/<slug>/ pages.
+ *
+ * Architecture: category and tag chips NAVIGATE (real <a> links to the
+ * filtered routes), they don't filter in-place. This avoids silent breakage
+ * past 12 posts where in-place DOM filtering would only see the current
+ * page. Sort + date-range + in-page text-search filter the visible cards
+ * on the current page only — labelled "Filter within this page".
+ *
+ * Search input: Enter only → navigates to /search/?q=. No keystroke filter.
+ *
+ * Props:
+ *   categories[]   — for the category chip row
+ *   tags[]         — { tag, count } for the tag chip row (top 12)
+ *   currentCategory?, currentTag? — for active-state and "All" link target
+ */
+import type { Category, TagUsage } from '../lib/posts';
+interface Props {
+  categories: Category[];
+  tags: TagUsage[];
+  currentCategory?: string;
+  currentTag?: string;
+  /** Total post count in scope (used by "Showing N of M" status). */
+  totalCount?: number;
+}
+const { categories, tags, currentCategory, currentTag, totalCount } = Astro.props;
+const topTags = tags.slice(0, 12);
+const moreTags = tags.slice(12);
+
+const allChipActive = !currentCategory && !currentTag;
+
+/* Plain-English summary of the active scope (rendered above the grid).
+ * Only shows when there's actually an active scope or filters set; the
+ * client-side script will additionally fold in sort/date params. */
+const scopeLabel: string | null = currentCategory
+  ? (categories.find((c) => c.data.id === currentCategory)?.data.name ?? currentCategory)
+  : (currentTag ? `#${currentTag}` : null);
+---
+<section class="archive-filters" aria-label="Filters">
+  <nav class="archive-filters__row archive-filters__categories" aria-label="Categories">
+    <a
+      class="filter-chip filter-chip--all"
+      href="/archive/"
+      data-active={allChipActive ? 'true' : undefined}
+    >All</a>
+    {categories.map((c) => (
+      <a
+        class="filter-chip"
+        href={`/category/${c.data.slug}/`}
+        data-category={c.data.id}
+        data-active={currentCategory === c.data.id ? 'true' : undefined}
+      >{c.data.name}</a>
+    ))}
+  </nav>
+
+  {topTags.length > 0 && (
+    <nav class="archive-filters__row archive-filters__tags" aria-label="Tags">
+      {topTags.map(({ tag }) => (
+        <a
+          class="filter-chip filter-chip--tag"
+          href={`/tag/${tag}/`}
+          data-active={currentTag === tag ? 'true' : undefined}
+        >#{tag}</a>
+      ))}
+      {moreTags.length > 0 && (
+        <details class="archive-filters__more">
+          <summary>More</summary>
+          <div class="archive-filters__more-list">
+            {moreTags.map(({ tag }) => (
+              <a class="filter-chip filter-chip--tag" href={`/tag/${tag}/`}>#{tag}</a>
+            ))}
+          </div>
+        </details>
+      )}
+    </nav>
+  )}
+
+  <div class="archive-filters__controls">
+    <label class="sort-dropdown">
+      <span class="sort-dropdown__label">Sort:</span>
+      <select data-sort>
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </label>
+
+    <details class="archive-filters__date">
+      <summary>Filter by date</summary>
+      <div class="date-range">
+        <label>From <input type="date" data-date-from /></label>
+        <label>To <input type="date" data-date-to /></label>
+      </div>
+    </details>
+
+    <form class="archive-filters__search" role="search" action="/search/" method="get">
+      <input
+        type="search"
+        name="q"
+        placeholder="Search articles…"
+        aria-label="Search articles (Enter to submit)"
+      />
+    </form>
+
+    <button class="clear-filters" type="button" data-clear hidden>Clear filters</button>
+  </div>
+
+  {(scopeLabel || (totalCount != null && totalCount > 0)) && (
+    <p class="archive-filters__scope">
+      {scopeLabel && <span class="archive-filters__scope-pill">{scopeLabel}</span>}
+      {totalCount != null && totalCount > 0 && (
+        <span class="archive-filters__scope-count">{totalCount} {totalCount === 1 ? 'article' : 'articles'} in scope</span>
+      )}
+    </p>
+  )}
+
+  <p class="archive-filters__status" data-filter-status></p>
+</section>
+
+<script>
+  const sortEl   = document.querySelector('[data-sort]');
+  const fromEl   = document.querySelector('[data-date-from]');
+  const toEl     = document.querySelector('[data-date-to]');
+  const clearEl  = document.querySelector('[data-clear]');
+  const statusEl = document.querySelector('[data-filter-status]');
+  const grid     = document.querySelector('.archive-list__grid');
+  if (grid && sortEl) {
+    const cards = Array.from(grid.querySelectorAll('.post-card'));
+    const total = cards.length;
+
+    function applyFilters() {
+      const sort = sortEl.value;
+      const from = fromEl?.value ?? '';
+      const to   = toEl?.value ?? '';
+      let visible = 0;
+      cards.forEach((card) => {
+        const date = card.getAttribute('data-date') ?? '';
+        const inFrom = !from || date >= from;
+        const inTo   = !to   || date <= to;
+        const show = inFrom && inTo;
+        if (show) { card.removeAttribute('data-hidden'); visible++; }
+        else      { card.setAttribute('data-hidden', 'true'); }
+      });
+      // sort visible cards by date
+      const visibleCards = cards.filter((c) => c.getAttribute('data-hidden') !== 'true');
+      visibleCards.sort((a, b) => {
+        const ad = a.getAttribute('data-date') ?? '';
+        const bd = b.getAttribute('data-date') ?? '';
+        return sort === 'oldest' ? ad.localeCompare(bd) : bd.localeCompare(ad);
+      });
+      visibleCards.forEach((c) => grid.appendChild(c));
+
+      const filtersActive = sort !== 'newest' || from || to;
+      if (clearEl) clearEl.hidden = !filtersActive;
+      if (statusEl) {
+        statusEl.textContent = filtersActive
+          ? `Showing ${visible} of ${total} on this page`
+          : '';
+      }
+
+      const u = new URL(location.href);
+      if (sort !== 'newest') u.searchParams.set('sort', sort); else u.searchParams.delete('sort');
+      if (from) u.searchParams.set('from', from); else u.searchParams.delete('from');
+      if (to)   u.searchParams.set('to', to);     else u.searchParams.delete('to');
+      history.replaceState({}, '', u.toString());
+    }
+
+    /* Init from URL params. */
+    const params = new URLSearchParams(location.search);
+    if (params.get('sort') === 'oldest') sortEl.value = 'oldest';
+    if (params.get('from') && fromEl) fromEl.value = params.get('from');
+    if (params.get('to')   && toEl)   toEl.value   = params.get('to');
+    applyFilters();
+
+    sortEl.addEventListener('change', applyFilters);
+    fromEl?.addEventListener('change', applyFilters);
+    toEl?.addEventListener('change', applyFilters);
+    clearEl?.addEventListener('click', () => {
+      sortEl.value = 'newest';
+      if (fromEl) fromEl.value = '';
+      if (toEl)   toEl.value   = '';
+      applyFilters();
+    });
+  }
+</script>

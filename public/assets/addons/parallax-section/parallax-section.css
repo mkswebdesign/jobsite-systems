@@ -1,0 +1,33 @@
+/*
+ * Parallax Section — drop-in subtle background-parallax.
+ *
+ * Marker: data-aed-parallax="0.4" (speed 0–1, where 1 = no parallax,
+ * 0 = stationary in viewport). The JS sets --aed-parallax-y on the
+ * element; CSS uses it via background-position OR a child wrapper's
+ * transform — author chooses.
+ *
+ * See /parallax-section/README.md.
+ */
+
+[data-aed-parallax] {
+  position: relative;
+  overflow: hidden;
+  --aed-parallax-y: 0px;
+  background-position-y: calc(50% + var(--aed-parallax-y));
+}
+
+/* Child layer pattern: wrap the parallax target in <div data-aed-parallax-layer> */
+[data-aed-parallax-layer] {
+  transform: translate3d(0, var(--aed-parallax-y, 0px), 0);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-parallax] { --aed-parallax-y: 0px !important; background-position-y: 50% !important; }
+  [data-aed-parallax-layer] { transform: none !important; }
+}
+
+@media print {
+  [data-aed-parallax] { background-position-y: 50% !important; }
+  [data-aed-parallax-layer] { transform: none !important; }
+}

@@ -1,0 +1,382 @@
+/* ============================================
+   Checkout / signup sub-pages — distraction-free
+   --------------------------------------------
+   Rendered by src/pages/pricing/[tier]/[cycle].astro under Base.astro's
+   `chromeless` mode (nav + footer suppressed). The goal is a clean
+   two-column layout: plan summary on the left, signup form on the right.
+   Collapses to a single column on narrow viewports.
+   ============================================ */
+
+.checkout-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.checkout-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+.checkout-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+.checkout-home-label { white-space: nowrap }
+.checkout-back {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.checkout-back:hover { color: var(--text-primary) }
+
+.checkout-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem);
+}
+/* Single-column variant used by the /success/ child page where there's
+   no plan-summary sidebar — the handoff card sits centered on its own. */
+.checkout-main--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 620px;
+}
+
+/* ---- Plan summary (left column) ---- */
+.checkout-summary {
+  position: sticky;
+  top: calc(1.5rem + var(--aed-announcement-h, 0px));
+  align-self: start;
+  padding: 2rem 1.85rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.checkout-cycle-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  margin-bottom: 1.25rem;
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.checkout-plan-name {
+  font-size: clamp(1.75rem, 3vw, 2.125rem);
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+.checkout-plan-group {
+  margin: 0 0 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.checkout-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+.checkout-price-now {
+  font-size: clamp(2.25rem, 4.5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+.checkout-price-was {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  opacity: 0.7;
+}
+.checkout-price-suffix {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+.checkout-save-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  margin-top: 0.5rem;
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.checkout-billed-note {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 0.25rem;
+}
+.checkout-yearly-total {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.75;
+  margin: 0 0 1.5rem;
+}
+.checkout-plan-desc {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.checkout-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.checkout-features li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.checkout-features li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 0.75rem;
+  height: 0.4rem;
+  border-left: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(-45deg);
+}
+.checkout-switch-cycle {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--border-light);
+  text-underline-offset: 3px;
+  transition: color var(--transition);
+}
+.checkout-switch-cycle:hover { color: var(--accent) }
+
+/* ---- Form (right column) ---- */
+.checkout-form-wrap h2 {
+  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.01em;
+}
+.checkout-form-lead {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: 0 0 2rem;
+}
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.checkout-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+}
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.checkout-field label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+}
+.checkout-field input,
+.checkout-field textarea {
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 10px);
+  background: var(--bg-card);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  width: 100%;
+}
+.checkout-field input:focus,
+.checkout-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.18);
+}
+.checkout-field textarea { resize: vertical; min-height: 6rem }
+.checkout-submit {
+  appearance: none;
+  border: none;
+  padding: 0.95rem 1.4rem;
+  margin-top: 0.75rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--btn-primary-fg, #fff);
+  background: var(--accent);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 12px 30px rgba(var(--accent-rgb), 0.28);
+}
+.checkout-submit:hover {
+  background: var(--accent-hover, var(--accent));
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px rgba(var(--accent-rgb), 0.34);
+}
+.checkout-submit:focus-visible {
+  outline: 3px solid rgba(var(--accent-rgb), 0.5);
+  outline-offset: 2px;
+}
+.checkout-legal {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ---- Inline error banner (form submit failure) ---- */
+.checkout-error {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, #c0392b 50%, var(--border));
+  background: color-mix(in srgb, #c0392b 8%, transparent);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.checkout-error[hidden] { display: none }
+.checkout-error strong { font-weight: 700; margin-right: 0.25rem }
+
+/* ---- ACH handoff card (used on /success/ child page) ----
+   Baseline scaffold only — positioning, card frame, default typography.
+   Brand-specific polish (icon lockup, numbered-step bullets, "Powered by"
+   credit, proceed-button styling) lives in brands/<id>.css. */
+.checkout-handoff-card {
+  padding: 2rem 1.85rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.35);
+}
+.checkout-handoff-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--accent-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.checkout-handoff-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.checkout-handoff-lead {
+  margin: 0 0 1.1rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.checkout-handoff-plan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.85rem 1rem;
+  margin: 0 0 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--text-primary) 3%, transparent);
+}
+.checkout-handoff-plan-name {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+.checkout-handoff-plan-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.checkout-handoff-plan-price strong {
+  font-weight: 800;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+.checkout-handoff-plan-suffix { color: var(--text-muted); font-size: 0.8rem }
+.checkout-handoff-plan-cycle { color: var(--text-muted); font-size: 0.8rem }
+
+.checkout-handoff-help {
+  margin: 1rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.825rem;
+  text-align: center;
+}
+.checkout-handoff-help a { color: var(--accent); font-weight: 600 }
+
+/* ---- Footer ---- */
+.checkout-footer {
+  padding: 1.5rem clamp(1rem, 3vw, 2rem);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+.checkout-footer p { margin: 0 }
+
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .checkout-main { grid-template-columns: 1fr; padding-top: 2rem }
+  .checkout-summary { position: static }
+  .checkout-row { grid-template-columns: 1fr }
+}
+

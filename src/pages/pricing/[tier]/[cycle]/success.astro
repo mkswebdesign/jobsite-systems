@@ -1,0 +1,132 @@
+---
+import { getEntry } from 'astro:content';
+import { brand } from '../../../../builder/lib/brand';
+import Base from '../../../../builder/layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const entry = await getEntry('pages', 'pricing');
+  if (!entry) return [];
+  const d: any = entry.data;
+  if (!d.billing) return [];
+
+  const groups: any[] = d.tierGroups?.groups?.length
+    ? d.tierGroups.groups
+    : (d.tiers?.length ? [{ id: 'default', label: null, tiers: d.tiers }] : []);
+  const cycles = ['monthly', 'yearly'];
+
+  const paths: any[] = [];
+  for (const g of groups) {
+    for (const t of (g.tiers ?? [])) {
+      if (!t.id) continue;
+      for (const c of cycles) {
+        paths.push({
+          params: { tier: t.id, cycle: c },
+          props: { tier: t, cycle: c, group: g, billing: d.billing },
+        });
+      }
+    }
+  }
+  return paths;
+}
+
+const { tier, cycle, group, billing } = Astro.props as any;
+
+const discount = typeof billing.discount === 'number' ? billing.discount : 0.30;
+const priceNum = parseFloat((/(\d+(?:\.\d+)?)/.exec(tier.price || '') || [,'0'])[1]);
+const yearlyMonthlyNum = Math.round(priceNum * (1 - discount));
+const yearlyDisplay = tier.price.replace(/\d+(?:\.\d+)?/, String(yearlyMonthlyNum));
+const displayPrice = cycle === 'yearly' ? yearlyDisplay : tier.price;
+const billedNote = cycle === 'yearly'
+  ? (billing.yearlyNote || 'billed annually')
+  : (billing.monthlyNote || 'billed monthly');
+
+const planLabel = `${group?.label ? group.label + ' — ' : ''}${tier.name}`;
+const title = `Details Received — ${planLabel} — ${brand.name}`;
+const description = `Your details for the ${planLabel} plan are in. Next step: set up ACH on GoCardless.`;
+
+// PENDING: swap to the real GoCardless mandate / payment link when issued.
+const GOCARDLESS_URL = 'https://pay.gocardless.com/BRT0002S09FX3BV';
+---
+
+<Base title={title} description={description} indexable={false} chromeless skipTarget="#confirm">
+  <div class="checkout-shell">
+    <header class="checkout-topbar">
+      <a href="/" class="checkout-home" aria-label={`${brand.name} home`}>
+        <span class="checkout-home-label">{brand.name}</span>
+      </a>
+      <a href="/pricing/" class="checkout-back">← Plans</a>
+    </header>
+
+    <main class="checkout-main checkout-main--single" id="confirm">
+      <section class="checkout-handoff-card" aria-labelledby="handoff-title">
+        <div class="checkout-handoff-header">
+          <div class="checkout-handoff-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <img class="checkout-handoff-header-mark" src="/assets/mkswebdesign/mks-mark.svg" alt="MKS Web Design" width="32" height="32" loading="lazy" decoding="async" />
+        </div>
+
+        <p class="checkout-handoff-eyebrow">Got it — your details are in.</p>
+        <h1 id="handoff-title" class="checkout-handoff-title">One more step — set up ACH</h1>
+        <p class="checkout-handoff-lead">
+          You'll authorize a recurring bank transfer on GoCardless. No card fees, no paperwork — bank‑to‑bank.
+        </p>
+
+        <div class="checkout-handoff-plan" aria-label="Selected plan">
+          <span class="checkout-handoff-plan-name">{planLabel}</span>
+          <span class="checkout-handoff-plan-price">
+            <strong>{displayPrice}</strong>
+            {tier.priceSuffix && <span class="checkout-handoff-plan-suffix">{tier.priceSuffix}</span>}
+            <span class="checkout-handoff-plan-cycle">· {billedNote}</span>
+          </span>
+        </div>
+
+        <ol class="checkout-handoff-steps">
+          <li>Authorize a recurring ACH mandate on <strong>GoCardless</strong>.</li>
+          <li>We confirm and start onboarding within one business day.</li>
+          <li>Your first charge runs only after we confirm scope by email.</li>
+        </ol>
+
+        <p class="checkout-handoff-note">
+          <span class="checkout-handoff-note-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </span>
+          <span class="checkout-handoff-note-text">
+            Secure ACH via <strong>GoCardless</strong> — no card numbers stored on our site.
+          </span>
+        </p>
+
+        <div class="checkout-handoff-cta">
+          <a class="checkout-handoff-proceed" href={GOCARDLESS_URL} target="_blank" rel="noopener">
+            Set Up ACH on GoCardless <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <p class="checkout-handoff-help">
+          Need help or have a question first? Email
+          {' '}<a href={`mailto:${brand.contact.email}`}>{brand.contact.email}</a>.
+        </p>
+
+        <a
+          class="checkout-handoff-credit"
+          href="https://gomks.com/"
+          target="_blank"
+          rel="noopener"
+          aria-label="Powered by gomks.com — an MKS Web Design company"
+        >
+          <span class="checkout-handoff-credit-label">Powered by</span>
+          <span class="checkout-handoff-credit-wordmark" aria-hidden="true">
+            <span class="checkout-handoff-credit-go">go</span><span class="checkout-handoff-credit-mks">mks</span><span class="checkout-handoff-credit-tld">.com</span>
+          </span>
+          <span class="checkout-handoff-credit-tag">an MKS Web Design company</span>
+        </a>
+      </section>
+    </main>
+
+    <footer class="checkout-footer">
+      <p>Secure signup — your details are never shared. © {new Date().getFullYear()} {brand.name}.</p>
+    </footer>
+  </div>
+</Base>

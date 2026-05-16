@@ -1,0 +1,77 @@
+{
+  "slug": "terms",
+  "path": "/terms/",
+  "breadcrumbLabel": "Terms",
+  "seo": {
+    "title": "Terms — Cedar Mill Plumbing",
+    "description": "Ground rules for using cedarmillplumbing.example and submitting a service request. The plumber-customer relationship runs on the written estimate and invoice for each specific job.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/terms/"
+  },
+  "header": {
+    "heading": "Website Terms",
+    "lead": "Plain-language rules for using this website. Each specific job is governed by its own written estimate and invoice — that's where pricing, scope, warranty terms, and any project-specific conditions are set."
+  },
+  "lastUpdated": "April 2026",
+  "body": [
+    {
+      "heading": "1. Scope",
+      "paragraphs": [
+        "These terms apply to use of cedarmillplumbing.example and any submission of the contact or service-request forms. They do not establish a service contract — that begins only with a signed written estimate (or, for flat-rate service calls, with the customer agreeing to the published flat rate at the time of dispatch)."
+      ]
+    },
+    {
+      "heading": "2. The website is informational",
+      "paragraphs": [
+        "This site exists to describe the shop, what services I offer, pricing, and how to schedule a service call or estimate visit. Nothing on the website constitutes a binding quote for any specific job. Real quotes are issued in writing after I've seen the work."
+      ]
+    },
+    {
+      "heading": "3. Submitting a request is not a service contract",
+      "paragraphs": [
+        "Filling out the contact form starts a conversation about scheduling — it is not, by itself, a binding service contract. The contract starts when you sign off on a written estimate or agree to a published flat rate at the time of dispatch."
+      ]
+    },
+    {
+      "heading": "4. Emergency situations",
+      "paragraphs": [
+        "The contact form is not monitored continuously. If you have an active emergency — burst pipe, sewage backup in the house, no hot water tonight, gas smell — call (503) 555-0149 directly. If it's life-safety (fire, structural collapse, gas you can smell from outside), call 911 first."
+      ]
+    },
+    {
+      "heading": "5. Pricing on this site",
+      "paragraphs": [
+        "Flat rates and project ranges published on this site are accurate at the time of writing but are not a guaranteed quote for your specific job. Final pricing is in the written estimate or in the published flat rate confirmed at the time of dispatch. If something behind the wall changes the scope, the price is revised in writing before any additional work is performed."
+      ]
+    },
+    {
+      "heading": "6. Intellectual property",
+      "paragraphs": [
+        "The site's content — text, design, photos of completed work — belongs to Cedar Mill Plumbing. Don't copy, redistribute, or republish without written permission. Linking to a page is fine."
+      ]
+    },
+    {
+      "heading": "7. No warranty (on the website)",
+      "paragraphs": [
+        "The site is provided \"as is.\" We aim for accuracy but make no warranty that everything is current or continuously available. Job-specific workmanship warranties (1-year standard, 5-year on repipes) and manufacturer warranty pass-through terms apply to the work itself, not the website."
+      ]
+    },
+    {
+      "heading": "8. Limitation of liability",
+      "paragraphs": [
+        "To the fullest extent permitted by law, Cedar Mill Plumbing is not liable for indirect, incidental, or consequential damages arising from use of this website. This does not limit warranty obligations on completed work, which are governed by the written estimate and invoice."
+      ]
+    },
+    {
+      "heading": "9. Updates",
+      "paragraphs": [
+        "These terms may be updated occasionally. The \"last updated\" date at the top reflects the most recent revision."
+      ]
+    },
+    {
+      "heading": "10. Contact",
+      "paragraphs": [
+        "Questions about these terms? Email hello@cedarmillplumbing.example or call (503) 555-0149."
+      ]
+    }
+  ]
+}

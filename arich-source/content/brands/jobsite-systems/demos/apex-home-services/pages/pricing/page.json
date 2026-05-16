@@ -1,0 +1,125 @@
+{
+  "slug": "pricing",
+  "path": "/pricing/",
+  "breadcrumbLabel": "Pricing & Estimates",
+  "seo": {
+    "title": "Pricing & Estimates — Apex Home Services",
+    "description": "Hourly handyman rates, flat-rate small electrical, and remodel project ranges. Free in-home estimates for projects. Written quote before any work starts.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/pricing/"
+  },
+  "header": {
+    "sectionLabel": "Pricing & Estimates",
+    "heading": "Real numbers up front.\nWritten quotes on every job.",
+    "lead": "Pricing varies a lot by trade. Handyman work is hourly, small electrical is flat-rate, and remodels are project-quoted after a free in-home estimate. Below: the actual ballpark numbers per category, how estimates work, and what you should expect to see on a written quote."
+  },
+  "billing": {
+    "default": "monthly",
+    "discount": 0,
+    "savePill": "",
+    "monthlyLabel": "Category",
+    "yearlyLabel": "",
+    "monthlyNote": "your specific cost depends on the job and materials",
+    "yearlyNote": ""
+  },
+  "tierGroups": {
+    "defaultId": "all",
+    "toggleLabel": "Category",
+    "groups": [
+      {
+        "id": "all",
+        "label": "Handyman, Electrical, Remodel & Exterior",
+        "blurb": "Three ways to think about pricing across our four trades. Hourly for handyman, flat-rate for small electrical, project-quoted for remodel and bigger exterior work. Written quote before any work starts in every category.",
+        "tiers": [
+          {
+            "id": "apex-handyman",
+            "name": "Handyman (Hourly)",
+            "price": "$95/hr",
+            "priceSuffix": "1-hour minimum",
+            "description": "General home repairs, drywall, doors, fixture installs, mounting, and punch-list work. $95/hr with a one-hour minimum, or $85/hr in 4-hour blocks for bigger punch-list days. Materials at cost plus a small handling markup, listed on your written quote before work starts.",
+            "ctaLabel": "Request a Handyman Quote",
+            "ctaHref": "/demo/apex-home-services/contact/",
+            "ctaVariant": "primary",
+            "featured": true,
+            "badge": "Most Common",
+            "features": [
+              { "name": "$95/hr · 1-hour minimum on single visits", "included": true },
+              { "name": "$85/hr · 4-hour blocks for bigger punch lists", "included": true },
+              { "name": "Two-person crew on most visits", "included": true },
+              { "name": "Phone-quotes from photos for clear-cut jobs", "included": true },
+              { "name": "Materials at cost plus small handling markup", "included": true },
+              { "name": "Branded truck, written quote, photos at end-of-job", "included": true },
+              { "name": "1-year workmanship warranty", "included": true }
+            ]
+          },
+          {
+            "id": "apex-electrical",
+            "name": "Electrical (Flat + Quoted)",
+            "price": "From $185",
+            "priceSuffix": "outlet add",
+            "description": "Small electrical is flat-rate so you know the price before we start. Standard outlet add on existing circuit $185, standard ceiling fan install on existing fixture box $295. Bigger work — panel upgrades, EV chargers, generator transfer switches — quoted on-site after a free walkthrough.",
+            "ctaLabel": "Request an Electrical Quote",
+            "ctaHref": "/demo/apex-home-services/contact/",
+            "ctaVariant": "secondary",
+            "featured": false,
+            "features": [
+              { "name": "Outlet add (existing circuit) — $185 flat", "included": true },
+              { "name": "Ceiling fan install (existing fixture box) — $295 flat", "included": true },
+              { "name": "Panel upgrade — quoted on-site, typical $1,800–$3,500", "included": true },
+              { "name": "Level 2 EV charger install — typical $750–$1,800", "included": true },
+              { "name": "Licensed KS electrical contractor on every job (#E-19842)", "included": true },
+              { "name": "Permits pulled and inspections coordinated where required", "included": true },
+              { "name": "1-year workmanship warranty", "included": true }
+            ]
+          },
+          {
+            "id": "apex-remodel",
+            "name": "Light Remodel (Project)",
+            "price": "$5k–$60k",
+            "priceSuffix": "project range",
+            "description": "Kitchens, baths, and basement finish-outs in the $5k–$60k range. Free in-home estimate, written scope and price within 3–5 business days, on-site supervisor every workday. We're not the right call for whole-house gut renovations or new builds — we're a small crew that does mid-size projects well.",
+            "ctaLabel": "Book a Free In-Home Estimate",
+            "ctaHref": "/demo/apex-home-services/contact/",
+            "ctaVariant": "secondary",
+            "featured": false,
+            "features": [
+              { "name": "Kitchen refresh — typical $12k–$35k", "included": true },
+              { "name": "Full kitchen remodel — typical $35k–$60k", "included": true },
+              { "name": "Bathroom remodel — typical $8k–$40k depending on scope", "included": true },
+              { "name": "Basement finish-out — typical $20k–$60k", "included": true },
+              { "name": "Free in-home estimate; written scope and price before any demo", "included": true },
+              { "name": "Deposit at signing; milestone payments through the project", "included": true },
+              { "name": "1-year workmanship warranty + manufacturer warranties on parts", "included": true }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "oneOff": {
+    "heading": "How an estimate is prepared.",
+    "body": "After your in-home estimate walkthrough, we put a written scope and price together within 3–5 business days. The quote covers labor, materials at cost, any permits and inspections, and a line-by-line breakdown of what's included and what's not. You sign nothing at the walkthrough — the quote goes home with you and you accept on your timeline. <a href=\"/demo/apex-home-services/faq/\">More on the FAQ →</a>",
+    "ctaLabel": "Get a Quote",
+    "ctaHref": "/demo/apex-home-services/contact/"
+  },
+  "faq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions About Cost",
+    "faqs": [
+      { "question": "Why don't you list every project price on the website?", "answer": "Because the same kitchen remodel can be $12k or $50k depending on cabinets, counters, layout changes, and what's behind the walls. Posting a single number would be misleading. We give real ranges per category here, and a written project price after we've walked the space." },
+      { "question": "Is the in-home estimate really free?", "answer": "Yes. Free in-home estimates on remodel projects and bigger electrical work. The only thing we charge for is dispatch on jobs where the customer cancels after the truck is already on-site, and we always disclose that up front. Phone-quotes are free for handyman and small electrical work." },
+      { "question": "Do you offer payment plans on remodels?", "answer": "We use milestone payments on remodel projects — a deposit at signing, payments through the project tied to specific milestones, and a final payment at walkthrough. We don't do third-party financing, but milestone structures make most projects manageable without it." },
+      { "question": "What's included on a written quote?", "answer": "Line items for labor, materials at cost (with brand info on key items), any permits and inspections, exclusions called out explicitly, and a section for known-unknowns we'd hit a change-order on. The price is the price unless we hit something hidden in the walls — and if we do, we tell you immediately and you sign before the cost changes." }
+    ]
+  },
+  "cta": {
+    "heading": "Have questions about pricing or scope?",
+    "body": "The walkthrough is the right place to talk numbers on a remodel project. The phone or text is the right place to phone-quote handyman or small electrical work. Either way, written quote before any work starts.",
+    "label": "Get a Quote",
+    "href": "/demo/apex-home-services/contact/"
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

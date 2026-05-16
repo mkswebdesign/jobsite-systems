@@ -1,0 +1,13 @@
+{
+  "type": "testimonials",
+  "sectionLabel": "What customers say",
+  "heading": "From homeowners\nand property managers.",
+  "subtext": "We're obsessive about Google reviews — 250+ at last count, 4.8-star average. The quotes here come from homeowners and property managers across the KC metro.",
+  "variant": "carousel",
+  "testimonialIds": [
+    "dr-david-h",
+    "lauren-w",
+    "dr-priya-m",
+    "marcus-j-apex"
+  ]
+}

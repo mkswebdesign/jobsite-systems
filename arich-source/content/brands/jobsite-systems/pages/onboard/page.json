@@ -1,0 +1,463 @@
+{
+  "slug": "onboard",
+  "path": "/onboard/",
+  "breadcrumbLabel": "Onboarding",
+  "seo": {
+    "title": "Onboarding — Jobsite Systems",
+    "description": "A guided onboarding walkthrough for new Jobsite Systems clients. Tell us about your business so we can build your site right.",
+    "canonical": "https://jobsite.systems/onboard/"
+  },
+  "header": {
+    "sectionLabel": "Welcome aboard",
+    "heading": "Let's build your site.",
+    "lead": "Fourteen short questions about your business — most folks finish in 10–15 minutes. Skip what you don't have, ramble in the open boxes, drop a phone number for anything you'd rather walk through. We'll turn this into a real first draft and follow up within one business day."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New onboarding intake from jobsite.systems",
+    "submitLabel": "Send Onboarding Details",
+    "successMessage": "Got everything. We'll review and follow up within one business day with a real response.",
+    "errorMessage": "Something went wrong. Please try again or email us directly at hello@jobsite.systems.",
+    "steps": [
+      {
+        "id": "business-type",
+        "eyebrow": "Step 1 · Trade Type",
+        "title": "What kind of trade business do you have?",
+        "description": "Pick all that apply. A mix is normal — many trade businesses wear several hats.",
+        "fields": [
+          {
+            "id": "business_type",
+            "name": "business_type",
+            "type": "checkbox-grid",
+            "required": true,
+            "options": [
+              { "value": "handyman", "label": "Handyman / general repairs", "description": "Punch lists, small jobs, multi-trade fixes." },
+              { "value": "hvac", "label": "HVAC", "description": "Install, repair, maintenance — residential or light commercial." },
+              { "value": "plumbing", "label": "Plumbing", "description": "Service calls, repipes, water heaters, fixtures." },
+              { "value": "electrical", "label": "Electrical", "description": "Service work, panel upgrades, lighting, EV chargers." },
+              { "value": "carpentry", "label": "Carpentry / finish work", "description": "Trim, built-ins, decks, framing, doors." },
+              { "value": "remodeling", "label": "Remodeling", "description": "Kitchens, baths, additions, whole-house remodels." },
+              { "value": "general-contractor", "label": "General contractor", "description": "Multi-trade GC, new builds or major renovations." },
+              { "value": "other", "label": "Other", "description": "Tell us in step 12." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "about-business",
+        "eyebrow": "Step 2 · Your Business",
+        "title": "Tell me about your business.",
+        "description": "The basics — name, history, structure, and what makes you different from the next outfit on the directory page.",
+        "fields": [
+          {
+            "id": "company_name_step2",
+            "name": "company_name",
+            "label": "Business Name",
+            "type": "text",
+            "placeholder": "Your Business, LLC",
+            "required": true,
+            "row": 1,
+            "autocomplete": "organization",
+            "autocapitalize": "words"
+          },
+          {
+            "id": "year_started",
+            "name": "year_started",
+            "label": "Year Started",
+            "type": "text",
+            "placeholder": "2014",
+            "required": false,
+            "row": 1,
+            "inputmode": "numeric"
+          },
+          {
+            "id": "ownership",
+            "name": "ownership",
+            "type": "radio-cards",
+            "required": false,
+            "options": [
+              { "value": "solo", "label": "Solo operator", "description": "One-person handyman, HVAC tech, plumber, or specialist." },
+              { "value": "group-owner", "label": "Multi-crew shop (I own it)", "description": "A few crews, I'm the owner / operator." },
+              { "value": "group-associate", "label": "Multi-crew shop (I work in the field)", "description": "I'm a lead or foreman but don't own the business." },
+              { "value": "organization", "label": "Larger contractor / multi-site GC", "description": "Bigger entity with multiple locations or service lines." },
+              { "value": "other-ownership", "label": "Something else", "description": "Tell us in the box below." }
+            ]
+          },
+          {
+            "id": "differentiation",
+            "name": "differentiation",
+            "label": "What makes your business different?",
+            "type": "textarea",
+            "placeholder": "A sentence or two — years of experience, manufacturer certifications, specific specialties, same-day service, warranty terms, whatever sets you apart.",
+            "required": true,
+            "rows": 4
+          }
+        ]
+      },
+      {
+        "id": "service-area",
+        "eyebrow": "Step 3 · Location & Reach",
+        "title": "Where do you work?",
+        "description": "Your home base, towns and ZIPs you cover, drive-time radius — whatever shape your service area takes.",
+        "fields": [
+          {
+            "id": "home_base",
+            "name": "home_base",
+            "label": "Primary location",
+            "type": "text",
+            "placeholder": "Denver, CO",
+            "required": true,
+            "autocapitalize": "words"
+          },
+          {
+            "id": "service_area",
+            "name": "service_area",
+            "label": "Service area — towns, ZIPs, drive-time radius, or counties covered",
+            "type": "textarea",
+            "placeholder": "e.g. Denver Metro plus Aurora, Lakewood, Arvada, Wheat Ridge, Englewood. Up to ~30 miles from downtown. Adams, Arapahoe, Denver, Jefferson counties.",
+            "required": true,
+            "rows": 4
+          }
+        ]
+      },
+      {
+        "id": "customers",
+        "eyebrow": "Step 4 · Customers",
+        "title": "Who do you work for?",
+        "description": "Pick everything you actually take — even if homeowners are most of the work, the others still belong on the site if you take that work.",
+        "fields": [
+          {
+            "id": "customer_types",
+            "name": "customer_types",
+            "type": "checkbox-grid",
+            "required": true,
+            "options": [
+              { "value": "homeowners", "label": "Homeowners", "description": "Single-family residential." },
+              { "value": "property-managers", "label": "Property managers", "description": "Multi-unit, rental portfolios, HOAs." },
+              { "value": "commercial", "label": "Commercial / light commercial", "description": "Offices, restaurants, retail, small commercial buildings." },
+              { "value": "builders", "label": "Builders / GCs", "description": "Sub work for other contractors." },
+              { "value": "real-estate", "label": "Real estate / flippers", "description": "Pre-listing repairs, flip rehabs, inspection punch lists." },
+              { "value": "insurance", "label": "Insurance restoration", "description": "Storm, water, fire damage repairs paid by insurance." },
+              { "value": "specific-pop", "label": "Specific niche", "description": "Historic homes, luxury, smart-home installs, accessibility, etc." },
+              { "value": "other-customers", "label": "Other", "description": "Tell us in step 12." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "services",
+        "eyebrow": "Step 5 · Services & Trades",
+        "title": "What do you focus on?",
+        "description": "Short names are fine. We'll turn this into the services / trades pages on your site. Pricing notes are optional — only fill them in if you want a price on the site.",
+        "fields": [
+          {
+            "id": "services_list",
+            "name": "services_list",
+            "label": "Services and trades",
+            "type": "textarea",
+            "placeholder": "Furnace repair, AC install, water heater swap, drain cleaning, panel upgrades, kitchen remodels, deck builds, finish carpentry, emergency service…",
+            "required": true,
+            "rows": 5
+          },
+          {
+            "id": "pricing_model",
+            "name": "pricing_model",
+            "label": "Pricing notes — what you want shown (optional)",
+            "type": "textarea",
+            "placeholder": "Service call: $89. Free estimates on remodels. Hourly: $95/hr after first hour. Flat-rate book on common repairs. Senior discount 10%.",
+            "required": false,
+            "rows": 4
+          }
+        ]
+      },
+      {
+        "id": "team",
+        "eyebrow": "Step 6 · Team & Credentials",
+        "title": "What's your team look like?",
+        "description": "For solos: license, insurance, manufacturer certifications, years on the tools. For multi-crew shops: crew count, trucks, and the credentials of the team. Becomes credibility on the site.",
+        "fields": [
+          {
+            "id": "crew_size",
+            "name": "crew_size",
+            "label": "Crew size (incl. you)",
+            "type": "text",
+            "placeholder": "1",
+            "required": false,
+            "row": 1,
+            "inputmode": "numeric"
+          },
+          {
+            "id": "trucks_crews",
+            "name": "trucks_crews",
+            "label": "Trucks / crews on the road",
+            "type": "text",
+            "placeholder": "1 truck or 2 crews + 3 trucks",
+            "required": false,
+            "row": 1
+          },
+          {
+            "id": "equipment_notes",
+            "name": "equipment_notes",
+            "label": "Notable certifications, license #s, manufacturer training, BBB rating",
+            "type": "textarea",
+            "placeholder": "Master plumber license #CO-12345, NATE-certified HVAC, EPA 608, lead-safe certified, BBB A+ rating, Carrier Factory Authorized Dealer, anything you'd put on the truck.",
+            "required": false,
+            "rows": 4
+          }
+        ]
+      },
+      {
+        "id": "why-pick-you",
+        "eyebrow": "Step 7 · Differentiators",
+        "title": "Why do customers pick you?",
+        "description": "Three or four short reasons. Bullet points, fragments, plain talk — exactly how you'd explain the fit on a phone call with a homeowner.",
+        "fields": [
+          {
+            "id": "reasons",
+            "name": "reasons",
+            "label": "Reasons customers pick you",
+            "type": "textarea",
+            "placeholder": "Same tech every visit — no rotating crew.\nUpfront, flat-rate pricing — no surprises.\nResponse to estimate requests within one business day.\nFifteen years of focused experience in [your trade].",
+            "required": true,
+            "rows": 6
+          }
+        ]
+      },
+      {
+        "id": "numbers",
+        "eyebrow": "Step 8 · Proof",
+        "title": "Got any numbers worth highlighting?",
+        "description": "Stats become credibility blocks on the site. Years on the tools, jobs completed, response time, certifications, anything quantifiable.",
+        "fields": [
+          {
+            "id": "stats",
+            "name": "stats",
+            "label": "Numbers and credentials",
+            "type": "textarea",
+            "placeholder": "12+ years on the tools.\n4,000+ jobs completed.\n24-hour estimate response.\nLicensed in 3 counties.\nNATE-certified, EPA 608, BBB A+.",
+            "required": false,
+            "rows": 6
+          }
+        ]
+      },
+      {
+        "id": "testimonials",
+        "eyebrow": "Step 9 · Customer Reviews",
+        "title": "Any reviews you can share?",
+        "description": "Google reviews, BBB, Angi, HomeAdvisor, or Houzz quotes work great. We can pull live or curate the best. Skip if unsure — we'll start with placeholders and confirm what's appropriate on the call.",
+        "fields": [
+          {
+            "id": "testimonials",
+            "name": "testimonials",
+            "label": "Customer reviews (Google, BBB, Angi, Houzz, repeat customers)",
+            "type": "textarea",
+            "placeholder": "\"Showed up on time, fixed the leak, didn't try to upsell. We'll call them every time.\" — Sarah K., Denver (Google review)\n\"Honest pricing, clean work, and they answered the phone on a Sunday.\" — Tom B., Lakewood (Google review)",
+            "required": false,
+            "rows": 7
+          }
+        ]
+      },
+      {
+        "id": "reach",
+        "eyebrow": "Step 10 · Reach Us",
+        "title": "How do customers reach you?",
+        "description": "The contact info that goes on the site, and where new estimate requests should land.",
+        "fields": [
+          {
+            "id": "business_phone",
+            "name": "business_phone",
+            "label": "Business phone (optional)",
+            "type": "tel",
+            "placeholder": "(303) 555-0142",
+            "required": false,
+            "row": 1,
+            "autocomplete": "tel"
+          },
+          {
+            "id": "business_email",
+            "name": "business_email",
+            "label": "Business email (where estimate requests go)",
+            "type": "email",
+            "placeholder": "estimates@yourbusiness.com",
+            "required": true,
+            "row": 1,
+            "autocomplete": "email"
+          },
+          {
+            "id": "channels",
+            "name": "channels",
+            "type": "checkbox-grid",
+            "required": false,
+            "options": [
+              { "value": "phone", "label": "Phone calls", "description": "Live answer or voicemail with quick callback." },
+              { "value": "text", "label": "Text messages", "description": "SMS for quick estimate questions." },
+              { "value": "email", "label": "Email", "description": "Standard inquiry email." },
+              { "value": "form", "label": "Website form", "description": "Estimate-request form on the site." }
+            ]
+          },
+          {
+            "id": "hours_response",
+            "name": "hours_response",
+            "label": "Business hours & typical reply time",
+            "type": "textarea",
+            "placeholder": "Mon–Fri 7am–5pm. Saturday emergencies only. Most estimate requests returned within one business day.",
+            "required": false,
+            "rows": 3
+          }
+        ]
+      },
+      {
+        "id": "brand-vibe",
+        "eyebrow": "Step 11 · Brand Colors",
+        "title": "Brand colors.",
+        "description": "Your visual starting point. Drop in a primary and (optional) secondary color. We'll handle the logo separately on its own dedicated upload form.",
+        "fields": [
+          {
+            "id": "primary_color",
+            "name": "primary_color",
+            "label": "Primary color",
+            "type": "text",
+            "placeholder": "Truck red, #c8312f, or 'match what we already have'",
+            "required": false,
+            "row": 1
+          },
+          {
+            "id": "secondary_color",
+            "name": "secondary_color",
+            "label": "Secondary color",
+            "type": "text",
+            "placeholder": "Charcoal, #2a2a2a, or leave blank",
+            "required": false,
+            "row": 1
+          }
+        ]
+      },
+      {
+        "id": "anything-else",
+        "eyebrow": "Step 12 · Open Box",
+        "title": "Anything else we should know?",
+        "description": "Free-form. Trades you don't take, jobs you avoid, license numbers, lead-time policy, anything off-script.",
+        "fields": [
+          {
+            "id": "notes",
+            "name": "notes",
+            "label": "Open notes",
+            "type": "textarea",
+            "placeholder": "We don't do roofing or hot tubs. Booked out two weeks on remodels; same-week on service calls. License #CO-MP-12345.",
+            "required": false,
+            "rows": 6
+          }
+        ]
+      },
+      {
+        "id": "you",
+        "eyebrow": "Step 13 · You",
+        "title": "Your contact info.",
+        "description": "How to reach you, plus your existing site if any. We'll confirm everything on a quick follow-up call.",
+        "fields": [
+          {
+            "id": "name",
+            "name": "name",
+            "label": "Your Name",
+            "type": "text",
+            "placeholder": "Jane Smith",
+            "required": true,
+            "row": 1,
+            "autocomplete": "name",
+            "autocapitalize": "words"
+          },
+          {
+            "id": "email",
+            "name": "email",
+            "label": "Email Address",
+            "type": "email",
+            "placeholder": "jane@yourbusiness.com",
+            "required": true,
+            "row": 1,
+            "autocomplete": "email"
+          },
+          {
+            "id": "company",
+            "name": "company",
+            "label": "Business Name",
+            "type": "text",
+            "placeholder": "Your business name",
+            "required": true,
+            "row": 2,
+            "autocomplete": "organization"
+          },
+          {
+            "id": "current_url",
+            "name": "current_url",
+            "label": "Current Website (if any)",
+            "type": "url",
+            "placeholder": "https://",
+            "required": false,
+            "row": 2
+          },
+          {
+            "id": "timeline",
+            "name": "timeline",
+            "type": "radio-cards",
+            "required": false,
+            "options": [
+              { "value": "asap", "label": "ASAP", "description": "Within the next 1–2 weeks." },
+              { "value": "this-month", "label": "This month", "description": "Before the month ends." },
+              { "value": "before-launch", "label": "Before busy season", "description": "Lining up alongside spring or fall demand." },
+              { "value": "this-quarter", "label": "This quarter", "description": "Roughly 3 months out." },
+              { "value": "flexible", "label": "Flexible", "description": "No fixed deadline." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "plan",
+        "eyebrow": "Step 14 · Plan",
+        "title": "Pick a plan that fits.",
+        "description": "Two site styles, three feature tiers each. Pick what looks closest — we'll confirm the right call on the follow-up. Yearly billing is shown (30% off the launch price).",
+        "fields": [
+          {
+            "id": "plan",
+            "name": "plan",
+            "type": "plan-picker",
+            "required": false,
+            "source": "pricing-tiers-grouped",
+            "extras": [
+              {
+                "value": "one-time",
+                "label": "One-Time Build",
+                "tagline": "Own it outright",
+                "description": "One-off build — see the pricing page for current options. You own the files; ongoing hosting and care optional.",
+                "icon": "wrench"
+              },
+              {
+                "value": "not-sure",
+                "label": "Not Sure Yet",
+                "tagline": "We'll recommend",
+                "description": "Walk through it together on the follow-up call. No commitment until you're sure.",
+                "icon": "compass"
+              }
+            ]
+          },
+          {
+            "id": "human_check",
+            "name": "human_check",
+            "type": "human-check",
+            "label": "Type the number above to confirm you're human",
+            "required": true,
+            "digits": 4
+          },
+          {
+            "id": "terms",
+            "name": "terms",
+            "type": "checkbox",
+            "label": "I agree to the <a href=\"/terms/\" target=\"_blank\" rel=\"noopener\">Terms &amp; Conditions</a> and <a href=\"/privacy/\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>, and consent to being contacted about my onboarding.",
+            "value": "accepted",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

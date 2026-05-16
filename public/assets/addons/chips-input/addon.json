@@ -1,0 +1,22 @@
+{
+  "name": "chips-input",
+  "assets": {
+    "css": ["chips-input.css"],
+    "js":  ["chips-input.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "input[data-aed-chips]",
+        "description": "Tag-entry input. Wraps a native <input> so its value is a comma-joined CSV (form-submit friendly) while the user sees pill-shaped chips.",
+        "fields": {
+          "data-aed-chips":           { "type": "boolean","required": true,         "description": "Opt-in marker." },
+          "data-aed-chips-allowed":   { "type": "string[]",                          "description": "Comma-separated whitelist. If set, only these values may be added." },
+          "data-aed-chips-strict":    { "type": "boolean", "default": false,        "description": "When true with `chips-allowed`, reject any value not on the whitelist (default behavior is to allow but mark)." },
+          "data-aed-chips-max":       { "type": "number",                            "description": "Maximum number of chips. Further input is rejected." },
+          "data-aed-chips-separator": { "type": "string",  "default": ",",          "description": "Character that finalizes a chip when typed (in addition to Enter)." }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "slug": "faq",
+  "path": "/faq/",
+  "breadcrumbLabel": "FAQ",
+  "seo": {
+    "title": "FAQ — Cedar Mill Plumbing",
+    "description": "Common questions about pricing, service area, scheduling, warranty, and how a one-truck plumbing shop runs across Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/faq/"
+  },
+  "header": {
+    "heading": "Common Questions",
+    "lead": "What people ask before booking — covers pricing, service area, scheduling, warranty, and how a one-truck shop actually runs. Don't see yours? Call (503) 555-0149 or use the contact form."
+  },
+  "groupIds": [
+    "how-we-work",
+    "pricing-billing",
+    "logistics"
+  ],
+  "cta": {
+    "sectionLabel": "Still have questions?",
+    "heading": "Let's Talk.",
+    "body": "Anything not covered here? Call or send a quick form — I respond personally. No diagnostic fee on the question, no high-pressure pitch on the call.",
+    "ctaPrimary": {
+      "label": "Request a Service Call",
+      "href": "/demo/cedar-mill-plumbing/contact/"
+    },
+    "ctaSecondary": {
+      "label": "How a job goes",
+      "href": "/demo/cedar-mill-plumbing/process/"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+---
+/**
+ * AuthorCard — avatar + name + bio + link to author archive.
+ * Used in two places:
+ *   - PostArticle footer (between share row and prev/next)
+ *   - /author/<id>/ page header
+ *
+ * Props: author (Author entry), variant ("inline" | "page" — default "inline")
+ */
+import type { Author } from '../lib/posts';
+interface Props { author: Author; variant?: 'inline' | 'page'; }
+const { author, variant = 'inline' } = Astro.props;
+const a = author.data;
+const initials = a.name.split(/\s+/).map((s) => s[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+---
+<aside
+  class={`author-card author-card--${variant}`}
+  aria-label={`About ${a.name}`}
+  data-section-type="author-card"
+  data-section-label="Author card"
+  data-section-variants="A:Default,B:Compact"
+>
+  <div class="author-card__avatar" aria-hidden="true">
+    {a.avatar
+      ? <img src={a.avatar} alt="" width="64" height="64" loading="lazy" />
+      : <span class="author-card__initials">{initials}</span>}
+  </div>
+  <div class="author-card__body">
+    <h3 class="author-card__name">
+      {variant === 'page' ? a.name : <a href={`/author/${a.id}/`}>{a.name}</a>}
+    </h3>
+    {a.bio && <p class="author-card__bio">{a.bio}</p>}
+    {variant === 'inline' && (
+      <a class="author-card__more" href={`/author/${a.id}/`}>More from {a.name} →</a>
+    )}
+  </div>
+</aside>

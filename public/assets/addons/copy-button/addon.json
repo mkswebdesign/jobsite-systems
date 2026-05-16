@@ -1,0 +1,23 @@
+{
+  "name": "copy-button",
+  "assets": {
+    "css": ["copy-button.css"],
+    "js":  ["copy-button.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-copy]",
+        "description": "Decorate any <button> or <a> as a clipboard-copy trigger. Apply to elements that copy a literal string or the contents of another element.",
+        "fields": {
+          "data-aed-copy":              { "type": "boolean", "required": true,           "description": "Opt-in marker." },
+          "data-aed-copy-text":         { "type": "string",                                "description": "Literal text to copy. Mutually exclusive with `copy-from`." },
+          "data-aed-copy-from":         { "type": "string",                                "description": "CSS selector of the element whose textContent should be copied." },
+          "data-aed-copy-label":        { "type": "string",                                "description": "Initial button label (text content used if absent)." },
+          "data-aed-copy-copied-label": { "type": "string",  "default": "Copied",         "description": "Label shown briefly after a successful copy." },
+          "data-aed-copy-variant":      { "type": "string",  "enum": ["ghost", "icon"],   "description": "Visual variant. 'icon' renders an icon-only button." }
+        }
+      }
+    ]
+  }
+}

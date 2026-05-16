@@ -1,0 +1,93 @@
+/*
+ * Skeleton — drop-in shimmering placeholder.
+ *
+ * Pure CSS, no JS. Mark any element with data-aed-skeleton; a shimmer
+ * sweep plays until you set data-aed-skeleton="off" or remove the
+ * attribute.
+ *
+ * Variants: block (default), line, circle, text (multi-line).
+ *
+ * See /skeleton/README.md.
+ */
+
+[data-aed-skeleton]:not([data-aed-skeleton="off"]) {
+  display: inline-block;
+  position: relative;
+  background-color: var(--bg-secondary, #111113);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--text-primary, #fafafa) 8%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-position: -100% 0;
+  border-radius: 6px;
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+  animation: aed-skel-shimmer 1.4s ease-in-out infinite;
+}
+
+/* Hide children content under the shimmer so existing markup stays in place */
+[data-aed-skeleton]:not([data-aed-skeleton="off"]) > * {
+  visibility: hidden;
+}
+
+@keyframes aed-skel-shimmer {
+  0%   { background-position: -100% 0; }
+  100% { background-position:  100% 0; }
+}
+
+/* Variants */
+[data-aed-skeleton="line"]:not([data-aed-skeleton="off"]) {
+  display: block;
+  height: 0.85em;
+  margin: 0.4em 0;
+  border-radius: 999px;
+}
+[data-aed-skeleton="circle"]:not([data-aed-skeleton="off"]) {
+  display: inline-block;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+[data-aed-skeleton="text"]:not([data-aed-skeleton="off"])::before,
+[data-aed-skeleton="text"]:not([data-aed-skeleton="off"])::after {
+  content: '';
+  display: block;
+  height: 0.85em;
+  margin: 0.4em 0;
+  background-color: var(--bg-secondary, #111113);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--text-primary, #fafafa) 8%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-position: -100% 0;
+  border-radius: 999px;
+  animation: inherit;
+}
+[data-aed-skeleton="text"]:not([data-aed-skeleton="off"])::after {
+  width: 70%;
+}
+
+/* When turned off: just unstyle */
+[data-aed-skeleton="off"] {
+  background-image: none !important;
+  animation: none !important;
+  color: inherit !important;
+}
+[data-aed-skeleton="off"] > * { visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-skeleton]:not([data-aed-skeleton="off"]) { animation: none; }
+}
+
+@media print {
+  [data-aed-skeleton] { display: none !important; }
+}

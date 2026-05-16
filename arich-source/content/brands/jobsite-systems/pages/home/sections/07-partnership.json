@@ -1,0 +1,19 @@
+{
+  "type": "partnership",
+  "sectionLabel": "What's Included",
+  "heading": "Everything Your Site Needs",
+  "subtext": "One flat monthly price covers build, hosting, security, updates, and small content changes. No surprise invoices.",
+  "cardTitle": "The complete package",
+  "cardLead": "This isn't a template you pay for and babysit. It's a done-for-you site that stays working year after year — and stays out of your way while you're on the job.",
+  "benefits": [
+    "Complete trade-business website — services / trades, crew, licensed-and-insured trust signals, service area, contact",
+    "Estimate-request form that emails you directly",
+    "Search and AI engine optimization — structured for Google to read, ready for ChatGPT-style search engines",
+    "Managed hosting, SSL, daily backups, and uptime monitoring",
+    "Small content changes handled for you — crew updates, service-area changes, new trades, multi-crew rosters",
+    "Direct email support — no tickets, no call centers"
+  ],
+  "ctaLabel": "Get Started",
+  "ctaHref": "/contact/",
+  "note": "Sites from $129/mo, billed annually — see the pricing page for the full tier breakdown. Business email is a $10/mo per-mailbox add-on. We'll confirm the right fit on the intro call."
+}

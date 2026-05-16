@@ -1,0 +1,29 @@
+/*
+ * Animated Numbers — drop-in count-up.
+ *
+ * Almost no CSS — the addon just animates the textContent. This file
+ * exists so users can add their own visual flourish via the marker
+ * classes the addon adds.
+ *
+ * See /animated-numbers/README.md.
+ */
+
+[data-aed-count-to] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Optional: subtle highlight while counting */
+.aed-counting {
+  /* Override in your own CSS if you want, e.g. text shadow or color flash */
+}
+
+/* After completion: hook for a subtle settle effect */
+.aed-counted {
+  /* Override in your own CSS — e.g.
+     .aed-counted { animation: aed-num-pop 0.4s ease both; }
+  */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The JS bypasses animation when this is set; nothing to do here. */
+}

@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import SectionHeading from '../SectionHeading.astro';
+import Icon from '../Icon.astro';
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  serviceSlugs: string[];
+}
+
+const { sectionLabel, heading, subtext, serviceSlugs } = Astro.props;
+
+const all = await getCollection('services');
+const byId = new Map(all.map(s => [s.id, s.data]));
+const services = serviceSlugs
+  .map(slug => byId.get(slug))
+  .filter((s): s is NonNullable<typeof s> => !!s);
+---
+
+<section
+  class="section services services-bg"
+  id="services"
+  data-section-type="services"
+  data-section-label="Services"
+  data-section-variants="a:Default,B:Listed,C:Gridded,D:Compact,E:Minimal,F:Featured"
+>
+  <div class="container">
+    <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+    <div class="services-grid stagger-container reveal">
+      {services.map((s, i) => (
+        <div class="service-card stagger-item">
+          {i === 0 && s.heroImage && (
+            <div class="service-feature-image" aria-hidden="true">
+              <img src={s.heroImage} alt={s.heroImageAlt ?? ''} loading="lazy" decoding="async" />
+            </div>
+          )}
+          <div class="service-card-head">
+            {s.iconKey && <div class="service-icon" aria-hidden="true"><Icon name={s.iconKey} size={22} /></div>}
+            <span class="service-num">{s.number}</span>
+            <h3>{s.title}</h3>
+          </div>
+          <p>{s.shortDescription}</p>
+          <a href={`/services/${s.slug}/`} class="service-link" aria-label={`Learn more about ${s.title}`}>
+            Learn more <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+{
+  "name": "confetti",
+  "assets": {
+    "css": ["confetti.css"],
+    "js":  ["confetti.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:confetti",
+        "default": "on",
+        "description": "Opt-in master switch + optional auto-bridges to other addons.",
+        "enum": ["on", "true", "1"],
+        "attrs": {
+          "data-bridge": { "type": "string", "enum": ["form"], "description": "Comma-separated bridges. 'form' fires confetti on aed:form:success events." }
+        }
+      }
+    ],
+    "api": {
+      "global": "window.__confetti.fire(opts)",
+      "description": "Programmatic API only — no per-element markup. Call from page scripts or other addons.",
+      "fields": {
+        "origin":        { "type": "object",   "default": { "x": 0.5, "y": 0.5 }, "description": "Burst origin in normalized 0–1 viewport coords ({x,y})." },
+        "particleCount": { "type": "number",   "default": 80,                      "description": "Number of confetti pieces in the burst." },
+        "spread":        { "type": "number",   "default": 70,                      "description": "Cone spread in degrees." },
+        "angle":         { "type": "number",   "default": 90,                      "description": "Cone direction in degrees (90 = straight up)." },
+        "startVelocity": { "type": "number",   "default": 32,                      "description": "Initial velocity of each particle." },
+        "decay":         { "type": "number",   "default": 0.94,                    "description": "Per-frame velocity multiplier (lower = faster decay)." },
+        "gravity":       { "type": "number",   "default": 1,                       "description": "Gravity multiplier." },
+        "ticks":         { "type": "number",   "default": 200,                     "description": "Particle lifetime in frames." },
+        "scalar":        { "type": "number",   "default": 1,                       "description": "Overall size multiplier." },
+        "colors":        { "type": "string[]",                                     "description": "Hex color array. Defaults to brand accent colors." }
+      }
+    }
+  }
+}

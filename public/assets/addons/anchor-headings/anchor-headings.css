@@ -1,0 +1,62 @@
+/*
+ * Anchor Headings — drop-in click-to-link headings.
+ *
+ * Adds a discreet # link next to each processed heading. Visible on
+ * hover (or always on touch devices). Click copies the URL with anchor.
+ *
+ * See /anchor-headings/README.md.
+ */
+
+[data-aed-anchor] {
+  /* Bring hover target into the heading */
+  position: relative;
+  /* Offset jump-target so headings clear sticky nav + announcement */
+  scroll-margin-top: calc(var(--aed-announcement-h, 0px) + var(--aed-nav-h, 80px) + 12px);
+}
+
+.aed-anchor-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05em;
+  height: 1.05em;
+  margin-left: 0.45em;
+  vertical-align: middle;
+  color: var(--text-muted, #9a9aa2);
+  border-radius: 6px;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity 0.15s ease, transform 0.15s ease, color 0.15s ease, background 0.15s ease;
+  cursor: pointer;
+}
+.aed-anchor-link svg { width: 0.7em; height: 0.7em; }
+
+[data-aed-anchor]:hover .aed-anchor-link,
+[data-aed-anchor]:focus-within .aed-anchor-link,
+.aed-anchor-link:focus-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.aed-anchor-link:hover {
+  color: var(--accent, #6B00FF);
+  background: color-mix(in srgb, var(--accent, #6B00FF) 12%, transparent);
+}
+.aed-anchor-link.is-copied {
+  color: #10b981;
+  background: color-mix(in srgb, #10b981 14%, transparent);
+}
+
+/* Touch / pointer-coarse: always show (no hover) */
+@media (hover: none) {
+  .aed-anchor-link { opacity: 0.6; transform: none; }
+  .aed-anchor-link:hover { opacity: 1; }
+}
+
+@media print {
+  .aed-anchor-link { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-anchor-link { transition: opacity 0.15s ease; transform: none !important; }
+}

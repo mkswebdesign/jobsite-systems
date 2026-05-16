@@ -1,0 +1,1044 @@
+---
+/**
+ * ArchiveToolbar — sticky toolbar above the post grid. Used by /archive/,
+ * /category/<slug>/, and /tag/<slug>/.
+ *
+ * Categories segmented control: rendered as real anchors (<a>) so each
+ * category is a navigable, indexable page. Clicking a category navigates
+ * to its route — never an in-place filter — and JS preserves the current
+ * URL search params across the navigation so sort/view/drawer state isn't
+ * lost. The "All" anchor goes to /archive/. The current route's anchor
+ * gets aria-current="page".
+ *
+ * Scope: each route encodes a baseline filter via data-attribute on the
+ * page root: data-scope-category="<id>" (on /category/<slug>/) or
+ * data-scope-tag="<tag>" (on /tag/<slug>/). The behavior script applies
+ * scope first in the pipeline and shows a dismissible scope chip in the
+ * active strip whose × navigates to /archive/ (clearing the scope).
+ *
+ * State (committed) drives toolbar/grid/URL: tags, authors, dateFrom,
+ * dateTo, datePreset, sort, view, search, rtMin, rtMax. There is NO
+ * `category` field — categories are pure route navigation.
+ */
+import type { Category } from '../lib/posts';
+
+interface Props {
+  categories: Category[];
+  /** Map of category id → published-post count (across the FULL corpus
+   *  so the segmented counts stay stable across category/tag scopes). */
+  categoryCounts: Record<string, number>;
+  /** Full-corpus count, shown on the "All" segmented anchor. */
+  totalCount: number;
+  /** Optional initial result-head count. Defaults to totalCount. On
+   *  /category/<slug>/ pass the in-category count; on /tag/<slug>/
+   *  pass the count of posts tagged with this tag. */
+  resultCount?: number;
+  /** Set on /category/<slug>/ — id of the current category. Used to mark
+   *  the matching segmented anchor with aria-current="page". */
+  currentCategory?: string;
+  /** Set on /tag/<slug>/ — current tag slug. When set, no segmented
+   *  anchor is aria-current="page" (none point at the current route). */
+  currentTag?: string;
+}
+const { categories, categoryCounts, totalCount, resultCount, currentCategory, currentTag } = Astro.props;
+const initialResultCount = resultCount ?? totalCount;
+
+/* "All" is current only when no scope is active (i.e. on /archive/).
+ * On /tag/<slug>/, NO segmented anchor is aria-current="page" — none of
+ * them point at the current route. The tag chip in the active strip is
+ * what marks the active scope visually. */
+const allIsCurrent = !currentCategory && !currentTag;
+
+/* For roving tabindex: exactly one anchor must be tabindex=0 so the
+ * segmented is keyboard-reachable. On /tag/<slug>/ where no anchor is
+ * current, the "All" anchor is the sensible fallback. */
+const allIsTabbable = allIsCurrent || !!currentTag;
+---
+
+<div
+  class="arch-toolbar"
+  role="toolbar"
+  aria-label="Archive filters"
+  data-section-type="archive-toolbar"
+  data-section-label="Archive toolbar"
+  data-section-variants="A:Default,B:Slim"
+>
+  <div class="arch-segmented" role="group" aria-label="Categories">
+    <a
+      class="arch-seg"
+      href="/archive/"
+      data-cat="all"
+      aria-current={allIsCurrent ? 'page' : undefined}
+      tabindex={allIsTabbable ? 0 : -1}
+    >
+      <span class="arch-seg__name">All</span>
+      <span class="arch-count">{totalCount}</span>
+    </a>
+    {categories.map((c) => {
+      const isCurrent = c.data.id === currentCategory;
+      return (
+        <a
+          class="arch-seg"
+          href={`/category/${c.data.slug}/`}
+          data-cat={c.data.id}
+          aria-current={isCurrent ? 'page' : undefined}
+          tabindex={isCurrent ? 0 : -1}
+        >
+          <span class="arch-seg__name">{c.data.name}</span>
+          <span class="arch-count">{categoryCounts[c.data.id] ?? 0}</span>
+        </a>
+      );
+    })}
+  </div>
+
+  <button
+    class="arch-tbtn"
+    id="arch-refine-btn"
+    type="button"
+    aria-label="Refine filters"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="arch-drawer"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="7" y1="12" x2="17" y2="12" />
+      <line x1="10" y1="18" x2="14" y2="18" />
+    </svg>
+    <span>Refine</span>
+    <span class="arch-badge" id="arch-refine-badge" hidden>0</span>
+  </button>
+
+  <div class="arch-sort-wrap" data-open="false">
+    <button
+      class="arch-tbtn"
+      id="arch-sort-btn"
+      type="button"
+      aria-label="Sort articles"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="arch-sort-menu"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 6h13" />
+        <path d="M3 12h9" />
+        <path d="M3 18h5" />
+        <path d="M17 8l4 4-4 4" />
+        <path d="M21 12h-7" />
+      </svg>
+      <span id="arch-sort-label">Newest</span>
+    </button>
+    <ul class="arch-sort-menu" id="arch-sort-menu" role="listbox" aria-label="Sort articles">
+      <li><button class="arch-sort-opt" type="button" role="option" aria-selected="true"  data-sort="newest">Newest first</button></li>
+      <li><button class="arch-sort-opt" type="button" role="option" aria-selected="false" data-sort="oldest">Oldest first</button></li>
+      <li><button class="arch-sort-opt" type="button" role="option" aria-selected="false" data-sort="quick">Quickest read</button></li>
+    </ul>
+  </div>
+
+  <div class="arch-view" role="group" aria-label="View mode">
+    <button type="button" aria-pressed="true"  data-view="grid" aria-label="Grid view">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" />
+        <rect x="14" y="3" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" />
+        <rect x="14" y="14" width="7" height="7" />
+      </svg>
+    </button>
+    <button type="button" aria-pressed="false" data-view="list" aria-label="List view">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="8" y1="6" x2="21" y2="6" />
+        <line x1="8" y1="12" x2="21" y2="12" />
+        <line x1="8" y1="18" x2="21" y2="18" />
+        <line x1="3" y1="6" x2="3.01" y2="6" />
+        <line x1="3" y1="12" x2="3.01" y2="12" />
+        <line x1="3" y1="18" x2="3.01" y2="18" />
+      </svg>
+    </button>
+    <button type="button" aria-pressed="false" data-view="compact" aria-label="Compact view">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+        <line x1="3" y1="14" x2="21" y2="14" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="arch-active" id="arch-active" hidden>
+  <span class="arch-active-label">Active</span>
+  <button class="arch-clear-all" id="arch-clear-all" type="button">Clear all</button>
+</div>
+
+<div class="arch-result-head">
+  <div class="arch-result-head__count">
+    <strong id="arch-count-num">{initialResultCount}</strong> articles
+    <em id="arch-count-suffix" hidden>matching your filters</em>
+  </div>
+  <div class="arch-result-head__sort">Sorted by <strong id="arch-sort-display">Newest</strong></div>
+</div>
+
+<script>
+/* eslint-disable */
+(() => {
+  /* Identify the page root regardless of route. `.home-archive` is
+   * the inline-embed selector used by blog-brand homepages (currently
+   * swift-digest only); additive so sibling brands without a
+   * `.home-archive` element on any page are unaffected. */
+  const archiveRoot = document.querySelector('.archive-page, .category-detail-page, .tag-page, .home-archive') as HTMLElement | null;
+  if (!archiveRoot) return;
+
+  const $ = (sel: string, root: ParentNode = document) => root.querySelector(sel) as HTMLElement | null;
+  const $$ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => Array.from(root.querySelectorAll(sel)) as T[];
+
+  /* Route-encoded scope. Pipeline applies these as a baseline filter. */
+  const scopeCategory = archiveRoot.getAttribute('data-scope-category') ?? '';
+  const scopeTag      = archiveRoot.getAttribute('data-scope-tag') ?? '';
+
+  const segAnchors    = $$<HTMLAnchorElement>('.arch-seg', archiveRoot);
+  const refineBtn     = $('#arch-refine-btn') as HTMLButtonElement | null;
+  const refineBadge   = $('#arch-refine-badge');
+  const sortBtn       = $('#arch-sort-btn') as HTMLButtonElement | null;
+  const sortLabel     = $('#arch-sort-label');
+  const sortMenu      = $('#arch-sort-menu');
+  const sortWrap      = sortBtn?.parentElement as HTMLElement | null;
+  const sortOpts      = $$<HTMLButtonElement>('.arch-sort-opt');
+  const sortDisplay   = $('#arch-sort-display');
+  const viewBtns      = $$<HTMLButtonElement>('.arch-view button', archiveRoot);
+  const activeStrip   = $('#arch-active');
+  const clearAllBtn   = $('#arch-clear-all');
+  const countNum      = $('#arch-count-num');
+  const countSuffix   = $('#arch-count-suffix');
+  const archiveList   = $('.archive-list', archiveRoot);
+  const serverGrid    = $('.archive-list__grid', archiveRoot);
+  const pagination    = $('.pagination', archiveRoot);
+
+  /* Drawer elements. */
+  const drawer        = $('#arch-drawer');
+  const drawerBack    = $('#arch-drawer-back');
+  const drawerClose   = $('#arch-drawer-close') as HTMLButtonElement | null;
+  const drawerSearch  = $('#arch-q') as HTMLInputElement | null;
+  const tagSearch     = $('.arch-tag-search') as HTMLInputElement | null;
+  const tagBtns       = $$<HTMLButtonElement>('.arch-tag', drawer ?? document);
+  const presetBtns    = $$<HTMLButtonElement>('.arch-preset', drawer ?? document);
+  const dateFromInput = $('#arch-date-from') as HTMLInputElement | null;
+  const dateToInput   = $('#arch-date-to') as HTMLInputElement | null;
+  const rtMinInput    = $('#arch-rt-min') as HTMLInputElement | null;
+  const rtMaxInput    = $('#arch-rt-max') as HTMLInputElement | null;
+  const rtFill        = $('.arch-rt-fill');
+  const rtReadout     = $('#arch-rt-readout');
+  const authorBtns    = $$<HTMLButtonElement>('.arch-author', drawer ?? document);
+  const resetBtn      = $('#arch-reset') as HTMLButtonElement | null;
+  const applyBtn      = $('#arch-apply') as HTMLButtonElement | null;
+  const applyCount    = $('#arch-apply-count');
+  const sectionHeads  = $$<HTMLButtonElement>('.arch-section__head', drawer ?? document);
+
+  const authorNameById: Record<string, string> = {};
+  authorBtns.forEach((b) => {
+    const id = b.dataset.author ?? '';
+    authorNameById[id] = b.textContent?.trim() ?? id;
+  });
+
+  type State = {
+    tags: string[];
+    authors: string[];
+    dateFrom: string;
+    dateTo: string;
+    datePreset: string;
+    sort: 'newest' | 'oldest' | 'quick';
+    view: 'grid' | 'list' | 'compact';
+    search: string;
+    rtMin: number;
+    rtMax: number;
+  };
+  const RT_MIN_BOUND = 1;
+  const RT_MAX_BOUND = 20;
+  const DEFAULTS: State = {
+    tags: [], authors: [],
+    dateFrom: '', dateTo: '', datePreset: '',
+    sort: 'newest', view: 'grid', search: '',
+    rtMin: RT_MIN_BOUND, rtMax: RT_MAX_BOUND,
+  };
+  const SORT_LABEL: Record<State['sort'], string> = {
+    newest: 'Newest', oldest: 'Oldest', quick: 'Quickest read',
+  };
+
+  const cloneState = (s: State): State => ({ ...s, tags: [...s.tags], authors: [...s.authors] });
+  const isFiltered = (s: State) =>
+    s.tags.length > 0 ||
+    s.authors.length > 0 ||
+    !!s.dateFrom || !!s.dateTo || !!s.datePreset ||
+    !!s.search ||
+    s.rtMin !== RT_MIN_BOUND || s.rtMax !== RT_MAX_BOUND;
+  const filterCount = (s: State) =>
+    s.tags.length +
+    s.authors.length +
+    ((s.dateFrom || s.dateTo || s.datePreset) ? 1 : 0) +
+    (s.search ? 1 : 0) +
+    ((s.rtMin !== RT_MIN_BOUND || s.rtMax !== RT_MAX_BOUND) ? 1 : 0);
+
+  /* If a route is scoped (category/tag), client-render is needed for any
+   * filter change, not just for "isFiltered" — server only renders the
+   * scope-baseline 12-per-page pagination. So in scoped routes, ANY
+   * non-default state triggers client mode. */
+  const isScoped = !!scopeCategory || !!scopeTag;
+
+  let committed: State = cloneState(DEFAULTS);
+  let pending: State = cloneState(DEFAULTS);
+
+  /* --- URL sync --- */
+
+  function readURL(): State {
+    const p = new URLSearchParams(location.search);
+    const s = cloneState(DEFAULTS);
+    if (p.get('tag')) s.tags = p.get('tag')!.split(',').filter(Boolean);
+    if (p.get('author')) s.authors = p.get('author')!.split(',').filter(Boolean);
+    if (p.get('from')) s.dateFrom = p.get('from')!;
+    if (p.get('to')) s.dateTo = p.get('to')!;
+    if (p.get('preset')) s.datePreset = p.get('preset')!;
+    const sort = p.get('sort');
+    if (sort === 'newest' || sort === 'oldest' || sort === 'quick') s.sort = sort;
+    const view = p.get('view');
+    if (view === 'grid' || view === 'list' || view === 'compact') s.view = view;
+    if (p.get('q')) s.search = p.get('q')!;
+    const rt = p.get('rt');
+    if (rt && /^\d+-\d+$/.test(rt)) {
+      const [a, b] = rt.split('-').map(Number);
+      s.rtMin = a; s.rtMax = b;
+    }
+    return s;
+  }
+
+  function writeURL(s: State) {
+    const u = new URL(location.href);
+    const set = (k: string, v: string) => v ? u.searchParams.set(k, v) : u.searchParams.delete(k);
+    /* Drop legacy `cat` param if it leaked in from earlier deploys. */
+    u.searchParams.delete('cat');
+    set('tag', s.tags.length ? s.tags.join(',') : '');
+    set('author', s.authors.length ? s.authors.join(',') : '');
+    set('from', s.dateFrom);
+    set('to', s.dateTo);
+    set('preset', s.datePreset);
+    set('sort', s.sort !== 'newest' ? s.sort : '');
+    set('view', s.view !== 'grid' ? s.view : '');
+    set('q', s.search);
+    const rtChanged = s.rtMin !== RT_MIN_BOUND || s.rtMax !== RT_MAX_BOUND;
+    set('rt', rtChanged ? `${s.rtMin}-${s.rtMax}` : '');
+    history.replaceState({}, '', u.toString());
+  }
+
+  /* Back-compat: an old /archive/?cat=politics URL navigates to the
+   * category route. Runs once on load before any other state work. */
+  function migrateLegacyCatParam(): boolean {
+    if (isScoped) return false;
+    const params = new URLSearchParams(location.search);
+    const cat = params.get('cat');
+    if (!cat) return false;
+    const target = `/category/${cat}/${location.search.replace(/[?&]cat=[^&]*/, '').replace(/^&/, '?')}`;
+    location.replace(target);
+    return true;
+  }
+
+  /* --- /search.json (lazy) --- */
+
+  type Doc = {
+    id: string; title: string; url: string; excerpt: string;
+    category: string; categoryName: string; tags: string[];
+    author: string; coverSrc: string; coverAlt: string;
+    date: string; readingMinutes: number; body: string;
+  };
+  let docs: Doc[] = [];
+  let docsPromise: Promise<Doc[]> | null = null;
+  function loadDocs(): Promise<Doc[]> {
+    if (docsPromise) return docsPromise;
+    docsPromise = fetch('/search.json')
+      .then((r) => r.json())
+      .then((data: Doc[]) => { docs = data ?? []; return docs; })
+      .catch(() => { docs = []; return docs; });
+    return docsPromise;
+  }
+
+  /* --- Filtering pipeline --- */
+
+  function presetRange(preset: string): { from: string; to: string } {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const isoToday = today.toISOString().slice(0, 10);
+    if (preset === 'today') return { from: isoToday, to: isoToday };
+    if (preset === '7d') {
+      const d = new Date(today); d.setDate(d.getDate() - 6);
+      return { from: d.toISOString().slice(0, 10), to: isoToday };
+    }
+    if (preset === '30d') {
+      const d = new Date(today); d.setDate(d.getDate() - 29);
+      return { from: d.toISOString().slice(0, 10), to: isoToday };
+    }
+    if (preset === 'ytd') return { from: `${yyyy}-01-01`, to: isoToday };
+    return { from: '', to: '' };
+  }
+
+  function effectiveRange(s: State) {
+    if (s.datePreset) return presetRange(s.datePreset);
+    return { from: s.dateFrom, to: s.dateTo };
+  }
+
+  function pipeline(s: State, source: Doc[]): Doc[] {
+    const { from, to } = effectiveRange(s);
+    const q = s.search.trim().toLowerCase();
+    const filtered = source.filter((d) => {
+      /* Route scope first. */
+      if (scopeCategory && d.category !== scopeCategory) return false;
+      if (scopeTag && !d.tags.includes(scopeTag)) return false;
+      /* In-page state. */
+      if (s.tags.length && !s.tags.every((t) => d.tags.includes(t))) return false;
+      if (s.authors.length && !s.authors.includes(d.author)) return false;
+      if (from && d.date < from) return false;
+      if (to && d.date > to) return false;
+      if (q && !`${d.title} ${d.excerpt} ${d.body}`.toLowerCase().includes(q)) return false;
+      const rt = d.readingMinutes ?? 1;
+      if (rt < s.rtMin || rt > s.rtMax) return false;
+      return true;
+    });
+    if (s.sort === 'oldest') filtered.sort((a, b) => a.date.localeCompare(b.date));
+    else if (s.sort === 'quick') filtered.sort((a, b) =>
+      (a.readingMinutes ?? 1) - (b.readingMinutes ?? 1) || b.date.localeCompare(a.date));
+    else filtered.sort((a, b) => b.date.localeCompare(a.date));
+    return filtered;
+  }
+
+  /* --- Rendering --- */
+
+  function escapeHTML(s: string): string {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
+  }
+  function formatDate(iso: string): string {
+    try {
+      return new Date(iso + 'T00:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+    } catch { return iso; }
+  }
+
+  let resultsGrid: HTMLDivElement | null = null;
+  function ensureResultsGrid(): HTMLDivElement {
+    if (resultsGrid) return resultsGrid;
+    resultsGrid = document.createElement('div');
+    resultsGrid.className = 'arch-results-grid';
+    resultsGrid.dataset.view = committed.view;
+    archiveList?.insertBefore(resultsGrid, pagination ?? null);
+    return resultsGrid;
+  }
+
+  function renderCard(d: Doc): string {
+    const cover = d.coverSrc
+      ? `<div class="post-card__cover"><img src="${escapeHTML(d.coverSrc)}" alt="${escapeHTML(d.coverAlt)}" loading="lazy" decoding="async" /></div>`
+      : '';
+    const tags = (d.tags ?? []).slice(0, 4).map((t) => `<li class="post-card__tag">#${escapeHTML(t)}</li>`).join('');
+    const tagsBlock = tags ? `<ul class="post-card__tags">${tags}</ul>` : '';
+    return `
+      <article class="post-card" data-date="${escapeHTML(d.date)}" data-category="${escapeHTML(d.category)}" data-tags="${escapeHTML((d.tags ?? []).join(','))}">
+        <a href="${escapeHTML(d.url)}" class="post-card__link">
+          ${cover}
+          <div class="post-card__body">
+            <span class="post-card__category" data-category="${escapeHTML(d.category)}">${escapeHTML(d.categoryName || d.category)}</span>
+            <h3 class="post-card__title">${escapeHTML(d.title)}</h3>
+            <p class="post-card__excerpt">${escapeHTML(d.excerpt || '')}</p>
+            <div class="post-card__meta">
+              <time class="post-card__date" datetime="${escapeHTML(d.date)}">${formatDate(d.date)}</time>
+              <span class="post-card__sep" aria-hidden="true">·</span>
+              <span class="post-card__reading">${d.readingMinutes} min read</span>
+            </div>
+            ${tagsBlock}
+          </div>
+        </a>
+      </article>
+    `;
+  }
+
+  function renderResults(filtered: Doc[]) {
+    const grid = ensureResultsGrid();
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const oldRects = new Map<string, DOMRect>();
+    if (!reduced) {
+      $$<HTMLElement>('.post-card', grid).forEach((c) => {
+        const id = c.querySelector('a')?.getAttribute('href') ?? '';
+        oldRects.set(id, c.getBoundingClientRect());
+      });
+    }
+
+    grid.innerHTML = filtered.map(renderCard).join('');
+    grid.dataset.view = committed.view;
+
+    let empty = archiveList?.querySelector('.arch-empty') as HTMLDivElement | null;
+    if (filtered.length === 0) {
+      if (!empty) {
+        empty = document.createElement('div');
+        empty.className = 'arch-empty';
+        empty.textContent = 'No articles match these filters.';
+        archiveList?.insertBefore(empty, pagination ?? null);
+      }
+      empty.hidden = false;
+    } else if (empty) {
+      empty.hidden = true;
+    }
+
+    if (!reduced) {
+      const newCards = $$<HTMLElement>('.post-card', grid).slice(0, 60);
+      for (const card of newCards) {
+        const id = card.querySelector('a')?.getAttribute('href') ?? '';
+        const oldRect = oldRects.get(id);
+        if (!oldRect) continue;
+        const newRect = card.getBoundingClientRect();
+        const dx = oldRect.left - newRect.left;
+        const dy = oldRect.top - newRect.top;
+        if (dx === 0 && dy === 0) continue;
+        card.style.transition = 'none';
+        card.style.transform = `translate(${dx}px, ${dy}px)`;
+      }
+      requestAnimationFrame(() => {
+        for (const card of newCards) {
+          card.style.transition = 'transform 180ms cubic-bezier(.2,.8,.2,1)';
+          card.style.transform = '';
+        }
+      });
+    }
+  }
+
+  /* --- Active chips strip --- */
+
+  function humanDate(iso: string): string {
+    try {
+      return new Date(iso + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+    } catch { return iso; }
+  }
+  const PRESET_LABEL: Record<string, string> = {
+    today: 'Today', '7d': 'Last 7 days', '30d': 'Last 30 days', ytd: 'This year',
+  };
+
+  type Chip = { key: string; label: string; remove: () => void; isScope?: boolean };
+  function buildChips(s: State): Chip[] {
+    const chips: Chip[] = [];
+    /* Tag scope chip — × clears scope by navigating to /archive/. */
+    if (scopeTag) {
+      chips.push({
+        key: `scope-tag:${scopeTag}`,
+        label: `# ${scopeTag}`,
+        remove: () => navigatePreserving('/archive/'),
+        isScope: true,
+      });
+    }
+    for (const t of s.tags) {
+      chips.push({
+        key: `tag:${t}`,
+        label: `# ${t}`,
+        remove: () => commitMerge({ tags: committed.tags.filter((x) => x !== t) }),
+      });
+    }
+    for (const a of s.authors) {
+      chips.push({
+        key: `author:${a}`,
+        label: authorNameById[a] ?? a,
+        remove: () => commitMerge({ authors: committed.authors.filter((x) => x !== a) }),
+      });
+    }
+    if (s.datePreset) {
+      chips.push({
+        key: 'date',
+        label: PRESET_LABEL[s.datePreset] ?? s.datePreset,
+        remove: () => commitMerge({ datePreset: '', dateFrom: '', dateTo: '' }),
+      });
+    } else if (s.dateFrom || s.dateTo) {
+      const lo = s.dateFrom ? humanDate(s.dateFrom) : '…';
+      const hi = s.dateTo ? humanDate(s.dateTo) : '…';
+      chips.push({
+        key: 'date',
+        label: `${lo} – ${hi}`,
+        remove: () => commitMerge({ dateFrom: '', dateTo: '', datePreset: '' }),
+      });
+    }
+    if (s.rtMin !== RT_MIN_BOUND || s.rtMax !== RT_MAX_BOUND) {
+      chips.push({
+        key: 'rt',
+        label: `${s.rtMin}–${s.rtMax} min read`,
+        remove: () => commitMerge({ rtMin: RT_MIN_BOUND, rtMax: RT_MAX_BOUND }),
+      });
+    }
+    if (s.search) {
+      chips.push({
+        key: 'q',
+        label: `“${s.search}”`,
+        remove: () => commitMerge({ search: '' }),
+      });
+    }
+    return chips;
+  }
+
+  function renderActiveChips() {
+    if (!activeStrip || !clearAllBtn) return;
+    const chips = buildChips(committed);
+    activeStrip.querySelectorAll('.arch-chip').forEach((n) => n.remove());
+    if (chips.length === 0) {
+      activeStrip.hidden = true;
+      return;
+    }
+    activeStrip.hidden = false;
+    for (const c of chips) {
+      const span = document.createElement('span');
+      span.className = 'arch-chip' + (c.isScope ? ' arch-chip--scope' : '');
+      span.dataset.key = c.key;
+      span.textContent = c.label + ' ';
+      const btn = document.createElement('button');
+      btn.className = 'arch-chip__close';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Remove ${c.label}`);
+      btn.textContent = '×';
+      btn.addEventListener('click', c.remove);
+      span.appendChild(btn);
+      activeStrip.insertBefore(span, clearAllBtn);
+    }
+  }
+
+  /* --- Toolbar reflection (segmented + sort + view + badge) --- */
+
+  function reflectToolbar() {
+    /* Segmented anchors are server-rendered with aria-current — JS doesn't
+     * touch them. Just keep tabIndex synced for roving keyboard nav. */
+    const currentIdx = segAnchors.findIndex((a) => a.getAttribute('aria-current') === 'page');
+    segAnchors.forEach((a, i) => { a.tabIndex = (i === Math.max(0, currentIdx)) ? 0 : -1; });
+
+    sortOpts.forEach((o) => o.setAttribute('aria-selected', o.dataset.sort === committed.sort ? 'true' : 'false'));
+    if (sortLabel) sortLabel.textContent = SORT_LABEL[committed.sort];
+    if (sortDisplay) sortDisplay.textContent = SORT_LABEL[committed.sort];
+    viewBtns.forEach((b) => b.setAttribute('aria-pressed', b.dataset.view === committed.view ? 'true' : 'false'));
+    const fc = filterCount(committed);
+    if (refineBadge) {
+      refineBadge.textContent = String(fc);
+      refineBadge.hidden = fc === 0;
+    }
+  }
+
+  function reflectResultHead(count: number) {
+    if (countNum) countNum.textContent = String(count);
+    if (countSuffix) countSuffix.hidden = !isFiltered(committed);
+  }
+
+  /* --- Mode switching: server-render vs client-render ---
+   * Server render = the route's existing ArchiveList grid + pagination
+   * (already scope-filtered server-side for /category/ and /tag/).
+   * Client render = our /search.json-driven .arch-results-grid.
+   * Switch to client whenever any state filter or any scope-needing
+   * sort/view change is active. */
+
+  /* Optional per-instance cap. The homepage embed sets
+   * `data-result-limit="12"` on the section root so client-mode
+   * filtering never floods the homepage with the full match set.
+   * Routes (/archive/, /category/, /tag/) omit the attribute and
+   * keep the existing "render every match" behavior. */
+  const limitAttr = archiveRoot!.getAttribute('data-result-limit');
+  const resultLimit = limitAttr ? parseInt(limitAttr, 10) : Infinity;
+
+  function applyMode(filtered: Doc[]) {
+    /* Client mode triggers when any state filter OR any non-default sort/view.
+     * (View toggle alone changes layout; we want it to take effect even with
+     * no filter — but the server grid honors data-view too, so we only need
+     * to re-render in client mode when filtering. For a pure view toggle on
+     * default state, we keep server grid and just set [data-view].) */
+    const needClient = isFiltered(committed);
+    const display = Number.isFinite(resultLimit) ? filtered.slice(0, resultLimit) : filtered;
+    const truncated = display.length < filtered.length;
+    if (needClient) {
+      archiveRoot!.setAttribute('data-filter-mode', 'client');
+      renderResults(display);
+      renderTruncationCTA(truncated, filtered.length);
+    } else {
+      archiveRoot!.removeAttribute('data-filter-mode');
+      if (resultsGrid) resultsGrid.innerHTML = '';
+      const empty = archiveList?.querySelector('.arch-empty') as HTMLElement | null;
+      if (empty) empty.hidden = true;
+      if (serverGrid) serverGrid.setAttribute('data-view', committed.view);
+      renderTruncationCTA(false, 0);
+    }
+  }
+
+  /* Render/update the "View all N matching →" CTA shown only on
+   * capped instances (homepage embed) when client-mode results
+   * exceed the cap. Anchor preserves the live querystring so the
+   * filters carry over to /archive/. No-op on uncapped routes. */
+  let truncationEl: HTMLAnchorElement | null = null;
+  function renderTruncationCTA(truncated: boolean, totalMatches: number) {
+    if (!truncated) {
+      if (truncationEl) truncationEl.hidden = true;
+      return;
+    }
+    if (!truncationEl) {
+      truncationEl = document.createElement('a');
+      truncationEl.className = 'arch-truncation-cta';
+      archiveList?.appendChild(truncationEl);
+    }
+    truncationEl.href = `/archive/${location.search}`;
+    truncationEl.textContent = `View all ${totalMatches} matching →`;
+    truncationEl.hidden = false;
+  }
+
+  /* --- Update cycle --- */
+
+  async function update() {
+    reflectToolbar();
+    writeURL(committed);
+    if (isFiltered(committed)) {
+      const data = await loadDocs();
+      const filtered = pipeline(committed, data);
+      applyMode(filtered);
+      reflectResultHead(filtered.length);
+    } else {
+      applyMode([]);
+      const total = parseInt(countNum?.dataset.total ?? '', 10);
+      reflectResultHead(Number.isFinite(total) ? total : (countNum ? parseInt(countNum.textContent || '0', 10) : 0));
+    }
+    renderActiveChips();
+  }
+
+  if (countNum) countNum.dataset.total = countNum.textContent || '0';
+
+  function commitMerge(patch: Partial<State>) {
+    committed = { ...committed, ...patch, tags: patch.tags ?? committed.tags, authors: patch.authors ?? committed.authors };
+    pending = cloneState(committed);
+    syncDrawerFromState(pending);
+    update();
+  }
+
+  function commitFromPending() {
+    committed = cloneState(pending);
+    update();
+  }
+
+  function resetAll() {
+    committed = cloneState(DEFAULTS);
+    pending = cloneState(DEFAULTS);
+    syncDrawerFromState(pending);
+    update();
+  }
+
+  /* --- Segmented navigation: hijack click to preserve query params --- */
+
+  function navigatePreserving(href: string) {
+    const target = href + (location.search || '');
+    location.assign(target);
+  }
+  segAnchors.forEach((a) => {
+    a.addEventListener('click', (e) => {
+      /* Honor modifier-clicks (open in new tab/window). */
+      const me = e as MouseEvent;
+      if (me.metaKey || me.ctrlKey || me.shiftKey || me.altKey || me.button !== 0) return;
+      /* Self-navigation (clicking the current anchor) should be a no-op. */
+      if (a.getAttribute('aria-current') === 'page') {
+        me.preventDefault();
+        return;
+      }
+      me.preventDefault();
+      navigatePreserving(a.getAttribute('href') ?? '/archive/');
+    });
+  });
+
+  /* Roving tabindex + arrow keys. */
+  const segContainer = $('.arch-segmented', archiveRoot);
+  segContainer?.addEventListener('keydown', (e) => {
+    const ke = e as KeyboardEvent;
+    if (ke.key !== 'ArrowLeft' && ke.key !== 'ArrowRight') return;
+    const cur = document.activeElement;
+    const idx = segAnchors.indexOf(cur as HTMLAnchorElement);
+    if (idx < 0) return;
+    ke.preventDefault();
+    const next = ke.key === 'ArrowRight'
+      ? (idx + 1) % segAnchors.length
+      : (idx - 1 + segAnchors.length) % segAnchors.length;
+    segAnchors[next].focus();
+  });
+
+  viewBtns.forEach((b) => {
+    b.addEventListener('click', () => {
+      const view = (b.dataset.view ?? 'grid') as State['view'];
+      commitMerge({ view });
+    });
+  });
+
+  /* --- Sort menu --- */
+
+  function openSort() {
+    if (!sortWrap || !sortBtn) return;
+    sortWrap.dataset.open = 'true';
+    sortBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeSort() {
+    if (!sortWrap || !sortBtn) return;
+    sortWrap.dataset.open = 'false';
+    sortBtn.setAttribute('aria-expanded', 'false');
+  }
+  sortBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (sortWrap?.dataset.open === 'true') closeSort();
+    else openSort();
+  });
+  sortOpts.forEach((opt) => {
+    opt.addEventListener('click', () => {
+      const sort = (opt.dataset.sort ?? 'newest') as State['sort'];
+      closeSort();
+      commitMerge({ sort });
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (sortWrap?.dataset.open === 'true' && !sortWrap.contains(e.target as Node)) closeSort();
+  });
+
+  /* --- Drawer open/close + focus trap --- */
+
+  let lastFocused: HTMLElement | null = null;
+  function focusables(): HTMLElement[] {
+    if (!drawer) return [];
+    return $$<HTMLElement>('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])', drawer)
+      .filter((el) => !el.hasAttribute('disabled') && !el.hidden && el.offsetParent !== null);
+  }
+  function openDrawer() {
+    if (!drawer || !drawerBack || !refineBtn) return;
+    pending = cloneState(committed);
+    syncDrawerFromState(pending);
+    updateApplyCount();
+
+    drawer.hidden = false;
+    drawerBack.hidden = false;
+    requestAnimationFrame(() => {
+      drawer.dataset.open = 'true';
+      drawerBack.dataset.open = 'true';
+    });
+    refineBtn.setAttribute('aria-expanded', 'true');
+    lastFocused = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => focusables()[0]?.focus(), 50);
+  }
+  function closeDrawer() {
+    if (!drawer || !drawerBack || !refineBtn) return;
+    drawer.dataset.open = 'false';
+    drawerBack.dataset.open = 'false';
+    refineBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      if (drawer.dataset.open === 'false') drawer.hidden = true;
+      if (drawerBack.dataset.open === 'false') drawerBack.hidden = true;
+    }, 320);
+    lastFocused?.focus();
+  }
+  refineBtn?.addEventListener('click', () => {
+    if (drawer?.dataset.open === 'true') closeDrawer();
+    else openDrawer();
+  });
+  drawerClose?.addEventListener('click', closeDrawer);
+  drawerBack?.addEventListener('click', closeDrawer);
+  drawer?.addEventListener('keydown', (e) => {
+    const ke = e as KeyboardEvent;
+    if (ke.key !== 'Tab') return;
+    const els = focusables();
+    if (els.length === 0) return;
+    const first = els[0], last = els[els.length - 1];
+    if (ke.shiftKey && document.activeElement === first) { ke.preventDefault(); last.focus(); }
+    else if (!ke.shiftKey && document.activeElement === last) { ke.preventDefault(); first.focus(); }
+  });
+
+  /* --- Drawer interactions (mutate `pending`, not `committed`) --- */
+
+  sectionHeads.forEach((h) => {
+    h.addEventListener('click', () => {
+      const sec = h.closest('.arch-section') as HTMLElement | null;
+      if (!sec) return;
+      const isOpen = sec.dataset.open !== 'false';
+      sec.dataset.open = isOpen ? 'false' : 'true';
+      h.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  drawerSearch?.addEventListener('input', () => {
+    pending.search = drawerSearch.value;
+    debouncedApplyPreview();
+  });
+
+  tagSearch?.addEventListener('input', () => {
+    const q = tagSearch.value.trim().toLowerCase();
+    tagBtns.forEach((b) => {
+      const t = (b.dataset.tag ?? '').toLowerCase();
+      b.hidden = !!q && !t.includes(q);
+    });
+  });
+  tagBtns.forEach((b) => {
+    b.addEventListener('click', () => {
+      const t = b.dataset.tag ?? '';
+      const on = b.dataset.on === 'true';
+      if (on) {
+        b.dataset.on = 'false';
+        b.setAttribute('aria-pressed', 'false');
+        pending.tags = pending.tags.filter((x) => x !== t);
+      } else {
+        b.dataset.on = 'true';
+        b.setAttribute('aria-pressed', 'true');
+        if (!pending.tags.includes(t)) pending.tags.push(t);
+      }
+      debouncedApplyPreview();
+    });
+  });
+
+  presetBtns.forEach((b) => {
+    b.addEventListener('click', () => {
+      const p = b.dataset.preset ?? '';
+      if (pending.datePreset === p) {
+        pending.datePreset = '';
+      } else {
+        pending.datePreset = p;
+        pending.dateFrom = '';
+        pending.dateTo = '';
+        if (dateFromInput) dateFromInput.value = '';
+        if (dateToInput) dateToInput.value = '';
+      }
+      reflectPresetButtons();
+      debouncedApplyPreview();
+    });
+  });
+  function reflectPresetButtons() {
+    presetBtns.forEach((b) => {
+      const on = b.dataset.preset === pending.datePreset;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  dateFromInput?.addEventListener('change', () => {
+    pending.dateFrom = dateFromInput.value;
+    pending.datePreset = '';
+    reflectPresetButtons();
+    debouncedApplyPreview();
+  });
+  dateToInput?.addEventListener('change', () => {
+    pending.dateTo = dateToInput.value;
+    pending.datePreset = '';
+    reflectPresetButtons();
+    debouncedApplyPreview();
+  });
+
+  function reflectRT() {
+    if (!rtMinInput || !rtMaxInput || !rtFill || !rtReadout) return;
+    let lo = parseInt(rtMinInput.value, 10);
+    let hi = parseInt(rtMaxInput.value, 10);
+    if (lo > hi) { const t = lo; lo = hi; hi = t; }
+    pending.rtMin = lo;
+    pending.rtMax = hi;
+    rtMinInput.value = String(lo);
+    rtMaxInput.value = String(hi);
+    const pctLo = ((lo - RT_MIN_BOUND) / (RT_MAX_BOUND - RT_MIN_BOUND)) * 100;
+    const pctHi = ((hi - RT_MIN_BOUND) / (RT_MAX_BOUND - RT_MIN_BOUND)) * 100;
+    (rtFill as HTMLElement).style.left = `${pctLo}%`;
+    (rtFill as HTMLElement).style.right = `${100 - pctHi}%`;
+    rtReadout.textContent = `${lo}–${hi} min read`;
+  }
+  rtMinInput?.addEventListener('input', () => { reflectRT(); debouncedApplyPreview(); });
+  rtMaxInput?.addEventListener('input', () => { reflectRT(); debouncedApplyPreview(); });
+
+  authorBtns.forEach((b) => {
+    b.addEventListener('click', () => {
+      const id = b.dataset.author ?? '';
+      const on = b.dataset.on === 'true';
+      if (on) {
+        b.dataset.on = 'false';
+        b.setAttribute('aria-pressed', 'false');
+        pending.authors = pending.authors.filter((x) => x !== id);
+      } else {
+        b.dataset.on = 'true';
+        b.setAttribute('aria-pressed', 'true');
+        if (!pending.authors.includes(id)) pending.authors.push(id);
+      }
+      debouncedApplyPreview();
+    });
+  });
+
+  applyBtn?.addEventListener('click', () => {
+    commitFromPending();
+    closeDrawer();
+  });
+  resetBtn?.addEventListener('click', () => {
+    pending = cloneState(DEFAULTS);
+    syncDrawerFromState(pending);
+    updateApplyCount();
+  });
+  clearAllBtn?.addEventListener('click', resetAll);
+
+  let previewTimer: number | null = null;
+  function debouncedApplyPreview() {
+    if (previewTimer) clearTimeout(previewTimer);
+    previewTimer = window.setTimeout(updateApplyCount, 200);
+  }
+  async function updateApplyCount() {
+    if (!applyCount) return;
+    if (!isFiltered(pending)) {
+      const total = parseInt(countNum?.dataset.total ?? '0', 10);
+      applyCount.textContent = String(Number.isFinite(total) ? total : 0);
+      return;
+    }
+    const data = await loadDocs();
+    applyCount.textContent = String(pipeline(pending, data).length);
+  }
+
+  function syncDrawerFromState(s: State) {
+    if (drawerSearch) drawerSearch.value = s.search;
+    tagBtns.forEach((b) => {
+      const on = s.tags.includes(b.dataset.tag ?? '');
+      b.dataset.on = on ? 'true' : 'false';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    authorBtns.forEach((b) => {
+      const on = s.authors.includes(b.dataset.author ?? '');
+      b.dataset.on = on ? 'true' : 'false';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (dateFromInput) dateFromInput.value = s.dateFrom;
+    if (dateToInput)   dateToInput.value   = s.dateTo;
+    presetBtns.forEach((b) => {
+      const on = b.dataset.preset === s.datePreset;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (rtMinInput) rtMinInput.value = String(s.rtMin);
+    if (rtMaxInput) rtMaxInput.value = String(s.rtMax);
+    reflectRT();
+  }
+
+  /* --- Keyboard shortcuts --- */
+
+  function isTypingTarget(el: EventTarget | null): boolean {
+    if (!(el instanceof HTMLElement)) return false;
+    const tag = el.tagName;
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+  }
+  document.addEventListener('keydown', (e) => {
+    const ke = e as KeyboardEvent;
+    if (ke.key === 'Escape') {
+      if (sortWrap?.dataset.open === 'true') { closeSort(); return; }
+      if (drawer?.dataset.open === 'true') { closeDrawer(); return; }
+    }
+    if (isTypingTarget(ke.target)) return;
+    if (ke.key === '/') {
+      ke.preventDefault();
+      if (drawer?.dataset.open !== 'true') openDrawer();
+      setTimeout(() => drawerSearch?.focus(), 60);
+    } else if (ke.key === 'r' && !ke.metaKey && !ke.ctrlKey && !ke.altKey) {
+      ke.preventDefault();
+      if (drawer?.dataset.open === 'true') closeDrawer();
+      else openDrawer();
+    }
+  });
+
+  /* --- Boot --- */
+
+  if (migrateLegacyCatParam()) return;
+
+  committed = readURL();
+  pending = cloneState(committed);
+  syncDrawerFromState(pending);
+  if (isFiltered(committed)) {
+    loadDocs().then(() => update());
+  } else {
+    update();
+  }
+})();
+</script>

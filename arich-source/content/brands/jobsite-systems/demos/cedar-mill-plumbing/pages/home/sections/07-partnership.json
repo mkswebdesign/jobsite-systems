@@ -1,0 +1,19 @@
+{
+  "type": "partnership",
+  "sectionLabel": "What you get",
+  "heading": "What every Cedar Mill Plumbing job comes with.",
+  "subtext": "Whether it's a $189 drain cleaning or a $12,000 repipe — the standards are the same.",
+  "cardTitle": "The standard service",
+  "cardLead": "Every job, every visit, every invoice. No tier system, no \"premium service\" upsell.",
+  "benefits": [
+    "Written quote before any work starts on projects $500+, flat-rate on common service calls",
+    "Same plumber every visit — Mike Hollister, no rotating techs or subcontractors",
+    "Drop cloths and shoe covers on every visit. Cleaned-up worksite at completion",
+    "Photos of every job sent with the invoice — joints, runs, fittings, before and after",
+    "Permits pulled and inspections scheduled where required, included in the written quote",
+    "1-year workmanship warranty on standard work, 5-year on whole-house repipes, manufacturer warranty pass-through on parts"
+  ],
+  "ctaLabel": "Request a Service Call",
+  "ctaHref": "/demo/cedar-mill-plumbing/contact/",
+  "note": "Licensed Oregon plumber, Oregon CCB # (placeholder), bonded and insured. Service area: Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland (97225, 97229, 97006, 97005, 97124, 97210, 97231). 24/7 emergency dispatch inside the service area; non-emergency work typically scheduled inside 3 to 5 business days."
+}

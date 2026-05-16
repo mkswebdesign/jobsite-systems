@@ -1,0 +1,38 @@
+{
+  "name": "mailing-list",
+  "assets": {
+    "css": ["mailing-list.css"],
+    "js":  ["mailing-list.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-mailing-list]",
+        "description": "Container that renders a styled email-capture form. Reads its content from a referenced JSON config block.",
+        "fields": {
+          "data-aed-mailing-list": { "type": "boolean", "required": true,                           "description": "Opt-in marker." },
+          "data-aed-ml-source":    { "type": "string",  "default": "aed-mailing-list",              "description": "DOM id of the JSON config block to read. Allows multiple lists per page." }
+        }
+      }
+    ],
+    "json": [
+      {
+        "id": "aed-mailing-list",
+        "description": "List provider + copy. Provider determines POST format: convertkit uses JSON; beehiiv/buttondown/mailerlite/custom use FormData with no-cors fallback.",
+        "required": true,
+        "fields": {
+          "provider":       { "type": "string",  "required": true, "enum": ["convertkit", "beehiiv", "buttondown", "mailerlite", "custom"], "description": "List host." },
+          "endpoint":       { "type": "string",  "required": true,                                                                          "description": "Provider URL — for convertkit this is the form-submit endpoint, for others the list submission URL." },
+          "headline":       { "type": "string",  "default": "Subscribe",                                                                    "description": "Form heading." },
+          "body":           { "type": "string",                                                                                              "description": "Subheading body copy." },
+          "placeholder":    { "type": "string",  "default": "you@example.com",                                                              "description": "Email input placeholder." },
+          "buttonLabel":    { "type": "string",  "default": "Subscribe",                                                                    "description": "Submit-button label." },
+          "footer":         { "type": "string",                                                                                              "description": "Small print under the form (e.g. 'No spam. Unsubscribe anytime.')." },
+          "successMessage": { "type": "string",  "default": "Thanks — check your inbox.",                                                   "description": "Replaces the form on success." },
+          "errorMessage":   { "type": "string",  "default": "Something went wrong. Try again?",                                             "description": "Shown on submit failure." },
+          "extraFields":    { "type": "object",  "default": {},                                                                              "description": "Provider-specific extra POST fields (e.g. ConvertKit tags / form ids)." }
+        }
+      }
+    ]
+  }
+}

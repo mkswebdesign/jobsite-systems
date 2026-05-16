@@ -1,0 +1,27 @@
+{
+  "slug": "privacy",
+  "path": "/privacy/",
+  "breadcrumbLabel": "Privacy Policy",
+  "seo": {
+    "title": "Privacy Policy — Apex Home Services",
+    "description": "How apexhomeservices.example handles information from website quote requests. Plain-language privacy policy for a Kansas City home services company.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/privacy/"
+  },
+  "header": {
+    "heading": "Website Privacy Policy",
+    "lead": "What this site collects, why, and how it's handled. Plain-language version of how a small home services company in the KC metro thinks about your information."
+  },
+  "lastUpdated": "April 2026",
+  "body": [
+    { "heading": "1. Scope", "paragraphs": ["This policy covers website use only — what happens when you visit the site or submit the quote request form. Once you become a customer, our normal small-business handling applies: we keep job records, photos, and invoices for service history and warranty purposes."] },
+    { "heading": "2. Information collected via website forms", "paragraphs": ["When you submit a quote request, the form collects:"], "items": ["Your name, email, and phone number for follow-up.", "What kind of work you need — at the level of trade and rough scope, not a full job specification.", "Your city or area in the metro and rough timing.", "Any practical scheduling notes (gate codes, dogs, parking, etc.) you choose to share.", "Acknowledgment of these terms."] },
+    { "heading": "3. Photos sent by text or email", "paragraphs": ["If you text or email photos to help us phone-quote, those photos are stored on our standard small-business email and the office's phone, kept with the rest of your job record. If you'd rather we delete them after the quote is finalized, just say so and we will."] },
+    { "heading": "4. How information is used", "paragraphs": ["Form submissions are used only to:"], "items": ["Reply with a phone-quote or schedule a free in-home estimate.", "Coordinate the dispatch and crew once a job is booked.", "Maintain a job history for warranty and repeat-customer purposes.", "Send same-day invoices and (for repeat customers) periodic check-ins."] },
+    { "heading": "5. Service providers", "paragraphs": ["Form submissions are processed via a Cloudflare Worker (validation only, not stored) and delivered as email. We store the resulting email in standard business email infrastructure. Our scheduling and invoicing software is a standard small-business platform — no third-party data sharing beyond what's required to send your invoice and process your payment."] },
+    { "heading": "6. Analytics", "paragraphs": ["This site uses anonymized, aggregate analytics — page views, referrer, country. No tracking cookies, no advertising pixels, no cross-site tracking, no personal identifiers."] },
+    { "heading": "7. Your rights", "paragraphs": ["You may request access to or deletion of any information you've submitted via the website. Email us or call (913) 555-0177."] },
+    { "heading": "8. Children", "paragraphs": ["This website is not directed at children under 13. No information is knowingly collected from minors directly through the website."] },
+    { "heading": "9. Updates", "paragraphs": ["This policy may be updated occasionally. The \"last updated\" date at the top reflects the most recent revision."] },
+    { "heading": "10. Contact", "paragraphs": ["For website privacy questions, call (913) 555-0177 or use the contact form. We're a small company — the office gets the message."] }
+  ]
+}

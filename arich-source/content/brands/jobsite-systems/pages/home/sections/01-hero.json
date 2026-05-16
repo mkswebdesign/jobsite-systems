@@ -1,0 +1,59 @@
+{
+  "type": "hero",
+  "_TODO_copyApproval": "P2 #8 hero rewrite, #9 badge update, #15 risk-reversal microcopy. Awaiting owner sign-off before deploy.",
+  "badge": "**First cohort** · 1–2 weeks from call to live site",
+  "badgeHref": "/contact/",
+  "headline": "A website shouldn't be another thing",
+  "headlineAccent": "you have to manage between jobs.",
+  "lead": "Simple, working websites for trade businesses. One flat monthly price. No plugins, no logins, no surprises — just a site that brings in estimate requests while you're on the job.",
+  "ctaMicrocopy": "Cancel anytime · Month-to-month · You own your content",
+  "metaParts": [
+    "Jobsite Systems",
+    "Productized Websites",
+    "Zero-Maintenance by Design"
+  ],
+  "ctaPrimary": {
+    "label": "Book an Intro Call",
+    "href": "/contact/"
+  },
+  "ctaSecondary": {
+    "label": "See a Sample Site",
+    "href": "/work/"
+  },
+  "backgroundImages": [
+    "https://images.pexels.com/photos/4981780/pexels-photo-4981780.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=compress&cs=tinysrgb&w=1920",
+    "https://images.pexels.com/photos/8820170/pexels-photo-8820170.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "https://images.pexels.com/photos/14319099/pexels-photo-14319099.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "https://images.pexels.com/photos/33689718/pexels-photo-33689718.jpeg?auto=compress&cs=tinysrgb&w=1920"
+  ],
+  "backgroundImageInterval": 9,
+  "imageCaption": "From jobsite to homepage",
+  "trustMarquee": true,
+  "trustMetrics": [
+    {
+      "value": "1–2 weeks",
+      "label": "Avg from call to live site"
+    },
+    {
+      "value": "<1s",
+      "label": "Mobile load time"
+    },
+    {
+      "value": "99.99%",
+      "label": "Typical uptime"
+    },
+    {
+      "value": "0 plugins",
+      "label": "Nothing to manage"
+    },
+    {
+      "value": "Direct",
+      "label": "Email support, no tickets"
+    },
+    {
+      "value": "First cohort",
+      "label": "Onboarding trade businesses now"
+    }
+  ]
+}

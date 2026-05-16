@@ -1,0 +1,25 @@
+{
+  "name": "grain-overlay",
+  "assets": {
+    "css": ["grain-overlay.css"],
+    "js": []
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "html",
+        "description": "Per-page tuning. The overlay is pure CSS — set these directly on <html> (or in a site stylesheet) to adjust.",
+        "fields": {
+          "data-aed-grain-animated": { "type": "boolean", "description": "Animate the noise pattern — slow 8-step shift for organic motion. Default: static." }
+        }
+      },
+      {
+        "selector": ":root (CSS var)",
+        "description": "CSS custom property knob — override in a <style> block or brand stylesheet.",
+        "fields": {
+          "--aed-grain-opacity": { "type": "number", "description": "Opacity of the grain layer (0–1). Default 0.08 dark / 0.06 light." }
+        }
+      }
+    ]
+  }
+}

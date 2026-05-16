@@ -1,0 +1,58 @@
+/*
+ * Gauge — drop-in half-circle progress arc.
+ *
+ * Companion to /progress-ring/. Pure SVG. Theme-aware.
+ *
+ * See /gauge/README.md.
+ */
+
+[data-aed-gauge] {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  line-height: 0;
+}
+[data-aed-gauge] svg { display: block; overflow: visible; }
+
+.aed-g-track {
+  fill: none;
+  stroke: var(--border, #27272a);
+}
+.aed-g-fill {
+  fill: none;
+  stroke: var(--accent, #6B00FF);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aed-g-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;   /* anchor to bottom of half-circle */
+  padding-bottom: 4%;
+  font-variant-numeric: tabular-nums;
+}
+.aed-g-value {
+  font: 800 1.05rem/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  color: var(--text-primary, #fafafa);
+}
+.aed-g-suffix {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+  margin-top: 0.15rem;
+}
+
+[data-aed-gauge][data-aed-trend="up"]   .aed-g-fill { stroke: #10b981; }
+[data-aed-gauge][data-aed-trend="down"] .aed-g-fill { stroke: #ef4444; }
+[data-aed-gauge][data-aed-trend="warn"] .aed-g-fill { stroke: #f59e0b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-g-fill { transition: none; }
+}

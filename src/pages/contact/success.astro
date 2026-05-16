@@ -1,0 +1,35 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../../builder/layouts/Base.astro';
+import PageHeader from '../../builder/components/PageHeader.astro';
+import NextSteps from '../../builder/components/sections/NextSteps.astro';
+import { brand } from '../../builder/lib/brand';
+
+/* Reads optional `successPage` overrides from the brand's pages/contact/page.json
+ * so brands can reskin the post-submit screen without forking this template.
+ * Falls back to neutral English (no hardcoded brand name in the title) so
+ * other brands render reasonably even without overrides. */
+const contactEntry = await getEntry('pages', 'contact');
+const sp: any = (contactEntry?.data as any)?.successPage ?? {};
+const parentBreadcrumb: { label: string; href: string } = sp.parentBreadcrumb ?? { label: 'Contact', href: '/contact/' };
+const childBreadcrumb: string = sp.childBreadcrumb ?? 'Message Sent';
+const sectionLabel: string = sp.sectionLabel ?? 'Got it.';
+const heading: string = sp.heading ?? 'Submission successful.';
+const lead: string = sp.lead ?? "Thanks! We'll be in touch within one business day, usually sooner.";
+const titleSuffix: string = sp.titleSuffix ?? 'Message Sent';
+const seo = {
+  title: `${titleSuffix} — ${brand.name}`,
+  description: sp.metaDescription ?? "Thanks for reaching out. We'll be in touch within one business day.",
+};
+---
+
+<Base title={seo.title} description={seo.description} skipTarget="#main" indexable={false}>
+  <PageHeader
+    crumbs={[parentBreadcrumb, { label: childBreadcrumb }]}
+    sectionLabel={sectionLabel}
+    heading={heading}
+    lead={lead}
+  />
+
+  <NextSteps tightTop={false} />
+</Base>

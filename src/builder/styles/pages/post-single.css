@@ -1,0 +1,896 @@
+/* ============================================
+   /post/<slug>/ — single-post template (Pass 7).
+   Newsroom layout: full-bleed hero overlay, 3-column body grid
+   with sticky rails, drop-cap article column, bottom-zone
+   (author + older-story), sticky mobile share bar.
+
+   ALL rules scope under `.post-single` so this file is page-local.
+   Only this template's brand-tinted accents reference --brand-* tokens
+   declared in brands/swift-digest.css; other brands without those
+   tokens still render (the per-category data attributes are no-ops).
+   ============================================ */
+
+.post-single {
+  /* Page-scoped color tokens — bound to the brand's theme-aware tokens so
+     the [data-theme="light"] toggle flips this template along with the
+     rest of the site. The hex fallbacks preserve the original newsroom
+     palette if a brand without those tokens ever loads this stylesheet. */
+  --ps-bg: var(--bg-primary, #0a0a0b);
+  --ps-bg-rgb: var(--bg-primary-rgb, 10, 10, 11);
+  --ps-card: var(--bg-card, #131316);
+  --ps-card-2: var(--bg-card-hover, #1a1a1f);
+  --ps-border: var(--border, #1c1c20);
+  --ps-border-2: var(--border-light, #2a2a30);
+  --ps-text: var(--text-primary, #fff);
+  --ps-text-2: var(--text-primary, #e8e8ea);
+  --ps-text-3: var(--text-secondary, #d4d4d8);
+  --ps-text-4: var(--text-secondary, #b8b8bf);
+  --ps-muted: var(--text-muted, #8a8a92);
+  --ps-accent: var(--cat, var(--accent, #e63946));
+
+  --ps-serif: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+  --ps-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --ps-display: Georgia, 'Times New Roman', serif;
+
+  --ps-max: 1240px;
+  --ps-narrow: 920px;
+
+  background: var(--ps-bg);
+  color: var(--ps-text-2);
+  font-family: var(--ps-sans);
+  /* Buffer for the sticky mobile share bar so the last paragraph isn't
+     covered. Hidden by media query at ≥769px. */
+  padding-bottom: 0;
+}
+@media (max-width: 768px) {
+  .post-single { padding-bottom: 64px; }
+}
+
+/* Per-category accent tint. Mirrors the existing convention from
+   brands/swift-digest.css:170-175 so each post inherits its category color
+   for non-pill accents (drop cap, pull-quote rule, active TOC border, etc.).
+   Falls back to the brand red when no recognized category. */
+.post-single[data-category="politics"]   { --cat: var(--brand-politics,   #e63946); }
+.post-single[data-category="technology"] { --cat: var(--brand-technology, #0369a1); }
+.post-single[data-category="business"]   { --cat: var(--brand-business,   #047857); }
+.post-single[data-category="culture"]    { --cat: var(--brand-culture,    #7c3aed); }
+.post-single[data-category="world"]      { --cat: var(--brand-world,      #c2410c); }
+.post-single[data-category="science"]    { --cat: var(--brand-science,    #0f766e); }
+
+/* ---------- Breadcrumb ----------
+   Uses the shared Breadcrumbs.astro component (`<nav class="breadcrumbs">`).
+   Brand CSS at brands/swift-digest.css:38 sets defaults; we override with
+   higher specificity (.post-single descendant) to land the newsroom sizing. */
+
+.post-single > .breadcrumbs {
+  max-width: var(--ps-max);
+  margin: 0 auto;
+  padding: 10px 32px;
+}
+.post-single .breadcrumbs ol {
+  margin: 0;
+  font-size: 12px;
+  gap: 4px;
+  color: var(--ps-muted);
+}
+.post-single .breadcrumbs a {
+  color: var(--ps-muted);
+  border-bottom-color: transparent;
+}
+.post-single .breadcrumbs a:hover {
+  color: var(--ps-text-3);
+  border-bottom-color: transparent;
+}
+.post-single .breadcrumbs [aria-current="page"] { color: var(--ps-text); }
+.post-single .breadcrumbs__sep { margin: 0 4px; opacity: 0.55; }
+
+/* ---------- Hero ---------- */
+
+.post-single__hero {
+  position: relative;
+  width: 100%;
+  height: 62vh;
+  min-height: 440px;
+  max-height: 580px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--ps-card);
+}
+.post-single__hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.post-single__hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ps-bg-rgb), 0.2) 0%,
+    rgba(var(--ps-bg-rgb), 0.4) 50%,
+    rgba(var(--ps-bg-rgb), 0.95) 100%
+  );
+  pointer-events: none;
+}
+.post-single__hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  z-index: 1;
+}
+.post-single__hero-inner {
+  width: 100%;
+  max-width: var(--ps-max);
+  margin: 0 auto;
+  padding: 0 32px 28px;
+}
+
+.post-single__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 10px;
+  margin: 0 0 14px;
+  font-size: 12px;
+  color: var(--ps-text-3);
+}
+.post-single__meta > * + *::before {
+  content: "·";
+  margin-right: 10px;
+  color: var(--ps-muted);
+}
+.post-single__category {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 3px;
+  background: var(--ps-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.post-single__category:hover { filter: brightness(1.08); }
+.post-single__category + *::before { display: none; }
+
+.post-single__headline {
+  margin: 0 0 14px;
+  max-width: 880px;
+  font-family: var(--ps-display);
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ps-text);
+}
+.post-single__dek {
+  margin: 0;
+  max-width: 820px;
+  font-family: var(--ps-display);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--ps-text-3);
+}
+
+/* ---------- Byline strip ---------- */
+
+.post-single__byline {
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-bg);
+  padding: 0;
+}
+.post-single__byline-inner {
+  max-width: var(--ps-max);
+  margin: 0 auto;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.post-single__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+.post-single__author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  /* Brand mark: red background with the author's initials on top.
+     For "Swift Digest Editorial" → "SD" — the site's iconography element.
+     When an <img> avatar is present it covers this; when only initials
+     are present, the red shows through. */
+  background: var(--accent, var(--ps-accent));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.post-single__author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.post-single__author-initials {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-family: var(--ps-sans);
+  line-height: 1;
+}
+.post-single__author-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.post-single__author-name {
+  color: var(--ps-text);
+  font-weight: 600;
+  font-size: 14px;
+}
+.post-single__author-role {
+  color: var(--ps-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.post-single__share {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.post-single__share-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--ps-border-2);
+  background: transparent;
+  color: var(--ps-text-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, color 150ms;
+  text-decoration: none;
+  font: inherit;
+  padding: 0;
+}
+.post-single__share-btn svg { width: 15px; height: 15px; display: block; }
+.post-single__share-btn:hover {
+  background: var(--ps-accent);
+  border-color: var(--ps-accent);
+  color: #fff;
+}
+.post-single__share-btn.is-active {
+  background: var(--ps-accent);
+  border-color: var(--ps-accent);
+  color: #fff;
+}
+
+/* ---------- Three-column body grid ---------- */
+
+.post-single__grid {
+  max-width: var(--ps-max);
+  margin: 0 auto;
+  padding: 36px 32px 48px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 240px;
+  gap: 48px;
+}
+
+/* Left rail */
+.post-single__rail-left {
+  position: sticky;
+  top: 100px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.post-single__rail-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ps-muted);
+}
+.post-single__progress {
+  position: relative;
+  width: 4px;
+  height: 200px;
+  background: var(--ps-border-2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.post-single__progress-fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--ps-read, 0%);
+  background: var(--ps-accent);
+  transition: height 80ms linear;
+}
+.post-single__rail-share {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.post-single__rail-share .post-single__share-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+}
+.post-single__time-left {
+  font-size: 12px;
+  color: var(--ps-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Article column */
+.post-single__article {
+  font-family: var(--ps-serif);
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--ps-text-3);
+  max-width: 720px;
+}
+.post-single__article > *:first-child { margin-top: 0; }
+.post-single__article > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--ps-display);
+  font-size: 64px;
+  line-height: 0.92;
+  font-weight: 700;
+  color: var(--ps-accent);
+  margin: 6px 10px 0 0;
+}
+.post-single__article p {
+  margin: 0 0 1.4em;
+}
+.post-single__article a {
+  color: var(--ps-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--ps-accent) 60%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 150ms;
+}
+.post-single__article a:hover { text-decoration-color: var(--ps-accent); }
+.post-single__article h2,
+.post-single__article h3 {
+  font-family: var(--ps-sans);
+  color: var(--ps-text);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 2.2em 0 0.9em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ps-border-2);
+}
+.post-single__article h2 { font-size: 16px; }
+.post-single__article ul,
+.post-single__article ol {
+  margin: 0 0 1.4em;
+  padding-left: 1.4em;
+}
+.post-single__article li { margin-bottom: 0.5em; }
+.post-single__article strong { color: var(--ps-text); font-weight: 700; }
+.post-single__article em { color: var(--ps-text-2); }
+.post-single__article blockquote {
+  margin: 1.5em 0;
+  padding: 0.4em 0 0.4em 18px;
+  border-left: 3px solid var(--ps-accent);
+  font-family: var(--ps-display);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.5;
+  color: var(--ps-text-2);
+}
+.post-single__article blockquote.pullquote {
+  float: right;
+  width: 280px;
+  margin: 0.4em 0 1.2em 24px;
+  padding: 0.2em 0 0.2em 18px;
+  border-left: 3px solid var(--ps-accent);
+  font-size: 21px;
+}
+.post-single__article blockquote.pullquote cite {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--ps-sans);
+  font-style: normal;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ps-muted);
+}
+.post-single__article code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background: var(--ps-card);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  color: var(--ps-text);
+}
+.post-single__article pre {
+  background: var(--ps-card);
+  border: 1px solid var(--ps-border);
+  border-radius: 6px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.post-single__article pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+.post-single__article img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5em 0;
+  border-radius: 4px;
+}
+.post-single__article hr {
+  border: 0;
+  border-top: 1px solid var(--ps-border-2);
+  margin: 2em 0;
+}
+
+/* Right rail */
+.post-single__rail-right {
+  position: sticky;
+  top: 100px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-size: 13px;
+}
+.post-single__toc-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.post-single__toc-list li {
+  border-left: 2px solid var(--ps-border-2);
+}
+.post-single__toc-list a {
+  display: block;
+  padding: 6px 0 6px 12px;
+  color: var(--ps-text-4);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 150ms;
+}
+.post-single__toc-list a:hover { color: var(--ps-text); }
+.post-single__toc-list li.is-active {
+  border-left-color: var(--ps-accent);
+}
+.post-single__toc-list li.is-active a {
+  color: var(--ps-text);
+  font-weight: 600;
+}
+
+/* ---------- Engagement bar ---------- */
+
+.post-single__engage {
+  max-width: var(--ps-narrow);
+  margin: 16px auto 0;
+  padding: 16px 20px;
+  background: var(--ps-card);
+  border: 1px solid var(--ps-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.post-single__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.post-single__tag {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--ps-text-4);
+  background: var(--ps-card-2);
+  border: 1px solid var(--ps-border-2);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: color 150ms, border-color 150ms, background 150ms;
+}
+.post-single__tag:hover {
+  /* color stays var(--ps-text) so dark-mode reads white-on-tinted-dark and
+     light-mode reads dark-on-tinted-light — `#fff` only works for dark. */
+  color: var(--ps-text);
+  background: color-mix(in srgb, var(--ps-accent) 18%, var(--ps-card-2));
+  border-color: var(--ps-accent);
+}
+.post-single__engage-actions {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.post-single__engage-actions a,
+.post-single__engage-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ps-text-3);
+  text-decoration: none;
+  padding: 0;
+  transition: color 150ms;
+}
+.post-single__engage-actions a:hover,
+.post-single__engage-actions button:hover { color: var(--ps-accent); }
+
+/* ---------- Bottom zone ---------- */
+
+.post-single__bottom {
+  max-width: var(--ps-narrow);
+  margin: 28px auto 56px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.post-single__author-card,
+.post-single__older {
+  background: var(--ps-card);
+  border: 1px solid var(--ps-border);
+  border-radius: 8px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 150ms;
+}
+.post-single__older:hover { border-color: var(--ps-accent); }
+.post-single__author-card-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.post-single__author-card-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ps-text);
+}
+.post-single__author-card-bio {
+  margin: 0;
+  color: var(--ps-text-4);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.post-single__author-card-more {
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--ps-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.post-single__author-card-more:hover { text-decoration: underline; }
+.post-single__older-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ps-muted);
+}
+.post-single__older h3 {
+  margin: 0;
+  font-family: var(--ps-display);
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--ps-text);
+}
+.post-single__older-cta {
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--ps-accent);
+  font-weight: 600;
+}
+
+/* ---------- Sticky mobile share bar ---------- */
+
+.post-single__mobile-share {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: var(--ps-card);
+  border-top: 1px solid var(--ps-border-2);
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+}
+.post-single__mobile-share-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.post-single__mobile-share-list .post-single__share-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  gap: 6px;
+}
+
+/* ---------- Responsive ---------- */
+
+/* Tablet (≤1100px): hide right rail; collapse left rail to 60px. */
+@media (max-width: 1100px) {
+  .post-single__grid {
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 32px;
+    padding: 28px 24px 40px;
+  }
+  .post-single__rail-right { display: none; }
+  .post-single__rail-left {
+    align-items: center;
+    gap: 18px;
+  }
+  .post-single__rail-left .post-single__rail-label,
+  .post-single__rail-left .post-single__time-left { display: none; }
+  .post-single__progress {
+    width: 3px;
+    height: 120px;
+  }
+  .post-single__rail-share .post-single__share-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* Mobile (≤768px): unstacked hero, single column, sticky share bar, etc. */
+@media (max-width: 768px) {
+  .post-single__crumbs {
+    padding: 8px 20px;
+    font-size: 11px;
+  }
+  .post-single__hero {
+    height: 50vh;
+    height: 50dvh;
+    min-height: 280px;
+    max-height: none;
+  }
+  .post-single__hero::after {
+    /* On mobile, the meta/headline/dek live below the image — keep
+       only a light bottom darkening for image legibility, but the text
+       block sits below on solid bg. Theme-aware via --ps-bg-rgb so the
+       fade matches whichever bg the rest of the page is showing. */
+    background: linear-gradient(
+      180deg,
+      rgba(var(--ps-bg-rgb), 0) 0%,
+      rgba(var(--ps-bg-rgb), 0.25) 60%,
+      rgba(var(--ps-bg-rgb), 0.55) 100%
+    );
+  }
+  .post-single__hero-overlay {
+    position: static;
+    display: block;
+  }
+  .post-single__hero-inner {
+    position: relative;
+    background: var(--ps-bg);
+    padding: 18px 20px 4px;
+  }
+  /* Re-stack: image up top, text below it. The hero <figure> now
+     contains <img> + overlay block; place overlay below image. */
+  .post-single__hero {
+    display: flex;
+    flex-direction: column;
+    background: var(--ps-bg);
+  }
+  .post-single__hero img {
+    position: relative;
+    height: 50vh;
+    height: 50dvh;
+    min-height: 280px;
+  }
+  .post-single__headline { font-size: 32px; line-height: 1.12; }
+  .post-single__dek { font-size: 17px; }
+
+  .post-single__byline-inner { padding: 12px 20px; }
+
+  .post-single__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 24px 20px 32px;
+  }
+  .post-single__rail-left { display: none; }
+  .post-single__article {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .post-single__article > p:first-of-type::first-letter {
+    font-size: 48px;
+  }
+  .post-single__article blockquote.pullquote {
+    float: none;
+    width: auto;
+    margin: 1.5em 0;
+  }
+
+  .post-single__engage {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 8px 16px 0;
+  }
+  .post-single__engage-actions { justify-content: flex-start; }
+
+  .post-single__bottom {
+    grid-template-columns: minmax(0, 1fr);
+    margin: 24px 16px 24px;
+  }
+
+  .post-single__mobile-share { display: block; }
+}
+
+/* Small mobile (≤480px) */
+@media (max-width: 480px) {
+  .post-single__crumbs {
+    padding: 8px 16px;
+    font-size: 11px;
+  }
+  .post-single__hero img {
+    height: 38vh;
+    height: 38dvh;
+    min-height: 220px;
+  }
+  .post-single__hero-inner { padding: 14px 16px 4px; }
+  .post-single__headline {
+    font-size: 28px;
+    hyphens: auto;
+    word-break: break-word;
+  }
+  .post-single__dek { font-size: 16px; line-height: 1.4; }
+  .post-single__category { font-size: 10px; padding: 3px 7px; }
+  .post-single__meta { font-size: 11px; gap: 0 6px; }
+  .post-single__meta > * + *::before { margin-right: 6px; }
+
+  .post-single__byline-inner { padding: 10px 16px; }
+  .post-single__grid { padding: 20px 16px 28px; }
+  .post-single__engage { margin: 8px 12px 0; padding: 12px 14px; }
+  .post-single__bottom { margin: 20px 12px 20px; }
+}
+
+/* Reduced motion: disable progress-fill transition */
+@media (prefers-reduced-motion: reduce) {
+  .post-single__progress-fill { transition: none; }
+}
+
+/* ============================================
+   Section variants — wired to the editor via
+   data-section-type / data-section-variants attrs
+   on each region in PostArticle.astro. The active
+   variant attribute (data-<kind>-variant) is set
+   on <html> by Base.astro's pre-paint script from
+   brand.defaultVariants, page.variants, and
+   localStorage. Defaults to A:Default for every
+   section when no override is set.
+   ============================================ */
+
+/* --- post-hero variants ---
+ * A: Overlay (default — see base rules above)
+ * B: Compact — shorter banner-style hero (40vh, max 460px)
+ * C: Subdued — lighter gradient so cover image stays prominent
+ */
+[data-post-hero-variant="B"] .post-single__hero {
+  height: 40vh;
+  min-height: 320px;
+  max-height: 460px;
+}
+[data-post-hero-variant="B"] .post-single__headline { font-size: 38px; }
+[data-post-hero-variant="B"] .post-single__dek { font-size: 17px; }
+
+[data-post-hero-variant="C"] .post-single__hero::after {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--ps-bg-rgb), 0) 0%,
+    rgba(var(--ps-bg-rgb), 0.18) 55%,
+    rgba(var(--ps-bg-rgb), 0.7) 100%
+  );
+}
+
+/* --- post-byline variants ---
+ * A: Default (split — author left, share right)
+ * B: Centered (author + share stacked, both centered)
+ */
+[data-post-byline-variant="B"] .post-single__byline-inner {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+[data-post-byline-variant="B"] .post-single__author { justify-content: center; }
+[data-post-byline-variant="B"] .post-single__share { justify-content: center; }
+
+/* --- post-body variants ---
+ * A: ThreeColumn (default — left rail + article + right rail TOC)
+ * B: Centered (no rails; article column centered, narrow 720px)
+ * C: Wide (no rails; article column centered, 920px max)
+ */
+[data-post-body-variant="B"] .post-single__grid,
+[data-post-body-variant="C"] .post-single__grid {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: var(--ps-narrow);
+  gap: 0;
+}
+[data-post-body-variant="B"] .post-single__rail-left,
+[data-post-body-variant="B"] .post-single__rail-right,
+[data-post-body-variant="C"] .post-single__rail-left,
+[data-post-body-variant="C"] .post-single__rail-right {
+  display: none;
+}
+[data-post-body-variant="B"] .post-single__article { max-width: 720px; margin: 0 auto; }
+[data-post-body-variant="C"] .post-single__article { max-width: 920px; margin: 0 auto; }
+
+/* --- post-engage variants ---
+ * A: Default
+ * B: Compact (tighter padding, no border, smaller chips)
+ */
+[data-post-engage-variant="B"] .post-single__engage {
+  padding: 8px 14px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--ps-border);
+  border-bottom: 1px solid var(--ps-border);
+  border-radius: 0;
+}
+[data-post-engage-variant="B"] .post-single__tag {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+/* --- post-bottom variants ---
+ * A: TwoColumn (default — author card | older story)
+ * B: Stacked (single column; author card above older story)
+ */
+[data-post-bottom-variant="B"] .post-single__bottom {
+  grid-template-columns: minmax(0, 1fr);
+}

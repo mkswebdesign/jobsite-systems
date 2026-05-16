@@ -1,0 +1,22 @@
+{
+  "name": "scramble-text",
+  "assets": {
+    "css": ["scramble-text.css"],
+    "js":  ["scramble-text.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-scramble]",
+        "description": "Per-element text-scramble effect. Cycles through random characters before settling on the final text. Respects prefers-reduced-motion.",
+        "fields": {
+          "data-aed-scramble":     { "type": "boolean","required": true,           "description": "Opt-in marker." },
+          "data-aed-scr-trigger":  { "type": "string", "default": "scroll",        "enum": ["scroll", "load", "hover"], "description": "When to fire the effect." },
+          "data-aed-scr-duration": { "type": "number", "default": 900,             "description": "Total animation duration in ms." },
+          "data-aed-scr-cycles":   { "type": "number", "default": 4,               "description": "Number of random-character passes per character before settling." },
+          "data-aed-scr-chars":    { "type": "string", "default": "!<>-_\\/[]{}—=+*^?#%@&░▒▓01", "description": "Pool of glyphs used for the random shuffle." }
+        }
+      }
+    ]
+  }
+}

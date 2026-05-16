@@ -1,0 +1,27 @@
+{
+  "slug": "apex-home-services",
+  "order": 2,
+  "title": "Apex Home Services — Kansas City Metro",
+  "shortTitle": "Apex Home Services",
+  "client": "Apex Home Services",
+  "cardSummary": "Multi-trade home-services company (handyman, electrical, remodel, exterior) covering the Kansas City metro. One site, four trade pages, one shared estimate form.",
+  "category": "Sample Build",
+  "projectMeta": "Multi-Trade Home Services • Kansas City, MO • Sample Build",
+  "tags": ["Multi-Trade", "Kansas City, MO", "Sample Build"],
+  "gradientPreset": "g5",
+  "liveUrl": "/demo/apex-home-services/",
+  "liveUrlLabel": "View live demo",
+  "image": null,
+  "imageAlt": null,
+  "comingSoon": false,
+  "keyFeatures": [
+    "Four dedicated trade pages off one parent site",
+    "Crew bios and licenses surfaced near the top",
+    "Shared estimate form with a 'which trade?' picker",
+    "Local SEO tuned for the KC metro service area"
+  ],
+  "seo": {
+    "title": "Apex Home Services — Sample Build",
+    "description": "A sample multi-trade home-services site built on the Jobsite Systems platform: four trade pages, crew bios, shared estimate form, and local SEO."
+  }
+}

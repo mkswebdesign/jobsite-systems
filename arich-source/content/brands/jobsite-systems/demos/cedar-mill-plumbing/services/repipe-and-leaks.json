@@ -1,0 +1,51 @@
+{
+  "slug": "repipe-and-leaks",
+  "order": 3,
+  "number": "03",
+  "iconKey": "check-circle",
+  "heroImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Open subfloor with new PEX home runs neatly bundled",
+  "title": "Repipe & Leak Detection",
+  "headline": "Find the leak first.\nThen fix it once.",
+  "shortDescription": "Whole-house repipe (galvanized or polybutylene to PEX or copper), slab-leak detection, hidden-leak diagnosis, and targeted repairs that don't tear up half your house.",
+  "lead": "A lot of older NW Portland homes still have galvanized or original polybutylene supply lines, and most of the leak calls I run are some version of that pipe finally giving up. Before I cut drywall I find the leak — pressure tests, acoustic listening, infrared on suspect walls, and a moisture meter to confirm where it's tracking. Once I know exactly where it is, the repair is small. The houses that get torn apart are usually the ones where someone started cutting before they knew where the leak was.",
+  "seo": {
+    "title": "Repipe & Leak Detection — Cedar Mill Plumbing · Portland, OR",
+    "description": "Whole-house repipe (galvanized and polybutylene to PEX or copper), slab leak detection, and targeted leak repair in NW Portland, Cedar Mill, Bethany, and Beaverton.",
+    "schemaName": "Repipe and Leak Detection",
+    "schemaDescription": "Residential whole-house repipe, slab-leak detection, hidden-leak diagnosis, and targeted leak repairs."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "variant": "showcase",
+      "heading": "What this covers",
+      "intro": "From a single dripping fitting to a full-house repipe — same plumber, same standards.",
+      "items": [
+        { "label": "Leak detection visit — $189 flat", "body": "Full diagnostic: meter test, pressure isolation, acoustic, moisture mapping, and a written report with photos. Credited toward repair" },
+        { "label": "Visible leak repair — from $245", "body": "Compression fitting, slip joint, valve, hose bib, or accessible PEX/copper repair. Per-job estimate over 1 hour of work" },
+        { "label": "Slab leak repair — $1,400–$3,800", "body": "Detection plus repair via reroute (most common, least destructive) or spot repair through the slab. Free written estimate" },
+        { "label": "Whole-house repipe — $7,500–$14,500", "body": "Galvanized or polybutylene replaced with PEX-A home runs from a manifold. Includes patching open access points; drywall finish coordinated with a trusted partner" },
+        { "label": "Pressure regulator install — $475 flat", "body": "Many older Westside homes run 90+ PSI from the street. A PRV protects every fixture in the house and usually pays for itself in saved appliance lifespan" },
+        { "label": "Annual whole-home plumbing inspection — $189", "body": "Visual inspection of supply, drain, fixtures, water heater, shutoffs, and outdoor hose bibs. Written report and a photo of every issue I flag" }
+      ]
+    },
+    {
+      "type": "feature",
+      "theme": "white",
+      "heading": "How a repipe goes",
+      "body": "Plan the access points, run the new lines, swap one fixture group at a time, pressure-test, then patch.",
+      "items": [
+        "Walkthrough and free written estimate — what's getting replaced, where the access points are, how many days you'll be down to one bathroom",
+        "Set up the manifold (usually in the garage or utility room) and run PEX-A home runs through joist bays and wall cavities",
+        "Cut over one fixture group at a time so the house stays usable as much as possible — typically one full bathroom out at any given time",
+        "Pressure-test the system, sign off with the inspector, and reconnect every fixture with new shutoffs",
+        "Photos of every joint and run before drywall closes. 5-year workmanship warranty on the repipe itself, manufacturer warranty pass-through on PEX (typically 25-year)"
+      ]
+    }
+  ],
+  "cta": {
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  }
+}

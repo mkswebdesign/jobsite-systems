@@ -1,0 +1,409 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import SectionHeading from '../builder/components/SectionHeading.astro';
+import WorkGrid from '../builder/components/sections/WorkGrid.astro';
+import Capabilities from '../builder/components/sections/Capabilities.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import FinalCta from '../builder/components/sections/FinalCta.astro';
+import DesignBreak from '../builder/components/sections/DesignBreak.astro';
+import ContentSection from '../builder/components/sections/ContentSection.astro';
+import PhotoGallery from '../builder/components/sections/PhotoGallery.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+import InitialsAvatar from '../builder/components/InitialsAvatar.astro';
+import { brand, site } from '../builder/lib/brand';
+
+const entry = await getEntry('pages', 'about');
+if (!entry) throw new Error('pages/about entry not found');
+const d: any = entry.data;
+
+const headshot = d.intro?.headshot ?? brand.owner.headshot;
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'About' }]}
+    heading={d.header.heading}
+    lead={d.header.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {d.intro && (
+    <section
+      class="about-hero"
+      data-section-type="about-hero"
+      data-section-label="About hero"
+      data-section-variants="A:Default,B:Compact,C:Framed"
+    >
+      <div class="container about-grid">
+        <div class="about-image">
+          {headshot
+            ? <img src={headshot} alt={brand.owner.name} width="924" height="924" />
+            : <InitialsAvatar name={brand.owner.name} size={380} />}
+        </div>
+        <div class="about-content">
+          <h2>{d.intro.heading}</h2>
+          {d.intro.paragraphs?.map((p: string) => <p set:html={p} />)}
+          {d.intro.stats && d.intro.stats.length > 0 && (
+            <div class="about-stats" data-stats-grid>
+              {d.intro.stats.map((s: any, i: number) => (
+                <div class="stat" style={`--stat-i:${i}`}>
+                  <span class="stat-num">{s.value}</span>
+                  <span class="stat-label">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="intro" />
+
+  {/* Optional founder block — renders only when `founder.bio` is populated.
+      TASK 9 audit (2026-05-05): moved ABOVE whyStatic so the trust page
+      leads with a human author, not with infrastructure rationale. Image
+      bumped to 240×240 round per audit. Brand opts in by providing
+      `founder: { name, role?, bio, headshot?, eyebrow? }` in
+      pages/about/page.json. */}
+  {d.founder && typeof d.founder.bio === 'string' && d.founder.bio.trim() !== '' && (
+    <section
+      class="section about-founder"
+      data-section-type="about-founder"
+      data-section-label="Founder bio"
+    >
+      <div class="container about-founder__container">
+        <div class="about-founder__inner reveal">
+          {d.founder.headshot ? (
+            <img
+              src={d.founder.headshot}
+              alt={d.founder.name ?? 'Founder'}
+              width="240"
+              height="240"
+              loading="lazy"
+              class="about-founder__photo"
+            />
+          ) : (
+            <div class="about-founder__photo about-founder__photo--placeholder" aria-hidden="true">
+              <span>Photo</span>
+            </div>
+          )}
+          <div class="about-founder__copy">
+            {d.founder.eyebrow && (
+              <p class="about-founder__eyebrow">{d.founder.eyebrow}</p>
+            )}
+            {(d.founder.name || d.founder.role) && (
+              <h3 class="about-founder__name">
+                {d.founder.name}
+                {d.founder.role && <span class="about-founder__role"> · {d.founder.role}</span>}
+              </h3>
+            )}
+            <p class="about-founder__bio">{d.founder.bio}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="founder" />
+
+  {d.whyStatic && d.whyStatic.heading && (d.whyStatic.body || d.whyStatic.bodyBlocks) && (
+    <ContentSection
+      sectionLabel={d.whyStatic.sectionLabel}
+      heading={d.whyStatic.heading}
+      body={d.whyStatic.body}
+      bodyBlocks={d.whyStatic.bodyBlocks}
+      cta={d.whyStatic.cta}
+      variant={d.whyStatic.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="whyStatic" />
+
+  {d.philosophy && d.philosophy.variant === 'C' && Array.isArray(d.philosophy.cards) && d.philosophy.cards.length > 0 && (
+    <section
+      class="philosophy philosophy--featured section"
+      data-section-type="about-philosophy"
+      data-section-label="Philosophy"
+      data-section-variants="A:Default,B:Minimal,C:Featured"
+      data-about-philosophy-variant="C"
+    >
+      <div class="container philosophy-featured__grid">
+        <div class="philosophy-featured__lede">
+          <p class="philosophy-featured__eyebrow"><span class="philosophy-featured__eyebrow-rule" aria-hidden="true"></span>{d.philosophy.sectionLabel ?? 'Philosophy'}</p>
+          <h2 class="philosophy-featured__title">{d.philosophy.heading}</h2>
+          {d.philosophy.lede && <p class="philosophy-featured__lede-copy">{d.philosophy.lede}</p>}
+          {(() => {
+            const first = d.philosophy.cards[0];
+            return (
+              <article class="philosophy-featured__tile">
+                <span class="philosophy-featured__num">01</span>
+                <span class="philosophy-featured__pill" aria-hidden="true">Featured</span>
+                <h3 class="philosophy-featured__tile-title">{first.title}</h3>
+                {(d.philosophy.featuredSummary ?? null) && (
+                  <p class="philosophy-featured__tile-summary">{d.philosophy.featuredSummary}</p>
+                )}
+                <p class="philosophy-featured__tile-body">{first.body}</p>
+              </article>
+            );
+          })()}
+        </div>
+        <div class="philosophy-featured__list" role="list">
+          {d.philosophy.cards.slice(1).map((c: any, i: number) => {
+            const n = String(i + 2).padStart(2, '0');
+            return (
+              <div class="philosophy-featured__row" role="listitem">
+                <span class="philosophy-featured__row-num" aria-hidden="true">{n}</span>
+                <div class="philosophy-featured__row-body">
+                  <h4 class="philosophy-featured__row-title">{c.title}</h4>
+                  <p class="philosophy-featured__row-text">{c.body}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div class="philosophy-featured__footer">
+          {d.philosophy.meta && <p class="philosophy-featured__meta">{d.philosophy.meta}</p>}
+          {d.philosophy.cta && d.philosophy.cta.href && (
+            <a class="philosophy-featured__link" href={d.philosophy.cta.href}>
+              <span>{d.philosophy.cta.label ?? 'See the full process'}</span>
+              <span class="philosophy-featured__arrow" aria-hidden="true">→</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {d.philosophy && d.philosophy.variant !== 'C' && (
+    <section
+      class="philosophy section"
+      data-section-type="about-philosophy"
+      data-section-label="Philosophy"
+      data-section-variants="A:Default,B:Minimal,C:Featured"
+      {...(typeof d.philosophy.variant === 'string' && /^[A-J]$/.test(d.philosophy.variant) ? { 'data-about-philosophy-variant': d.philosophy.variant } : {})}
+    >
+      <div class="container">
+        <SectionHeading label={d.philosophy.sectionLabel} heading={d.philosophy.heading} subtext={d.philosophy.subtext} />
+        <div class="philosophy-grid">
+          {d.philosophy.cards?.map((c: any) => (
+            <div class="philosophy-card">
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <DividerSlot dividers={d.dividers} after="philosophy" />
+
+  {d.photoGallery && Array.isArray(d.photoGallery.images) && d.photoGallery.images.length >= 2 && (
+    <PhotoGallery
+      sectionLabel={d.photoGallery.sectionLabel}
+      heading={d.photoGallery.heading}
+      subtext={d.photoGallery.subtext}
+      images={d.photoGallery.images}
+      cta={d.photoGallery.cta}
+      variant={d.photoGallery.variant}
+      perPage={d.photoGallery.perPage}
+    />
+  )}
+
+  {d.designBreak && d.designBreak.cta && (
+    <DesignBreak
+      sectionLabel={d.designBreak.sectionLabel}
+      heading={d.designBreak.heading}
+      headingHtml={d.designBreak.headingHtml}
+      subtext={d.designBreak.subtext}
+      backgroundImage={d.designBreak.backgroundImage}
+      cta={d.designBreak.cta}
+      secondaryCta={d.designBreak.secondaryCta}
+      stats={d.designBreak.stats}
+      variant={d.designBreak.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="designBreak" />
+
+  {d.contentSection && d.contentSection.heading && d.contentSection.body && (
+    <ContentSection
+      sectionLabel={d.contentSection.sectionLabel}
+      heading={d.contentSection.heading}
+      body={d.contentSection.body}
+      cta={d.contentSection.cta}
+      variant={d.contentSection.variant}
+      indexNum={d.contentSection.indexNum}
+      comparison={d.contentSection.comparison}
+      statementTag={d.contentSection.statementTag}
+      railMeta={d.contentSection.railMeta}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="contentSection" />
+
+  {d.aboutCompare && Array.isArray(d.aboutCompare.rows) && d.aboutCompare.rows.length > 0 && (
+    <section class="section about-compare-section" data-section-type="about-compare" data-section-label="About comparison">
+      <div class="container">
+        {d.aboutCompare.eyebrow && <p class="about-compare-eyebrow">{d.aboutCompare.eyebrow}</p>}
+        {d.aboutCompare.heading && <h2 class="about-compare-heading">{d.aboutCompare.heading}</h2>}
+        {d.aboutCompare.subtext && <p class="about-compare-subtext">{d.aboutCompare.subtext}</p>}
+        <div class="about-compare-table-wrap">
+          <table class="about-compare-table" aria-label={d.aboutCompare.heading ?? 'Comparison'}>
+            <thead>
+              <tr>
+                <th scope="col" class="about-compare-dim">Dimension</th>
+                <th scope="col" class="about-compare-them">{d.aboutCompare.leftLabel ?? 'The Agency Route'}</th>
+                <th scope="col" class="about-compare-us">{d.aboutCompare.rightLabel ?? 'With Jobsite Systems'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.aboutCompare.rows.map((row: any) => (
+                <tr>
+                  <th scope="row">{row.dimension}</th>
+                  <td class="about-compare-them-cell">{row.left}</td>
+                  <td class="about-compare-us-cell">{row.right}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {d.aboutCompare.pullQuote && (
+          <blockquote class="about-compare-pullquote">
+            <p>{d.aboutCompare.pullQuote}</p>
+          </blockquote>
+        )}
+      </div>
+    </section>
+  )}
+
+  {d.craftReflection && d.craftReflection.heading && d.craftReflection.body && (
+    <ContentSection
+      sectionLabel={d.craftReflection.sectionLabel}
+      heading={d.craftReflection.heading}
+      body={d.craftReflection.body}
+      cta={d.craftReflection.cta}
+      variant={d.craftReflection.variant}
+    />
+  )}
+
+  {d.workShowcase && (
+    <WorkGrid
+      sectionLabel={d.workShowcase.sectionLabel}
+      heading={d.workShowcase.heading}
+      subtext={d.workShowcase.subtext}
+      workSlugs={d.workShowcase.workSlugs}
+      viewAllLabel={d.workShowcase.viewAllLabel}
+      viewAllHref={d.workShowcase.viewAllHref}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="workShowcase" />
+
+  {d.capabilities && (
+    <Capabilities
+      sectionLabel={d.capabilities.sectionLabel}
+      heading={d.capabilities.heading}
+      subtext={d.capabilities.subtext}
+      useSkillsCarousel={d.capabilities.useSkillsCarousel ?? true}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="capabilities" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="testimonials" />
+
+  {d.cta && d.cta.ctaPrimary && (
+    <FinalCta
+      heading={d.cta.heading}
+      body={d.cta.body ?? ''}
+      ctaPrimary={d.cta.ctaPrimary}
+      ctaSecondary={d.cta.ctaSecondary}
+      headshot={d.cta.headshot ?? null}
+    />
+  )}
+
+  {site.addons?.share?.enabled && (
+    <section class="section" style="padding:1.5rem 0 3rem">
+      <div class="container" style="display:flex;justify-content:center">
+        <div data-aed-share="twitter,bluesky,linkedin,email,copy" data-aed-share-label="Know someone who needs this?"></div>
+      </div>
+    </section>
+  )}
+</Base>
+
+<script>
+  (function() {
+    const grid = document.querySelector<HTMLElement>('[data-stats-grid]');
+    if (grid) {
+      const stats = Array.from(grid.querySelectorAll<HTMLElement>('.stat'));
+      const trigger = () => stats.forEach((s) => s.classList.add('stat-reveal'));
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) { trigger(); io.disconnect(); break; }
+          }
+        }, { threshold: 0.2 });
+        io.observe(grid);
+      } else {
+        trigger();
+      }
+    }
+  })();
+  (function() {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.philosophy-card'));
+    if (!cards.length) return;
+    const mq = window.matchMedia('(max-width: 768px)');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let rafId: number | null = null;
+    let activeIdx = -1;
+
+    const clear = () => {
+      cards.forEach((c) => c.classList.remove('is-viewing'));
+      activeIdx = -1;
+    };
+
+    const update = () => {
+      if (!mq.matches) { clear(); return; }
+      const center = window.innerHeight / 2;
+      const band = window.innerHeight * 0.35;
+      let best = { idx: -1, dist: Infinity };
+      cards.forEach((card, i) => {
+        const r = card.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return;
+        const c = r.top + r.height / 2;
+        const dist = Math.abs(center - c);
+        if (dist < band && dist < best.dist) best = { idx: i, dist };
+      });
+      if (best.idx !== activeIdx) {
+        cards.forEach((c, i) => c.classList.toggle('is-viewing', i === best.idx));
+        activeIdx = best.idx;
+      }
+    };
+
+    const schedule = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => { update(); rafId = null; });
+    };
+
+    if (reduce.matches) return;
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    mq.addEventListener?.('change', schedule);
+    schedule();
+  })();
+</script>

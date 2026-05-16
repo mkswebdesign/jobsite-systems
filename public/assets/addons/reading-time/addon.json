@@ -1,0 +1,23 @@
+{
+  "name": "reading-time",
+  "assets": {
+    "css": ["reading-time.css"],
+    "js":  ["reading-time.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-reading-time]",
+        "description": "Empty element that gets filled with an estimated reading time (e.g. '5 min read'). Counts words inside `data-aed-rt-scope`, stripping nav/footer/aside/script/style.",
+        "fields": {
+          "data-aed-reading-time": { "type": "boolean", "required": true,                 "description": "Opt-in marker." },
+          "data-aed-rt-scope":     { "type": "string",  "default": "article, main",       "description": "CSS selector for the prose container the addon should count words inside." },
+          "data-aed-rt-wpm":       { "type": "number",  "default": 220,                   "description": "Words per minute used for the estimate." },
+          "data-aed-rt-min":       { "type": "number",  "default": 1,                     "description": "Minimum minute count to display (estimates below this round up)." },
+          "data-aed-rt-format":    { "type": "string",  "default": "{n} min read",        "description": "Output template. `{n}` is the minute count." },
+          "data-aed-rt-no-icon":   { "type": "boolean", "default": false,                 "description": "Suppress the leading clock icon." }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,130 @@
+/*
+ * Toast — drop-in notification system.
+ *
+ * Programmatic API: window.__toast.show({ kind, text, action }). Used
+ * directly by your code and shareable across other addons (form
+ * success → toast, theme switch → toast, copy confirmation → toast).
+ *
+ * See /toast/README.md.
+ */
+
+.aed-toast-region {
+  position: fixed;
+  z-index: 9700;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+/* Default region: top-right */
+.aed-toast-region[data-aed-position="top-right"]    { top: 1rem; right: 1rem; align-items: flex-end; }
+.aed-toast-region[data-aed-position="top-left"]     { top: 1rem; left: 1rem;  align-items: flex-start; }
+.aed-toast-region[data-aed-position="top-center"]   { top: 1rem; left: 50%; transform: translateX(-50%); align-items: center; }
+.aed-toast-region[data-aed-position="bottom-right"] { bottom: 1rem; right: 1rem; align-items: flex-end; flex-direction: column-reverse; }
+.aed-toast-region[data-aed-position="bottom-left"]  { bottom: 1rem; left: 1rem;  align-items: flex-start; flex-direction: column-reverse; }
+.aed-toast-region[data-aed-position="bottom-center"]{ bottom: 1rem; left: 50%; transform: translateX(-50%); align-items: center; flex-direction: column-reverse; }
+
+.aed-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem 0.7rem 0.95rem;
+  min-width: 240px;
+  max-width: min(420px, calc(100vw - 32px));
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-left: 3px solid var(--text-muted, #9a9aa2);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.45);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.aed-toast.is-open { opacity: 1; transform: translateY(0) scale(1); }
+.aed-toast.is-leaving { opacity: 0; transform: translateY(-6px) scale(0.98); }
+
+/* Bottom-anchored regions: enter from below */
+[data-aed-position^="bottom-"] .aed-toast { transform: translateY(8px) scale(0.98); }
+[data-aed-position^="bottom-"] .aed-toast.is-open { transform: translateY(0) scale(1); }
+[data-aed-position^="bottom-"] .aed-toast.is-leaving { transform: translateY(6px) scale(0.98); }
+
+/* -- Kind variants -------------------------------------------------- */
+.aed-toast[data-aed-kind="info"]    { border-left-color: var(--accent, #6B00FF); }
+.aed-toast[data-aed-kind="success"] { border-left-color: #10b981; }
+.aed-toast[data-aed-kind="warn"]    { border-left-color: #f59e0b; }
+.aed-toast[data-aed-kind="error"]   { border-left-color: #ef4444; }
+
+.aed-toast-icon {
+  flex: 0 0 auto;
+  width: 18px; height: 18px;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.aed-toast[data-aed-kind="info"]    .aed-toast-icon { color: var(--accent, #6B00FF); }
+.aed-toast[data-aed-kind="success"] .aed-toast-icon { color: #10b981; }
+.aed-toast[data-aed-kind="warn"]    .aed-toast-icon { color: #f59e0b; }
+.aed-toast[data-aed-kind="error"]   .aed-toast-icon { color: #ef4444; }
+.aed-toast-icon svg { width: 16px; height: 16px; }
+
+.aed-toast-body { flex: 1; min-width: 0; }
+.aed-toast-title {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary, #fafafa);
+  margin-bottom: 0.05rem;
+}
+.aed-toast-text {
+  display: block;
+  color: var(--text-secondary, #a1a1aa);
+}
+.aed-toast-action {
+  flex: 0 0 auto;
+  align-self: center;
+  background: transparent;
+  border: 0;
+  padding: 0.3rem 0.55rem;
+  margin-left: 0.4rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent, #6B00FF);
+  cursor: pointer;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+.aed-toast-action:hover {
+  background: color-mix(in srgb, var(--accent, #6B00FF) 12%, transparent);
+}
+
+.aed-toast-close {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 0;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.aed-toast-close:hover { color: var(--text-primary, #fafafa); }
+.aed-toast-close svg { width: 14px; height: 14px; }
+
+@media print {
+  .aed-toast-region { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-toast { transition: opacity 0.15s ease; transform: none !important; }
+}

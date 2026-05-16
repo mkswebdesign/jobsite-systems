@@ -1,0 +1,47 @@
+/*
+ * Breadcrumbs — drop-in URL-derived trail.
+ *
+ * Hydrates <nav data-aed-breadcrumbs> with a trail derived from the
+ * current URL path. Theme-aware. See /breadcrumbs/README.md.
+ */
+
+.aed-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--text-muted, #9a9aa2);
+}
+.aed-breadcrumbs[hidden] { display: none; }
+
+.aed-breadcrumbs a {
+  color: var(--text-secondary, #a1a1aa);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.aed-breadcrumbs a:hover { color: var(--accent, #6B00FF); }
+
+.aed-breadcrumbs-sep {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.55;
+  font-size: 0.72rem;
+}
+
+.aed-breadcrumbs-current {
+  color: var(--text-primary, #fafafa);
+  font-weight: 500;
+}
+
+.aed-breadcrumbs[data-aed-variant="ghost"] a,
+.aed-breadcrumbs[data-aed-variant="ghost"] .aed-breadcrumbs-current {
+  color: var(--text-muted, #9a9aa2);
+}
+.aed-breadcrumbs[data-aed-variant="ghost"] a:hover { color: var(--accent, #6B00FF); }
+
+@media print {
+  .aed-breadcrumbs { color: #71717a; }
+  .aed-breadcrumbs a { color: #71717a; }
+}

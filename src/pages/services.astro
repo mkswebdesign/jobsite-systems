@@ -1,0 +1,201 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import SiteCta from '../builder/components/sections/SiteCta.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+
+const entry = await getEntry('pages', 'services');
+if (!entry) throw new Error('pages/services entry not found');
+const d: any = entry.data;
+
+const all = await getCollection('services');
+const byId = new Map(all.map(s => [s.id, s.data]));
+const slugs: string[] = d.grid?.serviceSlugs ?? [];
+const services = slugs
+  .map(slug => byId.get(slug))
+  .filter((s): s is NonNullable<typeof s> => !!s);
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Services' }]}
+    heading={d.header?.heading ?? 'Services'}
+    lead={d.header?.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {(d.productizationLine || d.eyebrowCaption || d.priceAnchor) && (
+    <section class="productization-band" data-section-type="productization" data-section-label="Productization band">
+      <div class="container productization-band-inner">
+        {d.productizationLine && <p class="productization-band-line reveal">{d.productizationLine}</p>}
+        {d.eyebrowCaption && <p class="productization-band-eyebrow reveal">{d.eyebrowCaption}</p>}
+        {d.priceAnchor && <p class="productization-band-anchor reveal">{d.priceAnchor}</p>}
+      </div>
+    </section>
+  )}
+
+  {d.intro && (Array.isArray(d.intro.paragraphs) && d.intro.paragraphs.length > 0 || d.intro.heading) && (
+    <section class="services-intro-band" data-section-type="services-intro" data-section-label="Services intro">
+      <div class="container services-intro-inner">
+        {d.intro.eyebrow && <p class="services-intro-eyebrow reveal">{d.intro.eyebrow}</p>}
+        {d.intro.heading && <h2 class="services-intro-heading reveal" data-reveal-delay="80">{d.intro.heading}</h2>}
+        {Array.isArray(d.intro.paragraphs) && d.intro.paragraphs.map((p: string, i: number) => (
+          <p class="services-intro-paragraph reveal" data-reveal-delay={160 + i * 80} set:html={p} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {(() => {
+    // "Featured" variant opts into a split layout: the first service (or
+    // the one whose slug matches `featuredSlug` in services.json) renders
+    // as a large hero card, and the remaining services flow into a
+    // horizontal scroll-snap rail below. All other variants render the
+    // cards in a flat grid as before.
+    const featuredSlug: string | undefined = (d as any).featuredSlug;
+    const isFeatured = d.gridVariant === 'featured';
+    const featuredIndex = isFeatured
+      ? Math.max(0, featuredSlug ? services.findIndex((s: any) => s.slug === featuredSlug) : 0)
+      : -1;
+    const featuredService = featuredIndex >= 0 ? services[featuredIndex] : null;
+    const restServices = isFeatured
+      ? services.filter((_: any, i: number) => i !== featuredIndex)
+      : services;
+
+    const renderCard = (s: any, i: number, extraClass = '', isFeaturedCard = false) => {
+      const isFlagship = !!s.flagship || s.slug === featuredSlug;
+      const inclusionLabel: string | null = typeof s.inclusionLabel === 'string' && s.inclusionLabel.trim()
+        ? s.inclusionLabel
+        : null;
+      const flagshipBadge: string | null = isFlagship && typeof s.flagshipBadge === 'string' && s.flagshipBadge.trim()
+        ? s.flagshipBadge
+        : (isFlagship ? 'Start here' : null);
+      const bodyText: string = isFeaturedCard && typeof s.showcaseLead === 'string' && s.showcaseLead.trim()
+        ? s.showcaseLead
+        : s.shortDescription;
+      const bullets: string[] = isFeaturedCard && Array.isArray(s.showcaseBullets)
+        ? s.showcaseBullets.filter((b: any): b is string => typeof b === 'string' && b.trim().length > 0)
+        : [];
+      return (
+        <a
+          href={`/services/${s.slug}/`}
+          class={`service-showcase-card reveal${isFlagship ? ' service-showcase-card--flagship' : ''}${extraClass ? ' ' + extraClass : ''}`}
+          data-reveal-delay={i * 80}
+          style={`--card-accent-hue:${(i * 47) % 360}`}
+        >
+          {flagshipBadge && (
+            <span class="service-showcase-flagship-badge" aria-hidden="true">{flagshipBadge}</span>
+          )}
+          {inclusionLabel && (
+            <span class="service-showcase-inclusion" aria-hidden="true">{inclusionLabel}</span>
+          )}
+          <div class="service-showcase-hero" aria-hidden="true">
+            <div class="service-showcase-hero-clip">
+              {s.heroImage && (
+                <img class="service-showcase-photo" src={s.heroImage} alt={s.heroImageAlt ?? ''} loading="lazy" decoding="async" />
+              )}
+              <div class="service-showcase-orbit"></div>
+              <div class="service-showcase-orbit service-showcase-orbit--b"></div>
+            </div>
+            <span class="service-showcase-num">{s.number}</span>
+          </div>
+          <div class="service-showcase-body">
+            <h3>{s.title}</h3>
+            <p>{bodyText}</p>
+            {bullets.length > 0 && (
+              <ul class="service-showcase-bullets" role="list">
+                {bullets.map((b: string) => (
+                  <li>
+                    <svg class="service-showcase-bullet-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <span class="service-showcase-link">
+              Learn more
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+      );
+    };
+
+    return (
+      <section
+        class="section services-showcase-section"
+        style="padding-top:2rem"
+        data-section-type="services-showcase"
+        data-section-label="Services grid"
+        data-section-variants="grid:Grid,list:List,compact:Compact,image:Image,featured:Featured"
+        data-default-variant={d.gridVariant ?? ''}
+      >
+        <div class="container">
+          {isFeatured && featuredService ? (
+            <>
+              {renderCard(featuredService, 0, 'service-showcase-card--featured', true)}
+              {restServices.length > 0 && (d as any).componentsHeading && (
+                <h3 class="services-showcase-components-heading reveal" data-reveal-delay="0">
+                  {(d as any).componentsHeading}
+                </h3>
+              )}
+              {restServices.length > 0 && (
+                <div
+                  class="services-showcase-slider"
+                  role="region"
+                  aria-label="More services"
+                  tabindex="0"
+                >
+                  {restServices.map((s: any, i: number) => renderCard(s, i + 1))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div class="services-showcase">
+              {services.map((s: any, i: number) => renderCard(s, i))}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })()}
+
+  <script is:inline>
+    (function () {
+      var section = document.querySelector('.services-showcase-section');
+      if (!section) return;
+      var preset = section.getAttribute('data-default-variant');
+      if (!preset) return;
+      var html = document.documentElement;
+      if (!html.hasAttribute('data-services-showcase-variant')) {
+        html.setAttribute('data-services-showcase-variant', preset);
+      }
+    })();
+  </script>
+
+  <DividerSlot dividers={d.dividers} after="showcase" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="testimonials" />
+
+  {d.cta && (
+    <SiteCta
+      heading={d.cta.heading}
+      body={d.cta.body}
+      label={d.cta.label}
+      href={d.cta.href}
+    />
+  )}
+</Base>

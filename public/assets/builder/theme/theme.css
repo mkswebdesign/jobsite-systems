@@ -1,0 +1,388 @@
+/* ============================================
+   Theme — portable dark / light / vibrant token system
+   --------------------------------------------
+   Three site-wide modes, selected with <html data-theme="...">:
+
+     dark     — uniform dark palette across every section
+     light    — uniform light palette across every section
+     vibrant  — authored section-rhythm: dark root with per-section
+                overrides via data-sec-theme kicking in. See
+                section-overrides.css. Vibrant root palette is the
+                dark palette (hero reads as the dark anchor that the
+                authored white/primary sections contrast against).
+
+   Per-section overrides (data-sec-theme="light|dark|white|black|
+   primary") are ONLY honored when the site is in vibrant mode —
+   dark/light are the "uniform" modes where content authors' per-
+   section picks are intentionally flattened.
+
+   The companion theme.js wires a segmented #themeToggle control if
+   you include one. The pre-paint snippet in the README must be inline
+   in <head> to prevent FOUC.
+   ============================================ */
+
+:root {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111113;
+  --bg-card: #18181b;
+  --bg-card-hover: #1f1f23;
+  --bg-primary-rgb: 10, 10, 11;
+  --bg-secondary-rgb: 17, 17, 19;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #9a9aa2;
+  --accent: #6B00FF;
+  --accent-rgb: 107, 0, 255;
+  --accent-hover: #8b5cf6;
+  --accent-hover-rgb: 139, 92, 246;
+  --accent-glow: rgba(var(--accent-rgb),0.15);
+  --border: #27272a;
+  --border-light: #3f3f46;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --max-w: 1240px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --carousel-speed-testimonials: 90s;
+  --carousel-speed-skills: 180s;
+
+  /* ---- Theme-aware semantic tokens (dark defaults) ---- */
+  --bg-image-filter: brightness(0.4) saturate(1.4);
+  --bg-image-filter-soft: brightness(0.35) saturate(1.3);
+  --bg-image-filter-strong: brightness(0.3) saturate(1.5) contrast(1.2);
+  --shadow-color-rgb: 0, 0, 0;
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+  --shadow-drawer: -10px 0 40px rgba(0, 0, 0, 0.5);
+  --nav-scrolled-bg: rgba(10, 10, 11, 0.9);
+  --scrim-bg: rgba(0, 0, 0, 0.6);
+  --hero-aurora-blend: screen;
+}
+
+/* Explicit dark-mode block. The :root defaults above already paint the
+   dark palette, so this is a no-op visual change — but it gives brand
+   stylesheets a stable hook to attach `[data-theme="dark"]`-scoped
+   overrides without redeclaring tokens that should stay default. Keep
+   the values in lockstep with :root above. */
+:root[data-theme="dark"] {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111113;
+  --bg-card: #18181b;
+  --bg-card-hover: #1f1f23;
+  --bg-primary-rgb: 10, 10, 11;
+  --bg-secondary-rgb: 17, 17, 19;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #9a9aa2;
+  --accent-hover: #8b5cf6;
+  --accent-hover-rgb: 139, 92, 246;
+  --border: #27272a;
+  --border-light: #3f3f46;
+  --bg-image-filter: brightness(0.4) saturate(1.4);
+  --bg-image-filter-soft: brightness(0.35) saturate(1.3);
+  --bg-image-filter-strong: brightness(0.3) saturate(1.5) contrast(1.2);
+  --shadow-color-rgb: 0, 0, 0;
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+  --shadow-drawer: -10px 0 40px rgba(0, 0, 0, 0.5);
+  --nav-scrolled-bg: rgba(10, 10, 11, 0.9);
+  --scrim-bg: rgba(0, 0, 0, 0.6);
+  --hero-aurora-blend: screen;
+}
+
+/* Vibrant mode shares the dark root palette — section overrides in
+   section-overrides.css create the rhythm against that anchor. */
+:root[data-theme="vibrant"] {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111113;
+  --bg-card: #18181b;
+  --bg-card-hover: #1f1f23;
+  --bg-primary-rgb: 10, 10, 11;
+  --bg-secondary-rgb: 17, 17, 19;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #9a9aa2;
+  --accent-hover: #8b5cf6;
+  --accent-hover-rgb: 139, 92, 246;
+  --border: #27272a;
+  --border-light: #3f3f46;
+  --bg-image-filter: brightness(0.4) saturate(1.4);
+  --bg-image-filter-soft: brightness(0.35) saturate(1.3);
+  --bg-image-filter-strong: brightness(0.3) saturate(1.5) contrast(1.2);
+  --shadow-color-rgb: 0, 0, 0;
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+  --shadow-drawer: -10px 0 40px rgba(0, 0, 0, 0.5);
+  --nav-scrolled-bg: rgba(10, 10, 11, 0.9);
+  --scrim-bg: rgba(0, 0, 0, 0.6);
+  --hero-aurora-blend: screen;
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #fafaf9;
+  --bg-secondary: #f4f4f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-primary-rgb: 250, 250, 249;
+  --bg-secondary-rgb: 244, 244, 245;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --accent: #6B00FF;
+  --accent-rgb: 107, 0, 255;
+  --accent-hover: #5b21b6;
+  --accent-hover-rgb: 91, 33, 182;
+  --accent-glow: rgba(var(--accent-rgb),0.15);
+  --border: #e4e4e7;
+  --border-light: #d4d4d8;
+
+  /* ---- Light overrides for semantic tokens ---- */
+  --bg-image-filter: brightness(1) saturate(0.9);
+  --bg-image-filter-soft: brightness(1.05) saturate(0.85);
+  --bg-image-filter-strong: brightness(0.95) saturate(0.95) contrast(1.02);
+  --shadow-card: 0 10px 28px rgba(15, 23, 42, 0.08), 0 3px 10px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 20px 50px -10px rgba(15, 23, 42, 0.15), 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 30px 60px -20px rgba(15, 23, 42, 0.22), 0 10px 24px rgba(15, 23, 42, 0.08);
+  --shadow-drawer: -10px 0 40px rgba(15, 23, 42, 0.14);
+  --shadow-color-rgb: 15, 23, 42;
+  --nav-scrolled-bg: rgba(250, 250, 249, 0.88);
+  --scrim-bg: rgba(15, 23, 42, 0.45);
+  --hero-aurora-blend: multiply;
+}
+
+/* Theme-swap transition (activated by theme.js only during toggle) */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease !important;
+}
+
+/* ============================================
+   Toggle — segmented 3-option pill
+   --------------------------------------------
+   Default styles for the site-mode switcher. Host sites may override.
+   Markup contract (see theme.js + README):
+
+     <div id="themeToggle" class="theme-toggle" role="radiogroup" aria-label="Site theme">
+       <button class="theme-opt" data-mode="dark" type="button" role="radio" aria-label="Dark mode">
+         <svg class="theme-icon theme-icon-moon">…</svg>
+       </button>
+       <button class="theme-opt" data-mode="light" type="button" role="radio" aria-label="Light mode">
+         <svg class="theme-icon theme-icon-sun">…</svg>
+       </button>
+       <button class="theme-opt" data-mode="vibrant" type="button" role="radio" aria-label="Vibrant mode">
+         <svg class="theme-icon theme-icon-spark">…</svg>
+       </button>
+     </div>
+
+   theme.js manages aria-checked + toggles an internal .is-active flag
+   on whichever button matches <html data-theme>. A sliding thumb is
+   rendered via a pseudo-element positioned by a --thumb-index var.
+   ============================================ */
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 3px;
+  background: color-mix(in srgb, var(--bg-card) 72%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 1px 2px rgba(0, 0, 0, 0.08);
+  --thumb-index: 0;
+  --thumb-count: 3;
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  isolation: isolate;
+}
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--thumb-count));
+  height: calc(100% - 6px);
+  border-radius: 999px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 82%, #000) 0%, var(--accent) 60%, var(--accent-hover) 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(var(--accent-rgb), 0.28), 0 0 16px -4px rgba(var(--accent-rgb), 0.45);
+  transform: translateX(calc(var(--thumb-index) * 100%));
+  transition: transform 0.34s cubic-bezier(0.34, 1.2, 0.64, 1), background var(--transition), box-shadow var(--transition);
+  z-index: 0;
+  pointer-events: none;
+}
+.theme-toggle .theme-opt {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: color var(--transition);
+}
+.theme-toggle .theme-opt:hover { color: var(--text-primary) }
+.theme-toggle .theme-opt:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.theme-toggle .theme-opt.is-active { color: #ffffff }
+.theme-toggle .theme-icon {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.24s cubic-bezier(0.34, 1.2, 0.64, 1), filter 0.24s ease;
+}
+.theme-toggle .theme-opt.is-active .theme-icon {
+  transform: scale(1.08);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.28));
+}
+
+/* Hover preview: lift the thumb-colored ring without committing the mode. */
+.theme-toggle:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)) }
+
+/* Mobile drawer context: the pill spans the drawer's full grid width
+   (brand CSS sets `grid-column: 1 / -1` on `.theme-toggle` inside the
+   ≤900px drawer), which left the 30px icons sliding through a big
+   dead zone — the thumb would jump ~110px between three tiny icons.
+   Stretch each option to take an equal flex share, surface the mode
+   name from the existing `data-label` attribute, and land on a 44px
+   tap target. The thumb math — `calc((100% - 6px) / var(--thumb-count))`
+   — adapts automatically to the new button width. */
+@media (max-width: 900px) {
+  .theme-toggle { width: 100%; box-sizing: border-box }
+  .theme-toggle .theme-opt {
+    flex: 1 1 0;
+    width: auto;
+    height: 44px;
+    gap: 0.5rem;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .theme-toggle .theme-opt::after {
+    content: attr(data-label);
+    display: inline-block;
+  }
+  .theme-toggle .theme-icon { width: 16px; height: 16px; flex-shrink: 0 }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle::before,
+  .theme-toggle .theme-opt,
+  .theme-toggle .theme-icon {
+    transition: none;
+  }
+  .theme-toggle .theme-opt.is-active .theme-icon { transform: none }
+}
+
+/* ============================================
+   Toast — "<Mode> mode" confirmation
+   --------------------------------------------
+   Rendered as a portal in <body> with position: fixed so no nav
+   ancestor's overflow, backdrop-filter, transform, or isolation
+   stacking context can clip or underlay it. theme.js computes
+   top/bottom + left each click from the toggle's bounding rect
+   and flips the .theme-toast--above class so the notch points
+   toward whichever edge of the pill we're hanging from.
+   ============================================ */
+.theme-toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Rigid pill sizing — explicit pixel height + inline-flex centering
+     keeps the toast a pill on every device. Rem/em units are avoided
+     so an overridden html font-size (user zoom, site-level root tweak)
+     can't blow up the control. `-webkit-text-size-adjust: 100%` stops
+     mobile Chrome's "font boosting" from enlarging the uppercase text
+     inside a small detached element — which was the cause of a very
+     tall, multi-line toast on Android Chrome. `display: inline-flex`
+     + `align-items: center` prevents line-box height drift from body
+     line-height (1.6) leaking in if the shorthand fails to override. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 14px;
+  line-height: 1;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  transform: translate(-50%, -4px);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+  color: var(--text-primary);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 999px;
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.35), 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0.24, 1.1);
+  /* Floats above every site chrome layer: nav ≤ ~1001, contact widget
+     ≤ ~9000, editor overlays ≈ 2147483000. Stay below the editor but
+     above everything else site-authored. */
+  z-index: 2147482000;
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+}
+.theme-toast::before {
+  content: '';
+  position: absolute;
+  /* --notch-offset is set by theme.js when the toast is clamped to the
+     viewport so the notch keeps pointing at the true toggle center.
+     clamp() prevents the notch from sliding past the rounded end-caps
+     of the toast body where it'd render detached. */
+  left: clamp(14px, calc(50% + var(--notch-offset, 0px)), calc(100% - 14px));
+  bottom: 100%;
+  transform: translate(-50%, 1px) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-left: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+.theme-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+/* Above-anchored variant — toast hangs above the toggle; flip the notch
+   so it points downward. */
+.theme-toast--above::before {
+  bottom: auto;
+  top: 100%;
+  transform: translate(-50%, -1px) rotate(225deg);
+}
+/* Per-mode tint on the toast ring — echoes the thumb identity. */
+.theme-toast[data-mode="vibrant"] {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.35), 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.theme-toast[data-mode="dark"] {
+  border-color: #3f3f46;
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(24, 24, 27, 0.55);
+}
+.theme-toast[data-mode="light"] {
+  border-color: #d4d4d8;
+  box-shadow: 0 12px 28px -10px rgba(15, 23, 42, 0.18), 0 0 0 3px rgba(244, 244, 245, 0.85);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toast { transition: opacity 0.15s ease }
+  .theme-toast,
+  .theme-toast.is-visible { transform: translate(-50%, 0) }
+}

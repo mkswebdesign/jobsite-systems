@@ -1,0 +1,77 @@
+/*
+ * Figure Caption — drop-in <img data-caption> → <figure><figcaption>.
+ *
+ * Theme-aware. Pairs with /image-lightbox/ — wrapped images keep
+ * their data-aed-lightbox marker so click-to-zoom still works.
+ *
+ * See /figure-caption/README.md.
+ */
+
+figure[data-aed-fig] {
+  margin: 1.5rem 0;
+  padding: 0;
+  display: block;
+}
+
+figure[data-aed-fig] > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border, #27272a);
+}
+
+figure[data-aed-fig] > figcaption {
+  display: block;
+  margin-top: 0.6rem;
+  padding: 0 0.25rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted, #9a9aa2);
+  text-align: center;
+}
+
+/* Side caption variant */
+figure[data-aed-fig][data-aed-fig-variant="side"] {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+}
+figure[data-aed-fig][data-aed-fig-variant="side"] > figcaption {
+  text-align: left;
+  width: 200px;
+  margin-top: 0;
+}
+@media (max-width: 640px) {
+  figure[data-aed-fig][data-aed-fig-variant="side"] {
+    grid-template-columns: 1fr;
+  }
+  figure[data-aed-fig][data-aed-fig-variant="side"] > figcaption {
+    width: auto;
+    text-align: center;
+  }
+}
+
+/* Quote-like variant — italic, brand-accent dot prefix */
+figure[data-aed-fig][data-aed-fig-variant="quote"] > figcaption {
+  font-style: italic;
+  position: relative;
+  padding-left: 1rem;
+  text-align: left;
+}
+figure[data-aed-fig][data-aed-fig-variant="quote"] > figcaption::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent, #6B00FF);
+}
+
+@media print {
+  figure[data-aed-fig] > img { border-color: #d4d4d8; }
+  figure[data-aed-fig] > figcaption { color: #52525b; }
+}

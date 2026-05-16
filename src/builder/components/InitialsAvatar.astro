@@ -1,0 +1,46 @@
+---
+/**
+ * SVG fallback for an owner headshot — a circle filled with the brand accent
+ * (tinted with alpha) and the owner's initials centered inside. Used when
+ * `owner.headshot` is null (the default state for newly-scaffolded brands).
+ */
+interface Props {
+  name: string;
+  size?: number;
+  /** CSS class passthrough for existing layout hooks like `scale-reveal`. */
+  class?: string;
+}
+
+const { name, size = 350, class: cls = '' } = Astro.props;
+
+const initials = name
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map(w => w[0].toUpperCase())
+  .join('');
+
+const fontSize = Math.round(size * 0.38);
+---
+
+<svg
+  class={cls}
+  width={size}
+  height={size}
+  viewBox={`0 0 ${size} ${size}`}
+  role="img"
+  aria-label={`${name} avatar placeholder`}
+>
+  <circle cx={size / 2} cy={size / 2} r={size / 2 - 2} fill="rgba(var(--accent-rgb), 0.12)" stroke="var(--accent)" stroke-width="2" />
+  <text
+    x="50%"
+    y="50%"
+    text-anchor="middle"
+    dominant-baseline="central"
+    fill="var(--accent)"
+    font-family="var(--font-family)"
+    font-size={fontSize}
+    font-weight="700"
+    letter-spacing="2"
+  >{initials}</text>
+</svg>

@@ -1,0 +1,120 @@
+/*
+ * Social Proof — drop-in rotating activity toasts.
+ *
+ * Bottom-left positioned to stay clear of the contact-fab (bottom-right)
+ * and lead-bar (bottom-center). Theme-aware. See /social-proof/README.md.
+ */
+
+.aed-sp-toast {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 7000;
+  width: min(340px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 0.95rem;
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 14px;
+  box-shadow:
+    0 16px 40px -12px rgba(0, 0, 0, 0.45),
+    0 4px 12px -4px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+}
+.aed-sp-toast.is-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+.aed-sp-toast[hidden] { display: none; }
+
+.aed-sp-icon {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent, #6B00FF) 14%, transparent);
+  color: var(--accent, #6B00FF);
+  border-radius: 10px;
+}
+.aed-sp-icon svg { width: 18px; height: 18px; }
+
+.aed-sp-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-secondary, #a1a1aa);
+}
+a.aed-sp-toast:hover .aed-sp-text { color: var(--text-primary, #fafafa); }
+.aed-sp-text strong {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary, #fafafa);
+  margin-bottom: 0.05rem;
+}
+
+.aed-sp-close {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 0;
+  padding: 0.3rem;
+  margin: -0.3rem;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.aed-sp-close:hover {
+  color: var(--text-primary, #fafafa);
+  background: var(--bg-secondary, #111113);
+}
+.aed-sp-close svg { width: 14px; height: 14px; }
+
+/* Slide up out of the way of the consent banner if both are visible */
+body:has(.consent-banner.is-open) .aed-sp-toast {
+  transform: translateY(-86px);
+}
+
+/* On mobile, pin to bottom but keep clear of any lead-bar (full-width) */
+@media (max-width: 640px) {
+  .aed-sp-toast {
+    left: 0.85rem;
+    right: 0.85rem;
+    width: auto;
+    bottom: 0.9rem;
+  }
+  body.aed-leadbar-active .aed-sp-toast {
+    bottom: 5.25rem;
+  }
+}
+
+/* Hide if other engagement modals are open — coordination */
+body:has(.contact-fab-panel.is-open) .aed-sp-toast,
+body:has(.aed-booking-scrim.is-open) .aed-sp-toast,
+body:has(.aed-exit-scrim.is-open) .aed-sp-toast,
+body:has(.consent-scrim.is-open) .aed-sp-toast {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media print {
+  .aed-sp-toast { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-sp-toast { transition: opacity 0.18s ease; transform: none; }
+  body:has(.consent-banner.is-open) .aed-sp-toast { transform: none; }
+}

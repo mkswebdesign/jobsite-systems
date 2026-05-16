@@ -1,0 +1,27 @@
+{
+  "name": "forms",
+  "assets": {
+    "css": ["forms.css"],
+    "js":  ["forms.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "form[data-aed-form]",
+        "description": "Polished AJAX form submission. Submits the form via fetch, swaps the form for a success card, and dispatches events that addons like 'toast' and 'confetti' can bridge to.",
+        "fields": {
+          "data-aed-form":               { "type": "boolean","required": true,        "description": "Opt-in marker." },
+          "data-aed-form-endpoint":      { "type": "string",                           "description": "Override the form's `action` attribute (useful when the form posts to a third-party handler like Formspree)." },
+          "data-aed-form-success-title": { "type": "string","default": "Thanks!",     "description": "Headline of the success card." },
+          "data-aed-form-success-body":  { "type": "string","default": "We'll be in touch shortly.","description": "Body copy of the success card." },
+          "data-aed-form-redirect":      { "type": "string",                           "description": "If set, the visitor is redirected to this URL instead of seeing the success card." }
+        }
+      }
+    ],
+    "api": {
+      "global": "document events: aed:form:success, aed:form:error",
+      "description": "Other addons subscribe to these CustomEvents on `document`. detail = { form, response } or { form, error }. Confetti and toast both auto-bridge.",
+      "fields": {}
+    }
+  }
+}

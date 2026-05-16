@@ -1,0 +1,69 @@
+/*
+ * Callout — drop-in themed info / warn / success / danger boxes.
+ *
+ * Marker attribute: data-aed-callout="info|tip|success|warn|danger|quote"
+ * Optional: data-aed-callout-title="Title"
+ *
+ * Theme-aware colors. See /callout/README.md.
+ */
+
+[data-aed-callout] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.95rem 1.1rem;
+  margin: 1rem 0;
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-left: 3px solid var(--text-muted, #9a9aa2);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+[data-aed-callout="info"]    { border-left-color: var(--accent, #6B00FF);
+  background: color-mix(in srgb, var(--accent, #6B00FF) 5%, var(--bg-card, #18181b)); }
+[data-aed-callout="tip"]     { border-left-color: #38bdf8;
+  background: color-mix(in srgb, #38bdf8 5%, var(--bg-card, #18181b)); }
+[data-aed-callout="success"] { border-left-color: #10b981;
+  background: color-mix(in srgb, #10b981 5%, var(--bg-card, #18181b)); }
+[data-aed-callout="warn"]    { border-left-color: #f59e0b;
+  background: color-mix(in srgb, #f59e0b 6%, var(--bg-card, #18181b)); }
+[data-aed-callout="danger"]  { border-left-color: #ef4444;
+  background: color-mix(in srgb, #ef4444 5%, var(--bg-card, #18181b)); }
+[data-aed-callout="quote"]   { border-left-color: var(--text-muted, #9a9aa2);
+  background: var(--bg-secondary, #111113);
+  font-style: italic; }
+
+.aed-cl-icon {
+  flex: 0 0 auto;
+  width: 22px; height: 22px;
+  margin-top: 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+}
+.aed-cl-icon svg { width: 14px; height: 14px; }
+
+[data-aed-callout="info"]    .aed-cl-icon { color: var(--accent, #6B00FF); }
+[data-aed-callout="tip"]     .aed-cl-icon { color: #38bdf8; }
+[data-aed-callout="success"] .aed-cl-icon { color: #10b981; }
+[data-aed-callout="warn"]    .aed-cl-icon { color: #f59e0b; }
+[data-aed-callout="danger"]  .aed-cl-icon { color: #ef4444; }
+[data-aed-callout="quote"]   .aed-cl-icon { color: var(--text-muted, #9a9aa2); }
+
+.aed-cl-body { flex: 1; min-width: 0; }
+.aed-cl-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  letter-spacing: -0.005em;
+  color: var(--text-primary, #fafafa);
+  font-size: 0.95rem;
+}
+.aed-cl-body > p:first-child { margin-top: 0; }
+.aed-cl-body > p:last-child { margin-bottom: 0; }
+
+@media print {
+  [data-aed-callout] { background: transparent !important; border-color: #d4d4d8 !important; color: #18181b !important; }
+}

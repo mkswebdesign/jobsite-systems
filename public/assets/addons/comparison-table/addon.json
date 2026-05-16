@@ -1,0 +1,29 @@
+{
+  "name": "comparison-table",
+  "assets": {
+    "css": ["comparison-table.css"],
+    "js":  ["comparison-table.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-compare]",
+        "description": "Container that renders a comparison table from a referenced inline JSON config block.",
+        "fields": {
+          "data-aed-compare":        { "type": "boolean", "required": true, "description": "Opt-in marker." },
+          "data-aed-compare-source": { "type": "string",  "required": true, "description": "DOM id of a <script type='application/json'> block holding the table data." }
+        }
+      }
+    ],
+    "json": [
+      {
+        "id": "(referenced via data-aed-compare-source)",
+        "description": "Table content. Cell values 'yes' / true / '✓' render as green check; 'no' / false render as gray dash; 'partial' / '~' render as amber dot; anything else renders as text.",
+        "fields": {
+          "columns":       { "type": "object[]", "required": true, "description": "Column headers. Each: { label: string, you?: boolean }. Mark the brand's own column with `you: true` for accent styling." },
+          "rows":          { "type": "object[]", "required": true, "description": "Row entries. Either a feature row { label: string, values: any[] } (one value per column) or a section header { section: string }." }
+        }
+      }
+    ]
+  }
+}

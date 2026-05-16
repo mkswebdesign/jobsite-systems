@@ -1,0 +1,45 @@
+---
+import { brand } from '../../lib/brand';
+import InitialsAvatar from '../InitialsAvatar.astro';
+import BrandMark from '../BrandMark.astro';
+import Cta from '../Cta.astro';
+
+interface Props {
+  heading: string;
+  body: string;
+  ctaPrimary: { label: string; href: string };
+  ctaSecondary?: { label: string; href: string };
+  headshot?: string | null;
+}
+
+const { heading, body, ctaPrimary, ctaSecondary, headshot } = Astro.props;
+const resolvedHeadshot = headshot ?? brand.assets.headshot ?? brand.owner.headshot;
+const motifKind = (brand.assets as any).motifKind as string | undefined;
+const headingLines = heading.split('\n');
+---
+
+<section
+  class="final-cta cta-bg"
+  id="contact"
+  data-aed-cursor-spotlight
+  style="--aed-cs-size:480px;--aed-cs-opacity:0.16"
+  data-section-type="cta"
+  data-section-label="Final CTA"
+  data-section-variants="a:Default,B:Tall,C:Bold,D:Banner,E:Clean,F:Bare,G:Editorial,H:Split"
+>
+  <div class="container">
+    {resolvedHeadshot
+      ? <img src={resolvedHeadshot} alt={brand.owner.name} class="scale-reveal" loading="lazy" />
+      : (brand.assets.logo || motifKind === 'landscape' || motifKind === 'wellness')
+        ? <BrandMark size={350} variant="hero" class="scale-reveal final-cta-motif" />
+        : <InitialsAvatar name={brand.owner.name} size={350} class="scale-reveal" />}
+    <h2 class="reveal" data-reveal-delay="100">
+      {headingLines.map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </h2>
+    <p class="reveal" data-reveal-delay="200">{body}</p>
+    <div class="final-cta-actions reveal" data-reveal-delay="300">
+      <Cta cta={ctaPrimary} variant="primary" />
+      <Cta cta={ctaSecondary} variant="secondary" />
+    </div>
+  </div>
+</section>

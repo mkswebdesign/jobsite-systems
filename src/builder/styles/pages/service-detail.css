@@ -1,0 +1,661 @@
+/* ============================================
+   Service detail page
+   ============================================ */
+
+/* Hero image — the service's `heroImage` field rendered as a featured
+   image right after the page header, the same pattern work uses. Three
+   site-wide variants registered via [data-service-hero-variant] so the
+   editor's variant picker can swap framing across every service page.
+   A = Default framed plate, B = Fullbleed, C = Poster (accent rails). */
+.service-hero-image { padding: 3rem 0 1rem }
+.service-hero-frame {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-xl), 0 10px 30px -10px rgba(var(--accent-rgb), 0.18);
+  position: relative;
+}
+.service-hero-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 1;
+}
+.service-hero-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+/* The hero leads directly into the first section — collapse the next
+   section's top padding so the image sits flush with the editorial body
+   instead of double-spacing. */
+.service-detail > .service-hero-image + .service-section { padding-top: 2.5rem }
+
+/* B · Fullbleed — image escapes the container for a cinematic opener. */
+[data-service-hero-variant="B"] .service-hero-image { padding: 0 0 2rem }
+[data-service-hero-variant="B"] .service-hero-image .container { max-width: none; padding: 0 }
+[data-service-hero-variant="B"] .service-hero-image .service-hero-frame {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+[data-service-hero-variant="B"] .service-hero-image .service-hero-frame::before { display: none }
+[data-service-hero-variant="B"] .service-hero-image .service-hero-frame img {
+  aspect-ratio: 21 / 9;
+}
+
+/* C · Poster — narrower column, accent rails top + bottom, tinted plate. */
+[data-service-hero-variant="C"] .service-hero-image { padding: 2rem 0 3rem }
+[data-service-hero-variant="C"] .service-hero-image .container { max-width: 960px }
+[data-service-hero-variant="C"] .service-hero-image .service-hero-frame {
+  border: none;
+  border-top: 3px solid var(--accent);
+  border-bottom: 3px solid var(--accent);
+  border-radius: 0;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 10%, var(--bg-card)) 0%,
+    var(--bg-card) 55%,
+    color-mix(in srgb, var(--accent) 6%, var(--bg-card)) 100%
+  );
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  box-shadow:
+    0 30px 70px -30px rgba(0, 0, 0, 0.45),
+    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+[data-service-hero-variant="C"] .service-hero-image .service-hero-frame img {
+  border-radius: var(--radius);
+}
+
+@media (max-width: 768px) {
+  .service-hero-image { padding: 2rem 0 0.5rem }
+  .service-detail > .service-hero-image + .service-section { padding-top: 2rem }
+}
+
+.service-detail .service-section { padding: 5rem 0 }
+.service-detail .service-section--alt { background: var(--bg-secondary) }
+/* The first service section follows the page-header (which already provides
+   3rem bottom padding). Reduce its top padding so the header → first-section
+   gap matches the 5rem cadence used between later sections. Alt first-of-type
+   keeps the full 5rem so the background band reads as deliberate. Themed
+   first sections (sec-theme override) also keep the full padding so their
+   band looks symmetric top-to-bottom. */
+.service-detail > .service-section:first-of-type:not(.service-section--alt):not([data-sec-theme]) { padding-top: 2rem }
+/* Collapse padding only between siblings that share the same background, so the
+   eye reads them as one continuous band. Transitions between non-alt and alt
+   always keep their full 5rem spacing. Once a section carries a `data-sec-theme`
+   override, treat it as a deliberate band — never collapse against a neighbor. */
+.service-detail .service-section:not(.service-section--alt):not([data-sec-theme]) + .service-section:not(.service-section--alt):not([data-sec-theme]) { padding-top: 0 }
+.service-detail .service-section--alt:not([data-sec-theme]) + .service-section--alt:not([data-sec-theme]) { padding-top: 0 }
+.service-detail .service-section h2.section-heading { margin-bottom: 1rem }
+
+/* Labeled list grid (list sections with {label, body} items) */
+.service-list-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 2.5rem }
+.service-list-card { display: flex; gap: 1rem; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); transition: all var(--transition) }
+.service-list-card:hover { border-color: var(--border-light); background: var(--bg-card-hover); transform: translateY(-3px) }
+.service-list-dot { flex-shrink: 0; width: 10px; height: 10px; margin-top: 0.5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.12) }
+.service-list-check { flex-shrink: 0; width: 28px; height: 28px; margin-top: 0.2rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.25); animation: check-glow 3.2s ease-in-out infinite; animation-delay: calc(var(--check-i, 0) * 220ms); transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease }
+.service-list-check svg { width: 16px; height: 16px; stroke-dasharray: 30; stroke-dashoffset: 30; animation: check-draw 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: calc(var(--check-i, 0) * 90ms + 180ms) }
+.service-list-card:hover .service-list-check { background: color-mix(in srgb, var(--accent) 22%, transparent); border-color: var(--accent); transform: rotate(-3deg) scale(1.05) }
+@keyframes check-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.18) }
+  50% { box-shadow: 0 0 0 6px rgba(var(--accent-rgb), 0) }
+}
+@keyframes check-draw {
+  to { stroke-dashoffset: 0 }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-list-check { animation: none }
+  .service-list-check svg { animation: none; stroke-dashoffset: 0 }
+}
+.service-list-label { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; line-height: 1.3 }
+.service-list-card p { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.6 }
+
+/* Slider — for "What's Included" style lists (variant="slider").
+   Multi-card horizontal carousel: shows `--slider-per-view` cards at once
+   (3 desktop / 2 tablet / 1 mobile) and advances by one card per tick on a
+   slow autoplay. The track is a flex row translated by `i * (slide+gap)`
+   in pixels via JS; CSS owns the breakpoint→perView mapping. */
+.service-list-slider {
+  --slider-per-view: 3;
+  --slider-gap: 1.25rem;
+  margin: 2.5rem auto 0;
+  max-width: 1100px;
+}
+.service-list-slider-viewport { overflow: hidden; border-radius: var(--radius-lg) }
+.service-list-slider-track { display: flex; gap: var(--slider-gap); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform }
+.service-list-slide { flex: 0 0 calc((100% - var(--slider-gap) * (var(--slider-per-view) - 1)) / var(--slider-per-view)); min-width: 0 }
+.service-list-slide-card { display: flex; gap: 1rem; padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); height: 100%; align-items: flex-start }
+.service-list-slide-card--bare { align-items: center; justify-content: center; text-align: center }
+.service-list-slide-card--bare p { font-size: 1.075rem; color: var(--text-secondary); line-height: 1.6; margin: 0 }
+.service-list-slide-body { flex: 1; min-width: 0 }
+.service-list-slide-body h3 { font-size: 1.0625rem; margin: 0 0 0.5rem; line-height: 1.3 }
+.service-list-slide-body p { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.55; margin: 0 }
+@media (max-width: 880px) {
+  .service-list-slider { --slider-per-view: 2 }
+}
+@media (max-width: 560px) {
+  .service-list-slider { --slider-per-view: 1 }
+}
+.service-list-slider-controls { display: flex; align-items: center; justify-content: center; gap: 1.25rem; margin-top: 1.75rem }
+.service-list-slider-counter { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); min-width: 4.5rem; text-align: center; font-variant-numeric: tabular-nums }
+.service-list-slider-counter b { color: var(--accent); font-weight: 700 }
+.service-list-slider-arrow { width: 42px; height: 42px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition) }
+.service-list-slider-arrow:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-card-hover); transform: translateY(-1px) }
+.service-list-slider-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.service-list-slider-arrow svg { width: 18px; height: 18px }
+.service-list-slider-dots { display: inline-flex; align-items: center; gap: 0.5rem }
+.service-list-slider-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--text-muted) 35%, transparent); cursor: pointer; transition: background var(--transition), width var(--transition) }
+.service-list-slider-dot:hover { background: color-mix(in srgb, var(--accent) 60%, transparent) }
+.service-list-slider-dot.is-active { background: var(--accent); width: 22px; border-radius: 999px }
+.service-list-slider-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.service-list-slider-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0 }
+
+/* Two-column slider layout — heading/intro on left, slider on right.
+   The intro column gives the section a clear "what / why" anchor while
+   the slider auto-advances. Stacks to single column under 900px. */
+.service-list-slider-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 3rem;
+  align-items: start;
+  margin-top: 2.5rem;
+}
+.service-list-slider-layout .service-list-slider {
+  margin: 0;
+  max-width: none;
+}
+.service-list-slider-intro { padding-top: 0.25rem }
+.service-list-slider-intro .section-label,
+.service-list-slider-intro .section-heading,
+.service-list-slider-intro .section-subtext {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: none;
+}
+.service-list-slider-intro .section-heading {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+.service-list-slider-intro .section-subtext {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+@media (min-width: 1200px) {
+  .service-list-slider-layout { gap: 4rem }
+  .service-list-slider-intro { position: sticky; top: 7rem }
+}
+@media (max-width: 900px) {
+  .service-list-slider-layout {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .service-list-slider-intro { padding-top: 0 }
+}
+
+@media (max-width: 600px) {
+  .service-list-slide-card { padding: 1.75rem 1.5rem; gap: 1rem }
+  .service-list-slide-body h3 { font-size: 1.125rem }
+  .service-list-slide-body p { font-size: 0.95rem }
+  .service-list-slider-controls { gap: 0.75rem }
+  .service-list-slider-counter { min-width: 3.75rem; font-size: 0.72rem }
+}
+
+/* Persona grid — for "Who this is for" style lists (variant="persona") */
+.service-persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 2.5rem }
+.service-persona-card { position: relative; display: flex; gap: 1rem; padding: 1.5rem 1.5rem 1.4rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); overflow: hidden; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease }
+.service-persona-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0; transition: opacity 0.25s ease }
+.service-persona-card::after { content: ''; position: absolute; inset: auto -30% -30% auto; width: 180px; height: 180px; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 14%, transparent), transparent 65%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none }
+.service-persona-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 38%, var(--border)); box-shadow: 0 16px 40px -18px rgba(var(--accent-rgb), 0.32) }
+.service-persona-card:hover::before { opacity: 1 }
+.service-persona-card:hover::after { opacity: 1 }
+.service-persona-icon { flex-shrink: 0; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: color-mix(in srgb, var(--accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--border)); color: var(--accent); transition: transform 0.3s ease, background 0.25s ease }
+.service-persona-card:hover .service-persona-icon { transform: scale(1.06) rotate(-4deg); background: color-mix(in srgb, var(--accent) 22%, transparent) }
+.service-persona-body { display: flex; flex-direction: column; min-width: 0 }
+.service-persona-label { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 0.4rem; line-height: 1.3 }
+.service-persona-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin: 0 }
+@media (max-width: 600px) {
+  .service-persona-grid { grid-template-columns: 1fr; gap: 0.75rem }
+  .service-persona-card { padding: 1.25rem 1.25rem 1.15rem }
+}
+
+/* Plain bullet list (list sections with string[] items) */
+.service-bullet-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.75rem 2rem; margin-top: 2.5rem; max-width: 900px }
+.service-bullet-list li { position: relative; padding: 0.65rem 0 0.65rem 2rem; font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.6 }
+.service-bullet-list li::before { content: ''; position: absolute; left: 0; top: 1rem; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-glow); border: 1.5px solid var(--accent) }
+.service-bullet-list li::after { content: ''; position: absolute; left: 6px; top: 1.35rem; width: 4px; height: 8px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(45deg) }
+
+/* Feature callout (highlighted block on alt background) */
+.service-feature { max-width: 860px; margin: 0 auto; padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-light); background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-primary) 100%); position: relative; overflow: hidden }
+.service-feature::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-hover)) }
+.service-feature-heading { font-size: clamp(1.35rem, 2.5vw, 1.75rem); margin-bottom: 1rem; color: var(--text-primary) }
+.service-feature-body { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1rem }
+.service-check-list { display: flex; flex-direction: column; gap: 0.25rem }
+.service-check-list li { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.5 }
+.service-check-list li::before { content: '\2713'; flex-shrink: 0; width: 22px; height: 22px; margin-top: 0.05rem; border-radius: 50%; background: var(--accent-glow); border: 1.5px solid var(--accent); display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 0.75rem; font-weight: 700 }
+.service-feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 0.5rem }
+.service-feature-item { padding: 1.25rem; border-radius: var(--radius); border: 1px solid var(--border); background: rgba(var(--accent-rgb), 0.03) }
+.service-feature-item h3 { font-size: 0.9375rem; color: var(--text-primary); margin-bottom: 0.35rem }
+.service-feature-item p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.55 }
+
+/* Metrics section */
+.service-metrics-section .service-metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; max-width: 900px; margin: 2.5rem auto 0 }
+.service-metric { padding: 2rem 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); text-align: center; transition: all var(--transition) }
+.service-metric:hover { border-color: var(--accent); transform: translateY(-3px) }
+.service-metric-value { display: block; font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; color: var(--accent); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem }
+.service-metric-label { font-size: 0.8125rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em }
+
+/* Prose section (standalone paragraphs) */
+.service-prose { max-width: 720px; margin: 0 auto; text-align: center }
+.service-prose h2 { margin: 0 auto 1rem }
+.service-prose p { font-size: 1.075rem; color: var(--text-secondary); line-height: 1.75 }
+
+/* Related work cards */
+.service-related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem }
+.service-related-card { display: flex; flex-direction: column; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); overflow: hidden; transition: all var(--transition); text-decoration: none; color: inherit }
+.service-related-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow-card) }
+.service-related-thumb { height: 140px; flex-shrink: 0; position: relative; overflow: hidden }
+/* Gradient thumbs on these cards shouldn't multiply against the card bg —
+   they'd render nearly black. Keep their own brightness. */
+.service-related-thumb.work-gradient { mix-blend-mode: normal; opacity: 1 }
+.service-related-body { padding: 1.25rem 1.5rem 1.5rem }
+.service-related-body h3 { font-size: 1.0625rem; color: var(--text-primary); margin-bottom: 0.5rem }
+.service-related-body p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 1rem }
+.service-related-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent); font-size: 0.8125rem; font-weight: 600; transition: gap var(--transition), color var(--transition) }
+.service-related-link .arrow { display: inline-block; transition: transform var(--transition) }
+.service-related-card:hover .service-related-link { gap: 0.65rem; color: var(--accent-hover) }
+.service-related-card:hover .service-related-link .arrow { transform: translateX(4px) }
+
+/* Final CTA on service detail */
+.service-cta { padding: 6rem 0; text-align: center }
+.service-cta-card { max-width: 680px; margin: 0 auto; padding: 3rem 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-light); background: linear-gradient(135deg, var(--bg-card), var(--bg-primary)); position: relative; overflow: hidden }
+.service-cta-card::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, rgba(var(--accent-rgb),0.35), transparent 50%, rgba(var(--accent-rgb),0.2)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none }
+.service-cta-card h2 { margin: 0 auto 1rem; max-width: none }
+.service-cta-card p { max-width: 520px; margin: 0 auto 2rem; font-size: 1.0625rem }
+.service-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap }
+
+/* Prev/next pager */
+.service-pager { border-top: 1px solid var(--border); padding: 2.5rem 0; background: var(--bg-secondary) }
+.service-pager-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: stretch }
+.service-pager-link { display: flex; flex-direction: column; gap: 0.35rem; padding: 1.25rem 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-card); transition: all var(--transition); text-decoration: none }
+.service-pager-link:hover { border-color: var(--accent); background: var(--bg-card-hover); transform: translateY(-2px) }
+.service-pager-next { text-align: right }
+.service-pager-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted) }
+.service-pager-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); display: inline-flex; align-items: center; gap: 0.5rem }
+.service-pager-next .service-pager-title { justify-content: flex-end }
+.service-pager-link:hover .service-pager-title { color: var(--accent) }
+.service-pager-link .arrow { display: inline-block; transition: transform var(--transition); color: var(--accent) }
+.service-pager-link:hover .arrow { transform: translateX(3px) }
+.service-pager-prev:hover .arrow { transform: translateX(-3px) }
+
+/* Content visibility for below-fold service sections */
+.service-detail .service-related-section, .service-detail .service-cta, .service-detail .service-pager { content-visibility: auto; contain-intrinsic-size: auto 500px }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .service-detail .service-section { padding: 3.5rem 0 }
+  .service-detail .service-section--alt + .service-section--alt { padding-top: 3.5rem }
+  .service-feature { padding: 1.75rem }
+  .service-cta-card { padding: 2.25rem 1.5rem }
+  .service-cta { padding: 4rem 0 }
+  .service-pager-inner { grid-template-columns: 1fr }
+  .service-pager-next { text-align: left }
+  .service-pager-next .service-pager-title { justify-content: flex-start }
+}
+@media (max-width: 480px) {
+  .service-cta-actions { flex-direction: column; align-items: stretch }
+  .service-cta-actions .btn { width: 100% }
+}
+
+/* ==============================================================
+   Service detail variants (swapped via <html data-service-detail-variant="B|C">)
+   A = default (rules above). B = long-form editorial. C = saturated showcase.
+   Applies to every /services/<slug>/ page.
+   ============================================================== */
+
+/* B · Editorial — long-form prose, hairlines, numbered bullets, flat chrome */
+[data-service-detail-variant="B"] .service-list-grid {
+  grid-template-columns: 1fr;
+  max-width: 760px;
+  margin: 2.5rem auto 0;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+[data-service-detail-variant="B"] .service-list-card {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 1.5rem 0;
+}
+[data-service-detail-variant="B"] .service-list-card:hover {
+  transform: none;
+  background: transparent;
+  border-bottom-color: var(--accent);
+}
+[data-service-detail-variant="B"] .service-bullet-list {
+  counter-reset: svcb;
+  max-width: 760px;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+[data-service-detail-variant="B"] .service-bullet-list li {
+  counter-increment: svcb;
+  padding: 0.85rem 0 0.85rem 3.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 1rem;
+}
+[data-service-detail-variant="B"] .service-bullet-list li:first-child { border-top: none }
+[data-service-detail-variant="B"] .service-bullet-list li::before {
+  content: counter(svcb, decimal-leading-zero);
+  background: none;
+  border: none;
+  left: 0;
+  top: 0.85rem;
+  width: auto; height: auto;
+  color: var(--accent);
+  font: 900 1.05rem/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  opacity: 0.55;
+}
+[data-service-detail-variant="B"] .service-bullet-list li::after { display: none }
+[data-service-detail-variant="B"] .service-feature {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 2rem 0;
+  max-width: 760px;
+}
+[data-service-detail-variant="B"] .service-feature::before { display: none }
+[data-service-detail-variant="B"] .service-feature-grid {
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+[data-service-detail-variant="B"] .service-feature-item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 1rem 0;
+}
+[data-service-detail-variant="B"] .service-metrics-section .service-metrics-grid {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0;
+  max-width: 960px;
+  margin: 2.5rem auto 0;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+[data-service-detail-variant="B"] .service-metric {
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  padding: 0.5rem 1.5rem;
+}
+[data-service-detail-variant="B"] .service-metric:first-child { border-left: none }
+[data-service-detail-variant="B"] .service-metric:hover { transform: none; border-color: transparent; border-left-color: var(--border) }
+[data-service-detail-variant="B"] .service-metric-value {
+  font-size: clamp(2.25rem, 4.5vw, 3rem);
+}
+[data-service-detail-variant="B"] .service-prose {
+  max-width: 640px;
+  text-align: left;
+}
+[data-service-detail-variant="B"] .service-prose h2 { margin: 0 0 1rem }
+[data-service-detail-variant="B"] .service-prose p { font-size: 1.1rem; line-height: 1.75 }
+[data-service-detail-variant="B"] .service-related-grid {
+  grid-template-columns: 1fr;
+  max-width: 760px;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  margin: 3rem auto 0;
+}
+[data-service-detail-variant="B"] .service-related-card {
+  flex-direction: row;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  overflow: visible;
+  align-items: center;
+}
+[data-service-detail-variant="B"] .service-related-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-bottom-color: var(--accent);
+}
+[data-service-detail-variant="B"] .service-related-thumb {
+  width: 120px;
+  height: 80px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin: 1.25rem 1.25rem 1.25rem 0;
+}
+[data-service-detail-variant="B"] .service-related-body {
+  padding: 1.25rem 0;
+}
+[data-service-detail-variant="B"] .service-cta-card {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+[data-service-detail-variant="B"] .service-cta-card::before { display: none }
+
+/* C · Showcase — gradient-rich, accent rails, banner CTA */
+[data-service-detail-variant="C"] .service-list-card {
+  background: linear-gradient(135deg, var(--bg-card), color-mix(in srgb, var(--accent) 5%, var(--bg-card)));
+  border-left: 3px solid var(--accent);
+}
+[data-service-detail-variant="C"] .service-feature {
+  background:
+    radial-gradient(ellipse 90% 60% at 0% 0%, rgba(var(--accent-rgb), 0.16), transparent 60%),
+    linear-gradient(135deg, var(--bg-card) 0%, var(--bg-primary) 100%);
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--border-light));
+}
+[data-service-detail-variant="C"] .service-feature::before { height: 4px }
+[data-service-detail-variant="C"] .service-feature-item {
+  background: linear-gradient(135deg, var(--bg-card), color-mix(in srgb, var(--accent) 8%, var(--bg-card)));
+  border-left: 2px solid var(--accent);
+}
+[data-service-detail-variant="C"] .service-metric {
+  background:
+    radial-gradient(ellipse 70% 60% at 0% 0%, rgba(var(--accent-rgb), 0.15), transparent 60%),
+    var(--bg-card);
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--border));
+  text-align: left;
+  border-left: 3px solid var(--accent);
+}
+[data-service-detail-variant="C"] .service-related-card {
+  background: linear-gradient(135deg, var(--bg-card), color-mix(in srgb, var(--accent) 4%, var(--bg-card)));
+}
+[data-service-detail-variant="C"] .service-cta-card {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--accent) 78%, #000) 0%,
+    var(--accent) 50%,
+    color-mix(in srgb, var(--accent) 82%, #000) 100%);
+  color: #fff;
+  border: none;
+}
+[data-service-detail-variant="C"] .service-cta-card::before { display: none }
+[data-service-detail-variant="C"] .service-cta-card h2,
+[data-service-detail-variant="C"] .service-cta-card p { color: #fff }
+[data-service-detail-variant="C"] .service-cta-actions .btn-primary {
+  background: #fff;
+  color: var(--accent);
+  border-color: #fff;
+}
+[data-service-detail-variant="C"] .service-cta-actions .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--accent-hover);
+  border-color: rgba(255, 255, 255, 0.92);
+}
+[data-service-detail-variant="C"] .service-cta-actions .btn-secondary {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+[data-service-detail-variant="C"] .service-cta-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: #fff;
+}
+
+/* D · Compact — tighter spacing, denser layout, smaller type */
+[data-service-detail-variant="D"] .service-detail .service-section { padding: 3.5rem 0 }
+[data-service-detail-variant="D"] .service-list-grid {
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+[data-service-detail-variant="D"] .service-list-card { padding: 1.25rem }
+[data-service-detail-variant="D"] .service-feature { padding: 1.75rem; max-width: 720px }
+[data-service-detail-variant="D"] .service-feature-heading {
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+}
+[data-service-detail-variant="D"] .service-bullet-list { gap: 0.5rem 2rem }
+[data-service-detail-variant="D"] .service-metric { padding: 1.5rem 1.25rem }
+[data-service-detail-variant="D"] .service-metric-value { font-size: clamp(1.45rem, 3.2vw, 1.9rem) }
+[data-service-detail-variant="D"] .service-prose { max-width: 640px }
+[data-service-detail-variant="D"] .service-prose p { font-size: 1rem; line-height: 1.6 }
+[data-service-detail-variant="D"] .service-related-grid {
+  gap: 1rem;
+  margin-top: 2rem;
+}
+[data-service-detail-variant="D"] .service-related-thumb { height: 100px }
+[data-service-detail-variant="D"] .service-related-body { padding: 1rem 1.15rem 1.15rem }
+[data-service-detail-variant="D"] .service-cta { padding: 3.5rem 0 }
+[data-service-detail-variant="D"] .service-cta-card { padding: 2rem 1.75rem }
+[data-service-detail-variant="D"] .service-cta-card h2 { font-size: 1.6rem }
+[data-service-detail-variant="D"] .service-cta-card p { font-size: 0.95rem; margin-bottom: 1.5rem }
+
+/* E · Magazine — serif prose + drop-cap first letter */
+[data-service-detail-variant="E"] .service-prose { max-width: 640px; text-align: left }
+[data-service-detail-variant="E"] .service-prose h2 {
+  font-family: Georgia, "Playfair Display", serif;
+  margin: 0 0 1rem;
+}
+[data-service-detail-variant="E"] .service-prose p {
+  font-family: Georgia, "Playfair Display", serif;
+  font-size: 1.15rem;
+  line-height: 1.85;
+}
+[data-service-detail-variant="E"] .service-prose p:first-of-type::first-letter {
+  font-size: 3.6rem;
+  font-weight: 700;
+  float: left;
+  line-height: 0.88;
+  padding: 0.15rem 0.55rem 0 0;
+  color: var(--accent);
+  font-family: Georgia, "Playfair Display", serif;
+}
+[data-service-detail-variant="E"] .service-feature {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 2.5rem 0;
+  max-width: 720px;
+}
+[data-service-detail-variant="E"] .service-feature::before { display: none }
+[data-service-detail-variant="E"] .service-feature-heading {
+  font-family: Georgia, "Playfair Display", serif;
+  font-size: clamp(1.5rem, 2.5vw, 1.9rem);
+  letter-spacing: -0.01em;
+}
+[data-service-detail-variant="E"] .service-feature-body {
+  font-family: Georgia, "Playfair Display", serif;
+  font-size: 1.1rem;
+  line-height: 1.75;
+}
+[data-service-detail-variant="E"] .service-metric-value {
+  font-family: Georgia, "Playfair Display", serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+/* F · Terminal — monospace everything, code-style prompts */
+[data-service-detail-variant="F"] .service-list-card,
+[data-service-detail-variant="F"] .service-list-label,
+[data-service-detail-variant="F"] .service-bullet-list li,
+[data-service-detail-variant="F"] .service-feature-heading,
+[data-service-detail-variant="F"] .service-feature-body,
+[data-service-detail-variant="F"] .service-check-list li,
+[data-service-detail-variant="F"] .service-feature-item h3,
+[data-service-detail-variant="F"] .service-feature-item p,
+[data-service-detail-variant="F"] .service-metric-value,
+[data-service-detail-variant="F"] .service-metric-label,
+[data-service-detail-variant="F"] .service-prose h2,
+[data-service-detail-variant="F"] .service-prose p,
+[data-service-detail-variant="F"] .service-related-body h3,
+[data-service-detail-variant="F"] .service-related-body p,
+[data-service-detail-variant="F"] .service-related-link,
+[data-service-detail-variant="F"] .service-pager-label,
+[data-service-detail-variant="F"] .service-pager-title {
+  font-family: ui-monospace, Menlo, "SF Mono", Consolas, monospace;
+}
+[data-service-detail-variant="F"] .service-feature {
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  position: relative;
+  padding-top: 3rem;
+}
+[data-service-detail-variant="F"] .service-feature::before {
+  content: '// service-feature';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 0.55rem 1.25rem;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  font: 700 0.72rem/1 ui-monospace, Menlo, monospace;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  height: auto;
+  width: auto;
+}
+[data-service-detail-variant="F"] .service-bullet-list li::before,
+[data-service-detail-variant="F"] .service-bullet-list li::after { display: none }
+[data-service-detail-variant="F"] .service-bullet-list li {
+  padding-left: 1.5rem;
+  position: relative;
+}
+[data-service-detail-variant="F"] .service-bullet-list li::before {
+  display: block;
+  content: '>';
+  position: absolute;
+  left: 0;
+  top: 0.65rem;
+  color: var(--accent);
+  font: 900 1rem/1 ui-monospace, Menlo, monospace;
+  background: none;
+  border: none;
+  width: auto;
+  height: auto;
+}
+[data-service-detail-variant="F"] .service-check-list li::before {
+  content: '[x]';
+  background: none;
+  border: none;
+  color: var(--accent);
+  font: 700 0.7rem/1 ui-monospace, Menlo, monospace;
+  width: auto;
+  height: auto;
+}
+[data-service-detail-variant="F"] .service-list-card { border-radius: 6px }
+[data-service-detail-variant="F"] .service-feature-item { border-radius: 6px }
+[data-service-detail-variant="F"] .service-metric { border-radius: 6px }
+[data-service-detail-variant="F"] .service-related-card { border-radius: 6px }
+[data-service-detail-variant="F"] .service-cta-card { border-radius: 6px }

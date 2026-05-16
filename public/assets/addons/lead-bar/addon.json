@@ -1,0 +1,34 @@
+{
+  "name": "lead-bar",
+  "assets": {
+    "css": ["lead-bar.css"],
+    "js":  ["lead-bar.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:lead-bar",
+        "default": "on",
+        "required": true,
+        "description": "Master switch. Set content to 'on' to enable. Without this meta tag the bar never renders."
+      }
+    ],
+    "json": [
+      {
+        "id": "aed-lead-bar-config",
+        "description": "Override the auto-detected phone/email and CTA. All fields optional — phone is auto-discovered from the first <a href='tel:'> in the DOM if not set.",
+        "fields": {
+          "phone":       { "type": "string",                              "description": "Phone number to promote. Auto-detected from the page if omitted." },
+          "email":       { "type": "string",                              "description": "Fallback email if no phone is configured or detected." },
+          "phoneLabel":  { "type": "string",   "default": "Call now",     "description": "Label rendered next to the phone number." },
+          "emailLabel":  { "type": "string",   "default": "Email us",     "description": "Label rendered next to the email." },
+          "cta.label":   { "type": "string",   "default": "Get a quote",  "description": "Secondary CTA button label." },
+          "cta.href":    { "type": "string",   "default": "/contact/",    "description": "Secondary CTA URL." },
+          "showAfter":   { "type": "number",   "default": 0,              "description": "Pixels scrolled before the bar reveals. 0 = show immediately." },
+          "hideOnPaths": { "type": "string[]", "default": ["/contact/"],  "description": "Paths where the bar should not appear." },
+          "dismissable": { "type": "boolean",  "default": true,           "description": "Show the close button (dismiss persists for the session)." }
+        }
+      }
+    ]
+  }
+}

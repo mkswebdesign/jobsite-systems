@@ -1,0 +1,14 @@
+{
+  "type": "finalCta",
+  "heading": "Ready to get a quote?\nStep one is short.",
+  "body": "Send a quick request — what you need, where you are, photos if you have them. We'll phone-quote what we can and book the in-home estimate for anything bigger. You'll hear back the same business day.",
+  "ctaPrimary": {
+    "label": "Get a Quote",
+    "href": "/demo/apex-home-services/contact/"
+  },
+  "ctaSecondary": {
+    "label": "How it works",
+    "href": "/demo/apex-home-services/process/"
+  },
+  "headshot": null
+}

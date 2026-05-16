@@ -1,0 +1,228 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import Testimonials from '../builder/components/sections/Testimonials.astro';
+import SiteCta from '../builder/components/sections/SiteCta.astro';
+import WorkCard from '../builder/components/WorkCard.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+
+const entry = await getEntry('pages', 'work');
+if (!entry) throw new Error('pages/work entry not found');
+const d: any = entry.data;
+
+const all = await getCollection('work');
+const byId = new Map(all.map(w => [w.id, w.data]));
+const slugs: string[] = d.grid?.workSlugs ?? all.map(w => w.id);
+const items = slugs
+  .map(slug => byId.get(slug))
+  .filter((w): w is NonNullable<typeof w> => !!w);
+
+/* Layout: when the brand authors `grid.layout: "static"` OR there are ≤3
+ * items, render a centered grid instead of the carousel. The carousel UI
+ * was reading as broken on small portfolios — only one card visible at a
+ * time, prev/next arrows leading to no new content — so we collapse to a
+ * grid in those cases and skip the carousel script entirely. */
+const useStaticGrid =
+  d.grid?.layout === 'static' || items.length <= 3;
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'Work' }]}
+    heading={d.header?.heading ?? 'Work'}
+    lead={d.header?.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  {d.demoBuildsBanner && (
+    <section class="demo-builds-banner" data-section-type="demo-builds-banner" data-section-label="Demo builds banner">
+      <div class="container demo-builds-banner-inner">
+        <span class="demo-builds-banner-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        <p class="demo-builds-banner-body">
+          {d.demoBuildsBanner.label && <strong>{d.demoBuildsBanner.label}: </strong>}
+          {d.demoBuildsBanner.body}
+        </p>
+      </div>
+    </section>
+  )}
+
+  {(d.productizationLine || d.eyebrowCaption || d.priceAnchor) && (
+    <section class="productization-band" data-section-type="productization" data-section-label="Productization band">
+      <div class="container productization-band-inner">
+        {d.productizationLine && <p class="productization-band-line reveal">{d.productizationLine}</p>}
+        {d.eyebrowCaption && <p class="productization-band-eyebrow reveal">{d.eyebrowCaption}</p>}
+        {d.priceAnchor && <p class="productization-band-anchor reveal">{d.priceAnchor}</p>}
+      </div>
+    </section>
+  )}
+
+  {d.industries && Array.isArray(d.industries.items) && d.industries.items.length > 0 && (
+    <section class="industries-band" data-section-type="industries-band" data-section-label="Industries served">
+      <div class="container industries-band-inner">
+        {d.industries.label && <p class="industries-band-label reveal">{d.industries.label}</p>}
+        <ul class="industries-band-list reveal" data-reveal-delay="80">
+          {d.industries.items.map((item: string) => (
+            <li class="industries-band-item">{item}</li>
+          ))}
+        </ul>
+        {d.industries.footnote && (
+          <p class="industries-band-footnote reveal" data-reveal-delay="160">{d.industries.footnote}</p>
+        )}
+      </div>
+    </section>
+  )}
+
+  <section
+    class="section"
+    data-section-type={useStaticGrid ? 'work-grid' : 'work-carousel'}
+    data-section-label={useStaticGrid ? 'Work grid' : 'Work carousel'}
+    data-section-variants="A:Default,B:Minimal,C:Featured"
+  >
+    <div class="container">
+      {useStaticGrid ? (
+        <div class="work-grid work-grid--static reveal" data-work-grid={items.length}>
+          {items.map(w => (
+            <WorkCard
+              staggered={false}
+              slug={w.slug}
+              title={w.title}
+              shortTitle={w.shortTitle}
+              cardSummary={w.cardSummary}
+              tags={w.tags}
+              gradientPreset={w.gradientPreset}
+              image={w.image}
+              imageAlt={w.imageAlt}
+              comingSoon={(w as any).comingSoon ?? false}
+              href={(w as any).liveUrl && (w as any).liveUrl.startsWith('/') ? (w as any).liveUrl : undefined}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="work-carousel reveal" data-work-carousel>
+          <button class="work-carousel-nav work-carousel-nav--prev" type="button" aria-label="Previous projects" data-work-carousel-prev>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="work-carousel-track" data-work-carousel-track tabindex="0" aria-label="Project showcase">
+            {items.map(w => (
+              <WorkCard
+                staggered={false}
+                slug={w.slug}
+                title={w.title}
+                shortTitle={w.shortTitle}
+                cardSummary={w.cardSummary}
+                tags={w.tags}
+                gradientPreset={w.gradientPreset}
+                image={w.image}
+                imageAlt={w.imageAlt}
+                comingSoon={(w as any).comingSoon ?? false}
+                href={(w as any).liveUrl && (w as any).liveUrl.startsWith('/') ? (w as any).liveUrl : undefined}
+              />
+            ))}
+          </div>
+          <button class="work-carousel-nav work-carousel-nav--next" type="button" aria-label="Next projects" data-work-carousel-next>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <DividerSlot dividers={d.dividers} after="carousel" />
+
+  {d.testimonials && (
+    <Testimonials
+      sectionLabel={d.testimonials.sectionLabel}
+      heading={d.testimonials.heading}
+      subtext={d.testimonials.subtext}
+      testimonialIds={d.testimonials.testimonialIds}
+      variant={d.testimonials.variant}
+    />
+  )}
+
+  <DividerSlot dividers={d.dividers} after="testimonials" />
+
+  {d.cta && (
+    <SiteCta
+      heading={d.cta.heading}
+      body={d.cta.body}
+      label={d.cta.label}
+      href={d.cta.href}
+    />
+  )}
+</Base>
+
+<script>
+  (function () {
+    const wrap = document.querySelector<HTMLElement>('[data-work-carousel]');
+    if (!wrap) return;
+    const track = wrap.querySelector<HTMLElement>('[data-work-carousel-track]');
+    const prev = wrap.querySelector<HTMLButtonElement>('[data-work-carousel-prev]');
+    const next = wrap.querySelector<HTMLButtonElement>('[data-work-carousel-next]');
+    if (!track || !prev || !next) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const AUTO_SPEED_PX_PER_SEC = 20;
+    const INTERACT_PAUSE_MS = 2500;
+
+    function getStep(): number {
+      const first = track!.querySelector<HTMLElement>(':scope > *');
+      if (!first) return track!.clientWidth;
+      const style = getComputedStyle(track!);
+      const gap = parseFloat((style.columnGap || style.gap) as string) || 0;
+      return first.getBoundingClientRect().width + gap;
+    }
+
+    function atStart() { return track!.scrollLeft <= 1; }
+    function atEnd() { return Math.ceil(track!.scrollLeft + track!.clientWidth) >= track!.scrollWidth - 1; }
+
+    function updateNav() {
+      prev!.toggleAttribute('disabled', atStart());
+      next!.toggleAttribute('disabled', atEnd());
+    }
+
+    function scrollByStep(dir: 1 | -1) {
+      track!.scrollBy({ left: dir * getStep(), behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    prev.addEventListener('click', () => { markInteract(); scrollByStep(-1); });
+    next.addEventListener('click', () => { markInteract(); scrollByStep(1); });
+
+    track.addEventListener('scroll', updateNav, { passive: true });
+    window.addEventListener('resize', updateNav);
+    updateNav();
+
+    let lastInteract = 0;
+    let hovering = false;
+    function markInteract() { lastInteract = performance.now(); }
+
+    wrap.addEventListener('pointerenter', () => { hovering = true; });
+    wrap.addEventListener('pointerleave', () => { hovering = false; });
+    wrap.addEventListener('focusin', () => { hovering = true; });
+    wrap.addEventListener('focusout', () => { hovering = false; });
+    track.addEventListener('wheel', markInteract, { passive: true });
+    track.addEventListener('touchstart', markInteract, { passive: true });
+    track.addEventListener('keydown', markInteract);
+
+    if (reduceMotion) return;
+
+    let last = performance.now();
+    function tick(now: number) {
+      const dt = Math.min(now - last, 64) / 1000;
+      last = now;
+      const active = !document.hidden && !hovering && now - lastInteract > INTERACT_PAUSE_MS;
+      if (active) {
+        if (atEnd()) {
+          track!.scrollTo({ left: 0, behavior: 'auto' });
+        } else {
+          track!.scrollLeft += AUTO_SPEED_PX_PER_SEC * dt;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>

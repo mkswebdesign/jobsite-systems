@@ -1,0 +1,66 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../builder/layouts/Base.astro';
+import Breadcrumbs from '../../builder/components/Breadcrumbs.astro';
+import ArchiveList from '../../builder/components/ArchiveList.astro';
+import ArchiveToolbar from '../../builder/components/ArchiveToolbar.astro';
+import ArchiveDrawer from '../../builder/components/ArchiveDrawer.astro';
+import RssLink from '../../builder/components/RssLink.astro';
+import { brand } from '../../builder/lib/brand';
+import { getAllPosts, getAllCategories, getAllTags, getAllAuthors } from '../../builder/lib/posts';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const posts = await getAllPosts();
+  if (posts.length === 0) return [];
+  return paginate(posts, { pageSize: 12 });
+};
+
+const { page } = Astro.props;
+const totalPages = page.lastPage;
+const currentPage = page.currentPage;
+const title = currentPage === 1 ? `Latest — ${brand.name}` : `Latest (page ${currentPage}) — ${brand.name}`;
+const description = `The latest articles from ${brand.name}.`;
+
+const allPosts = await getAllPosts();
+const categories = await getAllCategories();
+const tags = await getAllTags();
+const authors = await getAllAuthors();
+
+/* Per-category counts feed the segmented control's "Politics 12 / All 128" labels.
+ * Computed here from the full corpus (not just this page) so counts are stable
+ * across pagination. */
+const categoryCounts: Record<string, number> = {};
+for (const p of allPosts) {
+  const id = p.data.category;
+  categoryCounts[id] = (categoryCounts[id] ?? 0) + 1;
+}
+---
+<Base title={title} description={description} skipTarget="#main">
+  <Fragment slot="head">
+    <link rel="alternate" type="application/rss+xml" title={brand.name} href="/rss.xml" />
+  </Fragment>
+  <main id="main" class="container archive-page">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Latest' }]} />
+    <header
+      class="archive-page__header-row"
+      data-section-type="archive-page-header"
+      data-section-label="Archive page header"
+      data-section-variants="A:Default,B:Compact"
+    >
+      <h1 class="archive-page__title">Latest Articles</h1>
+      <RssLink href="/rss.xml" label={`Subscribe to ${brand.name} RSS`} />
+    </header>
+    <ArchiveToolbar
+      categories={categories}
+      categoryCounts={categoryCounts}
+      totalCount={allPosts.length}
+    />
+    <ArchiveList
+      posts={page.data}
+      page={currentPage}
+      totalPages={totalPages}
+      baseUrl="/archive"
+    />
+    <ArchiveDrawer tags={tags} authors={authors} />
+  </main>
+</Base>

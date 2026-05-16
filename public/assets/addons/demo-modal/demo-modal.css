@@ -1,0 +1,206 @@
+/*
+ * Demo Modal — click-intercept modal for /demo/<slug>/* pages.
+ *
+ * Tokens-only color usage so the modal tracks whichever brand is
+ * rendering it (var(--accent), var(--bg-card), var(--text-*) all set
+ * by the brand stylesheet). No hardcoded brand colors in this file.
+ */
+
+/* Lock body scroll while the modal is open. The .aed-demo-modal--open
+   class is toggled on the modal root, but scroll lock has to live on
+   the documentElement so position:fixed doesn't shift the page. */
+html.aed-demo-modal-locked {
+  overflow: hidden;
+}
+
+.aed-demo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  /* Avoid layout shift when toggled — keep dimensions but invisible */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.aed-demo-modal--open {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.aed-demo-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.aed-demo-modal__card {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  background: var(--bg-card, #fff);
+  color: var(--text-primary, #18181b);
+  border: 1px solid var(--border, rgba(0,0,0,0.08));
+  border-radius: var(--radius-lg, 16px);
+  padding: 2rem 1.75rem 1.5rem;
+  box-shadow:
+    0 20px 60px -12px rgba(0, 0, 0, 0.45),
+    0 4px 16px -4px rgba(0, 0, 0, 0.25);
+  transform: translateY(8px) scale(0.98);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.aed-demo-modal--open .aed-demo-modal__card {
+  transform: translateY(0) scale(1);
+}
+
+.aed-demo-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted, var(--text-secondary, #71717a));
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.aed-demo-modal__close:hover,
+.aed-demo-modal__close:focus-visible {
+  background: var(--bg-card-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #18181b);
+  border-color: var(--border-light, rgba(0, 0, 0, 0.08));
+  outline: none;
+}
+
+.aed-demo-modal__eyebrow {
+  display: inline-block;
+  margin-bottom: 0.875rem;
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brand-accent-readable, var(--accent, #7ab8a4));
+  background: rgba(var(--accent-rgb, 122, 184, 164), 0.12);
+  border: 1px solid rgba(var(--accent-rgb, 122, 184, 164), 0.22);
+  border-radius: 999px;
+}
+
+.aed-demo-modal__heading {
+  margin: 0 0 0.625rem;
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--text-primary, #18181b);
+}
+
+.aed-demo-modal__body {
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text-secondary, #52525b);
+}
+
+.aed-demo-modal__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 1.125rem;
+}
+
+.aed-demo-modal__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius, 12px);
+  border: 1px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+.aed-demo-modal__cta--primary {
+  background: var(--accent, #7ab8a4);
+  color: var(--brand-on-surface, #0b1f1a);
+  border-color: var(--accent, #7ab8a4);
+}
+.aed-demo-modal__cta--primary:hover,
+.aed-demo-modal__cta--primary:focus-visible {
+  background: var(--accent-hover, #8fcaba);
+  border-color: var(--accent-hover, #8fcaba);
+  outline: none;
+  transform: translateY(-1px);
+}
+.aed-demo-modal__cta--secondary {
+  background: transparent;
+  color: var(--text-primary, #18181b);
+  border-color: var(--border, rgba(0, 0, 0, 0.12));
+}
+.aed-demo-modal__cta--secondary:hover,
+.aed-demo-modal__cta--secondary:focus-visible {
+  background: var(--bg-card-hover, rgba(0, 0, 0, 0.04));
+  border-color: var(--border-light, rgba(0, 0, 0, 0.16));
+  outline: none;
+}
+
+.aed-demo-modal__continue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.5rem 0;
+  background: transparent;
+  border: none;
+  color: var(--text-muted, var(--text-secondary, #71717a));
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.aed-demo-modal__continue:hover,
+.aed-demo-modal__continue:focus-visible {
+  color: var(--text-primary, #18181b);
+  outline: none;
+}
+.aed-demo-modal__continue-arrow {
+  transition: transform 0.18s ease;
+}
+.aed-demo-modal__continue:hover .aed-demo-modal__continue-arrow {
+  transform: translateX(3px);
+}
+
+@media (min-width: 480px) {
+  .aed-demo-modal__ctas {
+    flex-direction: row;
+  }
+  .aed-demo-modal__cta {
+    flex: 1;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .aed-demo-modal,
+  .aed-demo-modal__card,
+  .aed-demo-modal__cta,
+  .aed-demo-modal__continue-arrow {
+    transition: none;
+  }
+  .aed-demo-modal--open .aed-demo-modal__card {
+    transform: none;
+  }
+}

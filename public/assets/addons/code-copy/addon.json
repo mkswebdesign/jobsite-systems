@@ -1,0 +1,27 @@
+{
+  "name": "code-copy",
+  "assets": {
+    "css": ["code-copy.css"],
+    "js":  ["code-copy.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:code-copy",
+        "default": "auto",
+        "description": "Mode selector. 'auto' wires every <pre><code> block on the page; 'opt-in' only wires <pre> elements that explicitly opt in.",
+        "enum": ["auto", "opt-in"]
+      }
+    ],
+    "data": [
+      {
+        "selector": "pre[data-aed-code-copy]",
+        "description": "Per-block control (only honored in 'auto' mode for opting OUT, or in 'opt-in' mode for opting IN).",
+        "fields": {
+          "data-aed-code-copy": { "type": "string", "enum": ["off", "on"], "description": "'off' suppresses the copy button on this block. (Or 'on' in opt-in mode.)" },
+          "data-language":      { "type": "string",                         "description": "Override the language label rendered on the copy button." }
+        }
+      }
+    ]
+  }
+}

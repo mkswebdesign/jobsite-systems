@@ -1,0 +1,1032 @@
+{
+  "cta": {
+    "variant": "E"
+  },
+  "nav": {
+    "primary": [
+      {
+        "label": "About",
+        "href": "/about/"
+      },
+      {
+        "label": "Process",
+        "href": "/process/"
+      },
+      {
+        "label": "Services",
+        "href": "/services/"
+      },
+      {
+        "label": "Work",
+        "href": "/work/",
+        "alternateLabel": "Examples"
+      },
+      {
+        "label": "Pricing",
+        "href": "/pricing/"
+      }
+    ],
+    "cta": {
+      "label": "Start Your Site",
+      "href": "/start/"
+    }
+  },
+  "footer": {
+    "copyrightTemplate": "© {year} {brandName}. Built for trade businesses. Powered by {partnerName}, a {ownerName} project.",
+    "ownerLink": "https://mkswebdesign.com",
+    "partner": {
+      "name": "gomks.com",
+      "link": "https://gomks.com"
+    },
+    "extended": {
+      "tagline": "Practical, low-maintenance websites for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors. Get online, stay online, keep your focus on the work.",
+      "location": "Serving trade businesses nationwide",
+      "responseHours": "Weekdays, replies within one business day",
+      "columns": [
+        {
+          "heading": "Explore",
+          "links": [
+            {
+              "label": "About",
+              "href": "/about/"
+            },
+            {
+              "label": "Services",
+              "href": "/services/"
+            },
+            {
+              "label": "Work",
+              "href": "/work/"
+            },
+            {
+              "label": "Process",
+              "href": "/process/"
+            },
+            {
+              "label": "Pricing",
+              "href": "/pricing/"
+            },
+            {
+              "label": "FAQ",
+              "href": "/faq/"
+            },
+            {
+              "label": "Contact",
+              "href": "/contact/"
+            }
+          ]
+        },
+        {
+          "heading": "Contact",
+          "links": [
+            {
+              "label": "hello@jobsite.systems",
+              "href": "mailto:hello@jobsite.systems"
+            },
+            {
+              "label": "Start your site",
+              "href": "/start/"
+            }
+          ]
+        },
+        {
+          "heading": "Forms",
+          "links": [
+            {
+              "label": "Onboarding",
+              "href": "/onboard/"
+            },
+            {
+              "label": "Support",
+              "href": "/support/"
+            }
+          ]
+        },
+        {
+          "heading": "Resources",
+          "links": [
+            {
+              "label": "FAQ",
+              "href": "/faq/"
+            },
+            {
+              "label": "Sitemap",
+              "href": "/sitemap.xml",
+              "external": true
+            },
+            {
+              "label": "AI Engine Index",
+              "href": "/llms.txt",
+              "external": true
+            }
+          ]
+        }
+      ],
+      "legal": [
+        {
+          "label": "Privacy",
+          "href": "/privacy/"
+        },
+        {
+          "label": "Terms",
+          "href": "/terms/"
+        }
+      ]
+    }
+  },
+  "contactWidget": {
+    "label": "Let's Talk",
+    "ariaLabel": "Contact Jobsite Systems",
+    "href": "/contact/"
+  },
+  "skillsCarousel": {
+    "enabled": true,
+    "rows": [
+      {
+        "direction": "left",
+        "items": [
+          "Trade Business Web Design",
+          "Mobile-First Layouts",
+          "Job-Site-Ready Typography",
+          "Clear Service Pages",
+          "Crew & Owner Bios",
+          "Service-Area & Pricing Pages",
+          "Estimate-Request-First Design",
+          "Practical, Trade-Coded Palette"
+        ]
+      },
+      {
+        "direction": "right",
+        "items": [
+          "Static Site Hosting",
+          "Fast Load Times",
+          "Zero Plugin Maintenance",
+          "Secure by Default",
+          "SSL Included",
+          "Edge Caching",
+          "Automatic Deployments",
+          "DNS Setup"
+        ]
+      },
+      {
+        "direction": "left",
+        "items": [
+          "Estimate Request Forms",
+          "Service & Trade Pages",
+          "Owner & Crew Photos",
+          "Multi-Crew Team Directories",
+          "Licensed & Insured Trust Signals",
+          "Service-Area Maps",
+          "Before-and-After Galleries",
+          "Google Reviews & BBB Trust Notes"
+        ]
+      },
+      {
+        "direction": "right",
+        "items": [
+          "Local SEO",
+          "AI Engine Optimization",
+          "Schema Markup (LocalBusiness)",
+          "llms.txt for AI Agents",
+          "Sitemap & Robots",
+          "Uptime Monitoring",
+          "Daily Backups",
+          "Privacy-Friendly Analytics"
+        ]
+      }
+    ],
+    "groupTitles": [
+      "Design & Layout",
+      "Hosting & Infrastructure",
+      "Trades-Specific Features",
+      "SEO & Operations"
+    ],
+    "groupBodies": [
+      "Mobile-first designs shaped specifically for trade businesses — practical typography, clear service pages, before/after photo grids, and contact-first layouts that put the estimate request one tap away.",
+      "Modern static hosting with SSL, edge caching, and zero plugin maintenance. The site just keeps serving — even when you're three states deep in a remodel and not thinking about the website.",
+      "The sections a homeowner or property manager actually looks for — service-area maps, crew bios, before/after photos, licensed-and-insured trust signals, and an estimate-request form that emails the right person on the right truck.",
+      "Local SEO tuned for your service area, Google Business profile setup, schema markup, llms.txt for AI agents, and uptime monitoring — so prospective clients find you on search and AI engines, and the site stays online when they tap to call."
+    ]
+  },
+  "nextSteps": {
+    "sectionLabel": "What happens next",
+    "steps": [
+      {
+        "num": "01",
+        "title": "We read through what you shared",
+        "body": "We take time with every inquiry — no auto-replies, no sales pipeline. Just a real read."
+      },
+      {
+        "num": "02",
+        "title": "We reply with honest thoughts",
+        "body": "A ballpark timeline, a realistic budget range, and a candid take on whether we're a fit."
+      },
+      {
+        "num": "03",
+        "title": "If we're aligned, we schedule a call",
+        "body": "A short conversation to dig into goals, questions, and next steps — no pressure."
+      }
+    ],
+    "aside": {
+      "label": "While you wait",
+      "links": [
+        {
+          "iconKey": "layers",
+          "label": "See selected work",
+          "href": "/work/"
+        },
+        {
+          "iconKey": "check-circle",
+          "label": "Walk through the process",
+          "href": "/process/"
+        },
+        {
+          "iconKey": "trending-up",
+          "label": "Partnership pricing",
+          "href": "/pricing/"
+        }
+      ],
+      "home": {
+        "label": "Back to home",
+        "href": "/"
+      }
+    }
+  },
+  "errorPage": {
+    "code": "404",
+    "heading": "Page not found",
+    "body": "That page doesn't exist or has been moved. Let's get you back on track.",
+    "primaryCta": {
+      "label": "Back to Home",
+      "href": "/"
+    },
+    "secondaryCta": {
+      "label": "Get in Touch",
+      "href": "/contact/"
+    }
+  },
+  "addons": {
+    "demo-promo": {
+      "enabled": true,
+      "json": [
+        {
+          "id": "aed-demo-promo",
+          "data": {
+            "id": "cedar-mill-plumbing-demo-2026q2",
+            "eyebrow": "See it live",
+            "heading": "See a real trade-business site, end-to-end.",
+            "body": "Walk through a fully-built sample solo-plumber site (Cedar Mill Plumbing) or a multi-trade home-services group site (Apex Home Services) — same components, real copy, no signup.",
+            "cta": {
+              "label": "View the demos",
+              "href": "/demo/cedar-mill-plumbing/"
+            },
+            "scrollThreshold": 0.3,
+            "minDelayMs": 2000
+          }
+        }
+      ]
+    },
+    "floating-cta": {
+      "enabled": true,
+      "json": [
+        {
+          "id": "aed-floating-cta-config",
+          "data": {
+            "href": "/start/",
+            "label": "Start Your Site",
+            "hint": "Tell us about your business",
+            "showOnPaths": [
+              "/",
+              "/about/",
+              "/services/",
+              "/services/*",
+              "/work/",
+              "/work/*",
+              "/process/",
+              "/pricing/"
+            ],
+            "hideOnPaths": [
+              "/contact/",
+              "/start/",
+              "/onboard/",
+              "/support/",
+              "/thanks/",
+              "/demo/*"
+            ]
+          }
+        }
+      ]
+    },
+    "color-roll": {
+      "enabled": true,
+      "json": [
+        {
+          "id": "aed-color-roll-config",
+          "data": {
+            "scopePrefix": [
+              "/demo/cedar-mill-plumbing/",
+              "/demo/apex-home-services/"
+            ],
+            "label": "Try a new color",
+            "resetLabel": "Reset",
+            "hint": "Demo only — your visit only"
+          }
+        }
+      ]
+    },
+    "print-mode": {
+      "enabled": false
+    },
+    "consent": {
+      "enabled": false
+    },
+    "lead-bar": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:lead-bar",
+          "content": "on"
+        }
+      ]
+    },
+    "contact-fab": {
+      "enabled": false,
+      "json": [
+        {
+          "id": "aed-contact-fab-config",
+          "data": {
+            "prependActions": [
+              {
+                "kind": "calendar",
+                "label": "Book a call",
+                "sublabel": "15-minute intro",
+                "href": "javascript:void(__booking.open())"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "forms": {
+      "enabled": false
+    },
+    "email": {
+      "enabled": true,
+      "json": [
+        {
+          "id": "aed-email-config",
+          "data": {
+            "endpoint": "https://contact-proxy.anthony-abc.workers.dev",
+            "subject": "New inquiry from jobsite.systems",
+            "debug": false
+          }
+        }
+      ]
+    },
+    "booking": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:booking",
+          "content": "cal:jobsite-systems/intro"
+        }
+      ]
+    },
+    "exit-intent": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:exit-intent",
+          "content": "on"
+        }
+      ],
+      "json": [
+        {
+          "id": "aed-exit-intent-config",
+          "data": {
+            "eyebrow": "Hold on",
+            "headline": "Got 15 minutes?",
+            "body": "Pick a slot for a no-pressure intro call. We'll see if a simple trade-business website fits — and what the timeline looks like.",
+            "primary": {
+              "label": "Book a 15-minute intro",
+              "href": "javascript:void(__booking.open())"
+            },
+            "secondary": {
+              "label": "No thanks",
+              "dismiss": "session"
+            },
+            "dwellMs": 6000,
+            "minScrollPercent": 20,
+            "hideOnPaths": [
+              "/contact/",
+              "/start/",
+              "/thanks/"
+            ]
+          }
+        }
+      ]
+    },
+    "social-proof": {
+      "enabled": false,
+      "json": [
+        {
+          "id": "aed-social-proof-feed",
+          "data": [
+            {
+              "text": "**Now onboarding** trade businesses for 2026",
+              "icon": "users",
+              "href": "/contact/"
+            },
+            {
+              "text": "Launch in **2 weeks**, zero ongoing maintenance",
+              "icon": "bolt",
+              "href": "/pricing/"
+            }
+          ]
+        },
+        {
+          "id": "aed-social-proof-config",
+          "data": {
+            "dwellMs": 10000,
+            "displayMs": 7000,
+            "intervalMs": 18000,
+            "maxCycles": 2,
+            "hideOnPaths": [
+              "/contact/",
+              "/start/"
+            ]
+          }
+        }
+      ]
+    },
+    "announcement-bar": {
+      "enabled": true,
+      "json": [
+        {
+          "id": "aed-announcement-bar",
+          "data": {
+            "id": "jobsite-systems-yearly-30-2026",
+            "kind": "promo",
+            "icon": "sparkle",
+            "text": "Annual billing saves **30%** — sites from $129/mo.",
+            "cta": {
+              "label": "Learn more",
+              "href": "/pricing/"
+            },
+            "start": "2026-04-19",
+            "end": "2026-07-19",
+            "position": "top",
+            "dismissable": true,
+            "dismissCooldownDays": 7,
+            "hideOnPaths": [
+              "/contact/",
+              "/start/",
+              "/thanks/",
+              "/demo/*"
+            ]
+          }
+        }
+      ]
+    },
+    "availability-banner": {
+      "enabled": false,
+      "json": [
+        {
+          "id": "aed-availability",
+          "data": {
+            "status": "open",
+            "text": "**Now accepting** trade businesses for spring/summer launches",
+            "footnote": "Updated April 2026",
+            "cta": {
+              "label": "Book intro",
+              "href": "javascript:void(__booking.open())"
+            }
+          }
+        }
+      ]
+    },
+    "uptime-status": {
+      "enabled": false
+    },
+    "share": {
+      "enabled": false
+    },
+    "scroll-progress": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:scroll-progress",
+          "content": "on"
+        }
+      ]
+    },
+    "anchor-headings": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:anchor-headings",
+          "content": "on",
+          "attrs": {
+            "data-scope": ".section, .work-detail, .service-detail, article",
+            "data-levels": "2,3"
+          }
+        }
+      ]
+    },
+    "image-lightbox": {
+      "enabled": true,
+      "meta": [
+        {
+          "name": "aed:lightbox",
+          "content": "auto",
+          "attrs": {
+            "data-scope": "article, .work-detail, .service-detail, .case-study, .photo-gallery"
+          }
+        }
+      ]
+    },
+    "lazy-video": {
+      "enabled": false
+    },
+    "toc": {
+      "enabled": false
+    },
+    "animated-numbers": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:animated-numbers",
+          "content": "on",
+          "attrs": {
+            "data-auto-scope": ".stat-num",
+            "data-default-duration": "1800"
+          }
+        }
+      ]
+    },
+    "business-hours": {
+      "enabled": false,
+      "json": [
+        {
+          "id": "aed-business-hours",
+          "data": {
+            "timezone": "America/Chicago",
+            "hours": {
+              "mon": [
+                {
+                  "open": "09:00",
+                  "close": "18:00"
+                }
+              ],
+              "tue": [
+                {
+                  "open": "09:00",
+                  "close": "18:00"
+                }
+              ],
+              "wed": [
+                {
+                  "open": "09:00",
+                  "close": "18:00"
+                }
+              ],
+              "thu": [
+                {
+                  "open": "09:00",
+                  "close": "18:00"
+                }
+              ],
+              "fri": [
+                {
+                  "open": "09:00",
+                  "close": "17:00"
+                }
+              ],
+              "sat": [],
+              "sun": []
+            },
+            "soonMinutes": 30
+          }
+        }
+      ]
+    },
+    "code-copy": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:code-copy",
+          "content": "auto"
+        }
+      ]
+    },
+    "back-to-top": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:back-to-top",
+          "content": "on",
+          "attrs": {
+            "data-threshold": "800",
+            "data-position": "right",
+            "data-offset-x": "1.5rem",
+            "data-offset-y": "1.5rem",
+            "data-size": "44",
+            "data-style": "circle"
+          }
+        }
+      ]
+    },
+    "toast": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:toast",
+          "content": "top-right",
+          "attrs": {
+            "data-bridge": "form"
+          }
+        }
+      ]
+    },
+    "confetti": {
+      "enabled": false,
+      "meta": [
+        {
+          "name": "aed:confetti",
+          "content": "on",
+          "attrs": {
+            "data-bridge": "form"
+          }
+        }
+      ]
+    },
+    "animations": {
+      "enabled": true,
+      "meta": [
+        {
+          "name": "aed:animations",
+          "content": "on",
+          "attrs": {
+            "data-auto-scope": ".page-header h1, .page-header .lead",
+            "data-auto-effect": "fade-up",
+            "data-threshold": "0.2"
+          }
+        }
+      ]
+    },
+    "avatar-stack": {
+      "enabled": false
+    },
+    "aurora-bg": {
+      "enabled": true,
+      "meta": [
+        {
+          "name": "aed:aurora-bg",
+          "content": "on",
+          "attrs": {
+            "data-auto-scope": ".cta-section, .final-cta",
+            "data-auto-intensity": "subtle"
+          }
+        }
+      ]
+    },
+    "before-after": {
+      "enabled": false
+    },
+    "breadcrumbs": {
+      "enabled": false
+    },
+    "callout": {
+      "enabled": false
+    },
+    "chips-input": {
+      "enabled": false
+    },
+    "color-picker": {
+      "enabled": false
+    },
+    "comparison-table": {
+      "enabled": true,
+      "json": [
+        {
+          "id": "aed-compare-pricing",
+          "data": {
+            "columns": [
+              {
+                "label": "What you get"
+              },
+              {
+                "label": "Multi-Page Brochure",
+                "you": true
+              },
+              {
+                "label": "Single Page"
+              },
+              {
+                "label": "Other web design companies"
+              }
+            ],
+            "rows": [
+              {
+                "section": "Scope"
+              },
+              {
+                "label": "Number of pages",
+                "values": [
+                  "5 – unlimited",
+                  "1",
+                  "billed per page"
+                ]
+              },
+              {
+                "label": "Dedicated trade / service pages",
+                "values": [
+                  "yes",
+                  "on-page list",
+                  "upgrade / add-on"
+                ]
+              },
+              {
+                "label": "Crew bios (multi-crew shop)",
+                "values": [
+                  "one page per crew lead",
+                  "single bio block",
+                  "custom quote"
+                ]
+              },
+              {
+                "label": "About / how we work",
+                "values": [
+                  "dedicated page",
+                  "block on page",
+                  "custom build"
+                ]
+              },
+              {
+                "label": "Before-and-after / jobsite gallery",
+                "values": [
+                  "full gallery",
+                  "photo strip",
+                  "plugin / add-on fee"
+                ]
+              },
+              {
+                "label": "Reviews / customer quotes",
+                "values": [
+                  "full section",
+                  "on-page block",
+                  "third-party widget"
+                ]
+              },
+              {
+                "label": "Service-area / FAQ resources",
+                "values": [
+                  "yes (Growth tier)",
+                  "no",
+                  "billed hourly"
+                ]
+              },
+              {
+                "section": "SEO & estimate requests"
+              },
+              {
+                "label": "SEO & AI engine optimization",
+                "values": [
+                  "yes (Complete & up)",
+                  "yes (Standard & up)",
+                  "separate SEO retainer"
+                ]
+              },
+              {
+                "label": "Page-per-trade SEO depth",
+                "values": [
+                  "yes",
+                  "no",
+                  "extra scope"
+                ]
+              },
+              {
+                "label": "Estimate request form",
+                "values": [
+                  "yes",
+                  "yes",
+                  "third-party (monthly fee)"
+                ]
+              },
+              {
+                "label": "Licensed & insured / pricing note",
+                "values": [
+                  "dedicated section",
+                  "block on page",
+                  "billable change request"
+                ]
+              },
+              {
+                "label": "Business email ($10/mo per mailbox)",
+                "values": [
+                  "add-on",
+                  "add-on",
+                  "add-on"
+                ]
+              },
+              {
+                "section": "Best for"
+              },
+              {
+                "label": "Solo handyman / HVAC tech / plumber",
+                "values": [
+                  "yes",
+                  "yes",
+                  "yes"
+                ]
+              },
+              {
+                "label": "Multi-crew / multi-trade shop",
+                "values": [
+                  "yes (Growth tier)",
+                  "no",
+                  "custom quote"
+                ]
+              },
+              {
+                "label": "General contractor or remodeler with multiple service lines",
+                "values": [
+                  "yes",
+                  "no",
+                  "custom build"
+                ]
+              },
+              {
+                "label": "Solo operator, fast setup",
+                "values": [
+                  "yes",
+                  "yes",
+                  "4–8 week process"
+                ]
+              },
+              {
+                "section": "Starting at, billed annually"
+              },
+              {
+                "label": "Starting tier",
+                "values": [
+                  "$299/mo",
+                  "$129/mo",
+                  "$5,000+ upfront"
+                ]
+              },
+              {
+                "label": "Most popular tier",
+                "values": [
+                  "$399/mo",
+                  "$169/mo",
+                  "$8,000+ upfront"
+                ]
+              },
+              {
+                "label": "Full-featured tier",
+                "values": [
+                  "$499/mo",
+                  "$199/mo",
+                  "$12,000+ upfront"
+                ]
+              },
+              {
+                "label": "Hosting / SSL / backups included",
+                "values": [
+                  "yes",
+                  "yes",
+                  "separate invoice"
+                ]
+              },
+              {
+                "label": "Ongoing edits & updates",
+                "values": [
+                  "included",
+                  "included",
+                  "billed hourly"
+                ]
+              },
+              {
+                "label": "Month-to-month, no lock-in",
+                "values": [
+                  "yes",
+                  "yes",
+                  "annual contract"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cookie-cleaner": {
+      "enabled": false
+    },
+    "copy-button": {
+      "enabled": false
+    },
+    "copy-input": {
+      "enabled": false
+    },
+    "copy-quote": {
+      "enabled": false
+    },
+    "countdown": {
+      "enabled": false
+    },
+    "cursor-spotlight": {
+      "enabled": true
+    },
+    "diagnostics": {
+      "enabled": false
+    },
+    "dropzone": {
+      "enabled": false
+    },
+    "easter-egg": {
+      "enabled": false
+    },
+    "expandable": {
+      "enabled": false
+    },
+    "figure-caption": {
+      "enabled": false
+    },
+    "flip-card": {
+      "enabled": false
+    },
+    "footnotes": {
+      "enabled": false
+    },
+    "gauge": {
+      "enabled": false
+    },
+    "glossary": {
+      "enabled": false
+    },
+    "grain-overlay": {
+      "enabled": false
+    },
+    "internal-broken-links": {
+      "enabled": false
+    },
+    "internal-versions": {
+      "enabled": false
+    },
+    "mailing-list": {
+      "enabled": false
+    },
+    "marquee": {
+      "enabled": false
+    },
+    "parallax-section": {
+      "enabled": false
+    },
+    "progress-ring": {
+      "enabled": false
+    },
+    "range-slider": {
+      "enabled": false
+    },
+    "reading-time": {
+      "enabled": false
+    },
+    "relative-time": {
+      "enabled": false
+    },
+    "scramble-text": {
+      "enabled": false
+    },
+    "scrollspy": {
+      "enabled": false
+    },
+    "section-divider": {
+      "enabled": false
+    },
+    "segmented-control": {
+      "enabled": false
+    },
+    "sidenav-collapse": {
+      "enabled": false
+    },
+    "skeleton": {
+      "enabled": false
+    },
+    "sparkline": {
+      "enabled": false
+    },
+    "text-gradient": {
+      "enabled": false
+    },
+    "timeline": {
+      "enabled": false
+    },
+    "timezone-converter": {
+      "enabled": false
+    },
+    "typewriter": {
+      "enabled": false
+    }
+  }
+}

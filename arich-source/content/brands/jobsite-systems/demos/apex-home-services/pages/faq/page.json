@@ -1,0 +1,26 @@
+{
+  "slug": "faq",
+  "path": "/faq/",
+  "breadcrumbLabel": "FAQ",
+  "seo": {
+    "title": "FAQ — Apex Home Services",
+    "description": "Common questions about service area, pricing, scheduling, licensing, and warranty for Apex Home Services in the Kansas City metro.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/faq/"
+  },
+  "header": {
+    "heading": "Common Questions",
+    "lead": "What people ask before requesting a quote. Don't see yours? Call or text (913) 555-0177."
+  },
+  "groupIds": [
+    "getting-started",
+    "pricing-billing",
+    "scope-trust"
+  ],
+  "cta": {
+    "sectionLabel": "Still have questions?",
+    "heading": "Send us a note.",
+    "body": "Anything not covered here — bring it to the quote walkthrough. The office handles questions about scope, pricing, and scheduling.",
+    "ctaPrimary": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" },
+    "ctaSecondary": { "label": "How it works", "href": "/demo/apex-home-services/process/" }
+  }
+}

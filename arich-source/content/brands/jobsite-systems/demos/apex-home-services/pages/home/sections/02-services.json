@@ -1,0 +1,32 @@
+{
+  "type": "why",
+  "sectionLabel": "What we do",
+  "heading": "Four trades, one crew.",
+  "subtext": "Handyman, electrical, light remodel, and exterior — all run by the same team of eight people. One number to call, one written quote, one supervisor on-site. Most homes need work in more than one of these every year, and we'd rather you didn't manage four contractors.",
+  "cards": [
+    {
+      "iconKey": "shield",
+      "title": "Handyman Services",
+      "body": "Drywall, doors, fixture installs, mounting, punch-list days. $95/hr (1-hr min) or $85/hr in 4-hour blocks. Most jobs scheduled within 1–2 weeks.",
+      "cta": { "label": "Read more", "href": "/demo/apex-home-services/services/handyman-services/" }
+    },
+    {
+      "iconKey": "check-circle",
+      "title": "Electrical",
+      "body": "Outlets, fans, lighting, panel work, EV chargers. Licensed Kansas electrical contractor on every job. Flat-rate small jobs ($185 outlet, $295 fan) and free on-site quotes for bigger work.",
+      "cta": { "label": "Read more", "href": "/demo/apex-home-services/services/electrical/" }
+    },
+    {
+      "iconKey": "user",
+      "title": "Light Remodel",
+      "body": "Kitchens, baths, and basement finish-outs in the $5k–$60k range. Free in-home estimate, written scope and price, on-site supervisor every workday, 1-year warranty.",
+      "cta": { "label": "Read more", "href": "/demo/apex-home-services/services/light-remodel/" }
+    },
+    {
+      "iconKey": "layers",
+      "title": "Exterior Services",
+      "body": "Deck and fence repair, gutter clean and repair, light siding fixes, exterior trim and paint. The outside punch list most homes need every couple of years.",
+      "cta": { "label": "Read more", "href": "/demo/apex-home-services/services/exterior-services/" }
+    }
+  ]
+}

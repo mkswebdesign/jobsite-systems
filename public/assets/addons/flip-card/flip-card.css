@@ -1,0 +1,69 @@
+/*
+ * Flip Card — drop-in 3D flip card.
+ *
+ * Wraps two children of [data-aed-flip] (front + back) in a 3D
+ * transform that flips on hover or click.
+ *
+ * See /flip-card/README.md.
+ */
+
+[data-aed-flip] {
+  display: block;
+  position: relative;
+  perspective: 1200px;
+  width: 100%;
+  height: 240px;
+  cursor: pointer;
+}
+
+.aed-fc-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-aed-flip][data-aed-flip-trigger="hover"]:hover .aed-fc-inner,
+[data-aed-flip][data-aed-flip-trigger="hover"]:focus-within .aed-fc-inner,
+[data-aed-flip].is-flipped .aed-fc-inner {
+  transform: rotateY(180deg);
+}
+
+[data-aed-flip][data-aed-flip-axis="x"]:hover .aed-fc-inner,
+[data-aed-flip][data-aed-flip-axis="x"].is-flipped .aed-fc-inner {
+  transform: rotateX(180deg);
+}
+
+.aed-fc-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.aed-fc-back {
+  transform: rotateY(180deg);
+}
+[data-aed-flip][data-aed-flip-axis="x"] .aed-fc-back {
+  transform: rotateX(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-fc-inner { transition: none; }
+}
+
+@media print {
+  .aed-fc-inner { transform: none !important; }
+  .aed-fc-back { display: none; }
+}

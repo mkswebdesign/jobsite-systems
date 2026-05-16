@@ -1,0 +1,35 @@
+{
+  "slug": "faq",
+  "path": "/faq/",
+  "breadcrumbLabel": "FAQ",
+  "seo": {
+    "title": "FAQ — Frequently Asked Questions | Jobsite Systems",
+    "description": "Common questions about trade-business websites — pricing, timelines, what's included, trust signals, and what makes our setup low-maintenance.",
+    "canonical": "https://jobsite.systems/faq/"
+  },
+  "header": {
+    "heading": "Frequently Asked Questions.",
+    "lead": "Common questions from handymen, HVAC techs, plumbers, carpenters, GCs, and operators considering a new site. Don't see yours? Just reach out — we're happy to answer."
+  },
+  "groupIds": [
+    "whats-included",
+    "trust-signals",
+    "timeline-launch",
+    "maintenance-hosting",
+    "pricing-contract",
+    "technical-domain"
+  ],
+  "cta": {
+    "sectionLabel": "Still have questions?",
+    "heading": "Let's Start a Conversation.",
+    "body": "We're happy to answer anything that isn't covered here. No pressure, no pitch — just a straight answer about your situation.",
+    "ctaPrimary": {
+      "label": "Ask a Question",
+      "href": "/contact/"
+    },
+    "ctaSecondary": {
+      "label": "See the Process",
+      "href": "/process/"
+    }
+  }
+}

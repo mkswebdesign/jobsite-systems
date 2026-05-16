@@ -1,0 +1,77 @@
+{
+  "_note": "Repository of copyright-free / permissively-licensed image sources used by the editor comment tool. {q} is replaced with the note text (URL-encoded). Order = display order.",
+  "sources": [
+    {
+      "name": "Unsplash",
+      "url": "https://unsplash.com/s/photos/{q}",
+      "license": "Unsplash License — free to use, no attribution required (commercial OK)",
+      "host": "unsplash.com"
+    },
+    {
+      "name": "Pexels",
+      "url": "https://www.pexels.com/search/{q}/",
+      "license": "Pexels License — free to use, no attribution required (commercial OK)",
+      "host": "pexels.com"
+    },
+    {
+      "name": "Pixabay",
+      "url": "https://pixabay.com/images/search/{q}/",
+      "license": "Pixabay Content License — free to use, no attribution required",
+      "host": "pixabay.com"
+    },
+    {
+      "name": "Openverse",
+      "url": "https://openverse.org/search?q={q}",
+      "license": "CC-licensed — attribution usually required, check each result",
+      "host": "openverse.org"
+    },
+    {
+      "name": "Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/w/index.php?search={q}&title=Special:MediaSearch&go=Go&type=image",
+      "license": "Various — CC / Public Domain, check each file",
+      "host": "commons.wikimedia.org"
+    },
+    {
+      "name": "Flickr (CC only)",
+      "url": "https://www.flickr.com/search/?text={q}&license=2%2C3%2C4%2C5%2C6%2C9",
+      "license": "CC / Public Domain filter applied — check each image",
+      "host": "flickr.com"
+    },
+    {
+      "name": "Burst",
+      "url": "https://burst.shopify.com/photos/search?q={q}",
+      "license": "Burst / Shopify — free for commercial use, attribution not required",
+      "host": "burst.shopify.com"
+    },
+    {
+      "name": "StockSnap",
+      "url": "https://stocksnap.io/search/{q}",
+      "license": "CC0 — public domain, no attribution required",
+      "host": "stocksnap.io"
+    },
+    {
+      "name": "Rawpixel (free)",
+      "url": "https://www.rawpixel.com/search/{q}?free=1",
+      "license": "Various — filter applied to free-only, check each",
+      "host": "rawpixel.com"
+    },
+    {
+      "name": "Kaboompics",
+      "url": "https://kaboompics.com/gallery?search={q}",
+      "license": "Kaboompics License — free for commercial & personal",
+      "host": "kaboompics.com"
+    },
+    {
+      "name": "Life of Pix",
+      "url": "https://www.lifeofpix.com/?s={q}",
+      "license": "Free for personal & commercial use — no attribution required",
+      "host": "lifeofpix.com"
+    },
+    {
+      "name": "Picjumbo",
+      "url": "https://picjumbo.com/?s={q}",
+      "license": "Picjumbo License — free for personal & commercial",
+      "host": "picjumbo.com"
+    }
+  ]
+}

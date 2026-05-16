@@ -1,0 +1,79 @@
+/*
+ * Diagnostics — drop-in staff perf overlay.
+ *
+ * Triggered by Ctrl+Shift+D (Cmd+Shift+D on Mac). Toggles a small
+ * fixed-corner panel showing Web Vitals and quick perf signals.
+ *
+ * See /diagnostics/README.md.
+ */
+
+.aed-diag {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9950;
+  width: 280px;
+  background: var(--bg-card, #18181b);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 12px;
+  padding: 0.85rem 0.95rem;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+  font: 0.78rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.aed-diag[hidden] { display: none; }
+
+.aed-diag-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--border, #27272a);
+}
+.aed-diag-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted, #9a9aa2);
+}
+.aed-diag-close {
+  background: transparent;
+  border: 0;
+  padding: 0.15rem;
+  margin: -0.15rem;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.aed-diag-close:hover { color: var(--text-primary, #fafafa); }
+.aed-diag-close svg { width: 12px; height: 12px; }
+
+.aed-diag-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--border, #27272a) 60%, transparent);
+}
+.aed-diag-row:last-child { border-bottom: 0; }
+.aed-diag-key { color: var(--text-muted, #9a9aa2); font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.aed-diag-val { color: var(--text-primary, #fafafa); font-weight: 700; }
+.aed-diag-val[data-aed-state="good"] { color: #10b981; }
+.aed-diag-val[data-aed-state="warn"] { color: #f59e0b; }
+.aed-diag-val[data-aed-state="poor"] { color: #ef4444; }
+
+.aed-diag-foot {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--border, #27272a);
+  font-size: 0.65rem;
+  color: var(--text-muted, #9a9aa2);
+}
+
+@media print {
+  .aed-diag { display: none !important; }
+}

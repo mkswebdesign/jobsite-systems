@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+interface Props {
+  data: any;
+}
+const { data: d } = Astro.props;
+const body = (d.body ?? []) as any[];
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? d.header?.heading }]}
+    heading={d.header?.heading}
+    lead={d.header?.lead}
+  />
+
+  <section class="section legal-section-wrap">
+    <div class="container">
+      <article class="legal-prose">
+        {d.lastUpdated && (
+          <p class="legal-meta"><span>Last updated</span> {d.lastUpdated}</p>
+        )}
+        {body.map((s: any) => (
+          <section class="legal-block">
+            {s.heading && <h2>{s.heading}</h2>}
+            {(s.paragraphs ?? []).map((p: string) => <p>{p}</p>)}
+            {s.items && (
+              <ul>
+                {s.items.map((i: string) => <li>{i}</li>)}
+              </ul>
+            )}
+          </section>
+        ))}
+      </article>
+    </div>
+  </section>
+</Base>

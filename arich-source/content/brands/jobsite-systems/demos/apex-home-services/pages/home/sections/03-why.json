@@ -1,0 +1,29 @@
+{
+  "type": "why",
+  "sectionLabel": "Why Apex",
+  "heading": "Why homeowners and property managers choose us.",
+  "subtext": "What we built the company around — and what 250+ Google reviews and 800+ jobs tell us actually matters to the people who hire us.",
+  "variant": "C",
+  "cards": [
+    {
+      "iconKey": "check-circle",
+      "title": "Four trades, one crew",
+      "body": "Handyman, electrical, light remodel, and exterior — all eight crew members work under one shop. When a remodel needs an electrical sign-off or a deck repair turns into a gutter fix, the same company handles it. One quote, one invoice, one number to call."
+    },
+    {
+      "iconKey": "shield",
+      "title": "Licensed, bonded, insured",
+      "body": "KS contractor license on file, KS electrical contractor license #E-19842, $2M general liability, $1M workers' comp, and bonded for project work. Certificates of insurance available on request — we email them to HOAs and property managers all the time."
+    },
+    {
+      "iconKey": "users",
+      "title": "Owner-operated since 2014",
+      "body": "Apex is owned by Dave Reichert and his brother Tim. Started with one truck doing handyman work; grew into four trucks across four trades. Owners are still on every estimate walkthrough and they're who you talk to if something goes sideways."
+    },
+    {
+      "iconKey": "monitor",
+      "title": "Communication that actually happens",
+      "body": "Texts when the crew is on the way. Photos at the end of every visit. Written quotes before work starts. Same-day invoicing. The thing other contractors do badly, we built the company around doing well."
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+---
+import { getEntry, getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../../../builder/layouts/Base.astro';
+import PageHeader from '../../../builder/components/PageHeader.astro';
+import SectionHeading from '../../../builder/components/SectionHeading.astro';
+
+type BestYearEntry = CollectionEntry<'bestByYear'>;
+
+export async function getStaticPaths() {
+  if (!(await getEntry('pages', 'best'))) return [];
+  let all: BestYearEntry[] = [];
+  try {
+    all = await getCollection('bestByYear');
+  } catch {
+    return [];
+  }
+  const list = all.filter(t => t.id && !t.id.startsWith('_'));
+  const sorted = [...list].sort((a, b) => a.data.year - b.data.year);
+  return sorted.map((e, i) => {
+    const prevE = i > 0 ? sorted[i - 1]! : null;
+    const nextE = i < sorted.length - 1 ? sorted[i + 1]! : null;
+    return {
+      params: { year: String(e.data.year), club: e.data.slug },
+      props: {
+        team: e,
+        prev: prevE
+          ? {
+              year: prevE.data.year,
+              slug: prevE.data.slug,
+              name: prevE.data.shortName ?? prevE.data.name,
+            }
+          : null,
+        next: nextE
+          ? {
+              year: nextE.data.year,
+              slug: nextE.data.slug,
+              name: nextE.data.shortName ?? nextE.data.name,
+            }
+          : null,
+      },
+    };
+  });
+}
+
+const { team, prev, next } = Astro.props;
+const d = team.data;
+const title = d.seo?.title ?? `${d.name} — team of ${d.year} | best.futbol`;
+const description = d.seo?.description ?? d.cardSummary;
+const country = d.country ? `${d.country}` : null;
+---
+
+<Base title={title} description={description} canonical={d.seo?.canonical} skipTarget="#main">
+  <PageHeader
+    crumbs={[
+      { label: 'Best in history', href: '/best/' },
+      { label: `${d.year} · ${d.shortName ?? d.name}` },
+    ]}
+    sectionLabel={country ?? 'Club'}
+    heading={`${d.name} — ${d.year}`}
+    lead={d.intro}
+  />
+
+  <div class="best-team-detail" id="main">
+    <section
+      class="section"
+      data-section-type="best-year-pick"
+      data-section-label="Year on the list"
+    >
+      <div class="container">
+        <div class="best-years-header reveal">
+          <SectionHeading
+            label="This year’s pick"
+            heading={`${d.year} — our best side in the world`}
+            subtext="A single club per calendar year, chosen for trophies, form, and how the season sat in the global game. It is an editorial lens, not an official title."
+          />
+        </div>
+        <p class="best-pick-year-badge reveal" data-reveal>
+          <span class="best-pick-y">{d.year}</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt" data-section-type="best-highlights" data-section-label="Highlights">
+      <div class="container">
+        <div class="best-narrative reveal">
+          <SectionHeading label="Context" heading="Why this season" />
+          <ul class="best-bullet-list">
+            {d.highlights.map((h: string) => (
+              <li>{h}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-section-type="best-achievements" data-section-label="Achievements">
+      <div class="container">
+        <div class="best-narrative reveal">
+          <SectionHeading label="Honours" heading="Key results" />
+          <ul class="best-bullet-list">
+            {d.achievements.map((a: string) => (
+              <li>{a}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section best-team-back" data-section-type="best-cta">
+      <div class="container">
+        <a href="/best/" class="btn btn-primary">All years (2000–2025)</a>
+        <a href="/" class="btn btn-secondary" style="margin-left:0.5rem">Home</a>
+      </div>
+    </section>
+
+    {(prev || next) && (
+      <nav class="service-pager" aria-label="Other years">
+        <div class="container service-pager-inner">
+          {prev && (
+            <a
+              href={`/best/${prev.year}/${prev.slug}/`}
+              class="service-pager-link service-pager-prev"
+            >
+              <span class="service-pager-label">Previous year</span>
+              <span class="service-pager-title">
+                <span class="arrow">&larr;</span> {prev.name} · {prev.year}
+              </span>
+            </a>
+          )}
+          {next && (
+            <a
+              href={`/best/${next.year}/${next.slug}/`}
+              class="service-pager-link service-pager-next"
+              style={!prev ? { marginLeft: 'auto' } : undefined}
+            >
+              <span class="service-pager-label">Next year</span>
+              <span class="service-pager-title">
+                {next.name} · {next.year} <span class="arrow">&rarr;</span>
+              </span>
+            </a>
+          )}
+        </div>
+      </nav>
+    )}
+  </div>
+</Base>
+
+<style is:global>
+  .best-pick-year-badge {
+    margin: 0.5rem 0 0;
+  }
+  .best-pick-y {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-base, 12px);
+    background: var(--bg-card, #18181b);
+  }
+  .best-bullet-list {
+    margin: 0.5rem 0 0;
+    padding-left: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .best-bullet-list li {
+    margin-bottom: 0.4rem;
+  }
+  .best-narrative {
+    max-width: 70ch;
+  }
+  .best-team-back {
+    padding-top: 0;
+  }
+  .section--alt {
+    background: var(--bg-secondary, #111113);
+  }
+</style>

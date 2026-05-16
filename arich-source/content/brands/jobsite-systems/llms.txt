@@ -1,0 +1,87 @@
+# Jobsite Systems — jobsite.systems
+
+> Jobsite Systems is a productized website service for trade businesses. Practical, low-maintenance websites for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors — built once, built right, kept online for you.
+
+## About
+
+Jobsite Systems is a focused, branded initiative that offers easy-to-launch, simple websites to trade-business owners and crews. The premise: most trade businesses either have no website, a directory listing only (Angi / HomeAdvisor / Houzz), a stalled DIY site, or a neglected WordPress install that's become a security headache. None of those options keep the phones ringing or get estimates booked.
+
+We designed a better middle — a practical, mobile-first trade-business website on a modern static-hosting stack. Fast, secure, and genuinely low-maintenance. No plugin updates, no PHP versions to chase, no surprise downtime when a homeowner is searching for an emergency plumber. One monthly price covers the website, hosting, security, backups, and small content changes. Business email management is available as an add-on.
+
+The package includes everything a homeowner or property manager looks for: services / trades, crew bios, licensed-and-insured trust signals, service area, and an easy way to request an estimate. The ongoing care keeps the site accurate and online year after year so the owner can stay focused on the work.
+
+## Services
+
+- Complete Trade-Business Website — the core package (about, services / trades, licensed & insured trust signals, service area, estimate-request form, contact)
+- Estimate Request Forms — short, mobile-friendly forms that email you directly, spam-protected, structured for trade work (job address, what's broken, urgency, photos optional)
+- Search & AI Engine Optimization — location-aware service-area pages, LocalBusiness schema, a maintained llms.txt for AI agents, quotable content structure, and sitemap submission
+- Before-and-After & Jobsite Photo Gallery — organized by trade or job type (kitchens, bathrooms, HVAC installs, finish carpentry, plumbing repairs, branded trucks, crew at work), mobile-optimized
+- Hosting, Security & Backups — managed static hosting, SSL, daily backups, 24/7 uptime monitoring
+- Business Email Management (add-on) — real email on your own domain (you@yourbusiness.com) at $10/mo per mailbox, including DNS (MX/SPF/DKIM/DMARC), spam & spoofing protection, device setup, and ongoing support.
+
+## How It Works
+
+1. **Intro Call** — A short call to understand your trades, service area, and goals. No pitch — just listening.
+2. **Content Handoff** — You send your license info, headshot or crew photo, services, and basics. We give you a checklist so nothing gets missed.
+3. **Design & Build** — We build your site on our trade-business template system — brand-matched, mobile-first, credible by design. Usually 1–2 weeks.
+4. **Review** — You review a staging link. One round of revisions included.
+5. **Launch** — Domain, SSL, analytics, sitemap submission, and llms.txt published for AI answer engines — then it's live.
+6. **Hands-Off Ongoing** — Your site stays up, stays current. Content changes handled by email.
+
+## What's Included
+
+- Complete trade-business website (about, services / trades, licensed & insured trust signals, service area, estimate-request form, contact)
+- Estimate-request form that emails you directly
+- Search & AI engine optimization — LocalBusiness schema, service pages, quotable content, llms.txt for AI agents
+- Managed static hosting, SSL, daily backups, uptime monitoring
+- Small content changes handled for you — crew updates, service-area changes, new trades, multi-crew rosters
+- Direct email support — no tickets, no account managers
+- No plugin updates, no admin panel, no ongoing WordPress maintenance — and no plugin attack surface
+
+## Pricing
+
+Two site styles — multi-page brochure or single-page — each priced by the feature set it includes. All month-to-month with no long-term contracts.
+
+Multi-page brochure:
+- **Essential** ($299/month) — Multi-page site with about, services, contact; solo operators with a focused offering
+- **Complete** ($399/month) — Full site with before-and-after / jobsite gallery, SEO & AI engine optimization, customer reviews, licensed-and-insured trust signals page, and a service-area callout
+- **Growth** ($499/month) — Everything in Complete plus per-crew bio pages for multi-crew shops, content migration, and a project portfolio / blog section
+
+Single-page:
+- **Basic** ($129/month) — One-page site with services, about, and estimate-request form
+- **Standard** ($169/month) — Adds photos, customer reviews, and SEO & AI engine optimization
+- **Plus** ($199/month) — Adds licensed-and-insured trust signals callout, service-area callout, and content migration
+
+Business Email Management add-on: **$10/mo per mailbox** — real email on your own domain, setup and support included, available with any plan or on its own.
+
+One-time builds also available starting at $1,990.
+
+See full details: https://jobsite.systems/pricing/
+
+## Who It's For
+
+- Handymen, HVAC techs, plumbers, carpenters, and GCs with no current website, relying on Angi / HomeAdvisor or word-of-mouth referrals
+- Solo trade-business owners ready to look more established
+- Multi-crew shops that need a real site for the whole team
+- New trade businesses just hanging out the shingle
+- Multi-trade GCs or remodelers with multiple service lines
+- Trade businesses with a DIY site that never quite worked
+- Trade businesses whose WordPress site has been hacked or neglected
+- Any trade business tired of paying for plugin subscriptions and maintenance fees
+- Owners still running the business on a personal Gmail or Yahoo address
+- Crews that need a clean, accurate, credible web presence for both homeowners and property managers
+
+## Technology
+
+Static-site architecture on modern edge-hosting infrastructure. No WordPress, no plugins, no PHP version upgrades, no admin panel to compromise. Content updates flow through us, not through a CMS. The result is a site that loads quickly, stays secure by default, and doesn't require ongoing technical attention from the owner.
+
+The forms on the site are built for the realities of trade work — job address, what's broken, urgency, optional photos — so estimate requests arrive in your inbox structured enough to triage between calls. We don't paper over the basics: license numbers, insurance, BBB rating, Google reviews, and a clear service area belong front-and-center, and the templates are built around those signals.
+
+## Contact
+
+- Email: hello@jobsite.systems
+- Website: https://jobsite.systems/
+
+## Location
+
+Serving trade businesses across the United States. Remote onboarding and support.

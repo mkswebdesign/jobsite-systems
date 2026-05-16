@@ -1,0 +1,112 @@
+{
+  "slug": "contact",
+  "path": "/contact/",
+  "breadcrumbLabel": "Contact",
+  "seo": {
+    "title": "Contact — Jobsite Systems",
+    "description": "Send us a quick note — a question, a hello, or anything else. For new-site requests, use Start Your Site.",
+    "canonical": "https://jobsite.systems/contact/"
+  },
+  "header": {
+    "sectionLabel": "Say Hello",
+    "heading": "Drop Us a Line.\nWe'd Love to Hear from You.",
+    "lead": "Quick question, general note, or just introducing yourself — send a message and we'll reply personally. Ready to plan a new site? Head to Start Your Site instead."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New contact message from jobsite.systems",
+    "fields": [
+      {
+        "id": "name",
+        "name": "name",
+        "label": "Your Name",
+        "type": "text",
+        "placeholder": "Jane Smith",
+        "required": true,
+        "row": 1
+      },
+      {
+        "id": "email",
+        "name": "email",
+        "label": "Email Address",
+        "type": "email",
+        "placeholder": "jane@yourbusiness.com",
+        "required": true,
+        "row": 1
+      },
+      {
+        "id": "company",
+        "name": "company",
+        "label": "Business name (optional)",
+        "type": "text",
+        "placeholder": "Your business or shop",
+        "required": false,
+        "row": 2
+      },
+      {
+        "id": "message",
+        "name": "message",
+        "label": "Your message",
+        "type": "textarea",
+        "placeholder": "What's on your mind? A quick note, a question, or anything else.",
+        "required": true,
+        "row": 3
+      },
+      {
+        "id": "terms",
+        "name": "terms",
+        "type": "checkbox",
+        "label": "I agree to the <a href=\"/terms/\">Terms &amp; Conditions</a> and <a href=\"/privacy/\">Privacy Policy</a>, and consent to being contacted about my inquiry.",
+        "value": "accepted",
+        "required": true,
+        "row": 4
+      }
+    ],
+    "submitLabel": "Send message",
+    "successMessage": "Message sent! We'll get back to you within one business day. Looking forward to it.",
+    "errorMessage": "Something went wrong. Please try again or email us directly at hello@jobsite.systems."
+  },
+  "sidebar": {
+    "infoCards": [
+      {
+        "iconKey": "envelope",
+        "title": "Email Directly",
+        "body": "Prefer email? No problem.",
+        "prominent": true,
+        "link": {
+          "label": "hello@jobsite.systems",
+          "href": "mailto:hello@jobsite.systems"
+        }
+      },
+      {
+        "iconKey": "clock",
+        "title": "Response Time",
+        "body": "We typically respond within one business day. Often sooner."
+      },
+      {
+        "iconKey": "rocket",
+        "title": "Ready for a Site?",
+        "body": "Skip the back-and-forth with a guided walkthrough.",
+        "link": {
+          "label": "Start Your Site",
+          "href": "/start/"
+        }
+      }
+    ],
+    "expect": {
+      "heading": "What to Expect",
+      "items": [
+        "A thoughtful response, not an auto-reply",
+        "Honest assessment of your situation",
+        "Clear next steps if we're a good fit",
+        "No pressure, no hard sell"
+      ]
+    }
+  },
+  "testimonials": {
+    "sectionLabel": "Owner & Operator Feedback",
+    "heading": "In their own words.",
+    "variant": "carousel"
+  }
+}

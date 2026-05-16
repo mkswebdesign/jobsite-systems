@@ -1,0 +1,105 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  shortTitle?: string;
+  cardSummary: string;
+  tags?: string[];
+  gradientPreset: string;
+  image?: string | null;
+  imageAlt?: string | null;
+  staggered?: boolean;
+  comingSoon?: boolean;
+  /** Optional override for the card's primary link. When set, the card
+   *  navigates here instead of the default `/work/<slug>/` case-study URL.
+   *  Used for portfolio entries that point at a live demo (e.g. demo
+   *  showcase entries on a brand's /work/ page) so the card click leads
+   *  to the working sample, not to a barebones case-study stub. */
+  href?: string;
+}
+
+const {
+  slug,
+  title,
+  shortTitle,
+  cardSummary,
+  tags = [],
+  gradientPreset,
+  image,
+  imageAlt,
+  staggered = true,
+  comingSoon = false,
+  href,
+} = Astro.props;
+
+/* Site-mockup wireframe: rendered when no image is supplied. Replaces the
+ * prior `placehold.net/main.svg` external dependency (which has been
+ * intermittently failing, leaving cards with broken-image icons) and the
+ * solid color block that color-only thumbnails rendered as. The SVG suggests
+ * a real site layout — browser chrome, hero band, three feature cards, CTA
+ * row — so demo / pre-launch cards still read as web work, not placeholder
+ * art. Strokes use currentColor so brand themes flow through naturally. */
+const showMockup = !image;
+const resolvedHref = href ?? `/work/${slug}/`;
+
+const classes = ['work-card'];
+if (staggered) classes.push('stagger-item');
+if (comingSoon) classes.push('work-card--coming-soon');
+if (showMockup) classes.push('work-card--mockup');
+---
+
+<a href={resolvedHref} class={classes.join(' ')}>
+  <div class="work-thumb">
+    {image && (
+      <img src={image} alt={imageAlt ?? title} loading="lazy" width="600" height="400" />
+    )}
+    {showMockup && (
+      <svg
+        class="work-mockup-svg"
+        viewBox="0 0 600 400"
+        role="img"
+        aria-label={imageAlt ?? `${title} site mockup`}
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <rect x="0" y="0" width="600" height="400" fill="var(--work-mockup-bg, rgba(255,255,255,0.04))" />
+        <rect x="40" y="40" width="520" height="320" rx="8" fill="var(--work-mockup-frame, rgba(255,255,255,0.08))" stroke="currentColor" stroke-width="1" stroke-opacity="0.35" />
+        <circle cx="60" cy="62" r="4" fill="currentColor" fill-opacity="0.4" />
+        <circle cx="76" cy="62" r="4" fill="currentColor" fill-opacity="0.4" />
+        <circle cx="92" cy="62" r="4" fill="currentColor" fill-opacity="0.4" />
+        <rect x="120" y="55" width="380" height="14" rx="4" fill="currentColor" fill-opacity="0.18" />
+        <rect x="40" y="84" width="520" height="1" fill="currentColor" fill-opacity="0.35" />
+        <rect x="60" y="110" width="220" height="14" rx="2" fill="currentColor" fill-opacity="0.55" />
+        <rect x="60" y="138" width="160" height="14" rx="2" fill="currentColor" fill-opacity="0.55" />
+        <rect x="60" y="172" width="280" height="8" rx="2" fill="currentColor" fill-opacity="0.32" />
+        <rect x="60" y="186" width="240" height="8" rx="2" fill="currentColor" fill-opacity="0.32" />
+        <rect x="60" y="220" width="110" height="30" rx="15" fill="currentColor" fill-opacity="0.85" />
+        <rect x="60" y="276" width="160" height="64" rx="6" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1" stroke-opacity="0.25" />
+        <rect x="240" y="276" width="160" height="64" rx="6" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1" stroke-opacity="0.25" />
+        <rect x="420" y="276" width="120" height="64" rx="6" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1" stroke-opacity="0.25" />
+        <rect x="72" y="290" width="80" height="6" rx="2" fill="currentColor" fill-opacity="0.45" />
+        <rect x="72" y="304" width="120" height="5" rx="2" fill="currentColor" fill-opacity="0.3" />
+        <rect x="72" y="316" width="100" height="5" rx="2" fill="currentColor" fill-opacity="0.3" />
+        <rect x="252" y="290" width="80" height="6" rx="2" fill="currentColor" fill-opacity="0.45" />
+        <rect x="252" y="304" width="120" height="5" rx="2" fill="currentColor" fill-opacity="0.3" />
+        <rect x="252" y="316" width="100" height="5" rx="2" fill="currentColor" fill-opacity="0.3" />
+        <rect x="432" y="290" width="80" height="6" rx="2" fill="currentColor" fill-opacity="0.45" />
+        <rect x="432" y="304" width="90" height="5" rx="2" fill="currentColor" fill-opacity="0.3" />
+        <rect x="432" y="316" width="80" height="5" rx="2" fill="currentColor" fill-opacity="0.3" />
+        <rect x="320" y="110" width="220" height="140" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-width="1" stroke-opacity="0.28" />
+        <path d="M345 220 L375 195 L405 215 L445 175 L515 235 L515 245 L345 245 Z" fill="currentColor" fill-opacity="0.22" />
+        <circle cx="495" cy="135" r="10" fill="currentColor" fill-opacity="0.35" />
+      </svg>
+    )}
+    <div class={`work-gradient ${gradientPreset}`}></div>
+    {comingSoon && <span class="work-coming-soon" aria-label="Case study coming soon">Coming soon</span>}
+  </div>
+  <div class="work-body">
+    <h3>{shortTitle ?? title}</h3>
+    <p>{cardSummary}</p>
+    {tags.length > 0 && (
+      <div class="work-tags">
+        {tags.map(t => <span class="work-tag">{t}</span>)}
+      </div>
+    )}
+  </div>
+</a>

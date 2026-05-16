@@ -1,0 +1,45 @@
+---
+/**
+ * PostCard — cover, category badge, title, excerpt, date, reading time, tag chips.
+ * Wraps the whole card in <a href="/post/<slug>/">.
+ * Used by ArchiveList, RelatedPosts, and homepage LatestPosts (Pass 4).
+ *
+ * data-* attrs (data-date, data-category, data-tags) support Pass 3's
+ * in-page sort/date filtering on archive routes.
+ */
+import type { Post } from '../lib/posts';
+import { computeReadingTime } from '../lib/posts';
+interface Props { post: Post; categoryName?: string; }
+const { post, categoryName } = Astro.props;
+const d = post.data;
+const dateStr = d.date.toISOString().slice(0, 10);
+const dateDisplay = d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+const readingMinutes = computeReadingTime(post.body ?? '');
+---
+<article
+  class="post-card"
+  data-date={dateStr}
+  data-category={d.category}
+  data-tags={d.tags.join(',')}
+>
+  <a href={`/post/${d.slug}/`} class="post-card__link">
+    <div class="post-card__cover">
+      <img src={d.cover.src} alt={d.cover.alt} loading="lazy" decoding="async" />
+    </div>
+    <div class="post-card__body">
+      <span class="post-card__category" data-category={d.category}>{categoryName ?? d.category}</span>
+      <h3 class="post-card__title">{d.title}</h3>
+      <p class="post-card__excerpt">{d.excerpt}</p>
+      <div class="post-card__meta">
+        <time class="post-card__date" datetime={d.date.toISOString()}>{dateDisplay}</time>
+        <span class="post-card__sep" aria-hidden="true">·</span>
+        <span class="post-card__reading">{readingMinutes}</span>
+      </div>
+      {d.tags.length > 0 && (
+        <ul class="post-card__tags">
+          {d.tags.slice(0, 4).map((t) => <li class="post-card__tag">#{t}</li>)}
+        </ul>
+      )}
+    </div>
+  </a>
+</article>

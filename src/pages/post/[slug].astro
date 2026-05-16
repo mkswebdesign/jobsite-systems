@@ -1,0 +1,95 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '../../builder/layouts/Base.astro';
+import PostArticle from '../../builder/components/PostArticle.astro';
+import { brand } from '../../builder/lib/brand';
+import {
+  getAllVisiblePosts,
+  getAllCategories,
+  getAuthorById,
+  getRelatedPosts,
+  getPrevNextPost,
+} from '../../builder/lib/posts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getAllVisiblePosts();
+  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+};
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+const cats = await getAllCategories();
+const category = cats.find((c) => c.data.id === post.data.category) ?? null;
+const categoryName = category?.data.name;
+
+const author = await getAuthorById(post.data.author);
+const authorName = author?.data.name;
+
+const related = await getRelatedPosts(post, 3);
+const { prev, next } = await getPrevNextPost(post);
+
+const url = brand.url + Astro.url.pathname;
+const seoTitle = post.data.seo?.title || `${post.data.title} — ${brand.name}`;
+const seoDescription = post.data.seo?.description || post.data.excerpt;
+const noindex = post.data.seo?.noindex === true;
+
+const coverAbs = post.data.cover.src.startsWith('http')
+  ? post.data.cover.src
+  : brand.url.replace(/\/$/, '') + post.data.cover.src;
+
+const publisherLogo = brand.assets?.ogImage
+  ? (String(brand.assets.ogImage).startsWith('http') ? brand.assets.ogImage : brand.url.replace(/\/$/, '') + brand.assets.ogImage)
+  : null;
+
+/* Article JSON-LD — emitted inline in <main> body. JSON-LD blocks are valid
+ * anywhere in the document per the schema.org and Google docs; no head-slot
+ * needed in Base.astro. Base already emits og:type/og:title/og:description/
+ * og:url/og:image and twitter card meta from the props below. */
+const articleSchema: any = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: post.data.excerpt,
+  image: coverAbs,
+  datePublished: post.data.date.toISOString(),
+  dateModified: (post.data.updated ?? post.data.date).toISOString(),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  author: authorName
+    ? { '@type': 'Person', name: authorName }
+    : { '@type': 'Organization', name: brand.name },
+  publisher: {
+    '@type': 'Organization',
+    name: brand.name,
+    ...(publisherLogo ? { logo: { '@type': 'ImageObject', url: publisherLogo } } : {}),
+  },
+};
+---
+<Base
+  title={seoTitle}
+  description={seoDescription}
+  canonical={url}
+  ogType="article"
+  ogImage={coverAbs}
+  indexable={!noindex}
+  skipTarget="#main"
+>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/rss+xml" title={brand.name} href="/rss.xml" />
+  </Fragment>
+  <main id="main" class="post-single-route">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(articleSchema)} />
+    <PostArticle
+      post={post}
+      Content={Content}
+      headings={headings}
+      related={related}
+      prev={prev}
+      next={next}
+      author={author}
+      authorName={authorName}
+      categoryName={categoryName}
+    />
+  </main>
+</Base>

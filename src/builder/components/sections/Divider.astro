@@ -1,0 +1,102 @@
+---
+// Divider — decorative bordered line staged via the gomks builder's
+// divider-gap button. A single horizontal rule with one of four
+// color choices (dark / light / primary / secondary). All four
+// colors resolve through CSS custom properties so the line stays
+// visible across the brand's three theme modes (vibrant / dark /
+// light) without per-mode overrides.
+//
+// Color mapping (vibrant mode):
+//   - dark      → #1a1a1a   (literal dark bar — what the chip label promises)
+//   - light     → #ffffff   (literal white bar)
+//   - primary   → var(--accent)                  (brand primary)
+//   - secondary → var(--accent-secondary) / --text-secondary fallback
+// Earlier impl used var(--text-primary) for "dark", which on a vibrant
+// page with off-white text-primary rendered "dark" as a WHITE bar — the
+// chip label and the rendered bar disagreed. Literal hexes match the
+// dark/light theme overrides below, so the bar stays consistent across
+// modes for the dark/light choices.
+//
+// The wrapper carries data-section-type / -label / -variants because
+// every component under sections/ must declare them for the editor's
+// CHIP-LBL and variant picker. The divider's "color" is a JSON prop,
+// not a CSS variant, so the variant list is a single placeholder.
+
+const ALLOWED = ['dark', 'light', 'primary', 'secondary'];
+const raw = (Astro.props as any).color;
+const safeColor = ALLOWED.indexOf(raw) >= 0 ? raw : 'primary';
+---
+
+<section
+  class="divider-section"
+  data-section-type="divider"
+  data-section-label="Divider"
+  data-section-variants="A:Default"
+>
+  <hr class="bordered-divider" data-color={safeColor} aria-hidden="true" />
+</section>
+
+<style is:global>
+  /* Global so the html[data-theme="…"] ancestor selectors below
+     reach the bar regardless of Astro's component scoping. The
+     selectors here only target .divider-section / .bordered-divider,
+     which only this component emits. */
+
+  .divider-section {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Solid bar — 10px tall, full-width. */
+  .bordered-divider {
+    display: block;
+    border: 0;
+    margin: 0;
+    width: 100%;
+    height: 10px;
+    background: var(--text-primary);
+  }
+
+  /* THEME RULE — Vibrant mode is the ONLY mode that honors the user's
+     color choice. Dark mode collapses every divider to a uniform dark
+     bar; Light mode collapses every divider to a uniform white bar.
+     Picking primary/secondary/dark/light only matters when the visitor
+     is reading the page in vibrant mode.
+
+     Specificity: html[data-theme="X"] .bordered-divider = (0,2,1) wins
+     over .bordered-divider[data-color="Y"] = (0,2,0) without needing
+     !important, so the theme override is naturally authoritative.
+
+       color       | vibrant       | dark mode | light mode
+       ------------|---------------|-----------|------------
+       dark        | text-primary  | #1a1a1a   | #ffffff
+       light       | #ffffff       | #1a1a1a   | #ffffff
+       primary     | --accent      | #1a1a1a   | #ffffff
+       secondary   | --accent-2    | #1a1a1a   | #ffffff
+  */
+
+  /* VIBRANT (no data-theme attr) — honor user's color choice. */
+  .bordered-divider[data-color="dark"] {
+    background: #1a1a1a;
+  }
+  .bordered-divider[data-color="light"] {
+    background: #ffffff;
+  }
+  .bordered-divider[data-color="primary"] {
+    background: var(--accent);
+  }
+  .bordered-divider[data-color="secondary"] {
+    background: var(--accent-secondary, var(--text-secondary, var(--accent)));
+  }
+
+  /* DARK MODE — every divider is dark, regardless of color choice. */
+  html[data-theme="dark"] .bordered-divider {
+    background: #1a1a1a;
+  }
+
+  /* LIGHT MODE — every divider is white, regardless of color choice. */
+  html[data-theme="light"] .bordered-divider {
+    background: #ffffff;
+  }
+</style>

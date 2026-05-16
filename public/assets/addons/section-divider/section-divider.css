@@ -1,0 +1,47 @@
+/*
+ * Section Divider — drop-in SVG transitions between sections.
+ *
+ * Hydrates [data-aed-divider] elements with a chosen SVG shape that
+ * fills the element width. Works as a standalone block between
+ * sections, or absolutely-positioned inside a section.
+ *
+ * See /section-divider/README.md.
+ */
+
+[data-aed-divider] {
+  display: block;
+  width: 100%;
+  line-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --aed-divider-fill: var(--bg-primary, #0a0a0b);
+}
+
+[data-aed-divider] svg {
+  display: block;
+  width: 100%;
+  height: var(--aed-divider-h, 60px);
+  fill: var(--aed-divider-fill);
+}
+
+/* Flip horizontally / vertically via attributes (so an "up" wave can
+   become a "down" wave without authoring a new shape) */
+[data-aed-divider][data-aed-flip-x="true"] svg { transform: scaleX(-1); }
+[data-aed-divider][data-aed-flip-y="true"] svg { transform: scaleY(-1); }
+[data-aed-divider][data-aed-flip-x="true"][data-aed-flip-y="true"] svg { transform: scale(-1, -1); }
+
+/* When inside a section, anchor to top or bottom */
+[data-aed-divider][data-aed-position="top"] {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 2;
+}
+[data-aed-divider][data-aed-position="bottom"] {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+}
+
+@media print {
+  [data-aed-divider] { display: none; }
+}

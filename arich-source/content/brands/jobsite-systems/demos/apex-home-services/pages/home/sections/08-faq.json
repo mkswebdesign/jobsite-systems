@@ -1,0 +1,27 @@
+{
+  "type": "faq",
+  "sectionLabel": "Common questions",
+  "heading": "Things people ask before getting a quote.",
+  "faqs": [
+    {
+      "question": "What's your service area?",
+      "answer": "Kansas City metro on the KS side and selected MO suburbs — KC, Overland Park, Lenexa, Shawnee, Leawood, and Olathe day-to-day. We'll travel further for remodel projects but small handyman jobs stay inside the core radius. If you're outside it, call us — we'll be honest about whether it makes sense."
+    },
+    {
+      "question": "What's your handyman rate?",
+      "answer": "$95/hr with a one-hour minimum, or $85/hr in 4-hour blocks for bigger punch-list days. The hour starts when the crew arrives and ends when the truck pulls away. Materials are at cost plus a small handling markup, listed on your written quote before any work starts."
+    },
+    {
+      "question": "Are you licensed and insured?",
+      "answer": "Yes. KS contractor license on file, KS electrical contractor license #E-19842, $2M general liability, $1M workers' comp, and bonded for project work. We email proof to HOAs and property managers all the time — just ask."
+    },
+    {
+      "question": "Do you do plumbing or HVAC?",
+      "answer": "Not the major stuff. Re-pipes, water heaters, sewer line, furnace, AC, and ductwork are not in our scope. We have two trusted partners we refer to for those and we'll make the introduction. We do handle small fixture-level plumbing work on remodels (faucet swaps, garbage disposals, etc.)."
+    },
+    {
+      "question": "How fast can you get out for a quote?",
+      "answer": "Phone-quotes for small jobs same business day if we have photos. Free in-home estimates for remodels typically scheduled within a week. Most handyman work books 1–2 weeks out; remodel projects 4–8 weeks out depending on scope and season."
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "slug": "photo-galleries",
+  "order": 4,
+  "number": "04",
+  "iconKey": "image",
+  "inclusionLabel": "Included with every site",
+  "heroImage": "https://images.pexels.com/photos/5463581/pexels-photo-5463581.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "heroImageAlt": "Finished kitchen remodel in natural light — the kind of work a gallery is built to frame",
+  "title": "Before-and-After & Jobsite Gallery",
+  "headline": "Let the Work\nDo the Talking.",
+  "shortDescription": "A clean before-and-after and jobsite gallery organized by trade — kitchens, bathrooms, HVAC installs, plumbing repairs, branded trucks, crew at work. Fast-loading, mobile-optimized, and easy to add to.",
+  "lead": "Photos communicate quality, craftsmanship, and professionalism more directly than any paragraph can. We set up a clean before-and-after and jobsite gallery — finished kitchens, bathroom remodels, HVAC installs, panel upgrades, decks, branded trucks, and crew at work — optimized for fast loading on mobile, with category organization and clear captions.",
+  "pricingCallout": "Included with every site — currently free across all tiers",
+  "anchorNav": [
+    { "label": "Overview", "href": "#main" },
+    { "label": "What You Get", "href": "#what-you-get" },
+    { "label": "Photo Tips", "href": "#photo-tips" },
+    { "label": "Pricing", "href": "/pricing/" },
+    { "label": "FAQ", "href": "#faq" }
+  ],
+  "inlineTestimonial": {
+    "id": "maria-s",
+    "placeAfter": 0
+  },
+  "seo": {
+    "title": "Before-and-After & Jobsite Gallery for Trade Businesses",
+    "description": "Organized photo galleries for trade-business websites — fast-loading, mobile-optimized, before-and-after pairs, jobsite shots, branded trucks, and crew at work.",
+    "schemaName": "Before-and-After & Jobsite Gallery",
+    "schemaDescription": "Photo gallery setup for trade-business websites with category organization (before-and-after, jobsite, crew, trucks), optimization, and easy updates."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "id": "what-you-get",
+      "variant": "showcase",
+      "heading": "What You Get",
+      "intro": "A gallery that conveys the quality of your work without slowing down your site.",
+      "items": [
+        { "label": "Organized by category", "body": "Before-and-after pairs, finished work, jobsite progress, crew at work, branded trucks, signage — whatever categories match your trade" },
+        { "label": "Before-and-after pairs", "body": "Side-by-side comparison so visitors can really see the transformation" },
+        { "label": "Mobile-optimized", "body": "Swipeable galleries that feel good on a phone" },
+        { "label": "Smart compression", "body": "Crisp on Retina screens, light enough to load fast on cellular" },
+        { "label": "Easy to add to", "body": "Send us new photos anytime — we add them with proper captions and alt text" }
+      ]
+    },
+    {
+      "type": "feature",
+      "id": "photo-tips",
+      "theme": "white",
+      "heading": "Photo Quality Tips",
+      "body": "We can work with whatever photos you have, but a few notes help:",
+      "items": [
+        "Phone photos are fine — modern phones take great photos",
+        "Natural daylight makes finished work look its best",
+        "Take a 'before' shot every time, even if you're not sure you'll need it",
+        "A wide shot plus a tight detail shot tells the whole story",
+        "Crew shots with branded shirts and clean trucks read as professional"
+      ]
+    },
+    {
+      "type": "list",
+      "heading": "Perfect For",
+      "intro": "Trade work is visual work, and customers are deciding partly on whether the finished product looks like something they'd be proud to point at. The easiest fix most trade businesses can make is just showing the work honestly.",
+      "variant": "grid",
+      "cols": 2,
+      "items": [
+        {
+          "label": "No photos at all",
+          "body": "Your site has stock images of \"hands holding wrenches\" and zero shots of the actual work. Visitors can't tell whether your work is rough patch jobs or finish-grade craftsmanship — and they pick the business that shows.",
+          "iconKey": "image"
+        },
+        {
+          "label": "Stuck with stock",
+          "body": "You used a stock-photo toolbox image in 2020 and it's still there. It signals \"I haven't updated this site in years\" — even if everything else is fresh.",
+          "iconKey": "layers"
+        },
+        {
+          "label": "Beautiful work, hidden",
+          "body": "You spent real time on a kitchen remodel or a clean panel job. The photos are on your phone and nowhere else. A flat before-and-after gallery would do more selling than any paragraph of copy.",
+          "iconKey": "leaf"
+        },
+        {
+          "label": "Branded trucks, crew on the job",
+          "body": "Your trucks are wrapped, your crew wears matching shirts, and customers see the brand on the road. A truck-and-crew section on the site reinforces that recognition the moment a homeowner lands on your homepage.",
+          "iconKey": "monitor"
+        },
+        {
+          "label": "Multi-crew shop with multiple service lines",
+          "body": "You want visitors to see each trade or each crew's work organized cleanly so a homeowner can match a service to a portfolio before they reach out.",
+          "iconKey": "grid"
+        }
+      ]
+    }
+  ],
+  "serviceFaq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions about the Gallery",
+    "faqs": [
+      {
+        "question": "Where do the photos come from?",
+        "answer": "From you. Phone photos are great. Send a Dropbox / Google Drive folder, an AirDrop bundle, or just email them to us and we'll handle the organization."
+      },
+      {
+        "question": "Do I need a professional headshot?",
+        "answer": "Not required, but it helps. A clean phone portrait against a neutral background works fine. If you want a professional one, we can recommend local photographers who do good owner / crew portraits at reasonable rates."
+      },
+      {
+        "question": "Will the gallery slow my site down?",
+        "answer": "No. Every image is compressed and resized at build time, served via a global edge network, and lazy-loaded so off-screen photos don't load until needed. Galleries with 50+ photos still feel fast on mobile."
+      },
+      {
+        "question": "Do you write captions and alt text?",
+        "answer": "Yes. We caption photos by category and write descriptive alt text for accessibility, SEO, and AI engines. You can edit any of it on review."
+      },
+      {
+        "question": "Can I add new photos after launch?",
+        "answer": "Yes. Email new photos anytime — we add them with proper captions and alt text. New-photo turnaround is same-week on Complete and Growth plans."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Ready to show off your work?",
+    "body": "Photo galleries are included in every Complete and Growth plan.",
+    "label": "See Plans",
+    "href": "/pricing/",
+    "actions": [
+      { "label": "Start Your Site", "href": "/contact/", "variant": "primary" },
+      { "label": "See Pricing", "href": "/pricing/", "variant": "secondary" },
+      { "label": "See Examples", "href": "/work/", "variant": "tertiary" }
+    ]
+  }
+}

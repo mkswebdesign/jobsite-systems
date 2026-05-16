@@ -1,0 +1,252 @@
+{
+  "groups": [
+    {
+      "id": "whats-included",
+      "title": "What's Included",
+      "faqs": [
+        {
+          "id": "included-pages",
+          "question": "What pages does a Jobsite Systems site include?",
+          "answer": "Every site includes a home page, about / how we work, services / trades, pricing or estimate-request notes, service area, contact, privacy, and terms. On the Complete and Growth plans, we expand services into individual trade pages and add per-crew bios and customer-review sections. You don't need to decide the structure — we have it mapped out from the start."
+        },
+        {
+          "id": "included-design",
+          "question": "Is the design custom or a template?",
+          "answer": "It's a productized template system that gets branded for your business — your colors, your photos, your voice, your trades. That's how we keep pricing simple and launches fast. If you want fully custom design from scratch, we can talk about a one-time build."
+        },
+        {
+          "id": "included-form",
+          "question": "Do I get an estimate-request form?",
+          "answer": "Yes. Every plan includes a short, mobile-friendly form for estimate requests, service calls, and general questions. Submissions email you directly — no third-party directory or marketplace to log into. The form is intentionally light on fields and clearly labeled so customers send the basics (job address, what's broken, when they need someone) without burying you in unstructured detail. If you want extra fields — service-line dropdowns, urgent-vs-routine toggles, photo upload — we wire those in too."
+        },
+        {
+          "id": "included-seo",
+          "question": "Is SEO included?",
+          "answer": "Search and AI engine optimization basics — location-aware service pages, pages structured for Google to read, a short AI-engine summary file (kept current as you change services), search-engine submission, clean heading hierarchy, and content written to be quotable by AI engines — are included on Complete and Growth plans. The Essential plan includes the technical fundamentals but not the deeper content work."
+        },
+        {
+          "id": "included-photos",
+          "question": "Can you work with the photos I already have?",
+          "answer": "Yes. Phone photos are fine. Send us what you have — before-and-after shots, trucks, crew on a jobsite, finished work, branded shirts — and we'll organize them into a clean gallery. New photos added anytime for free on the Complete and Growth plans."
+        }
+      ]
+    },
+    {
+      "id": "trust-signals",
+      "title": "Trust & Credentials",
+      "faqs": [
+        {
+          "id": "trust-licensing",
+          "question": "Do you handle license and insurance display?",
+          "answer": "Yes. Licensed-and-insured trust signals belong front-and-center on a trade-business site — license numbers, bonded amounts, insurance carrier (just a logo or a 'fully insured' line, not the full policy details), Better Business Bureau rating if you have one, and any trade-specific certifications (NATE, EPA, master plumber, lead-safe, etc.). We have dedicated spots for those across the home page, services, and footer."
+        },
+        {
+          "id": "trust-reviews",
+          "question": "Can you pull in my Google reviews?",
+          "answer": "Yes. We can embed a Google reviews widget that pulls live, or pull a curated set of standout reviews into a dedicated section. Most owners prefer the curated approach — you pick the strongest ones, we lay them out cleanly, and they don't disappear if Google's API has a bad day. We can also pull in BBB, Angi, HomeAdvisor, or Houzz reviews if those are where your reputation lives."
+        },
+        {
+          "id": "trust-service-area",
+          "question": "What about a service-area map?",
+          "answer": "Standard. Every site can include a service-area section — listed towns, ZIP codes you cover, drive-time radius, or an actual map. Helps customers self-qualify before they call, and helps Google understand where you actually work. For multi-crew shops covering multiple regions, we set up separate location pages so each area ranks on its own."
+        }
+      ]
+    },
+    {
+      "id": "timeline-launch",
+      "title": "Timeline & Launch",
+      "faqs": [
+        {
+          "id": "timeline-weeks",
+          "question": "How long until my site is live?",
+          "answer": "About two weeks from content handoff to launch. Most delay comes from waiting on photos and a service list — the build itself is fast because we've done dozens before."
+        },
+        {
+          "id": "timeline-launch-window",
+          "question": "Can I launch before busy season?",
+          "answer": "Yes — that's the common pattern. Many trade businesses onboard a few weeks before spring or fall busy season so the site is live alongside the first wave of estimate requests. Let us know your target date on the intro call."
+        },
+        {
+          "id": "timeline-rush",
+          "question": "Can you rush a site?",
+          "answer": "We can compress the timeline to 7–10 days if you need it. The main constraint is how fast you can send content and approve revisions."
+        }
+      ]
+    },
+    {
+      "id": "maintenance-hosting",
+      "title": "Maintenance & Hosting",
+      "faqs": [
+        {
+          "id": "maintenance-updates",
+          "question": "Do I have to update anything myself?",
+          "answer": "No. There's no admin panel, no plugins, no PHP versions to manage. Content changes go through us — one email and we handle it."
+        },
+        {
+          "id": "maintenance-hosting-included",
+          "question": "Is hosting included?",
+          "answer": "Yes. Managed static hosting, SSL, daily backups, and 24/7 uptime monitoring are included in every monthly plan. You don't pay a separate hosting bill."
+        },
+        {
+          "id": "maintenance-uptime",
+          "question": "What if the site goes down?",
+          "answer": "Our hosting stack has had ~100% uptime across all sites we've launched. If something does go wrong, we know before you do (uptime monitoring) and can restore from backup within minutes."
+        },
+        {
+          "id": "maintenance-plugins",
+          "question": "What happens to the WordPress plugins I had before?",
+          "answer": "Gone — on purpose. Static sites don't need plugins for contact forms, galleries, SEO, or caching. Everything your site needs is baked in at build time, so there's nothing to update, nothing to break, and nothing for hackers to break into."
+        }
+      ]
+    },
+    {
+      "id": "pricing-contract",
+      "title": "Pricing & Contract",
+      "faqs": [
+        {
+          "id": "price-range",
+          "question": "How much does it cost?",
+          "answer": "Multi-page brochure plans are $299/mo (Essential), $399/mo (Complete), and $499/mo (Growth) on yearly billing. Single-page plans are $129/mo (Basic), $169/mo (Standard), and $199/mo (Plus) on yearly billing. Monthly billing is also available — see the pricing page for the full breakdown. Business email is a $10/mo per-mailbox add-on. One-time builds start at $1,990."
+        },
+        {
+          "id": "price-contract",
+          "question": "Is there a long contract?",
+          "answer": "No. Monthly plans are month-to-month — you can cancel with 30 days' notice, no penalty. We'd rather you stay because the site works, not because you're locked in."
+        },
+        {
+          "id": "price-hidden-fees",
+          "question": "Are there setup fees or hidden costs?",
+          "answer": "No setup fees on monthly plans. No domain registration fees (we recommend you keep your domain in your own account). The only extras are if you want significant additions later — new locations, a new trade page, a full project portfolio section, etc. — which are quoted upfront."
+        }
+      ]
+    },
+    {
+      "id": "technical-domain",
+      "title": "Technical & Domain",
+      "faqs": [
+        {
+          "id": "tech-my-domain",
+          "question": "Can I use my existing domain?",
+          "answer": "Yes. We handle the DNS cutover at launch. Your domain stays in your own registrar account — you always own your domain and can move anytime."
+        },
+        {
+          "id": "tech-no-domain",
+          "question": "What if I don't have a domain yet?",
+          "answer": "We'll help you pick and register one in your own account. Registration is usually $12–20/year direct from the registrar — we don't mark it up."
+        },
+        {
+          "id": "tech-existing-site",
+          "question": "What happens to my old site?",
+          "answer": "It stays up until launch day. We build yours on a staging link; when you approve, we point your domain to the new site and the old one can be taken down (or kept running elsewhere if you prefer)."
+        },
+        {
+          "id": "tech-email",
+          "question": "Do you handle business email?",
+          "answer": "Yes. Our Business Email Management add-on runs real email on your own domain (you@yourbusiness.com) for $10/mo per mailbox — setup, DNS (MX/SPF/DKIM/DMARC), spam & spoofing protection, device configuration, and ongoing support included. You can also keep your own provider (Google Workspace, Microsoft 365) — in that case we just handle the DNS records so mail keeps flowing through the cutover."
+        },
+        {
+          "id": "tech-own-content",
+          "question": "Do I own the site?",
+          "answer": "Content is yours — text, photos, logo. The domain is yours too: you keep it in your own registrar account, in your name, and we only manage the DNS records pointing to the site. The template system and build infrastructure stay ours (that's how we keep pricing simple). If you leave, you keep your content and domain; the template goes with us."
+        },
+        {
+          "id": "tech-stop-paying",
+          "question": "What if I stop paying — does my site go down immediately?",
+          "answer": "No — there's no kill-switch. Your account moves to a 30-day grace window so we can email back, sort out the billing, or wind the site down cleanly. After 30 days the site comes off our infrastructure, but your domain (which is in your own registrar account) stays yours, and we can hand you a static export of the site so you can self-host or move providers."
+        },
+        {
+          "id": "tech-export-content",
+          "question": "Can I export my content if I leave?",
+          "answer": "Yes. On request, we hand off a static export of the live site as files (HTML, CSS, JS, images) plus the source content (the JSON files that drive each page). You can host it elsewhere as-is. The Jobsite Systems template system stays with us, but everything you brought — copy, photos, structure — is yours to keep."
+        }
+      ]
+    },
+    {
+      "id": "homepage-faqs",
+      "title": "Homepage FAQs (subset surfaced on /)",
+      "faqs": [
+        {
+          "id": "homepage-launch-time",
+          "question": "How long until my site is live?",
+          "answer": "About two weeks from content handoff to launch day. We've streamlined every step so nothing waits."
+        },
+        {
+          "id": "homepage-whats-included",
+          "question": "What's included in a site?",
+          "answer": "Design, build, managed hosting, SSL, backups, uptime monitoring, local SEO basics, an estimate-request form, and ongoing small content changes — all in one monthly price."
+        },
+        {
+          "id": "homepage-maintenance",
+          "question": "Do I have to maintain anything?",
+          "answer": "No. There's no admin panel, no plugins to update, no hosting control panel to log into. Updates go through us — one email, handled."
+        },
+        {
+          "id": "homepage-own-domain",
+          "question": "Can I use my own domain?",
+          "answer": "Yes. You keep your domain in your own registrar account — we just handle the DNS setup at launch."
+        },
+        {
+          "id": "homepage-existing-site",
+          "question": "I already have a site — can you take it over?",
+          "answer": "Often, yes. We regularly replace neglected WordPress sites, dated DIY builders, and abandoned projects. We'll audit what you have first and tell you honestly whether rebuilding is faster than fixing."
+        },
+        {
+          "id": "homepage-cancellation",
+          "question": "What if I want to cancel?",
+          "answer": "Month-to-month plans — cancel any time with 30 days' notice. Your domain is yours, your content is yours."
+        },
+        {
+          "id": "homepage-content-changes",
+          "question": "How do content changes work?",
+          "answer": "Email us what you want changed. Small changes (new crew member, updated service-area, new before-and-after photos) are handled same week on Complete and Growth plans."
+        },
+        {
+          "id": "homepage-pricing-details",
+          "question": "How much does it cost?",
+          "answer": "Two site styles. Multi-page brochure starts at $299/mo (Essential), with $399/mo Complete and $499/mo Growth on yearly billing. Single-page starts at $129/mo (Basic), with $169/mo Standard and $199/mo Plus on yearly billing. Business email on your domain is available as a $10/mo per-mailbox add-on. See the pricing page for the full breakdown."
+        }
+      ]
+    },
+    {
+      "id": "pricing-faqs",
+      "title": "Pricing FAQs (surfaced on /pricing/)",
+      "faqs": [
+        {
+          "id": "pricing-contract-length",
+          "question": "Is there a long contract?",
+          "answer": "No. Monthly plans are month-to-month with 30 days' notice to cancel. No annual lock-in, no cancellation fees."
+        },
+        {
+          "id": "pricing-whats-included",
+          "question": "What's included at each tier?",
+          "answer": "Essential: multi-page site, form, hosting, SSL, backups. Complete: adds before-and-after / jobsite gallery, SEO & AI engine optimization, customer reviews, licensed-and-insured trust signals page, and a service-area callout. Growth: everything in Complete plus per-crew bio pages for multi-crew shops, a project portfolio / blog section, and content migration from your old site."
+        },
+        {
+          "id": "pricing-switch-plans",
+          "question": "Can I change plans later?",
+          "answer": "Yes. Upgrade or downgrade any time — pro-rated from your next billing date. Most businesses start with Complete and only move to Growth when they expand to multiple crews or add a project portfolio section."
+        },
+        {
+          "id": "pricing-business-email",
+          "question": "Is business email included?",
+          "answer": "Email is an optional add-on, not part of the site plans. Business Email Management runs real email on your own domain (you@yourbusiness.com) for <strong>$10/mo per mailbox</strong>. Setup, DNS (MX/SPF/DKIM/DMARC), spam &amp; spoofing protection, device configuration, and ongoing support are included. Available with any plan or on its own. <a href=\"/services/email-management/\">See details →</a>"
+        },
+        {
+          "id": "pricing-one-time-vs-monthly",
+          "question": "One-time build or monthly plan — which makes sense?",
+          "answer": "Monthly is the better default. It includes hosting, security, backups, and content updates, which you'd otherwise stitch together yourself. One-time builds make sense if you already have hosting, have an in-house IT person, or specifically want to own the files outright."
+        },
+        {
+          "id": "pricing-refunds",
+          "question": "Do you offer refunds?",
+          "answer": "Month-to-month — cancel any time with 30 days' notice. No long-term contract, no early-termination fee. On the build phase: if we don't launch a site you're happy with, we'll refund any monthly payments made during the build. Once a site is live and serving your business, the no-refund rule kicks in — but the cancellation door is always open."
+        },
+        {
+          "id": "pricing-uptime-cover",
+          "question": "What does the uptime guarantee actually cover?",
+          "answer": "The 99.99% number is what we typically see in practice from our hosting stack — not a contractual SLA with credit-back terms. We monitor uptime 24/7, take it seriously, and fix outages as fast as the host's incident response allows. If a host-side outage takes the site down for an extended period, reach out — we'll work with you on the right thing case by case rather than pointing at fine print."
+        }
+      ]
+    }
+  ]
+}

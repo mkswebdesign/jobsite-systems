@@ -1,0 +1,34 @@
+{
+  "slug": "work",
+  "path": "/work/",
+  "breadcrumbLabel": "Recent Jobs",
+  "seo": {
+    "title": "Recent Jobs — Cedar Mill Plumbing",
+    "description": "A look at recent plumbing jobs across Cedar Mill, Bethany, Beaverton, and NW Portland — repipes, water heater installs, hydro jetting, and leak repairs.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/work/"
+  },
+  "header": {
+    "heading": "Recent Jobs",
+    "lead": "A few recent jobs across the Westside — open subfloor with new PEX, copper-to-PEX repipes, tankless conversions, and the occasional sewer scope that turned into a real fix."
+  },
+  "grid": {
+    "workSlugs": []
+  },
+  "emptyState": {
+    "heading": "Job photos coming soon",
+    "body": "I'm slowly publishing photo write-ups of finished jobs — what the situation was, what I found, what got installed, and what it cost. Check back over the next few months, or call if you want to see a similar job to yours.",
+    "ctaLabel": "Request a Service Call",
+    "ctaHref": "/demo/cedar-mill-plumbing/contact/"
+  },
+  "cta": {
+    "heading": "Looking for a similar job to yours?",
+    "body": "If you've got a project in mind and want to see how a comparable one went — what got installed, how long it took, what it cost — call or send a quick form. I keep photos on every job and I'm happy to walk through one.",
+    "label": "Email a Question",
+    "href": "mailto:hello@cedarmillplumbing.example"
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

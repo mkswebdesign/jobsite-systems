@@ -1,0 +1,39 @@
+{
+  "name": "social-proof",
+  "assets": {
+    "css": ["social-proof.css"],
+    "js":  ["social-proof.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:social-proof",
+        "description": "Optional. URL to a JSON feed (same shape as the inline `aed-social-proof-feed` block). Use this when the feed is dynamic / fetched from a backend."
+      }
+    ],
+    "json": [
+      {
+        "id": "aed-social-proof-feed",
+        "description": "Array of toast messages cycled in the corner of the page. Use this OR the meta-fetched URL.",
+        "required": true,
+        "fields": {
+          "text": { "type": "string", "required": true, "description": "Body. Supports **bold** via Markdown-style emphasis. Required per entry." },
+          "icon": { "type": "string", "enum": ["calendar", "check", "star", "users", "sparkle", "bolt", "bell", "message", "plus"], "description": "Leading icon." },
+          "href": { "type": "string", "description": "Optional click-through URL." }
+        }
+      },
+      {
+        "id": "aed-social-proof-config",
+        "description": "Cycle behavior. All fields optional.",
+        "fields": {
+          "dwellMs":     { "type": "number",   "default": 5000,       "description": "Milliseconds before the first toast appears." },
+          "displayMs":   { "type": "number",   "default": 6000,       "description": "Milliseconds each toast remains on screen." },
+          "intervalMs":  { "type": "number",   "default": 4000,       "description": "Milliseconds between consecutive toasts." },
+          "maxCycles":   { "type": "number",                           "description": "Stop after this many cycles through the feed. Omit for infinite." },
+          "shuffle":     { "type": "boolean",  "default": false,      "description": "Shuffle the feed each cycle." },
+          "hideOnPaths": { "type": "string[]", "default": [],         "description": "Paths to suppress the toasts on." }
+        }
+      }
+    ]
+  }
+}

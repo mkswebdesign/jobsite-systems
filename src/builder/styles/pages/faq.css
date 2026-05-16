@@ -1,0 +1,24 @@
+/* ============================================
+   FAQ page
+   ============================================ */
+
+.faq-section { padding: 4rem 0 }
+.faq-section > .container { display: flex; flex-direction: column; align-items: center }
+.faq-section .faq-list { margin-top: 0 }
+.faq-section .faq-group { display: flex; flex-direction: column; gap: 0.65rem }
+.faq-group + .faq-group { margin-top: 2.75rem }
+.faq-group-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); padding: 0.5rem 0 1rem; border-bottom: 1px solid var(--border); margin-bottom: 0.75rem; display: inline-flex; align-items: center; gap: 0.5rem }
+.faq-group-title::before { content: ''; width: 20px; height: 2px; background: var(--accent); border-radius: 2px }
+
+/* Variant G featured cards: a touch more breathing room between cards on /faq/ */
+[data-faq-variant="G"] .faq-section .faq-group { gap: 0.85rem }
+[data-faq-variant="G"] .faq-section .faq-group-title { border-bottom: none; padding-bottom: 0.35rem; margin-bottom: 0.35rem }
+
+/* Tighter packing for variant F (list) — still needs a hairline gap */
+[data-faq-variant="F"] .faq-section .faq-group { gap: 0.25rem }
+
+@media (max-width: 640px) {
+  .faq-section { padding: 3rem 0 }
+  .faq-group + .faq-group { margin-top: 2rem }
+  .faq-section .faq-group { gap: 0.55rem }
+}

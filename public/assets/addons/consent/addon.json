@@ -1,0 +1,30 @@
+{
+  "name": "consent",
+  "assets": {
+    "css": ["consent.css"],
+    "js":  ["consent.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-consent-config",
+        "description": "Override the default banner / modal copy and category metadata. All fields optional — defaults work out of the box for a generic site.",
+        "fields": {
+          "copy.bannerTitle":   { "type": "string", "default": "Your privacy",                                          "description": "Title rendered in the cookie banner." },
+          "copy.bannerBody":    { "type": "string", "default": "We use cookies for essential site functions...",        "description": "Body copy in the cookie banner. Plain text; the privacy link is appended automatically." },
+          "copy.privacyLink":   { "type": "string", "default": "/privacy/",                                             "description": "URL to the privacy policy. Set to empty string to suppress the link." },
+          "copy.privacyLabel":  { "type": "string", "default": "Privacy policy",                                        "description": "Anchor text for the privacy link." },
+          "copy.acceptAll":     { "type": "string", "default": "Accept all",                                            "description": "Primary banner button label." },
+          "copy.rejectAll":     { "type": "string", "default": "Reject all",                                            "description": "Reject button label." },
+          "copy.customize":     { "type": "string", "default": "Customize",                                             "description": "Customize button label (opens preferences modal)." },
+          "copy.modalTitle":    { "type": "string", "default": "Cookie preferences",                                    "description": "Heading inside the preferences modal." },
+          "copy.modalIntro":    { "type": "string", "default": "Choose which categories you allow...",                  "description": "Intro paragraph inside the preferences modal." },
+          "copy.save":          { "type": "string", "default": "Save preferences",                                      "description": "Modal save-button label." },
+          "copy.cancel":        { "type": "string", "default": "Cancel",                                                "description": "Modal cancel-button label." },
+          "copy.close":         { "type": "string", "default": "Close",                                                 "description": "Modal close-button ARIA label." },
+          "categories":         { "type": "object[]",                                                                   "description": "Override category metadata. Each entry: { id, name?, desc? }. Only existing ids ('necessary', 'analytics', 'marketing') are mergeable." }
+        }
+      }
+    ]
+  }
+}

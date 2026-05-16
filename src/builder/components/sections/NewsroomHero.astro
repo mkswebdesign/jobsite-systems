@@ -1,0 +1,260 @@
+---
+/**
+ * NewsroomHero — content-forward homepage hero for blog brands.
+ *
+ * Surfaces real post data above the fold:
+ *   1. Status bar — pulsing LIVE dot, build-time date, scrolling
+ *      headline ticker (all latest posts, real /post/{slug}/ links),
+ *      right-aligned story count.
+ *   2. Title row + beat-nav pills (sourced from categories.json).
+ *   3. Featured top story (posts[0]) + secondary stack
+ *      (posts[1], posts[2], newsletter tile).
+ *
+ * Empty-state behavior:
+ *   - 0 posts → status bar shows "0 latest stories"; body renders only
+ *     the title row + beat nav (skips featured + secondary).
+ *   - 1 post  → featured renders; secondary stack renders only the
+ *     newsletter tile.
+ *   - 2 posts → featured + 1 secondary card + newsletter tile.
+ */
+import { getAllPosts, getAllCategories, computeReadingTime } from '../../lib/posts';
+
+interface Props {
+  id?: string;
+  headline: string;
+  headlineAccent?: string;
+  lead: string;
+  liveLabel?: string;
+  tickerLimit?: number;
+  newsletter?: {
+    heading?: string;
+    body?: string;
+    cta: { label: string; href: string };
+  };
+  variant?: string;
+}
+
+const {
+  id = 'hero',
+  headline,
+  headlineAccent,
+  lead,
+  liveLabel = 'LIVE NEWSROOM',
+  tickerLimit = 12,
+  newsletter,
+  variant,
+} = Astro.props;
+
+const variantKey = typeof variant === 'string' && /^[a-zA-Z]$/.test(variant) ? variant : null;
+
+const posts = await getAllPosts();
+const cats = await getAllCategories();
+const catMap = new Map(cats.map((c) => [c.data.id, c.data]));
+
+const featured = posts[0] ?? null;
+const secondary = posts.slice(1, 3);
+const tickerPosts = posts.slice(0, Math.max(3, tickerLimit));
+
+// Build-time date in en-US long form, e.g. "Friday, May 8, 2026".
+const today = new Date();
+const todayLong = today.toLocaleDateString('en-US', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const todayIso = today.toISOString().slice(0, 10);
+
+// Count posts whose date is on or after start-of-today (build host TZ).
+const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+const newToday = posts.filter((p) => +p.data.date >= startOfToday).length;
+const countNumber = newToday > 0 ? newToday : posts.length;
+const countLabel = newToday > 0 ? 'new stories today' : 'latest stories';
+
+// Short date for ticker + cards (matches LatestPosts/PostCard convention).
+const fmtShort = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const slug = (p: typeof posts[number]) => `/post/${p.data.slug}/`;
+const catOf = (p: typeof posts[number]) => catMap.get(p.data.category);
+---
+
+<header
+  class="newsroom-hero"
+  id={id}
+  data-section-type="newsroom-hero"
+  data-section-label="Newsroom hero"
+  data-section-variants="A:Default"
+  data-aed-cursor-spotlight
+  style="--aed-cs-size:520px;--aed-cs-opacity:0.10"
+  {...(variantKey ? { 'data-newsroom-hero-variant': variantKey } : {})}
+>
+  <div class="newsroom-hero__atmos" aria-hidden="true"></div>
+
+  <div class="container newsroom-hero__inner">
+    {/* ---------- 1. Status bar ---------- */}
+    <div
+      class="newsroom-status newsroom-reveal-1"
+      role="status"
+      aria-label="Newsroom status"
+    >
+      <span class="newsroom-status__live">
+        <span class="newsroom-status__dot" aria-hidden="true"></span>
+        <span class="newsroom-status__live-label">{liveLabel}</span>
+      </span>
+      <time class="newsroom-status__date" datetime={todayIso}>{todayLong}</time>
+      <div
+        class="newsroom-status__ticker"
+        aria-label="Latest headlines ticker"
+      >
+        {tickerPosts.length > 0 && (
+          <div class="newsroom-status__ticker-track">
+            {[0, 1].map((dup) => (
+              <ul
+                class="newsroom-status__ticker-list"
+                aria-hidden={dup === 1 ? 'true' : undefined}
+              >
+                {tickerPosts.map((p) => {
+                  const c = catOf(p);
+                  return (
+                    <li class="newsroom-status__ticker-item">
+                      <a href={slug(p)} class="newsroom-status__ticker-link">
+                        <span
+                          class="newsroom-status__ticker-cat"
+                          style={c?.color ? `--cat-color:${c.color}` : undefined}
+                        >
+                          <span class="newsroom-status__ticker-cat-dot" aria-hidden="true"></span>
+                          {c?.name ?? p.data.category}
+                        </span>
+                        <span class="newsroom-status__ticker-headline">{p.data.title}</span>
+                        <span class="newsroom-status__ticker-date">{fmtShort(p.data.date)}</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            ))}
+          </div>
+        )}
+      </div>
+      <div class="newsroom-status__count">
+        <strong>{countNumber}</strong> {countLabel}
+      </div>
+    </div>
+
+    {/* ---------- 2. Title row + beat nav ---------- */}
+    <div class="newsroom-head newsroom-reveal-2">
+      <div class="newsroom-head__copy">
+        <h1 class="newsroom-hero__h1">
+          {headline}
+          {headlineAccent && (
+            <>
+              {' '}<span class="newsroom-hero__accent">{headlineAccent}</span>
+            </>
+          )}
+        </h1>
+        <p class="newsroom-hero__lead">{lead}</p>
+      </div>
+      {cats.length > 0 && (
+        <nav class="newsroom-beats newsroom-reveal-3" aria-label="Browse beats">
+          <ul class="newsroom-beats__list">
+            {cats.map((c) => (
+              <li>
+                <a
+                  class="newsroom-beats__pill"
+                  href={`/category/${c.data.slug}/`}
+                  style={c.data.color ? `--cat-color:${c.data.color}` : undefined}
+                >
+                  <span class="newsroom-beats__dot" aria-hidden="true"></span>
+                  {c.data.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
+
+    {/* ---------- 3. Featured + secondary ---------- */}
+    {featured && (
+      <div class="newsroom-grid">
+        <a
+          class="newsroom-featured newsroom-reveal-4"
+          href={slug(featured)}
+          aria-label={`Featured story: ${featured.data.title}`}
+        >
+          <span
+            class="newsroom-featured__bg"
+            aria-hidden="true"
+            style={`background-image:url('${featured.data.cover.src}')`}
+          ></span>
+          <span class="newsroom-featured__scrim" aria-hidden="true"></span>
+          <div class="newsroom-featured__body">
+            <span
+              class="newsroom-featured__chip"
+              style={catOf(featured)?.color ? `--cat-color:${catOf(featured)!.color}` : undefined}
+            >
+              <span class="newsroom-featured__chip-dot" aria-hidden="true"></span>
+              TOP STORY · {(catOf(featured)?.name ?? featured.data.category).toUpperCase()}
+            </span>
+            <h2 class="newsroom-featured__title">{featured.data.title}</h2>
+            <p class="newsroom-featured__excerpt">{featured.data.excerpt}</p>
+            <div class="newsroom-featured__meta">
+              <time datetime={featured.data.date.toISOString()}>{fmtShort(featured.data.date)}</time>
+              <span class="newsroom-featured__sep" aria-hidden="true">·</span>
+              <span>{computeReadingTime(featured.body ?? '')}</span>
+              <span class="newsroom-featured__cta">
+                Read story <span class="newsroom-featured__arrow" aria-hidden="true">→</span>
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <div class="newsroom-side">
+          {secondary.map((p, i) => {
+            const c = catOf(p);
+            return (
+              <a
+                class={`newsroom-side__card newsroom-reveal-${5 + i}`}
+                href={slug(p)}
+              >
+                <span
+                  class="newsroom-side__cover"
+                  aria-hidden="true"
+                  style={`background-image:url('${p.data.cover.src}')`}
+                ></span>
+                <div class="newsroom-side__body">
+                  <span
+                    class="newsroom-side__cat"
+                    style={c?.color ? `--cat-color:${c.color}` : undefined}
+                  >
+                    {c?.name ?? p.data.category}
+                  </span>
+                  <h3 class="newsroom-side__title">{p.data.title}</h3>
+                  <div class="newsroom-side__meta">
+                    <time datetime={p.data.date.toISOString()}>{fmtShort(p.data.date)}</time>
+                    <span aria-hidden="true">·</span>
+                    <span>{computeReadingTime(p.body ?? '')}</span>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+          {newsletter?.cta && (
+            <aside class={`newsroom-newsletter newsroom-reveal-${5 + secondary.length}`}>
+              <h3 class="newsroom-newsletter__heading">
+                {newsletter.heading ?? 'The Daily Digest'}
+              </h3>
+              <p class="newsroom-newsletter__body">
+                {newsletter.body ?? 'Top stories in your inbox each morning.'}
+              </p>
+              <a class="newsroom-newsletter__cta" href={newsletter.cta.href}>
+                {newsletter.cta.label} <span aria-hidden="true">→</span>
+              </a>
+            </aside>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</header>

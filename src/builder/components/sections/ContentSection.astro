@@ -1,0 +1,217 @@
+---
+/**
+ * ContentSection
+ *
+ * Text-only editorial content block — no images, no decorative chrome.
+ * For prose, case studies, essays, explainers. Pairs with DesignBreak
+ * the way an article paragraph pairs with a section break: DesignBreak
+ * is the visual breath, ContentSection is the room.
+ *
+ * Brand-styled variants (declared via `data-section-variants`):
+ *   A "Standard"  — single column, left-aligned, accent rule on heading
+ *   B "Centered"  — narrow centered column, larger heading
+ *   C "Editorial" — magazine-style two-column text (heading left, body right)
+ *   D "Spotlight" — vibrant accent-tinted head card with drop cap, animated
+ *                   entry, accent rule, halo drift, dot pulse, and CTA
+ *                   sweep. Theme-aware (vibrant/dark/bright); honors
+ *                   prefers-reduced-motion.
+ *   E "Stage"     — light-mode marketing block: monospace index marker,
+ *                   display headline with a single highlighted word
+ *                   (markdown-style `*word*` in `heading`), a two-column
+ *                   build-comparison panel (their slow path vs. ours, with
+ *                   tabular numerals + chip lists separated by a vertical
+ *                   hairline + VS badge), a single-paragraph italic-tagged
+ *                   statement, and a hairline footer rail with meta and
+ *                   forwarding CTA. Stage-only fields: `indexNum`,
+ *                   `comparison`, `statementTag`, `railMeta`. Stays in
+ *                   light mode regardless of site theme.
+ *
+ * Theme-aware via brand tokens (vibrant / dark / light) and the
+ * per-section override system (data-sec-theme: primary / light / white /
+ * dark / black) — see per-brand CSS for surface treatments.
+ *
+ * Body accepts a single string OR an array of strings — each becomes
+ * its own paragraph so brand authors can write 1-4 paragraph blocks
+ * without HTML.
+ */
+export interface Props {
+  sectionLabel?: string;
+  heading: string;
+  body: string | string[];
+  cta?: { label: string; href: string };
+  variant?: 'A' | 'B' | 'C' | 'D' | 'E';
+  indexNum?: string;
+  comparison?: {
+    left: { tag: string; num: string; unit: string; items: string[] };
+    right: { tag: string; num: string; unit: string; items: string[]; accent?: boolean };
+  };
+  statementTag?: string;
+  railMeta?: string;
+  /** Optional richer body composition that breaks a long prose section
+   *  into subheaded chunks with optional pull-quote callouts. When present,
+   *  takes precedence over `body`. Each block renders as `<h3>` (subhead)
+   *  + `<p>` paragraphs + optional `<blockquote>` pull-quote. Useful for
+   *  "wall of text" essay sections that benefit from visual hierarchy. */
+  bodyBlocks?: Array<{
+    subhead?: string;
+    paragraphs?: string[];
+    pullQuote?: string;
+  }>;
+}
+
+const {
+  sectionLabel,
+  heading,
+  body,
+  cta,
+  variant,
+  indexNum,
+  comparison,
+  statementTag,
+  railMeta,
+  bodyBlocks,
+} = Astro.props;
+const paragraphs = Array.isArray(body) ? body : [body];
+const useBlocks = Array.isArray(bodyBlocks) && bodyBlocks.length > 0;
+const variantKey = typeof variant === 'string' && /^[A-H]$/.test(variant) ? variant : null;
+
+const isStage = variantKey === 'E';
+
+/* Headline supports a single `*word*` emphasis marker. Split into
+   { pre, em, post } so the highlighted span renders inline without
+   dangerouslySetInnerHTML. If no marker is present, em/post are empty.
+   Always computed so the Stage branch can read fields unconditionally,
+   and so non-Stage variants (A/B/C/D) can render an inline <em> without
+   leaking literal asterisks into rendered text. */
+const stageHeadlineMatch = heading.match(/^([\s\S]*?)\*([^*]+)\*([\s\S]*)$/);
+const stageHeadline = stageHeadlineMatch
+  ? { pre: stageHeadlineMatch[1], em: stageHeadlineMatch[2], post: stageHeadlineMatch[3] }
+  : { pre: heading, em: '', post: '' };
+const hasInlineEm = !!stageHeadlineMatch;
+
+const stageStatement = isStage ? paragraphs[0] || '' : '';
+---
+
+{isStage ? (
+  <section
+    class="content-section content-section--stage"
+    data-section-type="content-section"
+    data-section-label="Content section"
+    data-section-variants="A:Standard,B:Centered,C:Editorial,D:Spotlight,E:Stage"
+    data-content-section-variant="E"
+  >
+    <div class="content-section__inner stage">
+      {(indexNum || sectionLabel) && (
+        <div class="stage__index">
+          {indexNum && <span class="stage__index-num">{indexNum}</span>}
+          <span class="stage__index-rule" aria-hidden="true"></span>
+          {sectionLabel && <span class="stage__index-label">{sectionLabel}</span>}
+        </div>
+      )}
+
+      <h2 class="stage__headline content-section__heading">
+        {stageHeadline.pre}
+        {stageHeadline.em && <span class="stage__headline-em">{stageHeadline.em}</span>}
+        {stageHeadline.post}
+      </h2>
+
+      {comparison && (
+        <div class="stage__proof" role="group" aria-label="Build comparison">
+          <div class="stage__col stage__col--them">
+            <div class="stage__col-tag">
+              <span class="stage__col-dot stage__col-dot--warn" aria-hidden="true"></span>
+              {comparison.left.tag}
+            </div>
+            <div class="stage__col-num">
+              {comparison.left.num}<span class="stage__col-num-unit">{comparison.left.unit}</span>
+            </div>
+            <div class="stage__col-list">
+              {comparison.left.items.map((item) => <span>{item}</span>)}
+            </div>
+          </div>
+
+          <div class="stage__vs" aria-hidden="true"></div>
+
+          <div class="stage__col stage__col--us">
+            <div class="stage__col-tag">
+              <span class="stage__col-dot stage__col-dot--good" aria-hidden="true"></span>
+              {comparison.right.tag}
+            </div>
+            <div class={`stage__col-num${comparison.right.accent ? ' stage__col-num--good' : ''}`}>
+              {comparison.right.num}<span class="stage__col-num-unit">{comparison.right.unit}</span>
+            </div>
+            <div class="stage__col-list">
+              {comparison.right.items.map((item) => <span>{item}</span>)}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {stageStatement && (
+        <p class="stage__statement content-section__body">
+          {stageStatement}
+          {statementTag && <span class="stage__statement-tag"> {statementTag}</span>}
+        </p>
+      )}
+
+      {(railMeta || (cta && cta.label && cta.href)) && (
+        <div class="stage__rail">
+          {railMeta && <span class="stage__rail-meta">{railMeta}</span>}
+          {cta && cta.label && cta.href && (
+            <a class="stage__rail-cta content-section__cta" href={cta.href}>
+              {cta.label}
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                <path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+) : (
+  <section
+    class="content-section"
+    data-section-type="content-section"
+    data-section-label="Content section"
+    data-section-variants="A:Standard,B:Centered,C:Editorial,D:Spotlight,E:Stage"
+    {...(variantKey ? { 'data-content-section-variant': variantKey } : {})}
+  >
+    <div class="content-section__inner">
+      <div class="content-section__head">
+        {sectionLabel && <p class="content-section__eyebrow">{sectionLabel}</p>}
+        <h2 class="content-section__heading">
+          {hasInlineEm ? (
+            <>
+              {stageHeadline.pre}
+              <em class="content-section__heading-em">{stageHeadline.em}</em>
+              {stageHeadline.post}
+            </>
+          ) : heading}
+        </h2>
+      </div>
+      <div class="content-section__copy">
+        <div class="content-section__body">
+          {useBlocks ? (
+            bodyBlocks!.map((block) => (
+              <div class="content-section__block">
+                {block.subhead && <h3 class="content-section__subhead">{block.subhead}</h3>}
+                {Array.isArray(block.paragraphs) && block.paragraphs.map((p) => <p>{p}</p>)}
+                {block.pullQuote && (
+                  <blockquote class="content-section__pullquote">
+                    <p>{block.pullQuote}</p>
+                  </blockquote>
+                )}
+              </div>
+            ))
+          ) : (
+            paragraphs.map((p) => <p>{p}</p>)
+          )}
+        </div>
+        {cta && (
+          <a class="content-section__cta" href={cta.href}>{cta.label}</a>
+        )}
+      </div>
+    </div>
+  </section>
+)}

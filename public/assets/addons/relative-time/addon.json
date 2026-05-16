@@ -1,0 +1,20 @@
+{
+  "name": "relative-time",
+  "assets": {
+    "css": ["relative-time.css"],
+    "js":  ["relative-time.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "time[data-aed-relative]",
+        "description": "Per-element relative-timestamp formatter (e.g. '2 days ago'). Uses Intl.RelativeTimeFormat where available, otherwise falls back to English strings. Updates every 60s (or every 1s within 60s of now); pauses when the tab is hidden.",
+        "fields": {
+          "datetime":         { "type": "string",  "required": true, "description": "Standard <time> attribute. ISO 8601 timestamp." },
+          "data-aed-relative":{ "type": "boolean", "required": true, "description": "Opt-in marker." },
+          "data-aed-style":   { "type": "string",  "enum": ["plain"], "description": "'plain' suppresses the underline. Defaults to underlined." }
+        }
+      }
+    ]
+  }
+}

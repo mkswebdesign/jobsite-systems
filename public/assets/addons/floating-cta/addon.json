@@ -1,0 +1,25 @@
+{
+  "name": "floating-cta",
+  "assets": {
+    "css": ["floating-cta.css"],
+    "js":  ["floating-cta.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-floating-cta-config",
+        "description": "Floating call-to-action pill (bottom-right on desktop, full-width bar on mobile). Reveals after the visitor scrolls past part of the first viewport. Per-session dismissable.",
+        "fields": {
+          "href":             { "type": "string",   "default": "/start/",                "description": "Destination URL." },
+          "label":            { "type": "string",   "default": "Get Started",            "description": "Primary button label." },
+          "hint":             { "type": "string",   "default": "Tell us about your project", "description": "Sub-label shown under the primary label on desktop." },
+          "showOnPaths":      { "type": "string[]", "default": [],                       "description": "If non-empty, the CTA only appears on these exact paths. Empty = every page (subject to hideOnPaths)." },
+          "hideOnPaths":      { "type": "string[]", "default": ["/start/"],              "description": "Paths to suppress on (typically the destination itself)." },
+          "revealAfterRatio": { "type": "number",   "default": 0.6,                     "description": "Reveal once scrollY exceeds this fraction of viewport height." },
+          "revealAfterMin":   { "type": "number",   "default": 360,                      "description": "Minimum scroll (px) before revealing, regardless of viewport ratio." },
+          "dismissable":      { "type": "boolean",  "default": true,                     "description": "Show the small × dismiss button (per-session sessionStorage)." }
+        }
+      }
+    ]
+  }
+}

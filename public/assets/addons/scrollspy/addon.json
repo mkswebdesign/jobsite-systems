@@ -1,0 +1,20 @@
+{
+  "name": "scrollspy",
+  "assets": {
+    "css": ["scrollspy.css"],
+    "js":  []
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-scrollspy]",
+        "description": "Per-container active-link highlighter (hooked up by the always-loaded /builder/main.js runtime; this addon ships the visual styling). Place on the nav element whose anchor links should track scroll position.",
+        "fields": {
+          "data-aed-scrollspy":            { "type": "boolean", "required": true,                              "description": "Opt-in marker on the nav/container." },
+          "data-aed-scrollspy-class":      { "type": "string",  "default": "is-active",                        "description": "CSS class toggled on the link whose target section is currently in view." },
+          "data-aed-scrollspy-rootmargin": { "type": "string",  "default": "-15% 0px -65% 0px",                "description": "IntersectionObserver `rootMargin`. Tune the band where a section is considered 'active'." }
+        }
+      }
+    ]
+  }
+}

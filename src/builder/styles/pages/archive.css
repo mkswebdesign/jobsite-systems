@@ -1,0 +1,860 @@
+/* ============================================
+   Archive page — sticky toolbar + slide-in refine drawer + active-filter
+   chips + result header. Replaces the legacy .archive-filters bar that
+   was removed from swift-digest.css and ArchiveFilters.astro.
+
+   Token namespace is --arch-* (NOT --sd-*, which would collide with the
+   existing --sd3-* nav tokens in brands/swift-digest.css). Reuses the
+   project's --accent so per-category brand colors and theme switching
+   keep working.
+
+   Theme system: <html data-theme="dark|light|vibrant">. Dark + vibrant
+   share the dark token set; light overrides surfaces.
+   ============================================ */
+
+:root,
+[data-theme="dark"],
+[data-theme="vibrant"] {
+  --arch-toolbar-bg: rgba(22, 24, 29, 0.85);
+  --arch-surface: #16181d;
+  --arch-surface-2: #1c1f26;
+  --arch-surface-hover: #232730;
+  --arch-border: rgba(255, 255, 255, 0.08);
+  --arch-border-strong: rgba(255, 255, 255, 0.16);
+  --arch-text: #e9eaee;
+  --arch-text-muted: #8b8f99;
+  --arch-text-dim: #6b6f78;
+  --arch-accent: var(--accent, #ef4444);
+  --arch-accent-soft: color-mix(in srgb, var(--arch-accent) 14%, transparent);
+  --arch-accent-glow: color-mix(in srgb, var(--arch-accent) 35%, transparent);
+  --arch-radius: 12px;
+  --arch-radius-lg: 16px;
+  --arch-shadow-pop: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --arch-drawer-back: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] {
+  --arch-toolbar-bg: rgba(255, 255, 255, 0.85);
+  --arch-surface: #ffffff;
+  --arch-surface-2: #f5f5f4;
+  --arch-surface-hover: #ececea;
+  --arch-border: rgba(0, 0, 0, 0.08);
+  --arch-border-strong: rgba(0, 0, 0, 0.16);
+  --arch-text: #0a0a0b;
+  --arch-text-muted: #52525b;
+  --arch-text-dim: #71717a;
+  --arch-shadow-pop: 0 8px 30px rgba(0, 0, 0, 0.15);
+  --arch-drawer-back: rgba(0, 0, 0, 0.35);
+}
+
+/* --- Sticky toolbar --- */
+
+.arch-toolbar {
+  position: sticky;
+  /* Clear the sticky sd3-nav (row 1 stays at ~48px when scrolled).
+   * Fallback covers brands without sd3-* tokens defined. */
+  top: calc(var(--sd3-h1-scrolled, 56px) + 8px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--arch-toolbar-bg);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  backdrop-filter: saturate(160%) blur(14px);
+  border: 1px solid var(--arch-border);
+  border-radius: var(--arch-radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  margin-top: 18px;
+}
+
+.arch-segmented {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 999px;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.arch-segmented::-webkit-scrollbar { display: none; }
+
+.arch-seg {
+  position: relative;
+  z-index: 2;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--arch-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.arch-seg:hover { color: var(--arch-text); }
+.arch-seg[aria-pressed="true"] {
+  color: #fff;
+  background: var(--arch-accent);
+  box-shadow: 0 4px 14px var(--arch-accent-glow);
+}
+.arch-seg .arch-count {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.arch-tbtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--arch-text);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.arch-tbtn:hover { border-color: var(--arch-border-strong); background: var(--arch-surface-hover); }
+.arch-tbtn svg { width: 15px; height: 15px; }
+
+.arch-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--arch-accent);
+  border-radius: 999px;
+}
+.arch-badge[hidden] { display: none; }
+
+.arch-view {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 10px;
+}
+.arch-view button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  color: var(--arch-text-muted);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.arch-view button[aria-pressed="true"] {
+  color: var(--arch-text);
+  background: var(--arch-surface);
+  box-shadow: inset 0 0 0 1px var(--arch-border-strong);
+}
+.arch-view button:hover { color: var(--arch-text); }
+.arch-view svg { width: 15px; height: 15px; }
+
+/* --- Sort menu --- */
+
+.arch-sort-wrap { position: relative; }
+.arch-sort-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--arch-surface);
+  border: 1px solid var(--arch-border-strong);
+  border-radius: var(--arch-radius);
+  box-shadow: var(--arch-shadow-pop);
+  display: none;
+  z-index: 50;
+}
+.arch-sort-wrap[data-open="true"] .arch-sort-menu { display: block; }
+.arch-sort-menu li { margin: 0; }
+.arch-sort-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--arch-text);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+.arch-sort-opt:hover { background: var(--arch-surface-2); }
+.arch-sort-opt[aria-selected="true"] { color: var(--arch-accent); }
+.arch-sort-opt[aria-selected="true"]::after { content: "✓"; }
+
+/* --- Active filter chips strip --- */
+
+.arch-active {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 2px 6px;
+  min-height: 24px;
+}
+.arch-active[hidden] { display: none; }
+.arch-active-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--arch-text-dim);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.arch-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--arch-text);
+  background: var(--arch-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--arch-accent) 30%, transparent);
+  border-radius: 999px;
+}
+.arch-chip__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--arch-text);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.arch-chip__close:hover { background: rgba(255, 255, 255, 0.1); }
+[data-theme="light"] .arch-chip__close:hover { background: rgba(0, 0, 0, 0.08); }
+.arch-clear-all {
+  margin-left: 4px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--arch-text-muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.arch-clear-all:hover { color: var(--arch-text); background: var(--arch-surface-2); }
+
+/* --- Result header --- */
+
+.arch-result-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 12px 2px 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--arch-border);
+}
+.arch-result-head__count { font-size: 15px; font-weight: 600; color: var(--arch-text); }
+.arch-result-head__count em {
+  color: var(--arch-text-muted);
+  font-style: normal;
+  font-weight: 500;
+  margin-left: 6px;
+}
+.arch-result-head__count em[hidden] { display: none; }
+.arch-result-head__sort { font-size: 13px; color: var(--arch-text-muted); }
+.arch-result-head__sort strong { color: var(--arch-text); font-weight: 600; }
+
+/* --- Drawer backdrop + container --- */
+
+.arch-drawer-back {
+  position: fixed;
+  inset: 0;
+  background: var(--arch-drawer-back);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.arch-drawer-back[data-open="true"] { opacity: 1; pointer-events: auto; }
+
+.arch-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 400px;
+  max-width: 92vw;
+  background: var(--arch-surface);
+  color: var(--arch-text);
+  border-left: 1px solid var(--arch-border-strong);
+  box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+.arch-drawer[data-open="true"] { transform: translateX(0); }
+
+.arch-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--arch-border);
+}
+.arch-drawer__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--arch-text);
+  margin: 0;
+}
+.arch-drawer__close {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 8px;
+  color: var(--arch-text);
+  cursor: pointer;
+  font-size: 16px;
+}
+.arch-drawer__close:hover { background: var(--arch-surface-hover); }
+.arch-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 20px 20px;
+}
+.arch-drawer__foot {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--arch-border);
+  background: var(--arch-toolbar-bg);
+}
+
+.arch-btn-ghost,
+.arch-btn-primary {
+  flex: 1;
+  padding: 11px 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.arch-btn-ghost {
+  color: var(--arch-text);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+}
+.arch-btn-ghost:hover { background: var(--arch-surface-hover); }
+.arch-btn-primary {
+  color: #fff;
+  background: var(--arch-accent);
+  border: 1px solid var(--arch-accent);
+  box-shadow: 0 4px 14px var(--arch-accent-glow);
+}
+.arch-btn-primary:hover { filter: brightness(0.92); }
+
+/* --- Drawer accordion sections --- */
+
+.arch-section {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--arch-border);
+}
+.arch-section:last-child { border-bottom: 0; }
+.arch-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--arch-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.arch-section__head .arch-caret { transition: transform 0.2s; width: 14px; height: 14px; }
+.arch-section[data-open="false"] .arch-caret { transform: rotate(-90deg); }
+.arch-section[data-open="false"] .arch-section__body { display: none; }
+.arch-section__body { padding-top: 14px; }
+
+/* --- Search inputs in drawer --- */
+
+.arch-tag-search,
+.arch-drawer-search {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--arch-text);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 10px;
+  outline: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b8f99' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='m21 21-4.3-4.3'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 10px 50%;
+  background-size: 16px;
+  margin-bottom: 12px;
+}
+.arch-tag-search:focus,
+.arch-drawer-search:focus { border-color: var(--arch-border-strong); }
+
+/* --- Tags grid --- */
+
+.arch-tag-grid,
+.arch-author-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.arch-tag,
+.arch-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--arch-text-muted);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+.arch-tag[hidden],
+.arch-author[hidden] { display: none; }
+.arch-tag:hover,
+.arch-author:hover {
+  color: var(--arch-text);
+  border-color: var(--arch-border-strong);
+}
+.arch-tag[data-on="true"],
+.arch-author[data-on="true"] {
+  color: var(--arch-text);
+  background: var(--arch-accent-soft);
+  border-color: var(--arch-accent);
+}
+.arch-tag[data-on="true"]::before,
+.arch-author[data-on="true"]::before { content: "✓"; font-size: 10px; }
+.arch-tag-count {
+  font-size: 10px;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* --- Date presets + inputs --- */
+
+.arch-date-presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.arch-preset {
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--arch-text);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+.arch-preset:hover { border-color: var(--arch-border-strong); }
+.arch-preset[aria-pressed="true"] {
+  color: var(--arch-text);
+  background: var(--arch-accent-soft);
+  border-color: var(--arch-accent);
+}
+.arch-date-inputs { display: flex; gap: 8px; }
+.arch-date-inputs label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--arch-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.arch-date-inputs input {
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--arch-text);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: 8px;
+}
+[data-theme="dark"] .arch-date-inputs input,
+[data-theme="vibrant"] .arch-date-inputs input { color-scheme: dark; }
+[data-theme="light"] .arch-date-inputs input { color-scheme: light; }
+
+/* --- Reading-time dual-handle slider --- */
+
+.arch-rt-slider {
+  position: relative;
+  height: 32px;
+}
+.arch-rt-track {
+  position: absolute;
+  inset: 14px 8px 14px 8px;
+  background: var(--arch-surface-2);
+  border-radius: 999px;
+  height: 4px;
+}
+.arch-rt-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--arch-accent);
+  border-radius: 999px;
+}
+.arch-rt-slider input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 32px;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  margin: 0;
+}
+.arch-rt-slider input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--arch-accent);
+  border: 2px solid var(--arch-surface);
+  box-shadow: 0 2px 6px var(--arch-accent-glow);
+  cursor: pointer;
+}
+.arch-rt-slider input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--arch-accent);
+  border: 2px solid var(--arch-surface);
+  cursor: pointer;
+}
+.arch-rt-readout {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--arch-text-muted);
+}
+
+/* --- View modes (apply to whichever grid container is active) ---
+   Grid (default) keeps the standard card layout. List swaps each card
+   to a horizontal cover+body row. Compact strips it to a single dense
+   row per post: category · title · date · reading-time, no cover. The
+   three modes share the same .post-card markup, so each override has
+   to undo defaults from brands/<brand>.css (3-line title clamp + min-
+   height, card body padding, card lift on hover, etc.). */
+
+/* ===== LIST view: horizontal cover + body row ===== */
+
+.archive-list__grid[data-view="list"],
+.arch-results-grid[data-view="list"] {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: none;
+  gap: 14px;
+}
+.archive-list__grid[data-view="list"] .post-card,
+.arch-results-grid[data-view="list"] .post-card {
+  display: block;
+}
+.archive-list__grid[data-view="list"] .post-card .post-card__link,
+.arch-results-grid[data-view="list"] .post-card .post-card__link {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+  flex: none;
+}
+.archive-list__grid[data-view="list"] .post-card .post-card__cover,
+.arch-results-grid[data-view="list"] .post-card .post-card__cover {
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 150px;
+}
+.archive-list__grid[data-view="list"] .post-card .post-card__body,
+.arch-results-grid[data-view="list"] .post-card .post-card__body {
+  padding: 1rem 1.25rem 1rem 0;
+}
+.archive-list__grid[data-view="list"] .post-card .post-card__title,
+.arch-results-grid[data-view="list"] .post-card .post-card__title {
+  font-size: 1.375rem;
+  -webkit-line-clamp: 2;
+  min-height: 0;
+}
+.archive-list__grid[data-view="list"] .post-card .post-card__excerpt,
+.arch-results-grid[data-view="list"] .post-card .post-card__excerpt {
+  -webkit-line-clamp: 2;
+}
+
+/* ===== COMPACT view: one-line dense row per post ===== */
+
+.archive-list__grid[data-view="compact"],
+.arch-results-grid[data-view="compact"] {
+  display: block;
+  grid-template-columns: none;
+  gap: 0;
+  border-top: 1px solid var(--arch-border);
+}
+.archive-list__grid[data-view="compact"] .post-card,
+.arch-results-grid[data-view="compact"] .post-card {
+  display: block;
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+  border-bottom: 1px solid var(--arch-border);
+  border-radius: 0;
+  padding: 0;
+  transition: background 0.15s ease;
+}
+/* Card-lift hover is wrong on a flat row — use a row tint instead. */
+.archive-list__grid[data-view="compact"] .post-card:hover,
+.arch-results-grid[data-view="compact"] .post-card:hover {
+  transform: none;
+  box-shadow: none;
+  background: var(--arch-surface-2);
+}
+.archive-list__grid[data-view="compact"] .post-card .post-card__link,
+.arch-results-grid[data-view="compact"] .post-card .post-card__link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 10px;
+  flex: none;
+}
+/* Lift body's children into the link's flex row so category / title /
+   meta line up horizontally. */
+.archive-list__grid[data-view="compact"] .post-card .post-card__body,
+.arch-results-grid[data-view="compact"] .post-card .post-card__body {
+  display: contents;
+}
+.archive-list__grid[data-view="compact"] .post-card__cover,
+.arch-results-grid[data-view="compact"] .post-card__cover { display: none; }
+.archive-list__grid[data-view="compact"] .post-card__excerpt,
+.arch-results-grid[data-view="compact"] .post-card__excerpt,
+.archive-list__grid[data-view="compact"] .post-card__tags,
+.arch-results-grid[data-view="compact"] .post-card__tags { display: none; }
+.archive-list__grid[data-view="compact"] .post-card .post-card__category,
+.arch-results-grid[data-view="compact"] .post-card .post-card__category {
+  flex: 0 0 auto;
+  order: 1;
+  margin: 0;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.65rem;
+  min-width: 88px;
+  text-align: center;
+}
+.archive-list__grid[data-view="compact"] .post-card .post-card__title,
+.arch-results-grid[data-view="compact"] .post-card .post-card__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  order: 2;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: 0;
+  /* Undo the brand's 3-line clamp so each row is one line. */
+  display: block;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: horizontal;
+  min-height: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.archive-list__grid[data-view="compact"] .post-card .post-card__meta,
+.arch-results-grid[data-view="compact"] .post-card .post-card__meta {
+  flex: 0 0 auto;
+  order: 3;
+  margin: 0;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  color: var(--arch-text-muted);
+}
+
+/* Results container for the client-rendered filter mode. Mirrors the
+   default .archive-list__grid layout when in grid view. */
+.arch-results-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 640px)  { .arch-results-grid[data-view="grid"] { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px)  { .arch-results-grid[data-view="grid"] { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1400px) { .arch-results-grid[data-view="grid"] { grid-template-columns: repeat(4, 1fr); } }
+
+/* When client-side filtering is active, hide the server-rendered grid +
+   pagination. Toggled via [data-filter-mode="client"] on the page root
+   (.archive-page, .category-detail-page, or .tag-page). */
+[data-filter-mode="client"] .archive-list__grid,
+[data-filter-mode="client"] .pagination { display: none; }
+.archive-page:not([data-filter-mode="client"]) .arch-results-grid,
+.archive-page:not([data-filter-mode="client"]) .arch-empty,
+.category-detail-page:not([data-filter-mode="client"]) .arch-results-grid,
+.category-detail-page:not([data-filter-mode="client"]) .arch-empty,
+.tag-page:not([data-filter-mode="client"]) .arch-results-grid,
+.tag-page:not([data-filter-mode="client"]) .arch-empty { display: none; }
+
+.arch-empty {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--arch-text-muted);
+  background: var(--arch-surface-2);
+  border: 1px solid var(--arch-border);
+  border-radius: var(--arch-radius);
+}
+
+/* --- Mobile (≤768px) --- */
+
+@media (max-width: 768px) {
+  .arch-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    /* sit below the scroll-collapsed sd3-nav (row 1 only when scrolled). */
+    top: calc(var(--sd3-h1-scrolled, 48px) + 8px);
+  }
+  /* Categories first visually + in DOM flow; actions wrap to row 2. */
+  .arch-segmented { order: 0; flex-basis: 100%; }
+  .arch-tbtn      { order: 1; }
+  .arch-sort-wrap { order: 2; margin-left: auto; }
+  .arch-view      { display: none; }
+
+  .arch-tbtn span:not(.arch-badge) { display: none; }
+
+  /* Stack count + sort indicator so they don't collide on narrow screens. */
+  .arch-result-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  /* List view collapses to vertical stack — image fills width, body below. */
+  .archive-list__grid[data-view="list"] .post-card .post-card__link,
+  .arch-results-grid[data-view="list"] .post-card .post-card__link {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .archive-list__grid[data-view="list"] .post-card .post-card__cover,
+  .arch-results-grid[data-view="list"] .post-card .post-card__cover {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: 0;
+  }
+  .archive-list__grid[data-view="list"] .post-card .post-card__body,
+  .arch-results-grid[data-view="list"] .post-card .post-card__body {
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+
+  /* Compact view: hide category badge on narrow screens to keep title +
+     date legible without truncating to nothing. */
+  .archive-list__grid[data-view="compact"] .post-card .post-card__category,
+  .arch-results-grid[data-view="compact"] .post-card .post-card__category {
+    display: none;
+  }
+  .archive-list__grid[data-view="compact"] .post-card .post-card__link,
+  .arch-results-grid[data-view="compact"] .post-card .post-card__link {
+    gap: 10px;
+    padding: 10px 6px;
+  }
+  .archive-list__grid[data-view="compact"] .post-card .post-card__meta,
+  .arch-results-grid[data-view="compact"] .post-card .post-card__meta {
+    font-size: 0.6875rem;
+  }
+
+  /* Touch targets ≥ 44px (or as close as practical) without changing visuals. */
+  .arch-chip { padding: 6px 8px 6px 12px; }
+  .arch-chip__close {
+    width: 28px;
+    height: 28px;
+    margin: -6px -4px -6px 0;
+    font-size: 18px;
+  }
+  .arch-rt-slider { height: 44px; }
+  .arch-rt-track  { inset: 20px 8px 20px 8px; }
+  .arch-rt-slider input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+  .arch-rt-slider input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .arch-drawer { width: 100%; max-width: 100%; }
+  /* Long "Apply (123 results)" can wrap to two lines on iPhone SE — let it. */
+  .arch-btn-primary { line-height: 1.2; }
+}
+
+/* --- Reduced motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .arch-drawer,
+  .arch-drawer-back,
+  .arch-section__body,
+  .arch-toolbar *,
+  .arch-results-grid * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

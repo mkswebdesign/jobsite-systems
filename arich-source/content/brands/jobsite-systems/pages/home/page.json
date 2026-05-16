@@ -1,0 +1,43 @@
+{
+  "slug": "home",
+  "path": "/",
+  "variants": {
+    "hero": "B",
+    "capabilities": "C",
+    "partnership": "A",
+    "design-break": "B",
+    "faq": "D",
+    "content-section": "C",
+    "versus-block": "A",
+    "process": "B"
+  },
+  "seo": {
+    "title": "Jobsite Systems — Simple, Working Websites for Trade Businesses",
+    "description": "Practical, low-maintenance websites for handymen, HVAC techs, plumbers, carpenters, remodelers, and GCs. No bloated CMS, no plugin treadmill, no maintenance trap.",
+    "canonical": "https://jobsite.systems/"
+  },
+  "sections": [
+    "sections/01-hero.json",
+    "sections/01-divider.json",
+    "sections/01a-about-split.json",
+    "sections/01b-versus-block.json",
+    "sections/01ba-divider.json",
+    "sections/01b1-trades-served.json",
+    "sections/01b1a-divider.json",
+    "sections/02-services.json",
+    "sections/02a-divider.json",
+    "sections/04-capabilities.json",
+    "sections/04a-divider.json",
+    "sections/04b-design-break.json",
+    "sections/05-testimonials.json",
+    "sections/05a-divider.json",
+    "sections/06-process.json",
+    "sections/07-partnership.json",
+    { "type": "divider", "color": "primary" },
+    "sections/10-design-break.json",
+    "sections/10a-divider.json",
+    "sections/08-faq.json",
+    "sections/08a-divider.json",
+    "sections/09-final-cta.json"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "groups": [
+    {
+      "id": "getting-started",
+      "title": "Getting Started",
+      "faqs": [
+        { "id": "service-area", "question": "What's your service area?", "answer": "We cover the Kansas City metro on the Kansas side and selected Missouri-side suburbs. Day-to-day that's Kansas City (KS and MO sides), Overland Park, Lenexa, Shawnee, Leawood, and Olathe. We'll travel a little further for remodel projects; small handyman jobs are limited to the core radius so the truck time stays reasonable. If you're outside it, give us a call and we'll be honest about whether it makes sense." },
+        { "id": "what-to-expect", "question": "What should I have ready when I call?", "answer": "For small handyman or electrical jobs: a short description of the issue and a couple of photos if you can. We can often phone-quote from photos. For remodel projects or anything bigger: rough scope, a few photos of the space, and a window for an in-home estimate. We don't email a remodel number without seeing the space." },
+        { "id": "second-opinion", "question": "I already have a quote from another contractor — will you give me a second opinion?", "answer": "Yes. We do a fair number of second-opinion estimates, especially on remodels and panel work. We're straightforward about it — sometimes our number is lower, sometimes the other guy's is, and occasionally we'll tell you the other quote is reasonable and we don't think we'd be a better fit. We'd rather lose a job than oversell it." },
+        { "id": "free-estimates", "question": "Do you offer free estimates?", "answer": "Free in-home estimates on remodel projects and bigger electrical work (panel upgrades, EV chargers). Phone-quotes are free for handyman work, small electrical, and exterior repairs we can price from photos. The only thing we charge for is dispatch on jobs where the customer cancels after the truck is already on-site — that's rare and we always disclose it up front." }
+      ]
+    },
+    {
+      "id": "pricing-billing",
+      "title": "Pricing & Billing",
+      "faqs": [
+        { "id": "handyman-rate", "question": "What's your handyman rate?", "answer": "$95 per hour with a one-hour minimum, or $85 per hour in 4-hour blocks for bigger punch-list days. The hour starts when the crew arrives and ends when the truck pulls away. Materials are billed at cost plus a small handling markup, listed on your written quote before any work starts." },
+        { "id": "flat-rate-electrical", "question": "Do you do flat-rate pricing on small electrical work?", "answer": "Yes. Standard outlet adds on existing circuits are $185, standard ceiling fan installs on existing fixture boxes are $295. Anything that requires a new circuit, panel work, or permits gets quoted on-site after a free walkthrough. We won't surprise you with hourly billing on what we said would be a flat-rate job." },
+        { "id": "remodel-pricing", "question": "How do you price remodel projects?", "answer": "Free in-home estimate, then a written scope and price within 3–5 business days. Project ranges depend heavily on scope: kitchen refresh $12k–$35k, full kitchen $35k–$60k, bathroom remodel $8k–$40k depending on whether it's a hall bath or primary, basement finish-out $20k–$60k. Once you sign, the price is the price unless we hit something hidden in the walls and we tell you immediately." },
+        { "id": "payment", "question": "How do I pay?", "answer": "Card, check, or ACH on small jobs — paid on-site at end-of-job. Remodel projects use a deposit at signing, milestone payments through the project, and a final payment at walkthrough. We don't ask for the full project price up front and we never collect after disappearing for a week." }
+      ]
+    },
+    {
+      "id": "scope-trust",
+      "title": "Scope, Trust & Warranty",
+      "faqs": [
+        { "id": "what-you-dont-do", "question": "What kinds of work don't you do?", "answer": "Major plumbing (re-pipes, water heater swaps, sewer line work) and HVAC (furnace, AC, ductwork) are not in our scope. We have two trusted partners we refer those out to and we'll make the introduction. We're also not a re-roofer or a full siding contractor — small repairs yes, full replacements no. And we don't do new-construction or whole-house gut renovations." },
+        { "id": "licensed-insured", "question": "Are you licensed, insured, and bonded?", "answer": "Yes. KS contractor license on file, KS electrical contractor license #E-19842 covering our electrical work, $2M general liability, $1M workers' comp, and we're bonded for project work. We carry the certificates on the trucks and we'll email proof to your HOA or property manager on request." },
+        { "id": "warranty", "question": "Do you warranty your work?", "answer": "1-year workmanship warranty on every job — handyman, electrical, exterior, and remodel. If something we did fails in the first year, we come back and fix it on our dime. Manufacturer warranties on parts (fixtures, appliances, etc.) are separate and we'll tell you what those look like at quote time." },
+        { "id": "after-hours", "question": "What if I have an issue after a job is done?", "answer": "Call our main line during business hours (Mon–Sat 7a–6p) and we'll get a crew member out — usually same week, often same day for warranty issues. For after-hours emergencies that aren't life-safety, leave a voicemail and we'll call back first thing. For real emergencies — gas, fire, active flooding, downed live wires — call 911 first, then call us once you're safe and we'll coordinate the repair." }
+      ]
+    }
+  ]
+}

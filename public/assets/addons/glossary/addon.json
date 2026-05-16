@@ -1,0 +1,26 @@
+{
+  "name": "glossary",
+  "assets": {
+    "css": ["glossary.css"],
+    "js":  ["glossary.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-glossary",
+        "description": "Map of term → definition. Every <dfn> on the page whose text (or `data-aed-glossary` attribute) matches a term gets a hover/tap tooltip.",
+        "required": true,
+        "fields": {}
+      }
+    ],
+    "data": [
+      {
+        "selector": "dfn",
+        "description": "Term marker. Either let the addon match `dfn` text against the glossary keys (case-insensitive), or set `data-aed-glossary` to override the lookup key.",
+        "fields": {
+          "data-aed-glossary": { "type": "string", "description": "Lookup key. Defaults to the element's text content if omitted." }
+        }
+      }
+    ]
+  }
+}

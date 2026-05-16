@@ -1,0 +1,108 @@
+---
+import { brand } from '../lib/brand';
+
+interface Props {
+  size?: number;
+  variant?: 'mark' | 'hero';
+  class?: string;
+}
+
+const { size = 28, variant = 'mark', class: klass = '' } = Astro.props;
+const logo = brand.assets.logo;
+const motif = (brand.assets as any).motifKind as string | undefined;
+const label = brand.name;
+const classes = ['brand-mark', klass].filter(Boolean).join(' ');
+---
+
+{logo ? (
+  <img src={logo} alt={label} width={size} height={size} class={classes} loading="eager" />
+) : motif === 'wellness' ? (
+  variant === 'hero' ? (
+    <svg class={`${classes} brand-mark--hero`} width={size} height={size} viewBox="0 0 350 350" role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bmWellHeroGlow" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.32" />
+          <stop offset="60%" stop-color="var(--accent)" stop-opacity="0.08" />
+          <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="bmWellHeroSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(var(--accent-rgb), 0.22)" />
+          <stop offset="100%" stop-color="rgba(var(--accent-rgb), 0.04)" />
+        </linearGradient>
+      </defs>
+      <circle cx="175" cy="175" r="173" fill="url(#bmWellHeroSky)" stroke="var(--accent)" stroke-width="2" />
+      <circle cx="175" cy="175" r="120" fill="url(#bmWellHeroGlow)" />
+      {/* Heart — the helping mark */}
+      <path d="M 175 270 C 175 270, 90 215, 90 155 C 90 120, 115 95, 145 95 C 165 95, 175 115, 175 135 C 175 115, 185 95, 205 95 C 235 95, 260 120, 260 155 C 260 215, 175 270, 175 270 Z" fill="var(--accent)" />
+      {/* Soft inner highlight for depth */}
+      <path d="M 138 118 C 122 122, 110 138, 112 158" fill="none" stroke="rgba(255,255,255,0.32)" stroke-width="6" stroke-linecap="round" />
+      <circle cx="175" cy="175" r="173" fill="none" stroke="rgba(var(--accent-rgb), 0.25)" stroke-width="1" stroke-dasharray="2 5" />
+    </svg>
+  ) : (
+    <svg class={`${classes} brand-mark--small`} width={size} height={size} viewBox="0 0 32 32" role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="bmWellMarkClip"><circle cx="16" cy="16" r="15" /></clipPath>
+      </defs>
+      <circle cx="16" cy="16" r="15" fill="rgba(var(--accent-rgb), 0.12)" stroke="var(--accent)" stroke-width="1.4" />
+      <g clip-path="url(#bmWellMarkClip)">
+        {/* Heart — the helping mark */}
+        <path d="M 16 24.5 C 16 24.5, 8.5 19.5, 8.5 14 C 8.5 10.8, 11 8.5, 13.5 8.5 C 15 8.5, 16 10.5, 16 12 C 16 10.5, 17 8.5, 18.5 8.5 C 21 8.5, 23.5 10.8, 23.5 14 C 23.5 19.5, 16 24.5, 16 24.5 Z" fill="var(--accent)" />
+      </g>
+    </svg>
+  )
+) : motif === 'landscape' ? (
+  variant === 'hero' ? (
+    <svg class={`${classes} brand-mark--hero`} width={size} height={size} viewBox="0 0 350 350" role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bmHeroSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(var(--accent-rgb), 0.22)" />
+          <stop offset="100%" stop-color="rgba(var(--accent-rgb), 0.04)" />
+        </linearGradient>
+        <radialGradient id="bmHeroSun" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="var(--accent)" stop-opacity="1" />
+          <stop offset="55%" stop-color="var(--accent)" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+        </radialGradient>
+        <clipPath id="bmHeroClip"><circle cx="175" cy="175" r="171" /></clipPath>
+      </defs>
+      <circle cx="175" cy="175" r="173" fill="url(#bmHeroSky)" stroke="var(--accent)" stroke-width="2" />
+      <g clip-path="url(#bmHeroClip)">
+        <circle cx="240" cy="110" r="52" fill="url(#bmHeroSun)" />
+        <circle cx="240" cy="110" r="20" fill="var(--accent)" />
+        <path d="M-10 205 L 55 150 L 105 185 L 150 150 L 205 190 L 260 160 L 310 195 L 360 180 L 360 350 L -10 350 Z" fill="rgba(var(--accent-rgb), 0.18)" />
+        <path d="M-10 240 L 45 205 L 100 235 L 155 210 L 210 240 L 265 215 L 310 240 L 360 225 L 360 350 L -10 350 Z" fill="rgba(var(--accent-rgb), 0.32)" />
+        <path d="M-10 280 C 50 268, 110 298, 175 282 S 290 266, 360 285 L 360 350 L -10 350 Z" fill="rgba(var(--accent-rgb), 0.55)" />
+        <g transform="translate(82 275)">
+          <line x1="0" y1="0" x2="0" y2="-52" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M-16 -20 L 0 -56 L 16 -20 Z M-13 -34 L 0 -58 L 13 -34 Z M-10 -46 L 0 -60 L 10 -46 Z" fill="var(--accent)" opacity="0.88" />
+        </g>
+        <g transform="translate(140 288)">
+          <line x1="0" y1="0" x2="0" y2="-32" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" opacity="0.85" />
+          <path d="M-10 -12 L 0 -35 L 10 -12 Z M-8 -22 L 0 -36 L 8 -22 Z" fill="var(--accent)" opacity="0.75" />
+        </g>
+        <g stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" fill="none" opacity="0.7">
+          <path d="M182 318 L 180 305 M188 318 L 189 306 M194 318 L 197 306" />
+          <path d="M40 322 L 38 310 M46 322 L 47 311 M52 322 L 55 311" />
+          <path d="M305 320 L 303 308 M311 320 L 312 309 M317 320 L 320 309" />
+        </g>
+      </g>
+      <circle cx="175" cy="175" r="173" fill="none" stroke="rgba(var(--accent-rgb), 0.25)" stroke-width="1" stroke-dasharray="2 5" />
+    </svg>
+  ) : (
+    <svg class={`${classes} brand-mark--small`} width={size} height={size} viewBox="0 0 32 32" role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="bmMarkClip"><circle cx="16" cy="16" r="15" /></clipPath>
+      </defs>
+      <circle cx="16" cy="16" r="15" fill="rgba(var(--accent-rgb), 0.12)" stroke="var(--accent)" stroke-width="1.4" />
+      <g clip-path="url(#bmMarkClip)">
+        <circle cx="22" cy="11" r="3.2" fill="var(--accent)" />
+        <path d="M0 20 L 7 15 L 13 18 L 19 15 L 26 18 L 32 16 L 32 32 L 0 32 Z" fill="rgba(var(--accent-rgb), 0.35)" />
+        <path d="M0 24 C 6 22, 12 26, 16 23.5 S 26 22, 32 25 L 32 32 L 0 32 Z" fill="var(--accent)" opacity="0.75" />
+        <g transform="translate(9 23)">
+          <line x1="0" y1="0" x2="0" y2="-6" stroke="var(--accent)" stroke-width="1" stroke-linecap="round" />
+          <path d="M-2.2 -2 L 0 -7 L 2.2 -2 Z M-1.6 -4 L 0 -7.2 L 1.6 -4 Z" fill="var(--accent)" />
+        </g>
+      </g>
+    </svg>
+  )
+) : null}

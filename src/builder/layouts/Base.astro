@@ -1,0 +1,737 @@
+---
+import '../styles/global.css';
+import { brand, brandCssVars, brandFontFaceCss, loadSectionOverrides, loadTemplatedGroups, loadBrandGallery } from '../lib/brand';
+import { getEnabledAddons } from '../lib/addons';
+import { publicAssetUrl } from '../lib/asset-hash';
+import { VARIANT_LETTER_RE_SOURCE, VARIANT_KEBAB_RE_SOURCE } from '../lib/variants';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import SwiftDigestNav from '../components/SwiftDigestNav.astro';
+import SwiftDigestFooter from '../components/SwiftDigestFooter.astro';
+import { BRAND_ID } from '../lib/brand';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogType?: string;
+  ogImage?: string;
+  /** Set to false to omit `<meta name="robots" content="index, follow">`. */
+  indexable?: boolean;
+  /** Optional first anchor the skip-link targets; defaults to #services. */
+  skipTarget?: string;
+  /** Suppress Nav + Footer for distraction-free pages (e.g. checkout/signup). */
+  chromeless?: boolean;
+  /** Suppress just the site Nav (header). Footer remains. Used by demo pages
+   *  that ship their own floating Home/Pricing pill. */
+  hideHeader?: boolean;
+  /** Suppress just the site Footer. Header remains. Pairs with hideHeader
+   *  on demo pages so the route can render a demo-flavored footer instead
+   *  of the agency footer. */
+  hideFooter?: boolean;
+  /** Per-page variant overrides. Merged on top of `brand.defaultVariants` so
+   *  this page's hero/services/etc. variants can differ from brand-wide
+   *  defaults without affecting siblings or demos. Map keys are section-type
+   *  slugs (e.g. "hero", "services", "design-break"); values are A-H letters
+   *  or short kebab slugs. */
+  variants?: Record<string, string>;
+}
+
+const {
+  title: pageTitle,
+  description: pageDescription,
+  canonical: pageCanonical,
+  ogType,
+  ogImage,
+  indexable = true,
+  skipTarget = '#services',
+  chromeless = false,
+  hideHeader = false,
+  hideFooter = false,
+  variants: pageVariantOverrides,
+} = Astro.props;
+
+/** Effective variants for THIS page render — brand defaults merged with any
+ *  page-level overrides. Inlined into the pre-paint script and into
+ *  `aed-variant-defaults` so the editor's diff filter (`collectActiveVariants`)
+ *  treats the merged set as this page's effective baseline. */
+const effectiveVariants = { ...(brand.defaultVariants ?? {}), ...(pageVariantOverrides ?? {}) };
+
+const title = pageTitle ?? brand.tagline;
+const description = pageDescription ?? brand.seo.defaultDescription;
+const canonical = pageCanonical ?? brand.url + Astro.url.pathname;
+const resolvedOgImage = ogImage ?? (brand.assets.ogImage ? brand.url + publicAssetUrl(brand.assets.ogImage) : null);
+const resolvedOgType = ogType ?? brand.seo.ogType;
+
+const assets = brand.assets;
+
+/** Committed per-section overrides baked into the brand. Inlined as JSON and
+ * applied by the restore script below before first paint; the in-page editor
+ * merges localStorage on top (so pending/unsaved tweaks always win locally). */
+const sectionOverridesBaked = loadSectionOverrides();
+
+/** Templated route groups (e.g. `/services/*`). Inlined so the editor and
+ * restore script agree on which visited pathnames share a template — changes
+ * the user makes at group scope propagate across every child page. */
+const templatedGroups = loadTemplatedGroups();
+
+/** Brand image gallery — inlined for the in-page editor's Images modal so
+ * every shipped URL appears alongside the localStorage paste buffer. Without
+ * this, the Library view only renders staged URLs and reads as empty after
+ * Clear Session even when gallery.json holds dozens of entries. */
+const brandGallery = loadBrandGallery();
+
+/* Extra CSS vars for section backgrounds (Unsplash URLs) — keeps global.css brand-agnostic. */
+const bgVars = [
+  assets.heroBackgroundImage && `--hero-bg-image: url('${assets.heroBackgroundImage}')`,
+  assets.servicesBackgroundImage && `--services-bg-image: url('${assets.servicesBackgroundImage}')`,
+  assets.processBackgroundImage && `--process-bg-image: url('${assets.processBackgroundImage}')`,
+  assets.partnershipBackgroundImage && `--partnership-bg-image: url('${assets.partnershipBackgroundImage}')`,
+  assets.ctaBackgroundImage && `--cta-bg-image: url('${assets.ctaBackgroundImage}')`,
+].filter(Boolean).join(';\n  ');
+
+const rootOverride = `${brandFontFaceCss()}\n${brandCssVars()}\n:root{\n  ${bgVars}\n}`;
+
+const orgId = brand.url + '#organization';
+const personId = brand.url + '#person';
+const serviceId = brand.url + '#service';
+const websiteId = brand.url + '#website';
+
+const sameAs = Object.values(brand.social ?? {}).filter((v): v is string => typeof v === 'string' && !!v);
+
+const personEntity = {
+  '@type': 'Person',
+  '@id': personId,
+  name: brand.owner.name,
+  jobTitle: brand.owner.role,
+  url: brand.url,
+  image: brand.owner.headshot ? brand.url + brand.owner.headshot : undefined,
+  sameAs: brand.owner.linkedin ? [brand.owner.linkedin] : undefined,
+  worksFor: { '@id': orgId },
+};
+
+/* Compute orgEntity defaults, then spread `brand.seo.schemaOrganization` on
+ * top so brands can extend or override any field — `priceRange`,
+ * `knowsAbout`, `address`, `slogan`, etc. — without forking this template.
+ * Two fields keep their computed values regardless of brand override:
+ *   - `@id` (must be the canonical orgId graph anchor)
+ *   - `founder` (the in-graph personEntity ref) */
+const _orgPhone = brand.contact.phone || undefined;
+const orgDefaults = {
+  '@type': 'Organization',
+  name: brand.name,
+  url: brand.url,
+  description: brand.seo.defaultDescription,
+  logo: resolvedOgImage ?? undefined,
+  image: resolvedOgImage ?? undefined,
+  email: brand.contact.email,
+  telephone: _orgPhone,
+  sameAs: sameAs.length ? sameAs : undefined,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: brand.contact.email,
+    telephone: _orgPhone,
+    contactType: 'customer service',
+    availableLanguage: ['English'],
+  },
+};
+const orgEntity = {
+  ...orgDefaults,
+  ...(brand.seo.schemaOrganization ?? {}),
+  '@id': orgId,
+  founder: { '@id': personId },
+};
+
+const professionalServiceEntity = {
+  '@type': 'ProfessionalService',
+  '@id': serviceId,
+  name: brand.name,
+  url: brand.url,
+  description: brand.seo.defaultDescription,
+  image: resolvedOgImage ?? undefined,
+  provider: { '@id': orgId },
+  areaServed: 'Worldwide',
+  priceRange: '$$-$$$',
+};
+
+const websiteEntity = {
+  '@type': 'WebSite',
+  '@id': websiteId,
+  url: brand.url,
+  name: brand.name,
+  publisher: { '@id': orgId },
+  inLanguage: brand.locale,
+};
+
+const schemaLd = {
+  '@context': 'https://schema.org',
+  '@graph': [orgEntity, personEntity, professionalServiceEntity, websiteEntity],
+};
+
+const pathname = Astro.url.pathname;
+
+const addons = getEnabledAddons();
+---
+<!DOCTYPE html>
+<html lang={brand.locale} class="no-js">
+<head>
+  <script is:inline>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');</script>
+  <script is:inline>
+    // Theme pre-paint — sets <html data-theme> to one of
+    //   "dark" | "light" | "vibrant"
+    // before first paint to avoid FOUC. See /theme/README.md.
+    // Must stay inline. First-visit default is "vibrant" — that's the
+    // authored rhythm (dark hero anchor + contrasting section bands)
+    // and is how the design is meant to be experienced. Returning
+    // visitors who previously had the dark/light + invert toggle on
+    // are migrated: invert=1 becomes "vibrant".
+    (function(){
+      try {
+        var t = localStorage.getItem('theme');
+        var inverted = localStorage.getItem('themeInverted');
+        if (t !== 'light' && t !== 'dark' && t !== 'vibrant') {
+          if (inverted === '1') t = 'vibrant';
+          else t = 'vibrant';
+        } else if (inverted === '1' && t !== 'vibrant') {
+          t = 'vibrant';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (_) { document.documentElement.setAttribute('data-theme', 'vibrant'); }
+    })();
+  </script>
+  <style is:inline>
+    /* Critical FOUC-prevention CSS — paints BEFORE theme.css + global.css
+       arrive on the wire. The pre-paint script above has already written
+       <html data-theme="vibrant|dark|light">, so these selectors match
+       on first paint. Without this block, body uses var(--bg-primary)
+       which falls through to inherit/default (often #000) on slow
+       networks while the brand stylesheet is still loading — the
+       symptom is a "near-black void with invisible text for 1–2s"
+       reported on Process/Services/Contact/Pricing/Home cold loads.
+       Values mirror theme.css's :root baseline so steady-state rendering
+       is unchanged; per-brand overrides in the inline <style> at the
+       bottom of <head> still cascade on top of these. */
+    html { background-color: #0a0a0b; color: #fafafa; color-scheme: dark; }
+    html[data-theme="light"] { background-color: #fafaf9; color: #18181b; color-scheme: light; }
+    html[data-theme="vibrant"], html[data-theme="dark"] { background-color: #0a0a0b; color: #fafafa; color-scheme: dark; }
+    body { background-color: inherit; color: inherit; }
+    /* Lock hero min-height so .hero CSS arriving late doesn't trigger a
+       "tiny hero → full-viewport hero" reflow once sections.css applies. */
+    .hero { min-height: 100vh; }
+  </style>
+  <script is:inline set:html={`(function(){try{var de=document.documentElement;var d=${JSON.stringify(effectiveVariants)};var letterRe=new RegExp(${JSON.stringify(VARIANT_LETTER_RE_SOURCE)});var kebabRe=new RegExp(${JSON.stringify(VARIANT_KEBAB_RE_SOURCE)});for(var k in d){if(!Object.prototype.hasOwnProperty.call(d,k))continue;var v=d[k];if(typeof v!=='string'||!v)continue;if(!letterRe.test(v)&&!kebabRe.test(v))continue;if(!/^[a-z][a-z0-9-]{0,31}$/.test(k))continue;de.setAttribute('data-'+k+'-variant',v);}}catch(_){} })();`}>
+  </script>
+  <script is:inline define:vars={{ VARIANT_LETTER_RE_SOURCE, VARIANT_KEBAB_RE_SOURCE }}>
+    (function(){
+      // Restore aed:<name>-variant localStorage keys as data-<name>-variant
+      // on <html> before first paint. Two passes:
+      //   1. Site-wide keys: `aed:<name>-variant`. Run first so per-page keys
+      //      can overwrite them.
+      //   2. Page-scoped keys: `aed:<name>-variant:page:<pathname>`. Only the
+      //      keys whose pathname matches `location.pathname` are applied;
+      //      others belong to a different page and should not bleed.
+      // Site-wide → page-scoped precedence mirrors the as-shipped resolution
+      // chain (brand.defaultVariants → page.json variants), so the editor's
+      // live preview matches what gets baked after Copy Patch.
+      // Values are sanitized against the letter cap (src/builder/lib/variants.ts:
+      // MAX_VARIANT_LETTER) or a short [a-z0-9-] slug.
+      try {
+        var de = document.documentElement;
+        var letterRe = new RegExp(VARIANT_LETTER_RE_SOURCE);
+        var kebabRe = new RegExp(VARIANT_KEBAB_RE_SOURCE);
+        var nameRe = /^[a-z][a-z0-9-]{0,31}$/;
+        var pageScopedHits = [];
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (!k) continue;
+          var v = localStorage.getItem(k);
+          if (!v) continue;
+          if (!letterRe.test(v) && !kebabRe.test(v)) continue;
+          var pageM = /^aed:([a-z][a-z0-9-]{0,31})-variant:page:(\/.*)$/.exec(k);
+          if (pageM) {
+            // Defer page-scoped keys; apply only those that match this page.
+            if (pageM[2] === location.pathname) pageScopedHits.push([pageM[1], v]);
+            continue;
+          }
+          var siteM = /^aed:([a-z][a-z0-9-]{0,31})-variant$/.exec(k);
+          if (!siteM) continue;
+          de.setAttribute('data-' + siteM[1] + '-variant', v);
+        }
+        // Second pass — page-scoped wins.
+        for (var j = 0; j < pageScopedHits.length; j++) {
+          var hit = pageScopedHits[j];
+          if (!nameRe.test(hit[0])) continue;
+          de.setAttribute('data-' + hit[0] + '-variant', hit[1]);
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <script is:inline>
+    (function(){
+      // Restore resolved theme-token CSS vars written by the editor's live
+      // preview — without this, rolling a palette on page A and navigating to
+      // page B would revert to shipped colors, since theme-pending alone
+      // doesn't get applied without the full theme-index mapping. The editor
+      // writes { "--accent": "#abc", "--accent-rgb": "1,2,3", ... } to
+      // aed:theme-cssvars whenever applyLivePreview runs.
+      try {
+        var raw = localStorage.getItem('aed:theme-cssvars');
+        if (!raw) return;
+        var map = JSON.parse(raw);
+        if (!map || typeof map !== 'object') return;
+        var style = document.documentElement.style;
+        for (var k in map) {
+          if (!Object.prototype.hasOwnProperty.call(map, k)) continue;
+          // Accept only CSS custom property names (--foo-bar).
+          if (!/^--[a-zA-Z][\w-]{0,63}$/.test(k)) continue;
+          var v = map[k];
+          if (typeof v !== 'string' || !v || v.length > 200) continue;
+          // Reject obviously-unsafe values (newlines, semicolons from CSS escape
+          // attempts). setProperty wouldn't execute JS but we keep values tame.
+          if (/[\r\n;]/.test(v)) continue;
+          style.setProperty(k, v);
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="stylesheet" href={publicAssetUrl('/assets/builder/theme/theme.css')} />
+  <link rel="stylesheet" href={publicAssetUrl('/assets/builder/theme/section-overrides.css')} />
+  <script type="application/json" id="aed-section-overrides-baked" set:html={JSON.stringify(sectionOverridesBaked)}></script>
+  <script type="application/json" id="aed-templated-groups" set:html={JSON.stringify(templatedGroups)}></script>
+  <script type="application/json" id="aed-variant-defaults" set:html={JSON.stringify(effectiveVariants)}></script>
+  <script is:inline>
+    (function () {
+      // Apply per-section theme/parallax/accent overrides before paint.
+      // Four layered sources, by precedence (lowest → highest):
+      //   1. Group baked:  section-overrides.json keyed by `/services/*`
+      //   2. Group local:  aed:sec-* localStorage keyed by `/services/*`
+      //   3. Exact baked:  section-overrides.json keyed by the exact path
+      //   4. Exact local:  aed:sec-* localStorage keyed by the exact path
+      // Group scope applies uniformly across every child of a templated route
+      // (e.g. /services/starter-site/, /services/lead-forms/, …). Exact scope
+      // is for one-off page overrides that should not propagate.
+      function readBaked() {
+        try {
+          var tag = document.getElementById('aed-section-overrides-baked');
+          if (!tag) return {};
+          return JSON.parse(tag.textContent || '') || {};
+        } catch (_) { return {}; }
+      }
+      function readGroups() {
+        try {
+          var tag = document.getElementById('aed-templated-groups');
+          if (!tag) return [];
+          var arr = JSON.parse(tag.textContent || '') || [];
+          return Array.isArray(arr) ? arr : [];
+        } catch (_) { return []; }
+      }
+      function matchingGroupKey(groups, path) {
+        for (var i = 0; i < groups.length; i++) {
+          var g = groups[i];
+          if (g && typeof g.prefix === 'string' && typeof g.group === 'string'
+              && path.indexOf(g.prefix) === 0 && path.length > g.prefix.length) {
+            return g.group;
+          }
+        }
+        return null;
+      }
+      function normalizeHeading(s) {
+        return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().toLowerCase();
+      }
+      function readLiveHeading(el) {
+        if (!el) return '';
+        var h = el.querySelector('h1, h2, h3');
+        return h ? normalizeHeading(h.textContent || '') : '';
+      }
+      // Heading-tiebreak resolver. Section overrides are keyed by
+      // {type, index} where index is "0-based ordinal among same-type
+      // sections in DOM order" — but that index drifts when the user
+      // deletes an earlier same-type section. The row's optional
+      // `sectionHeading` is a snapshot of the heading text taken when
+      // the override was authored. When it matches the live section's
+      // heading it's a hard identity win; otherwise we fall back to
+      // index, but only when no other row claims the live heading
+      // (else an orphaned row would attach to the wrong section).
+      function rowFor(map, path, type, idx, liveHeading) {
+        var arr = map[path] || [];
+        var idxMatch = null;
+        var headingHit = null;
+        var someoneElseClaimsLive = false;
+        for (var i = 0; i < arr.length; i++) {
+          var r = arr[i];
+          if (r.type !== type) continue;
+          var rh = normalizeHeading(r.sectionHeading || '');
+          if (liveHeading && rh && rh === liveHeading) {
+            // Strong identity match. Prefer rows where index also matches
+            // when multiple rows share the heading (rare but possible).
+            if (!headingHit || r.index === idx) headingHit = r;
+          } else if (liveHeading && rh && rh !== liveHeading) {
+            // This row's heading claims a DIFFERENT live section — note it
+            // so we don't blindly accept the index-fallback row when its
+            // heading would orphan something else.
+            // (Used only as informational; doesn't change branching here.)
+          }
+          if (r.index === idx) idxMatch = r;
+        }
+        if (headingHit) return headingHit;
+        if (idxMatch) {
+          var im = normalizeHeading(idxMatch.sectionHeading || '');
+          // Index match with no heading constraint on either side: pure positional, accept.
+          if (!im || !liveHeading) return idxMatch;
+          // Index match, but the row's heading disagrees with the live section.
+          // The row was authored against a section that has since shifted or been
+          // renamed — treat as orphan rather than misapplying.
+          return null;
+        }
+        return null;
+      }
+      function ls(key) {
+        try { return localStorage.getItem(key); } catch (_) { return null; }
+      }
+      // Read brand+page variant defaults blob inlined by brand.ts. Used by
+      // the per-instance variant restore pass below to fall back unmodified
+      // sections to the right baseline value when an instance pin elsewhere
+      // on the page forces the html-level attr to be stripped.
+      function readVariantDefaultsMap() {
+        try {
+          var tag = document.getElementById('aed-variant-defaults');
+          if (!tag) return {};
+          return JSON.parse(tag.textContent || '') || {};
+        } catch (_) { return {}; }
+      }
+      function apply() {
+        try {
+          var baked = readBaked();
+          var groups = readGroups();
+          var path = location.pathname;
+          var groupPath = matchingGroupKey(groups, path); // may be null
+          var nodes = document.querySelectorAll('[data-section-type]');
+
+          // Pre-pass: detect every section-type with at least one explicit
+          // per-section variant attribute — either an instance pin in
+          // localStorage (`aed:<type>-variant:instance:<path>:<n>`) OR an
+          // SSR-painted attribute (Astro emits `data-<type>-variant="X"` on
+          // a section when its JSON declares `variant: "X"`). The dual-form
+          // CSS selectors `[data-<type>-variant='X'] .<type>` (broadcast)
+          // and `.<type>[data-<type>-variant='X']` (per-instance) tie on
+          // specificity, so leaving the html-level broadcast in place while
+          // a section has its own attr lets CSS source order pick the LATER
+          // variant — meaning a page- or sitewide-scope pick of variant H
+          // would visually clobber a sibling's authored variant F because
+          // H's rules come later in the stylesheet. Strip the html attr and
+          // fall every same-type section back to an explicit attribute (pin
+          // > SSR > broadcast) so each variant resolves deterministically.
+          var pinByTypeIdx = {};       // pinByTypeIdx[type][idx] = "X" (instance pin)
+          var ssrAttrByTypeIdx = {};   // ssrAttrByTypeIdx[type][idx] = "X" (SSR-painted)
+          var explicitTypes = {};      // typeKey → true if any pin OR SSR for the type
+          var seenScan = {};
+          var variantSlugRe = /^[A-Za-z0-9][A-Za-z0-9-]{0,31}$/;
+          for (var s = 0; s < nodes.length; s++) {
+            var sNode = nodes[s];
+            var sType = sNode.getAttribute('data-section-type') || '';
+            if (!/^[a-z0-9][a-z0-9-]{0,31}$/.test(sType)) continue;
+            var sIdx = seenScan[sType] || 0; seenScan[sType] = sIdx + 1;
+            var pin = ls('aed:' + sType + '-variant:instance:' + path + ':' + sIdx);
+            if (pin && variantSlugRe.test(pin)) {
+              if (!pinByTypeIdx[sType]) pinByTypeIdx[sType] = {};
+              pinByTypeIdx[sType][sIdx] = pin;
+              explicitTypes[sType] = true;
+            }
+            // Capture the SSR-painted attr (if any) BEFORE the apply loop
+            // mutates anything. Astro paints this when JSON has variant: "X".
+            var ssrAttr = sNode.getAttribute('data-' + sType + '-variant');
+            if (ssrAttr && variantSlugRe.test(ssrAttr)) {
+              if (!ssrAttrByTypeIdx[sType]) ssrAttrByTypeIdx[sType] = {};
+              ssrAttrByTypeIdx[sType][sIdx] = ssrAttr;
+              explicitTypes[sType] = true;
+            }
+          }
+          var variantDefaultsMap = readVariantDefaultsMap();
+          var variantBroadcastByType = {};
+          for (var typeKey in explicitTypes) {
+            if (!Object.prototype.hasOwnProperty.call(explicitTypes, typeKey)) continue;
+            // Resolve broadcast value the html attr WOULD carry (page-scoped
+            // wins over sitewide wins over brand default). Used as the
+            // baseline for sections that don't carry a pin or SSR attr.
+            var broadcast = ls('aed:' + typeKey + '-variant:page:' + path)
+              || ls('aed:' + typeKey + '-variant')
+              || (variantDefaultsMap[typeKey] || null);
+            variantBroadcastByType[typeKey] = (broadcast && variantSlugRe.test(broadcast)) ? broadcast : null;
+            // Strip the html-level attr so dual-form variant rules don't
+            // clobber per-section attrs by source-order tiebreak.
+            document.documentElement.removeAttribute('data-' + typeKey + '-variant');
+          }
+
+          var seen = {};
+          for (var i = 0; i < nodes.length; i++) {
+            var el = nodes[i];
+            var type = el.getAttribute('data-section-type') || '';
+            if (!/^[a-z0-9][a-z0-9-]{0,31}$/.test(type)) continue;
+            var idx = seen[type] || 0; seen[type] = idx + 1;
+            var liveHeading = readLiveHeading(el);
+            var exactRow = rowFor(baked, path, type, idx, liveHeading) || {};
+            var groupRow = groupPath ? (rowFor(baked, groupPath, type, idx, liveHeading) || {}) : {};
+
+            // Per-section variant attribute resolve. When ANY section of
+            // this type has an explicit attr (pin or SSR), every same-type
+            // section gets its attr written explicitly so the html-level
+            // broadcast (which we already stripped above) doesn't tie with
+            // the per-instance form on source order. Resolution: pin > SSR
+            // > broadcast. Sections without an authored variant or pin
+            // fall through to the broadcast so they still get a CSS rule
+            // to match against once the html attr is gone.
+            if (explicitTypes[type]) {
+              var localPin = pinByTypeIdx[type] && pinByTypeIdx[type][idx];
+              var ssrAttr = ssrAttrByTypeIdx[type] && ssrAttrByTypeIdx[type][idx];
+              var resolved = localPin || ssrAttr || variantBroadcastByType[type];
+              if (resolved) el.setAttribute('data-' + type + '-variant', resolved);
+              else el.removeAttribute('data-' + type + '-variant');
+            }
+
+            // Theme — ssr-default < group-baked < group-local < exact-baked < exact-local.
+            // The SSR-rendered attribute (e.g. emitted from page JSON) sits at the
+            // bottom so a published default survives when no editor override exists.
+            // Without this, the no-override branch would strip the SSR value.
+            var themeAllowed = { light: 1, dark: 1, white: 1, black: 1, primary: 1, secondary: 1, vibrant: 1 };
+            var ssrDefault = el.getAttribute('data-sec-theme');
+            var theme = (ssrDefault && themeAllowed[ssrDefault]) ? ssrDefault : null;
+            if (themeAllowed[groupRow.theme]) theme = groupRow.theme;
+            if (groupPath) {
+              var groupThemeLocal = ls('aed:sec-theme:' + groupPath + ':' + type + ':' + idx);
+              if (groupThemeLocal && themeAllowed[groupThemeLocal]) theme = groupThemeLocal;
+            }
+            if (themeAllowed[exactRow.theme]) theme = exactRow.theme;
+            var exactThemeLocal = ls('aed:sec-theme:' + path + ':' + type + ':' + idx);
+            if (exactThemeLocal && themeAllowed[exactThemeLocal]) theme = exactThemeLocal;
+            if (theme && themeAllowed[theme]) el.setAttribute('data-sec-theme', theme);
+            else el.removeAttribute('data-sec-theme');
+
+            // Parallax — same precedence stack. An `off` cannot be represented
+            // in baked (only `parallax: 'on'` survives normalization), but the
+            // localStorage shape uses distinct on/off values so the editor can
+            // still explicitly disable a group-baked parallax on one page.
+            var parallaxOn = groupRow.parallax === 'on';
+            if (groupPath) {
+              var groupParaLocal = ls('aed:sec-parallax:' + groupPath + ':' + type + ':' + idx);
+              if (groupParaLocal === 'on') parallaxOn = true;
+              else if (groupParaLocal === 'off') parallaxOn = false;
+            }
+            if (exactRow.parallax === 'on') parallaxOn = true;
+            var exactParaLocal = ls('aed:sec-parallax:' + path + ':' + type + ':' + idx);
+            if (exactParaLocal === 'on') parallaxOn = true;
+            else if (exactParaLocal === 'off') parallaxOn = false;
+
+            var paraUrl = groupRow.parallaxUrl || '';
+            if (groupPath) {
+              var groupParaUrlLocal = ls('aed:sec-parallax-url:' + groupPath + ':' + type + ':' + idx);
+              if (groupParaUrlLocal) paraUrl = groupParaUrlLocal;
+            }
+            if (exactRow.parallaxUrl) paraUrl = exactRow.parallaxUrl;
+            var exactParaUrlLocal = ls('aed:sec-parallax-url:' + path + ':' + type + ':' + idx);
+            if (exactParaUrlLocal) paraUrl = exactParaUrlLocal;
+
+            if (parallaxOn) {
+              el.setAttribute('data-sec-parallax-bg', 'on');
+              if (/^https?:\/\//.test(paraUrl)) {
+                el.style.setProperty('--sec-parallax-url', 'url("' + paraUrl.replace(/"/g, '\\"') + '")');
+              } else {
+                el.style.removeProperty('--sec-parallax-url');
+              }
+            } else {
+              el.removeAttribute('data-sec-parallax-bg');
+              el.style.removeProperty('--sec-parallax-url');
+            }
+
+            // Disabled flag — same precedence stack. `data-sec-disabled="on"`
+            // hides the section from live visitors (via CSS) and flips the
+            // editor's overlay into a grayed/collapsed "review" stub.
+            var disabled = false;
+            if (groupRow.disabled === 'on') disabled = true;
+            if (groupPath) {
+              var groupDisLocal = ls('aed:sec-disabled:' + groupPath + ':' + type + ':' + idx);
+              if (groupDisLocal === 'on') disabled = true;
+              else if (groupDisLocal === 'off') disabled = false;
+            }
+            if (exactRow.disabled === 'on') disabled = true;
+            var exactDisLocal = ls('aed:sec-disabled:' + path + ':' + type + ':' + idx);
+            if (exactDisLocal === 'on') disabled = true;
+            else if (exactDisLocal === 'off') disabled = false;
+            if (disabled) el.setAttribute('data-sec-disabled', 'on');
+            else el.removeAttribute('data-sec-disabled');
+
+            // Accent — same precedence stack.
+            var accent = '';
+            var hexRe = /^#[0-9a-fA-F]{6}$/;
+            if (hexRe.test(groupRow.accent)) accent = groupRow.accent;
+            if (groupPath) {
+              var groupAccentLocal = ls('aed:sec-accent:' + groupPath + ':' + type + ':' + idx);
+              if (groupAccentLocal && hexRe.test(groupAccentLocal)) accent = groupAccentLocal;
+            }
+            if (hexRe.test(exactRow.accent)) accent = exactRow.accent;
+            var exactAccentLocal = ls('aed:sec-accent:' + path + ':' + type + ':' + idx);
+            if (exactAccentLocal && hexRe.test(exactAccentLocal)) accent = exactAccentLocal;
+
+            // Contrast guard: a near-white accent on a light/white section bg
+            // paints accent-colored text, eyebrows and buttons invisibly.
+            // Drop the override so the brand's root --accent (primary) inherits
+            // and provides a readable accent instead of white-on-white.
+            if (accent && (theme === 'light' || theme === 'white')) {
+              var an = parseInt(accent.slice(1), 16);
+              var ar = (an >> 16) & 255, ag = (an >> 8) & 255, ab = an & 255;
+              if ((ar * 299 + ag * 587 + ab * 114) / 1000 >= 235) accent = '';
+            }
+
+            if (accent && hexRe.test(accent)) {
+              el.style.setProperty('--accent', accent);
+              var n = parseInt(accent.slice(1), 16);
+              el.style.setProperty('--accent-rgb', ((n >> 16) & 255) + ', ' + ((n >> 8) & 255) + ', ' + (n & 255));
+            } else {
+              el.style.removeProperty('--accent');
+              el.style.removeProperty('--accent-rgb');
+            }
+          }
+        } catch (_) {}
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply, { once: true });
+      else apply();
+    })();
+  </script>
+  {/* Addon CSS + meta tags + head-level JSON (dynamic; order = site.json.addons key order) */}
+  {addons.map((a) => (
+    <Fragment>
+      {a.cssHrefs.map((h) => <link rel="stylesheet" href={h} {...a.cssAttrs} />)}
+      {a.meta.map((m) => <meta name={m.name} content={m.content} {...(m.attrs ?? {})} />)}
+    </Fragment>
+  ))}
+
+  <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="robots" content={indexable ? 'index, follow' : 'noindex, nofollow, noarchive'} />
+  {!indexable && <meta name="googlebot" content="noindex, nofollow, noarchive" />}
+  <link rel="canonical" href={canonical} />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
+
+  {/* Open Graph */}
+  <meta property="og:type" content={resolvedOgType} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+  {resolvedOgImage && <meta property="og:image:alt" content={`${brand.name} — ${brand.tagline}`} />}
+  <meta property="og:site_name" content={brand.name} />
+  <meta property="og:locale" content={brand.locale === 'en' ? 'en_US' : brand.locale} />
+
+  {/* Twitter */}
+  <meta name="twitter:card" content={brand.seo.twitterCard} />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+  {resolvedOgImage && <meta name="twitter:image:alt" content={`${brand.name} — ${brand.tagline}`} />}
+
+  {/* Icons */}
+  {assets.favicon && <link rel="icon" type="image/x-icon" href={publicAssetUrl(assets.favicon)} />}
+  {assets.favicon32 && <link rel="icon" type="image/png" sizes="32x32" href={publicAssetUrl(assets.favicon32)} />}
+  {assets.appleTouchIcon && <link rel="apple-touch-icon" sizes="180x180" href={publicAssetUrl(assets.appleTouchIcon)} />}
+
+  {/* Structured data */}
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schemaLd)}></script>
+
+  {/* Analytics */}
+  {brand.analytics.plausibleDomain && brand.analytics.plausibleScript && (
+    <script defer is:inline data-domain={brand.analytics.plausibleDomain} src={brand.analytics.plausibleScript}></script>
+  )}
+
+  {/* Brand CSS var override (after global.css import, so it wins) */}
+  <style set:html={rootOverride}></style>
+
+  {/* Per-page <head> injection slot — used by post / archive / category routes
+      for <link rel="alternate" type="application/rss+xml"> auto-discovery and
+      any other route-specific head elements. Brands/routes that don't need it
+      pass nothing; the slot renders empty and behavior is byte-identical. */}
+  <slot name="head" />
+</head>
+<body>
+  <a href={skipTarget} class="skip-to-content">Skip to content</a>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <div class="print-stamp" aria-hidden="true" hidden>
+    <span class="print-stamp-brand">{brand.name}</span>
+    <span class="print-stamp-url">{canonical}</span>
+    <span class="print-stamp-date"></span>
+  </div>
+
+  {!chromeless && !hideHeader && (
+    BRAND_ID === 'swift-digest'
+      ? <SwiftDigestNav pathname={pathname} />
+      : <Nav pathname={pathname} />
+  )}
+
+  <slot />
+
+  {!chromeless && !hideFooter && (
+    BRAND_ID === 'swift-digest'
+      ? <SwiftDigestFooter />
+      : <Footer />
+  )}
+
+  <script src={`/assets/builder/main.js?v=${import.meta.env.PUBLIC_MAIN_HASH}`} is:inline></script>
+  <script defer src={`/assets/builder/theme/theme.js?v=${import.meta.env.PUBLIC_THEME_HASH}`}></script>
+  {/* Addon runtime: per-addon JSON config blocks emitted before their script.
+      Path scoping (audit 2026-05-04): an addon's JSON / JS only emit on
+      pages where the addon's `showOnPaths` / `hideOnPaths` say it's active.
+      Without this, every enabled addon's full config (demo-promo, floating
+      cta, announcement-bar, comparison-table dataset, etc.) shipped to
+      every page's HTML even when the addon's runtime would reject the path
+      anyway — bloat with no public benefit. The matcher mirrors the trailing-`*`
+      prefix-match used inside individual addon scripts. */}
+  {addons.map((a) => {
+    const matches = (paths) => {
+      if (!Array.isArray(paths)) return false;
+      for (const p of paths) {
+        if (typeof p !== 'string' || !p) continue;
+        if (p.charAt(p.length - 1) === '*') {
+          const bare = p.slice(0, -1).replace(/\/$/, '');
+          if (pathname === bare || pathname === bare + '/' || pathname.indexOf(bare + '/') === 0) return true;
+        } else if (pathname === p || pathname === p + '/' || (p.charAt(p.length - 1) === '/' && pathname === p.slice(0, -1))) {
+          return true;
+        }
+      }
+      return false;
+    };
+    /* If ANY of this addon's json blocks declare path filters, the addon
+       only emits when the current path passes those filters. Multiple json
+       blocks per addon (e.g. demo-promo with both feed + config blocks)
+       use the strictest filter found across them. */
+    let suppress = false;
+    for (const j of a.json) {
+      const d = j.data ?? {};
+      if (Array.isArray(d.showOnPaths) && d.showOnPaths.length > 0 && !matches(d.showOnPaths)) suppress = true;
+      if (Array.isArray(d.hideOnPaths) && matches(d.hideOnPaths)) suppress = true;
+    }
+    if (suppress) return null;
+    return (
+      <Fragment>
+        {a.json.map((j) => <script type="application/json" id={j.id} is:inline set:html={JSON.stringify(j.data)}></script>)}
+        {a.jsSrcs.map((src) => <script defer src={src}></script>)}
+      </Fragment>
+    );
+  })}
+
+  {/* Builder admin: edit-mode bootstrap. Activation is opt-in only — visit
+      ?edit=1 (or ?edit=force for persistent) on the device you want to edit
+      from; the bootstrap remembers the choice in localStorage.
+
+      Audit (2026-05-04) flagged two leaks that previously rode this script:
+        - AED_ALLOWLIST (admin IPs in public HTML) — removed; bootstrap no
+          longer does an IP check, no allowlist ships.
+        - AED_GALLERY (60+ image URLs in public HTML on every page) — removed
+          from Base.astro; the editor fetches /admin/gallery.json on
+          activation instead. URLs no longer in HTML for public visitors. */}
+  <script defer src={`/assets/builder/editor/bootstrap.js?v=${import.meta.env.PUBLIC_BOOTSTRAP_HASH}`}></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "slug": "emergency-service",
+  "order": 4,
+  "number": "04",
+  "iconKey": "zap",
+  "heroImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Plumber's work truck loaded for an after-hours dispatch",
+  "title": "24/7 Emergency Plumbing",
+  "headline": "Burst pipe at 11pm?\nI'll usually answer.",
+  "shortDescription": "After-hours and weekend dispatch for burst pipes, mainline backups, water-heater failures, and active leaks — within Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland.",
+  "lead": "Plumbing emergencies don't keep business hours. Most of mine come in between 9pm and 6am or on a Sunday afternoon — a frozen line letting go in January, a 12-year-old water heater that finally split, a mainline backup that started during dinner. When you call, I'll usually answer myself. If I'm already on another call, I'll text back inside 15 minutes with an honest ETA. No call center, no \"a technician will reach out shortly,\" no surprise dispatch fee tacked on after the work is done.",
+  "seo": {
+    "title": "24/7 Emergency Plumber — Cedar Mill Plumbing · Portland, OR",
+    "description": "After-hours and weekend emergency plumbing in Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland. Burst pipes, mainline backups, water heater failures. Direct line to a licensed Oregon plumber.",
+    "schemaName": "Emergency Plumbing Service",
+    "schemaDescription": "24/7 emergency plumbing dispatch within the Cedar Mill, Bethany, Beaverton, and NW Portland service area."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "variant": "showcase",
+      "heading": "What this covers",
+      "intro": "The actual emergencies — the kind where shutting the water off won't hold until Monday.",
+      "items": [
+        { "label": "Burst supply line", "body": "Frozen pipes, failed compression fittings, an old galvanized run that finally let go. Stop the leak, stabilize the line, repair-or-replace decision in writing" },
+        { "label": "Mainline backup", "body": "Toilets gurgling, lowest-fixture overflow, water in the basement floor drain. Cabled or jetted same-night, scoped after to confirm" },
+        { "label": "Water heater failure", "body": "Tank cracked open, no hot water, gas smell at the unit. Shut off and stabilized tonight, replacement same-day or first thing in the morning" },
+        { "label": "Active leak from above", "body": "Ceiling staining and dripping under a bathroom or kitchen above. Isolate, demo a small access patch, repair the line, photo report so your insurance has documentation" },
+        { "label": "Sewage backup", "body": "Black-water in a fixture or floor drain. Cleared, scoped, and a written estimate for any pipe damage we find. Restoration referral if you need one" },
+        { "label": "After-hours fee — $125", "body": "Added on top of standard flat-rate or per-job pricing for evenings, overnights, weekends, and holidays. No additional dispatch fee, no trip charge" }
+      ]
+    },
+    {
+      "type": "feature",
+      "theme": "white",
+      "heading": "Service area & response time",
+      "body": "I keep emergency dispatch within a tight Westside radius so I can actually be there in time to help.",
+      "items": [
+        "Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland (97225, 97229, 97006, 97005, 97124, 97210, 97231) — typical 30 to 60 minute arrival",
+        "When you call after hours, you reach me directly. If I'm under a sink already, I'll text back inside 15 minutes with an honest ETA",
+        "Outside the service area, I'll point you to a colleague I trust rather than promise something I can't deliver",
+        "If it's life-safety — fire, gas leak you can smell from outside, structural collapse — call 911 first, then call me"
+      ]
+    }
+  ],
+  "cta": {
+    "label": "Call Now",
+    "href": "tel:+15035550149"
+  }
+}

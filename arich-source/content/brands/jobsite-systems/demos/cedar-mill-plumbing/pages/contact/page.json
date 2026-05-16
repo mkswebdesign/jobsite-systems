@@ -1,0 +1,205 @@
+{
+  "slug": "contact",
+  "path": "/contact/",
+  "breadcrumbLabel": "Contact",
+  "seo": {
+    "title": "Contact — Cedar Mill Plumbing · Mike Hollister",
+    "description": "Request a service call or estimate from Cedar Mill Plumbing — licensed Oregon plumber serving Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland. Direct line: (503) 555-0149.",
+    "canonical": "https://jobsite.systems/demo/cedar-mill-plumbing/contact/"
+  },
+  "header": {
+    "sectionLabel": "Get in touch",
+    "heading": "Request a service call or free estimate.",
+    "lead": "Send a short note — what's going on with the plumbing, where the house is, and how soon you need someone out. I respond personally, usually within a few hours during business hours and same-day on evenings/weekends. If it's a true emergency (active leak, mainline backup, no hot water tonight), call instead — (503) 555-0149."
+  },
+  "form": {
+    "action": "https://contact-proxy.anthony-abc.workers.dev",
+    "method": "POST",
+    "subject": "New service request from Cedar Mill Plumbing",
+    "steps": [
+      {
+        "id": "you",
+        "label": "Hello",
+        "title": "Introduce yourself",
+        "subtitle": "Just the basics so I know who I'm coming out to."
+      },
+      {
+        "id": "message",
+        "label": "The Job",
+        "title": "What's going on?",
+        "subtitle": "Pick a topic, then describe what's happening. Photos welcome at the estimate visit — no need to attach here."
+      },
+      {
+        "id": "confirm",
+        "label": "Review",
+        "title": "Ready to send?",
+        "subtitle": "Quick once-over. Hit Back or tap Edit to change anything."
+      }
+    ],
+    "fields": [
+      {
+        "id": "name",
+        "name": "name",
+        "label": "Your Name",
+        "type": "text",
+        "placeholder": "First name is fine",
+        "required": true,
+        "step": "you",
+        "row": 1
+      },
+      {
+        "id": "email",
+        "name": "email",
+        "label": "Email Address",
+        "type": "email",
+        "placeholder": "you@example.com",
+        "required": true,
+        "step": "you",
+        "row": 1
+      },
+      {
+        "id": "phone",
+        "name": "phone",
+        "label": "Phone (best for the callback)",
+        "type": "tel",
+        "placeholder": "(503) 555-0149",
+        "required": false,
+        "step": "you",
+        "row": 2
+      },
+      {
+        "id": "urgency",
+        "name": "urgency",
+        "label": "How urgent?",
+        "type": "select",
+        "required": false,
+        "step": "you",
+        "row": 2,
+        "options": [
+          { "value": "", "label": "Pick one…", "disabled": true, "selected": true },
+          { "value": "emergency", "label": "Emergency — please call instead" },
+          { "value": "this-week", "label": "This week if possible" },
+          { "value": "next-week", "label": "Next week is fine" },
+          { "value": "estimate", "label": "Just an estimate for a project" }
+        ]
+      },
+      {
+        "id": "location",
+        "name": "location",
+        "label": "Where's the house?",
+        "type": "text",
+        "placeholder": "Cedar Mill / Bethany / Beaverton / Hillsboro / NW Portland — neighborhood or zip is fine",
+        "required": false,
+        "step": "you",
+        "row": 3
+      },
+      {
+        "id": "topic",
+        "name": "topic",
+        "label": "What's the job?",
+        "type": "select",
+        "required": true,
+        "step": "message",
+        "row": 1,
+        "options": [
+          { "value": "", "label": "Pick what fits best…", "disabled": true, "selected": true },
+          { "value": "drain", "label": "Drain cleaning or backed-up line" },
+          { "value": "water-heater", "label": "Water heater install / replace / service" },
+          { "value": "leak", "label": "Leak repair or leak detection" },
+          { "value": "repipe", "label": "Repipe or larger plumbing project" },
+          { "value": "fixture", "label": "Faucet, toilet, or fixture work" },
+          { "value": "other", "label": "Something else" }
+        ]
+      },
+      {
+        "id": "message",
+        "name": "message",
+        "label": "Describe what's going on",
+        "type": "textarea",
+        "placeholder": "What's happening, when it started, where in the house. Photos welcome at the estimate visit — no need to attach here. If it's an active leak right now, please call instead.",
+        "required": true,
+        "step": "message",
+        "row": 2
+      },
+      {
+        "id": "heardFrom",
+        "name": "heardFrom",
+        "label": "How did you hear about us? (optional)",
+        "type": "select",
+        "required": false,
+        "step": "message",
+        "row": 3,
+        "options": [
+          { "value": "", "label": "Pick one…", "disabled": true, "selected": true },
+          { "value": "google", "label": "Google search" },
+          { "value": "referral", "label": "Referral (neighbor, friend, contractor)" },
+          { "value": "repeat", "label": "I'm a returning customer" },
+          { "value": "other", "label": "Somewhere else" }
+        ]
+      },
+      {
+        "id": "emergency",
+        "name": "emergency",
+        "type": "checkbox",
+        "label": "I understand this form is for non-emergency requests. If I have an active leak, sewage backup, no hot water tonight, or a gas smell, I will call (503) 555-0149 directly instead of waiting on a form reply.",
+        "value": "acknowledged",
+        "required": true,
+        "step": "confirm",
+        "row": 1
+      },
+      {
+        "id": "terms",
+        "name": "terms",
+        "type": "checkbox",
+        "label": "I agree to the <a href=\"/terms/\">Terms</a> and <a href=\"/privacy/\">Privacy Policy</a>.",
+        "value": "accepted",
+        "required": true,
+        "step": "confirm",
+        "row": 2
+      }
+    ],
+    "submitLabel": "Submit",
+    "nextLabel": "Continue",
+    "backLabel": "Back",
+    "successMessage": "Got it — your request's in. I'll reach out within a few hours with scheduling options or to ask any quick clarifying questions.",
+    "errorMessage": "Something went wrong. Please try again or call directly: (503) 555-0149."
+  },
+  "sidebar": {
+    "infoCards": [
+      {
+        "iconKey": "envelope",
+        "title": "Call Direct",
+        "body": "Phone is the fastest way for service calls and emergencies. Goes straight to Mike, including evenings and weekends.",
+        "prominent": true,
+        "link": {
+          "label": "(503) 555-0149",
+          "href": "tel:+15035550149"
+        }
+      },
+      {
+        "iconKey": "clock",
+        "title": "Response Time",
+        "body": "Form replies usually within a few hours during business days. Non-emergency service calls scheduled inside 3 to 5 business days. Emergency dispatch 24/7 in the service area."
+      },
+      {
+        "iconKey": "rocket",
+        "title": "Active Emergency?",
+        "body": "Burst pipe, sewage backup, no hot water tonight, gas smell — call (503) 555-0149 directly. The form is checked during business hours; the phone is checked 24/7. If it's life-safety (fire, structural, gas you can smell from outside), call 911 first."
+      }
+    ],
+    "expect": {
+      "heading": "What to expect",
+      "items": [
+        "A real reply from Mike, not an auto-responder",
+        "An honest read on whether it's a flat-rate service call or worth an estimate visit",
+        "Scheduling options that match the urgency you flagged",
+        "Photos and a written invoice with every job — that part starts at the first visit"
+      ]
+    }
+  },
+  "testimonials": {
+    "sectionLabel": "What customers say",
+    "heading": "From homeowners and property managers.",
+    "variant": "carousel"
+  }
+}

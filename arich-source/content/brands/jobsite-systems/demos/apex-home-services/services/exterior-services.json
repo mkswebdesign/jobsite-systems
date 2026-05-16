@@ -1,0 +1,35 @@
+{
+  "slug": "exterior-services",
+  "order": 4,
+  "number": "04",
+  "iconKey": "layers",
+  "heroImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Crew member repairing a backyard deck board",
+  "title": "Exterior Services",
+  "headline": "Decks, fences, gutters,\nand the outside punch list.",
+  "shortDescription": "Deck repair and refinishing, fence repair, gutter clean and repair, light siding fixes, and exterior trim and paint — the outside punch list most homes need every two or three years.",
+  "lead": "Most homes in the KC metro need a half-day of exterior work every couple of years — a sagging gate, gutters that overflow, a deck board that's gone soft, a piece of siding that came loose in a storm. Our exterior service is built for exactly that list. We're not a re-roofer or a full siding contractor, but we do all the in-between exterior work that smaller crews handle better than the big specialty shops. Same uniformed crew, branded truck, written quote, and photos at the end.",
+  "seo": {
+    "title": "Exterior Services — Apex Home Services · Kansas City Metro",
+    "description": "Deck, fence, gutter, and exterior trim repair across the Kansas City metro. Licensed and insured crew, written quote before work starts, photos at the end. Free walkthroughs.",
+    "schemaName": "Exterior Home Repair Services",
+    "schemaDescription": "Exterior home repair services including deck repair and refinishing, fence repair, gutter cleaning and repair, light siding repair, and exterior trim and paint."
+  },
+  "sections": [
+    { "type": "list", "variant": "showcase", "heading": "Common exterior jobs", "intro": "A representative — not exhaustive — list of what we handle on the outside.", "items": [
+      { "label": "Deck repair and refinishing", "body": "Board replacement, joist and ledger inspection, railing and stair repair, sand-and-stain. Full deck rebuilds when the framing is sound; full deck replacements route to a partner builder" },
+      { "label": "Fence repair", "body": "Gate sag, post resets, picket and panel replacement, hardware swaps. Wood, vinyl, and chain-link. New full fence installs route to a partner fence contractor" },
+      { "label": "Gutter clean and repair", "body": "Seasonal cleaning, downspout clearing, sealant and seam repair, fascia rot remediation. Gutter guard installs on existing gutters" },
+      { "label": "Light siding repair", "body": "Vinyl, fiber-cement, and wood-lap siding patches. Storm-damage spot repairs, color-matched where possible. Full siding replacement is not in our scope — we'll refer you" },
+      { "label": "Exterior trim and paint", "body": "Soffit and fascia repair, exterior door trim, garage trim, and small-scale exterior repaints. Pressure-washing the surface before paint is included" },
+      { "label": "Storm and pre-listing fixes", "body": "Post-storm punch lists for homeowners and pre-listing exterior fixes for real estate clients. Quick turnaround when the timing is tight" }
+    ]},
+    { "type": "feature", "theme": "white", "heading": "How an exterior job goes", "body": "Most exterior jobs follow the same arc.", "items": [
+      "Phone call or web request — describe the issue, send photos of the deck, fence, or affected area",
+      "Walk-around quote on-site for anything we can't price by photo; phone-quote for clear-cut small jobs",
+      "Crew arrives in a branded Apex truck with the materials listed in the quote",
+      "End-of-job walkthrough, before-and-after photos, and a 1-year workmanship warranty on repair work"
+    ]}
+  ],
+  "cta": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" }
+}

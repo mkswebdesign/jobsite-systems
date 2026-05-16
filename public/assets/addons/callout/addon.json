@@ -1,0 +1,19 @@
+{
+  "name": "callout",
+  "assets": {
+    "css": ["callout.css"],
+    "js":  ["callout.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-callout]",
+        "description": "Highlighted callout block (info / tip / warn / etc.). Element content becomes the callout body.",
+        "fields": {
+          "data-aed-callout":       { "type": "string", "required": true, "enum": ["info", "tip", "success", "warn", "danger", "quote"], "description": "Callout style. Drives icon + accent color." },
+          "data-aed-callout-title": { "type": "string",                    "description": "Optional bold title rendered above the body." }
+        }
+      }
+    ]
+  }
+}

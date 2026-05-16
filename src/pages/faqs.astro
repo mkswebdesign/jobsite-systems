@@ -1,0 +1,22 @@
+---
+/* /faqs/ → /faq/ redirect.
+   The canonical FAQ page is /faq/ (singular). This page exists only to
+   catch external/old links that point at /faqs/ and bounce them to the
+   real page with a 0-second meta refresh + JS fallback. The <link
+   rel="canonical"> tells crawlers to attribute any indexing to /faq/. */
+const target = '/faq/';
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting to FAQ</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href={target} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <script set:html={`location.replace(${JSON.stringify(target)});`}></script>
+  </head>
+  <body>
+    <p>Redirecting to <a href={target}>{target}</a>.</p>
+  </body>
+</html>

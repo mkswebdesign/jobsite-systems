@@ -1,0 +1,44 @@
+{
+  "name": "aurora-bg",
+  "assets": {
+    "css": ["aurora-bg.css"],
+    "js":  ["aurora-bg.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:aurora-bg",
+        "default": "on",
+        "description": "Animated aurora gradient backgrounds. When the addon is enabled, `data-auto-scope` selects the elements that get the effect (typically the home hero + CTA sections). When disabled, the entire effect disappears site-wide — the meta tag isn't emitted, JS never stamps attributes, and any in-DOM `data-aed-aurora` markers become inert CSS selectors with nothing to paint on.",
+        "enum": ["on", "true", "1"],
+        "attrs": {
+          "data-auto-scope":            { "type": "string",                                              "description": "CSS selector for elements to auto-decorate. E.g., '.hero, .cta-section' to light up every hero + CTA." },
+          "data-auto-intensity":        { "type": "string",  "enum": ["subtle", "bold"],                 "description": "Default intensity for auto-scoped elements. Overridden per-element by data-aed-aurora-intensity." },
+          "data-auto-static":           { "type": "boolean",                                             "description": "Disable animation on auto-scoped elements (still renders the gradient)." },
+          "data-animation-duration-ms": { "type": "number",  "default": 28000, "min": 2000, "max": 120000, "description": "Global drift animation duration in ms. Writes --aed-aurora-duration on <html>." },
+          "data-orb-blur-px":           { "type": "number",  "default": 60,    "min": 10,   "max": 200,    "description": "Global blur radius in px for the orb clouds. Writes --aed-aurora-blur on <html>." },
+          "data-opacity":               { "type": "number",  "default": 0.6,   "min": 0,    "max": 1,      "description": "Base opacity for the orb layers. Writes --aed-aurora-opacity on <html>. Per-element intensity variants (subtle/bold) override this." },
+          "data-hue-shift-deg":         { "type": "number",  "default": 0,     "min": -180, "max": 180,    "description": "Hue rotation applied to the orb layers in degrees. 0 = brand palette as-is; ±30 for a vibe shift. Writes --aed-aurora-hue on <html>." }
+        }
+      }
+    ],
+    "data": [
+      {
+        "selector": "[data-aed-aurora]",
+        "description": "Per-element aurora background opt-in. Useful when not using auto-scope.",
+        "fields": {
+          "data-aed-aurora":           { "type": "boolean", "required": true, "description": "Opt-in marker." },
+          "data-aed-aurora-intensity": { "type": "string",  "enum": ["subtle", "bold"], "description": "Override the global intensity." },
+          "data-aed-aurora-static":    { "type": "boolean",                  "description": "Disable animation on this element." }
+        }
+      },
+      {
+        "selector": "html",
+        "description": "Per-page kill switch.",
+        "fields": {
+          "data-aed-aurora-bg":        { "type": "string", "enum": ["off"], "description": "Set on <html> to skip the entire aurora effect on this page even if the addon is otherwise enabled." }
+        }
+      }
+    ]
+  }
+}

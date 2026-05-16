@@ -1,0 +1,386 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import Cta from '../Cta.astro';
+
+interface Props {
+  sectionLabel: string;
+  heading: string;
+  subtext?: string;
+  steps: Array<{ number: string; title: string; body?: string }>;
+  ctaLabel?: string;
+  ctaHref?: string;
+  /** Render inside the shared service-section surface (no alt bg) */
+  asService?: boolean;
+}
+
+const { sectionLabel, heading, subtext, steps, ctaLabel, ctaHref, asService = false } = Astro.props;
+const sectionClass = asService
+  ? 'section process service-process'
+  : 'section process process-bg';
+---
+
+<section
+  class={sectionClass}
+  id="process"
+  data-section-type="process"
+  data-section-label="Process"
+  data-section-variants="a:Default,B:Vertical,C:Minimal"
+>
+  <div class="container">
+    <SectionHeading label={sectionLabel} heading={heading} subtext={subtext} />
+
+    <div
+      class="process-slider reveal-scale"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={heading}
+      tabindex="0"
+    >
+      <div class="process-progress" aria-hidden="true">
+        <span class="process-progress-fill"></span>
+      </div>
+
+      <div class="process-track" data-process-track>
+        <div class="process-spine" aria-hidden="true">
+          <span class="process-spine-fill"></span>
+        </div>
+        {steps.map((step, i) => (
+          <article
+            class="step process-slide"
+            data-process-slide={i}
+            data-reveal-delay={i * 80}
+            tabindex="0"
+            aria-roledescription="slide"
+            aria-label={`Step ${i + 1} of ${steps.length}: ${step.title}`}
+          >
+            <div class="step-num">{step.number}</div>
+            <h3>{step.title}</h3>
+            {step.body && <p>{step.body}</p>}
+          </article>
+        ))}
+      </div>
+
+      <div
+        class="process-live"
+        data-process-live
+        aria-live="polite"
+        aria-atomic="true"
+        style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0"
+      ></div>
+
+      <div class="process-controls">
+        <button
+          type="button"
+          class="process-arrow process-arrow-prev"
+          data-process-prev
+          aria-label="Previous step"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
+        <div class="process-indicators" role="tablist" aria-label="Process steps">
+          {steps.map((step, i) => (
+            <button
+              type="button"
+              class="process-dot"
+              data-process-dot={i}
+              role="tab"
+              aria-label={`Go to step ${i + 1}: ${step.title}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+            ></button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          class="process-arrow process-arrow-next"
+          data-process-next
+          aria-label="Next step"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    {ctaHref && ctaLabel && (
+      <div style="text-align:center;margin-top:3rem">
+        <Cta cta={{ label: ctaLabel, href: ctaHref }} variant="secondary" />
+      </div>
+    )}
+  </div>
+</section>
+
+<script>
+  (function() {
+    const sliders = document.querySelectorAll<HTMLElement>('.process-slider');
+    if (!sliders.length) return;
+
+    const variant = (document.documentElement.dataset.processVariant || 'A').toUpperCase();
+
+    sliders.forEach((slider) => {
+      const track = slider.querySelector<HTMLElement>('[data-process-track]');
+      const slides = Array.from(slider.querySelectorAll<HTMLElement>('[data-process-slide]'));
+      if (!track || slides.length === 0) return;
+
+      // Variants B/C run scroll-engagement instead of carousel logic — track is
+      // not horizontally scrollable in those variants and the dot/arrow controls
+      // are CSS-hidden, so the carousel JS would just no-op or misfire.
+      if (variant !== 'A') {
+        initScrollEngagement(slider, track, slides);
+        return;
+      }
+
+      const dots = Array.from(slider.querySelectorAll<HTMLButtonElement>('[data-process-dot]'));
+      const prevBtn = slider.querySelector<HTMLButtonElement>('[data-process-prev]');
+      const nextBtn = slider.querySelector<HTMLButtonElement>('[data-process-next]');
+      const fill = slider.querySelector<HTMLElement>('.process-progress-fill');
+      const liveRegion = slider.querySelector<HTMLElement>('[data-process-live]');
+
+      let activeIndex = 0;
+
+      const setActive = (i: number) => {
+        const next = Math.max(0, Math.min(slides.length - 1, i));
+        const changed = next !== activeIndex;
+        activeIndex = next;
+        // Roving tabindex on the tablist — only the active dot is in the tab order.
+        dots.forEach((d, di) => {
+          const on = di === activeIndex;
+          d.setAttribute('aria-selected', on ? 'true' : 'false');
+          d.setAttribute('tabindex', on ? '0' : '-1');
+          d.classList.toggle('is-active', on);
+        });
+        slides.forEach((s, si) => {
+          const on = si === activeIndex;
+          s.classList.toggle('is-active', on);
+          if (on) s.setAttribute('aria-current', 'step');
+          else s.removeAttribute('aria-current');
+        });
+        if (fill) {
+          const pct = slides.length > 1 ? (activeIndex / (slides.length - 1)) * 100 : 100;
+          fill.style.width = pct + '%';
+        }
+        if (prevBtn) prevBtn.disabled = activeIndex === 0;
+        if (nextBtn) nextBtn.disabled = activeIndex === slides.length - 1;
+        // Announce step changes to screen readers. Skip the initial setActive(0)
+        // call so the page doesn't auto-announce on load.
+        if (changed && liveRegion) {
+          const heading = slides[activeIndex]?.querySelector('h3')?.textContent?.trim() || '';
+          liveRegion.textContent = `Step ${activeIndex + 1} of ${slides.length}${heading ? ': ' + heading : ''}`;
+        }
+      };
+
+      const scrollTo = (i: number) => {
+        const target = slides[Math.max(0, Math.min(slides.length - 1, i))];
+        if (!target) return;
+        const left = target.offsetLeft - track.offsetLeft;
+        track.scrollTo({ left, behavior: 'smooth' });
+      };
+
+      const go = (i: number) => {
+        scrollTo(i);
+        setActive(i);
+      };
+
+      prevBtn?.addEventListener('click', () => go(activeIndex - 1));
+      nextBtn?.addEventListener('click', () => go(activeIndex + 1));
+      dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+
+      // Tablist keyboard pattern — when a dot is focused, arrow/Home/End move
+      // the active step AND focus to the new dot. The slider-level handler
+      // below still covers arrows when focus is elsewhere inside the slider.
+      const tablist = slider.querySelector<HTMLElement>('.process-indicators');
+      tablist?.addEventListener('keydown', (e) => {
+        let next = activeIndex;
+        if (e.key === 'ArrowRight') next = (activeIndex + 1) % dots.length;
+        else if (e.key === 'ArrowLeft') next = (activeIndex - 1 + dots.length) % dots.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = dots.length - 1;
+        else return;
+        e.preventDefault();
+        e.stopPropagation();
+        go(next);
+        dots[next]?.focus();
+      });
+
+      // Tap/click a card to focus it. Honors the drag guard below so a
+      // finishing-drag click doesn't register as a tap. Ignores clicks on
+      // anchors/buttons inside the card so internal links still work.
+      slides.forEach((slide, i) => {
+        slide.addEventListener('click', (e) => {
+          if (dragMoved > MOVE_THRESHOLD) return;
+          if ((e.target as HTMLElement).closest('a, button')) return;
+          if (i === activeIndex) return;
+          slide.classList.add('is-tapping');
+          setTimeout(() => slide.classList.remove('is-tapping'), 220);
+          go(i);
+        });
+        slide.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          // Don't hijack Enter/Space when focus is on an inner link/button.
+          if ((e.target as HTMLElement).closest('a, button')) return;
+          e.preventDefault();
+          if (i !== activeIndex) go(i);
+        });
+      });
+
+      slider.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(activeIndex + 1); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); go(activeIndex - 1); }
+        else if (e.key === 'Home') { e.preventDefault(); go(0); }
+        else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+      });
+
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartScroll = 0;
+      let dragMoved = 0;
+      const MOVE_THRESHOLD = 5;
+      track.addEventListener('pointerdown', (e) => {
+        // Reset drag displacement for every pointer (mouse, touch, pen).
+        // If we only reset for mouse, a prior mouse drag leaves dragMoved
+        // high and the capture-phase click guard below eats the next tap.
+        dragMoved = 0;
+        if (e.pointerType !== 'mouse') return;
+        if (e.button && e.button !== 0) return;
+        if ((e.target as HTMLElement).closest('a, button')) return;
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartScroll = track.scrollLeft;
+        track.classList.add('is-dragging');
+        track.setPointerCapture(e.pointerId);
+      });
+      track.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStartX;
+        dragMoved = Math.abs(dx);
+        if (dragMoved > MOVE_THRESHOLD) e.preventDefault();
+        track.scrollLeft = dragStartScroll - dx;
+      });
+      const endDrag = (e: PointerEvent) => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.classList.remove('is-dragging');
+        try { track.releasePointerCapture(e.pointerId); } catch {}
+      };
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('click', (e) => {
+        if (dragMoved > MOVE_THRESHOLD) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          let bestIdx = -1;
+          let bestRatio = 0;
+          entries.forEach((entry) => {
+            const idx = slides.indexOf(entry.target as HTMLElement);
+            if (idx === -1) return;
+            if (entry.intersectionRatio > bestRatio) {
+              bestRatio = entry.intersectionRatio;
+              bestIdx = idx;
+            }
+          });
+          if (bestIdx >= 0 && bestRatio > 0.55) setActive(bestIdx);
+        }, { root: track, threshold: [0.3, 0.55, 0.8, 1] });
+        slides.forEach((s) => io.observe(s));
+      }
+
+      setActive(0);
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // Scroll engagement (variants B and C)
+    //
+    // While the section is on screen, mark the step nearest viewport-center
+    // with `.is-in-focus` and (variant B) drive the spine fill from 0 → 1
+    // proportional to how far the viewport center has travelled between the
+    // first and last step centers. Class state is intentionally sticky — it
+    // persists when the user stops scrolling so the centered card stays
+    // highlighted.
+    // ────────────────────────────────────────────────────────────────────
+    function initScrollEngagement(slider: HTMLElement, track: HTMLElement, slides: HTMLElement[]) {
+      const spineFill = slider.querySelector<HTMLElement>('.process-spine-fill');
+      const sectionEl = slider.closest<HTMLElement>('section') || slider;
+
+      let raf = 0;
+      let attached = false;
+
+      const update = () => {
+        raf = 0;
+        const center = window.innerHeight / 2;
+
+        let bestIdx = -1;
+        let bestDist = Infinity;
+        let firstCenter = 0;
+        let lastCenter = 0;
+        slides.forEach((s, i) => {
+          const r = s.getBoundingClientRect();
+          const sc = r.top + r.height / 2;
+          if (i === 0) firstCenter = sc;
+          if (i === slides.length - 1) lastCenter = sc;
+          const d = Math.abs(sc - center);
+          if (d < bestDist) { bestDist = d; bestIdx = i; }
+        });
+
+        // Only mark in-focus when the nearest slide is within ~70% of viewport
+        // height — avoids flashing focus onto the last card when the user has
+        // already scrolled well past the section.
+        const focusThreshold = window.innerHeight * 0.7;
+        slides.forEach((s, i) => {
+          const isFocus = i === bestIdx && bestDist < focusThreshold;
+          s.classList.toggle('is-in-focus', isFocus);
+          // is-passed: viewport center has scrolled past this card's center
+          // (used by variant C to progressively color row dividers).
+          const r = s.getBoundingClientRect();
+          s.classList.toggle('is-passed', r.top + r.height / 2 < center);
+        });
+
+        if (spineFill && slides.length > 1) {
+          const span = lastCenter - firstCenter;
+          const progress = span > 0
+            ? Math.max(0, Math.min(1, (center - firstCenter) / span))
+            : 0;
+          spineFill.style.transform = `scaleY(${progress})`;
+        } else if (spineFill) {
+          spineFill.style.transform = 'scaleY(1)';
+        }
+      };
+
+      const onScroll = () => {
+        if (raf) return;
+        raf = requestAnimationFrame(update);
+      };
+
+      const attach = () => {
+        if (attached) return;
+        attached = true;
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        update();
+      };
+      const detach = () => {
+        if (!attached) return;
+        attached = false;
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      };
+
+      if ('IntersectionObserver' in window) {
+        const sectIO = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) attach();
+            else detach();
+          });
+        }, { rootMargin: '25% 0px 25% 0px' });
+        sectIO.observe(sectionEl);
+      } else {
+        attach();
+      }
+    }
+  })();
+</script>

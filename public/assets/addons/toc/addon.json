@@ -1,0 +1,23 @@
+{
+  "name": "toc",
+  "assets": {
+    "css": ["toc.css"],
+    "js":  ["toc.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-toc]",
+        "description": "Per-element table-of-contents. Place an empty container on a page; the addon scans the surrounding article for headings and renders a nav. Per-page opt-out: data-aed-toc='off' on <html>.",
+        "fields": {
+          "data-aed-toc":          { "type": "boolean", "required": true,                                       "description": "Opt-in marker on the container that should hold the TOC." },
+          "data-aed-toc-scope":    { "type": "string",  "default": "article, main",                             "description": "CSS selector identifying the headings source." },
+          "data-aed-toc-levels":   { "type": "string[]","default": "2,3",                                       "description": "Comma-separated heading levels to include." },
+          "data-aed-toc-min":      { "type": "number",  "default": 2,                                           "description": "Minimum number of matching headings required before the TOC renders." },
+          "data-aed-toc-title":    { "type": "string",  "default": "On this page",                              "description": "Heading rendered above the link list." },
+          "data-aed-toc-position": { "type": "string",  "default": "top",  "enum": ["top", "sticky", "floating"], "description": "Layout hint for how the TOC anchors on the page." }
+        }
+      }
+    ]
+  }
+}

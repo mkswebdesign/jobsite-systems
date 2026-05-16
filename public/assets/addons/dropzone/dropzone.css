@@ -1,0 +1,129 @@
+/*
+ * Dropzone — drop-in drag-and-drop file input.
+ *
+ * Wraps any opted-in <input type="file" data-aed-dropzone> with a
+ * visual zone that accepts drag-and-drop. Native input preserved so
+ * forms + file API integration all keep working.
+ *
+ * See /dropzone/README.md.
+ */
+
+.aed-dz {
+  display: block;
+  position: relative;
+}
+
+.aed-dz-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 1.5rem 1.25rem;
+  background: var(--bg-card, #18181b);
+  color: var(--text-secondary, #a1a1aa);
+  border: 1.5px dashed var(--border-light, #3f3f46);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+.aed-dz-area:hover,
+.aed-dz-area:focus-within {
+  border-color: var(--accent, #6B00FF);
+  color: var(--text-primary, #fafafa);
+  background: color-mix(in srgb, var(--accent, #6B00FF) 5%, var(--bg-card, #18181b));
+}
+.aed-dz-area.is-dragover {
+  border-color: var(--accent, #6B00FF);
+  border-style: solid;
+  background: color-mix(in srgb, var(--accent, #6B00FF) 10%, var(--bg-card, #18181b));
+  color: var(--text-primary, #fafafa);
+  transform: scale(1.005);
+}
+
+.aed-dz-icon {
+  width: 32px; height: 32px;
+  color: var(--accent, #6B00FF);
+}
+.aed-dz-icon svg { width: 100%; height: 100%; }
+
+.aed-dz-headline {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #fafafa);
+}
+.aed-dz-headline strong { color: var(--accent, #6B00FF); }
+.aed-dz-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted, #9a9aa2);
+}
+
+/* Hide the native input but keep it functional */
+.aed-dz input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* File list */
+.aed-dz-files {
+  list-style: none;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.aed-dz-files[hidden] { display: none; }
+.aed-dz-file {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--bg-secondary, #111113);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+.aed-dz-file-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary, #fafafa);
+}
+.aed-dz-file-size {
+  color: var(--text-muted, #9a9aa2);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+}
+.aed-dz-file-remove {
+  background: transparent;
+  border: 0;
+  padding: 0.2rem;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.aed-dz-file-remove:hover { color: #ef4444; background: color-mix(in srgb, #ef4444 12%, transparent); }
+.aed-dz-file-remove svg { width: 14px; height: 14px; }
+
+.aed-dz-error {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in srgb, #ef4444 10%, var(--bg-card, #18181b));
+  border: 1px solid color-mix(in srgb, #ef4444 30%, var(--border, #27272a));
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.8rem;
+}
+.aed-dz-error[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-dz-area { transition: none; transform: none !important; }
+}

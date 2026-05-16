@@ -1,0 +1,145 @@
+{
+  "slug": "email-management",
+  "order": 6,
+  "number": "06",
+  "iconKey": "at-sign",
+  "inclusionLabel": "$10/mo add-on — sold separately",
+  "heroImage": "https://images.pexels.com/photos/32588555/pexels-photo-32588555.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "heroImageAlt": "Laptop and notebook on a desk — managed business email for a trade-business owner",
+  "title": "Business Email Management",
+  "headline": "Real Business Email,\nQuietly Handled.",
+  "shortDescription": "Managed business email on your own domain — $10/mo per address. Setup, DNS (MX/SPF/DKIM/DMARC), spam protection, device configuration, and ongoing support included.",
+  "lead": "Most trade businesses are still running yourname@gmail.com or busterspipes@yahoo.com. That's fine until a property manager prints your invoice next to a competitor whose email matches the truck — at which point you're losing the credibility war before the call even starts. We run real email on your own domain (you@yourbusiness.com) for $10/mo per mailbox. Setup, DNS, spam protection, device configuration, and ongoing support are all included — no separate Google or Microsoft invoices, no tab-juggling.",
+  "pricingCallout": "$10/mo per mailbox · setup included · runs with or without a site",
+  "anchorNav": [
+    { "label": "Overview", "href": "#main" },
+    { "label": "What's Included", "href": "#whats-included" },
+    { "label": "Why It Matters", "href": "#why-it-matters" },
+    { "label": "Pricing", "href": "/pricing/" },
+    { "label": "FAQ", "href": "#faq" }
+  ],
+  "inlineTestimonial": {
+    "id": "dave-t",
+    "placeAfter": 0
+  },
+  "seo": {
+    "title": "Managed Business Email for Trade Businesses",
+    "description": "Business email on your own domain at $10/mo per mailbox. Setup, DNS, spam protection, devices, and ongoing support included.",
+    "schemaName": "Managed Business Email",
+    "schemaDescription": "Managed business email service for trade businesses — domain-based mailboxes, DNS configuration, spam and spoofing protection, device setup, and ongoing support."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "id": "whats-included",
+      "variant": "showcase",
+      "heading": "What's Included",
+      "intro": "$10 per mailbox per month covers everything below. Add or drop mailboxes any time — pro-rated monthly.",
+      "items": [
+        { "label": "Mailbox on your domain", "body": "you@yourbusiness.com instead of a generic Gmail or Yahoo — billed per address" },
+        { "label": "DNS records handled", "body": "MX, SPF, DKIM, and DMARC set up correctly so your email actually lands in inboxes" },
+        { "label": "Spam & spoofing protection", "body": "Enterprise-grade filtering and anti-spoofing so scammers can't impersonate you to your customers" },
+        { "label": "Mobile & desktop setup", "body": "We walk you through configuring phones, tablets, and laptops — or send a one-tap config profile" },
+        { "label": "Aliases & forwarding", "body": "billing@, info@, dispatch@ forwarded to the right mailbox — no extra per-alias charge" },
+        { "label": "Shared dispatch inbox (on request)", "body": "A single dispatch@ inbox that crew leads or office staff can read and respond from" },
+        { "label": "Daily backups", "body": "Email stays recoverable if someone deletes something important" },
+        { "label": "Ongoing support", "body": "Reset a password, add a new crew member, change a forwarding rule — same-day email response" }
+      ]
+    },
+    {
+      "type": "feature",
+      "id": "why-it-matters",
+      "theme": "white",
+      "heading": "Why This Matters",
+      "body": "Business email is one of the quiet things customers judge you on — and one of the most common places trade businesses leak credibility:",
+      "items": [
+        "A yahoo.com or gmail.com address can feel less established to homeowners and property managers",
+        "DNS-misconfigured email goes to spam — you miss estimate requests and never know",
+        "Shared passwords and personal Gmails walk out the door when crew members do",
+        "SPF/DKIM/DMARC aren't optional anymore — Gmail and Yahoo both require them in 2026"
+      ]
+    },
+    {
+      "type": "list",
+      "heading": "How Pricing Works",
+      "intro": "Simple — counted per active mailbox.",
+      "items": [
+        { "label": "$10/mo per mailbox", "body": "Real-person mailboxes only — aliases and forwards to existing mailboxes are free" },
+        { "label": "No setup fee", "body": "Onboarding, DNS cutover, and device setup are included" },
+        { "label": "Scales with the business", "body": "Add a mailbox when a new crew member joins, drop one when someone leaves — pro-rated monthly" },
+        { "label": "Separate from your website plan", "body": "Bundled on one invoice if you have both, but priced independently" }
+      ]
+    },
+    {
+      "type": "list",
+      "heading": "Perfect For",
+      "intro": "If any of these sound like you, business email on your own domain is the easiest credibility upgrade you'll make this year.",
+      "variant": "grid",
+      "cols": 2,
+      "items": [
+        {
+          "label": "The Yahoo or Gmail holdout",
+          "body": "You're sending estimate replies from busterspipes@yahoo.com and quietly losing inquiries from property managers who looked you up and weren't sure they had the right person.",
+          "iconKey": "envelope"
+        },
+        {
+          "label": "Mismatched email and truck branding",
+          "body": "Your truck wrap says \"Apex Plumbing,\" but the email signature says \"alex.smith.84@gmail.com.\" One of them is winning the credibility battle, and it's not the truck.",
+          "iconKey": "shield"
+        },
+        {
+          "label": "Burned by a transition",
+          "body": "A crew lead left and walked out with the shared inbox password. You spent a week locking accounts, resetting things, and worrying about what they could still see.",
+          "iconKey": "tool"
+        },
+        {
+          "label": "Going from solo to multi-crew",
+          "body": "Your business is moving from solo to multi-crew — and you want every crew lead's email address to match the business domain so customers see one cohesive brand.",
+          "iconKey": "briefcase"
+        },
+        {
+          "label": "Workspace setup quitter",
+          "body": "You bought a Google Workspace seat, hit the DNS configuration wall, and the tab has been sitting open for three months. We pick it up where you left off.",
+          "iconKey": "tag"
+        }
+      ]
+    }
+  ],
+  "serviceFaq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions about Business Email",
+    "faqs": [
+      {
+        "question": "Do I have to give up Gmail / Outlook?",
+        "answer": "No. We can run mail on your own domain via our managed setup, OR keep your Gmail / Microsoft 365 mailboxes and just handle the DNS records (MX/SPF/DKIM/DMARC) so deliverability is correct. You pick the path on the intro call."
+      },
+      {
+        "question": "Is there a cap on how many mailboxes I can have?",
+        "answer": "No hard cap. $10/mo per real-person mailbox; aliases and forwards to existing mailboxes are free. Add or drop mailboxes any time — pro-rated monthly."
+      },
+      {
+        "question": "How do I set this up on my devices?",
+        "answer": "We send a one-tap config profile that drops the right server settings on iPhone or Android. Or, if you're a screen-share kind of person, we walk you through it on a quick call. Either way: it's working before we hang up."
+      },
+      {
+        "question": "Will my email actually land in inboxes — not the spam folder?",
+        "answer": "Yes. We configure MX, SPF, DKIM, and DMARC correctly at setup and verify deliverability against Gmail and Yahoo. Both providers now require these records — most small businesses still don't have them right, which is why their replies land in spam."
+      },
+      {
+        "question": "Can I run email without buying a website plan?",
+        "answer": "Yes. Email runs independently — billed per mailbox, no website required. You can add the website later, drop the website, or never have one. Email keeps working."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Want real business email without the hassle?",
+    "body": "$10/mo per address, all-in. Bundle it with your site or run it on its own.",
+    "label": "Get Started",
+    "href": "/contact/",
+    "actions": [
+      { "label": "Start Your Site", "href": "/contact/", "variant": "primary" },
+      { "label": "See Pricing", "href": "/pricing/", "variant": "secondary" },
+      { "label": "See Examples", "href": "/work/", "variant": "tertiary" }
+    ]
+  }
+}

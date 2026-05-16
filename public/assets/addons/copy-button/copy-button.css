@@ -1,0 +1,59 @@
+/*
+ * Copy Button — drop-in generic copy-to-clipboard trigger.
+ *
+ * Sibling to /code-copy/ (targets <pre><code>) and /copy-input/
+ * (wraps form inputs). This one is for free-floating buttons that
+ * copy literal text or another element's textContent.
+ *
+ * See /copy-button/README.md.
+ */
+
+button[data-aed-copy],
+a[data-aed-copy] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--bg-card, #18181b);
+  color: var(--text-secondary, #a1a1aa);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+button[data-aed-copy]:hover,
+a[data-aed-copy]:hover {
+  color: var(--accent, #6B00FF);
+  border-color: var(--accent, #6B00FF);
+}
+button[data-aed-copy].is-copied,
+a[data-aed-copy].is-copied {
+  color: #10b981;
+  border-color: #10b981;
+}
+[data-aed-copy] svg { width: 13px; height: 13px; }
+
+/* Variant: ghost */
+button[data-aed-copy][data-aed-copy-variant="ghost"],
+a[data-aed-copy][data-aed-copy-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+}
+button[data-aed-copy][data-aed-copy-variant="ghost"]:hover,
+a[data-aed-copy][data-aed-copy-variant="ghost"]:hover {
+  background: color-mix(in srgb, var(--accent, #6B00FF) 10%, transparent);
+}
+
+/* Variant: icon-only (collapses label) */
+button[data-aed-copy][data-aed-copy-variant="icon"],
+a[data-aed-copy][data-aed-copy-variant="icon"] {
+  width: 32px; height: 32px; padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+}
+[data-aed-copy][data-aed-copy-variant="icon"] .aed-cb-text { display: none; }

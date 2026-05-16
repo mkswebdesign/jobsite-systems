@@ -1,0 +1,80 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../builder/layouts/Base.astro';
+import TagHeader from '../../../builder/components/TagHeader.astro';
+import ArchiveList from '../../../builder/components/ArchiveList.astro';
+import ArchiveToolbar from '../../../builder/components/ArchiveToolbar.astro';
+import ArchiveDrawer from '../../../builder/components/ArchiveDrawer.astro';
+import { brand } from '../../../builder/lib/brand';
+import { getAllAuthors, getAllPosts, getAllTags, getAllCategories } from '../../../builder/lib/posts';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const tags = await getAllTags();
+  if (tags.length === 0) return [];
+  const allPosts = await getAllPosts();
+  const out: any[] = [];
+  for (const { tag } of tags) {
+    const matching = allPosts.filter((p) => p.data.tags.includes(tag));
+    out.push(...paginate(matching, { pageSize: 12, params: { slug: tag } }).map((entry) => ({
+      ...entry,
+      props: { ...entry.props, tag },
+    })));
+  }
+  return out;
+};
+
+const { page, tag } = Astro.props as any;
+const totalPages = page.lastPage;
+const currentPage = page.currentPage;
+const title = currentPage === 1
+  ? `#${tag} — ${brand.name}`
+  : `#${tag} (page ${currentPage}) — ${brand.name}`;
+const description = `Articles tagged #${tag} from ${brand.name}.`;
+
+const allCategories = await getAllCategories();
+const allTags = await getAllTags();
+const authors = await getAllAuthors();
+const allPosts = await getAllPosts();
+const matching = allPosts.filter((p) => p.data.tags.includes(tag));
+
+/* Per-category counts across the FULL corpus drive the segmented control's
+ * counters — same approach as /archive/ and /category/. The segmented row
+ * always shows total category sizes regardless of the current scope. */
+const categoryCounts: Record<string, number> = {};
+for (const p of allPosts) {
+  const id = p.data.category;
+  categoryCounts[id] = (categoryCounts[id] ?? 0) + 1;
+}
+
+/* Scope drawer-side tags to those that co-occur with this tag — selecting
+ * a tag that doesn't co-occur would always yield zero results otherwise. */
+const tagCoOccurrence = new Map<string, number>();
+for (const p of matching) {
+  for (const t of p.data.tags) {
+    if (t === tag) continue;
+    tagCoOccurrence.set(t, (tagCoOccurrence.get(t) ?? 0) + 1);
+  }
+}
+const scopedTags = [...tagCoOccurrence.entries()]
+  .map(([t, count]) => ({ tag: t, count }))
+  .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+---
+<Base title={title} description={description} skipTarget="#main">
+  <main id="main" class="container tag-page" data-scope-tag={tag}>
+    <TagHeader tag={tag} postCount={page.data.length} />
+    <ArchiveToolbar
+      categories={allCategories}
+      categoryCounts={categoryCounts}
+      totalCount={allPosts.length}
+      resultCount={matching.length}
+      currentTag={tag}
+    />
+    <ArchiveList
+      posts={page.data}
+      page={currentPage}
+      totalPages={totalPages}
+      baseUrl={`/tag/${tag}`}
+    />
+    <ArchiveDrawer tags={scopedTags} authors={authors} />
+  </main>
+</Base>

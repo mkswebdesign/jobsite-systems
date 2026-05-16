@@ -1,0 +1,22 @@
+{
+  "name": "business-hours",
+  "assets": {
+    "css": ["business-hours.css"],
+    "js":  ["business-hours.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-business-hours",
+        "description": "Source of truth for the open/closed pill. Required — without this block every <span data-aed-business-hours> on the page stays hidden.",
+        "required": true,
+        "fields": {
+          "timezone":     { "type": "string",   "default": "(browser default)",                                "description": "IANA zone, e.g. 'America/Chicago'. DST-aware. Falls back to the visitor's resolved timezone if omitted." },
+          "hours":        { "type": "object",   "required": true,                                              "description": "Weekly schedule. Keys: mon, tue, wed, thu, fri, sat, sun. Each value is an array of { open: 'HH:MM', close: 'HH:MM' } ranges. Empty array = closed all day." },
+          "soonMinutes":  { "type": "number",   "default": 30,                                                 "description": "Minutes-to-open or minutes-to-close threshold for showing 'Opening soon' / 'Closing soon' status." },
+          "exceptions":   { "type": "object[]", "default": [],                                                 "description": "One-off date overrides. Each entry: { date: 'YYYY-MM-DD', closed?: true, hours?: [...], label?: 'Closed for Christmas' }." }
+        }
+      }
+    ]
+  }
+}

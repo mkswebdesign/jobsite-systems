@@ -1,0 +1,22 @@
+{
+  "name": "email",
+  "assets": {
+    "css": ["email.css"],
+    "js":  ["email.js"]
+  },
+  "config": {
+    "json": [
+      {
+        "id": "aed-email-config",
+        "description": "Runtime config for form-submission routing and metadata. Applies to every <form data-aed-form> on the page — overrides its action attribute and injects hidden _subject / brand fields. Pair with the `forms` addon (which handles the actual AJAX submit).",
+        "required": false,
+        "fields": {
+          "endpoint":      { "type": "string",  "default": "https://contact-proxy.anthony-abc.workers.dev", "description": "POST target. Usually the emailit contact-proxy Cloudflare Worker URL. If set, overrides each form's `action` attribute at page load. Leave empty to respect per-form actions from contact.json." },
+          "subject":       { "type": "string",                                                              "description": "Subject line override. If non-empty, sets/replaces the hidden `_subject` field on every form. Empty = per-form _subject stays." },
+          "brandOverride": { "type": "string",                                                              "description": "Force a specific value in the submitted `brand` field. Default brand comes from PUBLIC_BRAND at build time; set this for staging or to test fallback routing (e.g. 'unverified-test' → fallback brand)." },
+          "debug":         { "type": "boolean", "default": false,                                           "description": "Log the full form payload to the console on submit. Useful for troubleshooting; leave off in production." }
+        }
+      }
+    ]
+  }
+}

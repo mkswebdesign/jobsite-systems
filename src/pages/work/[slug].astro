@@ -1,0 +1,417 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../builder/layouts/Base.astro';
+import PageHeader from '../../builder/components/PageHeader.astro';
+import SectionHeading from '../../builder/components/SectionHeading.astro';
+import InitialsAvatar from '../../builder/components/InitialsAvatar.astro';
+import DividerSlot from '../../builder/components/DividerSlot.astro';
+import { brand } from '../../builder/lib/brand';
+
+export async function getStaticPaths() {
+  const works = await getCollection('work');
+  const sorted = [...works].sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+  return sorted.map((w, i) => {
+    const prev = sorted[(i - 1 + sorted.length) % sorted.length];
+    const next = sorted[(i + 1) % sorted.length];
+    return {
+      params: { slug: w.id },
+      props: {
+        work: w,
+        prev: { slug: prev.id, title: prev.data.shortTitle ?? prev.data.title },
+        next: { slug: next.id, title: next.data.shortTitle ?? next.data.title },
+      },
+    };
+  });
+}
+
+const { work, prev, next } = Astro.props;
+const d: any = work.data;
+
+/* Per-brand label overrides for the work-detail template. Defaults preserve
+ * the agency-template English ("Case Study" / "Client" / "Technologies Used"
+ * / "Start Your Site" / etc.) so existing agency brands render unchanged.
+ * Brands like smokey-hill-retrievers override these via `brand.workTerms`
+ * to read as a kennel ("Our Dogs" / "Role" / "Health Clearances" / etc.).
+ * Per-record overrides (`d.workTerms`) win over brand-level defaults so a
+ * litter page can override "Why we kept him" → "About this litter". */
+const wt: any = { ...((brand as any).workTerms ?? {}), ...(d.workTerms ?? {}) };
+const T = {
+  indexBreadcrumb: wt.indexBreadcrumb ?? 'Case Studies',
+  indexBreadcrumbHref: wt.indexBreadcrumbHref ?? '/work/',
+  sectionLabelDefault: wt.sectionLabelDefault ?? 'Case Study',
+  metaClientLabel: wt.metaClientLabel ?? 'Client',
+  metaCategoryLabel: wt.metaCategoryLabel ?? 'Industry',
+  metaTimelineLabel: wt.metaTimelineLabel ?? 'Timeline',
+  metaTimelineUnit: wt.metaTimelineUnit ?? 'weeks',
+  metaTagsLabel: wt.metaTagsLabel ?? 'Services',
+  challengeLabel: wt.challengeLabel ?? 'The Challenge',
+  challengeHeading: wt.challengeHeading ?? 'What we set out to solve.',
+  solutionLabel: wt.solutionLabel ?? 'The Solution',
+  solutionHeading: wt.solutionHeading ?? 'How we approached it.',
+  technologiesHeading: wt.technologiesHeading ?? 'Technologies Used',
+  keyFeaturesHeading: wt.keyFeaturesHeading ?? 'Key Features',
+  resultsLabel: wt.resultsLabel ?? 'Results',
+  resultsHeading: wt.resultsHeading ?? 'The impact.',
+  relatedServicesLabel: wt.relatedServicesLabel ?? 'Related Services',
+  relatedServicesHeading: wt.relatedServicesHeading ?? 'Services used on this project.',
+  relatedServicesSubtext: wt.relatedServicesSubtext ?? 'Want something similar? These are the services that made this project happen.',
+  ctaHeading: wt.ctaHeading ?? 'Ready to start your project?',
+  ctaBody: wt.ctaBody ?? "Let's discuss your goals and create something exceptional together.",
+  ctaPrimaryLabel: wt.ctaPrimaryLabel ?? 'Start Your Site',
+  ctaPrimaryHref: wt.ctaPrimaryHref ?? '/start/',
+  ctaSecondaryLabel: wt.ctaSecondaryLabel ?? 'View All Work',
+  ctaSecondaryHref: wt.ctaSecondaryHref ?? '/work/',
+  pagerPrevLabel: wt.pagerPrevLabel ?? 'Previous Case Study',
+  pagerNextLabel: wt.pagerNextLabel ?? 'Next Case Study',
+  kennelMetaHeading: wt.kennelMetaHeading ?? 'At a glance',
+};
+
+const km = d.kennelMeta;
+
+const title = d.seo?.title ?? `${d.title} — ${T.sectionLabelDefault}`;
+const description = d.seo?.description ?? d.cardSummary;
+
+const allServices = await getCollection('services');
+const servicesBySlug = new Map(allServices.map(s => [s.id, s.data]));
+const relatedServices = (d.relatedServices ?? [])
+  .map((slug: string) => {
+    const s = servicesBySlug.get(slug);
+    return s ? { ...s, slug } : null;
+  })
+  .filter(Boolean);
+---
+
+<Base title={title} description={description} canonical={d.seo?.canonical} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: T.indexBreadcrumb, href: T.indexBreadcrumbHref }, { label: d.shortTitle ?? d.title }]}
+    sectionLabel={d.category ?? T.sectionLabelDefault}
+    heading={d.headline ?? d.title}
+    lead={d.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  <div class="work-detail">
+    {(d.timelineLabel || (d.tags && d.tags.length > 0) || d.liveUrl) && (
+      <div class="container work-header-meta">
+        {d.timelineLabel && (
+          <span class="work-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {d.timelineLabel}
+          </span>
+        )}
+        {d.tags && d.tags.length > 0 && (
+          <div class="work-header-tags">
+            {d.tags.map((t: string) => <span class="work-tag">{t}</span>)}
+          </div>
+        )}
+        {d.liveUrl && (
+          <a href={d.liveUrl} target="_blank" rel="noopener" class="work-live-link">
+            <span>{d.liveUrlLabel ?? 'Visit live site'}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>
+          </a>
+        )}
+      </div>
+    )}
+
+    <section
+      class="work-hero-image"
+      id="main"
+      data-section-type="work-hero"
+      data-section-label="Hero Image"
+      data-section-variants="A:Default,B:Fullbleed,C:Poster"
+    >
+      <div class="container">
+        <div class={`work-hero-frame reveal-scale${d.comingSoon ? ' work-hero-frame--coming-soon' : ''}`}>
+          {d.comingSoon ? (
+            <div class="work-hero-coming-soon" role="img" aria-label={`${d.client ?? d.title} — case study coming soon`}>
+              <div class="work-hero-coming-soon__inner">
+                <span class="work-hero-coming-soon__eyebrow">Case study · Coming soon</span>
+                <h2 class="work-hero-coming-soon__title">The full write-up is on its way.</h2>
+                {d.lead && <p class="work-hero-coming-soon__lead">{d.lead}</p>}
+                {d.liveUrl && (
+                  <a href={d.liveUrl} target="_blank" rel="noopener" class="work-hero-coming-soon__cta">
+                    <span>{d.liveUrlLabel ? `Visit ${d.liveUrlLabel}` : 'Visit the live site'}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : d.image ? (
+            <img src={d.image} alt={d.imageAlt ?? d.title} width="1200" height="720" loading="eager" />
+          ) : (
+            <div class={`work-gradient ${d.gradientPreset ?? 'g1'}`}></div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <DividerSlot dividers={d.dividers} after="hero" />
+
+    {(d.client || d.category || d.timelineWeeks || (d.tags && d.tags.length > 0)) && (
+      <section
+        class="section work-section work-meta-section"
+        data-section-type="work-section"
+        data-section-label="Meta"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <dl class="work-meta-grid reveal">
+            {d.client && (
+              <div class="work-meta-item">
+                <dt>{T.metaClientLabel}</dt>
+                <dd>{d.client}</dd>
+              </div>
+            )}
+            {d.category && (
+              <div class="work-meta-item">
+                <dt>{T.metaCategoryLabel}</dt>
+                <dd>{d.category}</dd>
+              </div>
+            )}
+            {d.timelineWeeks && (
+              <div class="work-meta-item">
+                <dt>{T.metaTimelineLabel}</dt>
+                <dd>{d.timelineWeeks}{T.metaTimelineUnit ? ` ${T.metaTimelineUnit}` : ''}</dd>
+              </div>
+            )}
+            {d.tags && d.tags.length > 0 && (
+              <div class="work-meta-item">
+                <dt>{T.metaTagsLabel}</dt>
+                <dd class="work-meta-tags">
+                  {d.tags.map((t: string) => <span class="work-tag">{t}</span>)}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="meta" />
+
+    {km && (
+      <section
+        class="section work-section work-section--alt work-kennel-meta-section"
+        data-section-type="work-section"
+        data-section-label="Kennel Meta"
+        data-section-variants="A:Default"
+      >
+        <div class="container">
+          <SectionHeading label={T.kennelMetaHeading} heading={km.heading ?? `Key facts on ${d.shortTitle ?? d.title}.`} />
+          <dl class="work-meta-grid work-kennel-meta-grid reveal">
+            {km.breed && (<div class="work-meta-item"><dt>Breed</dt><dd>{km.breed}</dd></div>)}
+            {km.color && (<div class="work-meta-item"><dt>Color</dt><dd>{km.color}</dd></div>)}
+            {km.sex && (<div class="work-meta-item"><dt>Sex</dt><dd>{km.sex}</dd></div>)}
+            {km.role && (<div class="work-meta-item"><dt>Role</dt><dd>{km.role}</dd></div>)}
+            {km.age && (<div class="work-meta-item"><dt>Age</dt><dd>{km.age}</dd></div>)}
+            {km.dob && (<div class="work-meta-item"><dt>Date of birth</dt><dd>{km.dob}</dd></div>)}
+            {km.weight && (<div class="work-meta-item"><dt>Weight</dt><dd>{km.weight}</dd></div>)}
+            {km.registeredName && (<div class="work-meta-item"><dt>Registered name</dt><dd>{km.registeredName}</dd></div>)}
+            {km.akcNumber && (<div class="work-meta-item"><dt>AKC number</dt><dd>{km.akcNumber}</dd></div>)}
+            {km.pedigreeUrl && (<div class="work-meta-item"><dt>Pedigree</dt><dd><a href={km.pedigreeUrl} target="_blank" rel="noopener">View pedigree</a></dd></div>)}
+            {km.ofaHips && (<div class="work-meta-item"><dt>OFA hips</dt><dd>{km.ofaHips}</dd></div>)}
+            {km.ofaElbows && (<div class="work-meta-item"><dt>OFA elbows</dt><dd>{km.ofaElbows}</dd></div>)}
+            {km.cerf && (<div class="work-meta-item"><dt>CERF eyes</dt><dd>{km.cerf}</dd></div>)}
+            {km.cardiac && (<div class="work-meta-item"><dt>Cardiac</dt><dd>{km.cardiac}</dd></div>)}
+            {km.huntTitles && km.huntTitles.length > 0 && (
+              <div class="work-meta-item"><dt>Titles</dt><dd>{km.huntTitles.join(' · ')}</dd></div>
+            )}
+            {km.litterCount != null && (<div class="work-meta-item"><dt>Litters sired/whelped</dt><dd>{km.litterCount}</dd></div>)}
+            {km.availableLitters && (<div class="work-meta-item"><dt>Available litters</dt><dd>{km.availableLitters}</dd></div>)}
+          </dl>
+          {km.note && <p class="work-kennel-meta-note reveal">{km.note}</p>}
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="kennelMeta" />
+
+    {d.challenge && (
+      <section
+        class="section work-section work-section--alt"
+        data-section-type="work-section"
+        data-section-label="Challenge"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <div class="work-narrative reveal">
+            <SectionHeading label={d.challengeLabel ?? T.challengeLabel} heading={d.challengeHeading ?? T.challengeHeading} />
+            <p>{d.challenge}</p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="challenge" />
+
+    {d.solution && (
+      <section
+        class="section work-section"
+        data-section-type="work-section"
+        data-section-label="Solution"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <div class="work-narrative reveal">
+            <SectionHeading label={d.solutionLabel ?? T.solutionLabel} heading={d.solutionHeading ?? T.solutionHeading} />
+            {d.solution.intro && <p>{d.solution.intro}</p>}
+            {d.solution.items && (
+              <ul class="work-solution-list">
+                {d.solution.items.map((it: string) => <li>{it}</li>)}
+              </ul>
+            )}
+          </div>
+
+          {(d.technologies || d.keyFeatures) && (
+            <div class="work-detail-grid">
+              {d.technologies && (
+                <div class="work-detail-card reveal">
+                  <h3>{d.technologiesHeading ?? T.technologiesHeading}</h3>
+                  <ul class="work-detail-list">
+                    {d.technologies.map((t: string) => <li>{t}</li>)}
+                  </ul>
+                </div>
+              )}
+              {d.keyFeatures && (
+                <div class="work-detail-card reveal">
+                  <h3>{d.keyFeaturesHeading ?? T.keyFeaturesHeading}</h3>
+                  <ul class="work-detail-list">
+                    {d.keyFeatures.map((f: string) => <li>{f}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="solution" />
+
+    {(d.results || (d.metrics && d.metrics.length > 0)) && (
+      <section
+        class="section work-section work-section--alt work-results-section"
+        data-section-type="work-section"
+        data-section-label="Results"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <div class="work-narrative reveal">
+            <SectionHeading label={d.resultsLabel ?? T.resultsLabel} heading={d.resultsHeading ?? T.resultsHeading} />
+            {d.results && <p>{d.results}</p>}
+          </div>
+          {d.metrics && d.metrics.length > 0 && (
+            <div class="work-metrics-grid reveal">
+              {d.metrics.map((m: any) => (
+                <div class="work-metric-card">
+                  <span class="work-metric-value">{m.value}</span>
+                  <span class="work-metric-label">{m.label}</span>
+                  {m.barWidth && (
+                    <div class="work-metric-bar" role="presentation">
+                      <div class="work-metric-bar-fill" style={`width:${m.barWidth}`}></div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="results" />
+
+    {d.testimonial && (
+      <section
+        class="section work-section work-testimonial-section"
+        data-section-type="work-section"
+        data-section-label="Testimonial"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <div class="work-testimonial reveal-scale">
+            <blockquote class="work-testimonial-quote">{d.testimonial.quote}</blockquote>
+            <div class="work-testimonial-author">
+              {d.testimonial.authorInitials ? (
+                <div class="testimonial-avatar" aria-hidden="true">{d.testimonial.authorInitials}</div>
+              ) : (
+                <div class="testimonial-avatar">
+                  <InitialsAvatar name={d.testimonial.authorName} size={40} />
+                </div>
+              )}
+              <div class="testimonial-meta">
+                <span class="testimonial-name">{d.testimonial.authorName}</span>
+                <span class="testimonial-role">{d.testimonial.authorRole}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="testimonial" />
+
+    {relatedServices.length > 0 && (
+      <section
+        class="section work-section work-section--alt work-related-services"
+        data-section-type="work-section"
+        data-section-label="Related Services"
+        data-section-variants="A:Default,B:Editorial,C:Bold"
+      >
+        <div class="container">
+          <SectionHeading
+            label={T.relatedServicesLabel}
+            heading={T.relatedServicesHeading}
+            subtext={T.relatedServicesSubtext}
+          />
+          <div class="work-related-services-grid reveal">
+            {relatedServices.map((s: any) => (
+              <a href={`/services/${s.slug}/`} class="work-related-service-card">
+                {s.number && <span class="service-num">{s.number}</span>}
+                <h3>{s.title}</h3>
+                <p>{s.shortDescription}</p>
+                <span class="service-link">Learn more <span class="arrow">&rarr;</span></span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <DividerSlot dividers={d.dividers} after="relatedServices" />
+
+    <section
+      class="section work-cta cta-bg"
+      data-section-type="work-section"
+      data-section-label="Work CTA"
+      data-section-variants="A:Default,B:Editorial,C:Bold,D:Aurora"
+    >
+      <div class="container">
+        <div class="work-cta-card reveal-scale">
+          <h2>{d.ctaHeading ?? T.ctaHeading}</h2>
+          <p>{d.ctaBody ?? T.ctaBody}</p>
+          <div class="work-cta-actions">
+            <a href={d.ctaPrimaryHref ?? T.ctaPrimaryHref} class="btn btn-primary">{d.ctaPrimaryLabel ?? T.ctaPrimaryLabel}</a>
+            <a href={d.ctaSecondaryHref ?? T.ctaSecondaryHref} class="btn btn-secondary">{d.ctaSecondaryLabel ?? T.ctaSecondaryLabel}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {prev && next && (
+      <nav class="service-pager" aria-label={T.indexBreadcrumb}>
+        <div class="container service-pager-inner">
+          <a href={`/work/${prev.slug}/`} class="service-pager-link service-pager-prev">
+            <span class="service-pager-label">{T.pagerPrevLabel}</span>
+            <span class="service-pager-title"><span class="arrow">&larr;</span> {prev.title}</span>
+          </a>
+          <a href={`/work/${next.slug}/`} class="service-pager-link service-pager-next">
+            <span class="service-pager-label">{T.pagerNextLabel}</span>
+            <span class="service-pager-title">{next.title} <span class="arrow">&rarr;</span></span>
+          </a>
+        </div>
+      </nav>
+    )}
+  </div>
+</Base>

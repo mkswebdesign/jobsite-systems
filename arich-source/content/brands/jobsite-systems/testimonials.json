@@ -1,0 +1,38 @@
+[
+  {
+    "_TODO_attribution": "P3 #23 — replace 'Pilot client' prefix with [City, State] · [Trade]. Sample cities applied below as drafts; confirm with each pilot owner before publishing. Format: `<City, State> · <Trade>` keeping first-name + last-initial.",
+    "id": "kyle-m",
+    "quote": "We had a neglected WordPress site that kept breaking right when estimate calls were busiest. Switched to Jobsite Systems and haven't thought about the site since. That's the point.",
+    "authorName": "Kyle M.",
+    "authorRole": "Tulsa, OK · Solo handyman",
+    "featured": true
+  },
+  {
+    "id": "amanda-r",
+    "quote": "Estimate requests started coming in the week we launched. The form goes straight to my office manager — she can route it before lunch. Exactly what we needed when we opened the second crew.",
+    "authorName": "Amanda R.",
+    "authorRole": "Greensboro, NC · Multi-trade home services",
+    "featured": true
+  },
+  {
+    "id": "dave-t",
+    "quote": "I'm not a web person. Sent over my license info, a headshot, and a few jobsite photos, and two weeks later we had a site that looked like a real, established outfit. No upsells, no surprises.",
+    "authorName": "Dave T.",
+    "authorRole": "Boise, ID · Solo HVAC tech",
+    "featured": true
+  },
+  {
+    "id": "maria-s",
+    "quote": "I needed dedicated pages for each trade and a real crew directory. They handled all of it and it loads faster than any contractor site I've used. The monthly pricing is simple — no surprise change orders.",
+    "authorName": "Maria S.",
+    "authorRole": "Denver, CO · Multi-trade GC",
+    "featured": true
+  },
+  {
+    "id": "jim-w",
+    "quote": "Best part is I can email them and get a service-area page updated or a new crew member added the same week. No portals, no tickets, no logging into anything. That alone is worth the monthly.",
+    "authorName": "Jim W.",
+    "authorRole": "Spokane, WA · Solo plumber",
+    "featured": false
+  }
+]

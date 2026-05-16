@@ -1,0 +1,179 @@
+{
+  "$schema": "../../schema.json",
+  "id": "jobsite-systems",
+  "name": "Jobsite Systems",
+  "nameParts": {
+    "prefix": "Jobsite",
+    "accent": "Systems"
+  },
+  "tagline": "Simple, Working Websites for Trade Businesses",
+  "description": "Practical, low-maintenance websites for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors. Get online, stay online, and keep your focus on the work.",
+  "domain": "jobsite.systems",
+  "url": "https://jobsite.systems",
+  "niche": "trades business",
+  "nichePossessive": "your trades business",
+  "locale": "en",
+  "copyrightYear": 2026,
+  "owner": {
+    "name": "MKS Web Design",
+    "role": "Founder",
+    "experienceYears": 20,
+    "linkedin": null,
+    "headshot": null
+  },
+  "contact": {
+    "email": "hello@jobsite.systems",
+    "emailAlt": null,
+    "phone": null,
+    "address": null
+  },
+  "social": {
+    "linkedin": null,
+    "twitter": null,
+    "instagram": null,
+    "github": null
+  },
+  "defaultVariants": {
+    "hero": "B",
+    "services-showcase": "image",
+    "nav": "G",
+    "faq": "D",
+    "services": "B",
+    "testimonials": "a",
+    "capabilities": "C",
+    "why": "a",
+    "partnership": "A",
+    "process": "a",
+    "cta": "F",
+    "footer": "A",
+    "service-section": "A",
+    "design-break": "B",
+    "photo-gallery": "B",
+    "content-section": "C"
+  },
+  "theme": {
+    "mode": "light",
+    "colors": {
+      "bgPrimary": "#0b0e12",
+      "bgSecondary": "#11151b",
+      "bgCard": "#161b23",
+      "bgCardHover": "#1c222a",
+      "textPrimary": "#fafafa",
+      "textSecondary": "#a4a8ad",
+      "textMuted": "#8e9298",
+      "accent": "#f97316",
+      "accentRgb": "249, 115, 22",
+      "accentHover": "#fb8a3d",
+      "accentHoverRgb": "251, 138, 61",
+      "border": "#1f262e",
+      "borderLight": "#2e3640"
+    },
+    "lightColors": {
+      "bgPrimary": "#fafaf7",
+      "bgSecondary": "#f3f1ec",
+      "bgCard": "#ffffff",
+      "bgCardHover": "#fbf3eb",
+      "textPrimary": "#18181b",
+      "textSecondary": "#52525b",
+      "textMuted": "#71717a",
+      "accent": "#ea580c",
+      "accentRgb": "234, 88, 12",
+      "accentHover": "#f97316",
+      "accentHoverRgb": "249, 115, 22",
+      "border": "#e4ddd1",
+      "borderLight": "#d6cdbc"
+    },
+    "typography": {
+      "fontFamily": "Inter",
+      "fontUrl": "/assets/builder/fonts/inter-latin.woff2",
+      "fontUrlExtended": "/assets/builder/fonts/inter-latin-ext.woff2",
+      "fallbacks": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    },
+    "radius": {
+      "base": "12px",
+      "lg": "16px"
+    },
+    "maxWidth": "1200px",
+    "borders": {
+      "thin": "1px",
+      "medium": "2px",
+      "thick": "3px"
+    },
+    "spacing": {
+      "xs": "0.25rem",
+      "sm": "0.5rem",
+      "md": "1rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "2xl": "3rem"
+    },
+    "shadows": {
+      "sm": "0 1px 2px rgba(0,0,0,.35)",
+      "md": "0 4px 12px rgba(0,0,0,.45)",
+      "lg": "0 12px 28px rgba(0,0,0,.55)",
+      "xl": "0 24px 60px rgba(0,0,0,.65)"
+    },
+    "motion": {
+      "durationFast": "120ms",
+      "durationBase": "220ms",
+      "durationSlow": "400ms",
+      "easingStandard": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "easingAccent": "cubic-bezier(0.22, 1, 0.36, 1)"
+    },
+    "buttons": {
+      "radius": "var(--radius)",
+      "paddingX": "1.75rem",
+      "paddingY": "0.875rem",
+      "fontWeight": "600",
+      "letterSpacing": "normal",
+      "textTransform": "none",
+      "borderWidth": "0"
+    }
+  },
+  "assets": {
+    "logo": "/assets/brands/jobsite-systems/logo.svg",
+    "favicon": "/assets/brands/jobsite-systems/favicon.svg",
+    "favicon32": "/assets/brands/jobsite-systems/favicon-32x32.png",
+    "appleTouchIcon": "/assets/brands/jobsite-systems/apple-touch-icon.png",
+    "ogImage": "/assets/brands/jobsite-systems/og-image.jpg",
+    "headshot": null,
+    "motifKind": "tradesman",
+    "heroBackgroundImage": "https://images.pexels.com/photos/8130011/pexels-photo-8130011.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "servicesBackgroundImage": "https://images.pexels.com/photos/17577584/pexels-photo-17577584.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "processBackgroundImage": "https://images.pexels.com/photos/7966573/pexels-photo-7966573.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "partnershipBackgroundImage": "https://images.unsplash.com/photo-1620653713380-7a34b773fef8?auto=compress&cs=tinysrgb&w=1920",
+    "ctaBackgroundImage": "https://images.pexels.com/photos/7867329/pexels-photo-7867329.jpeg?auto=compress&cs=tinysrgb&w=1920"
+  },
+  "seo": {
+    "defaultTitleSuffix": "Jobsite Systems",
+    "defaultDescription": "Simple, low-maintenance websites built for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors.",
+    "twitterCard": "summary_large_image",
+    "ogType": "website",
+    "schemaOrganization": {
+      "@type": "Organization",
+      "name": "Jobsite Systems",
+      "founder": "MKS Web Design",
+      "contactType": "customer service"
+    }
+  },
+  "analytics": {
+    "plausibleDomain": null,
+    "plausibleScript": null,
+    "googleAnalytics": null,
+    "googleTagManager": null
+  },
+  "positioning": {
+    "headline": "Simple Websites for Trade Businesses,",
+    "headlineAccent": "Built to Bring in Work",
+    "badge": "Now onboarding trade businesses",
+    "lead": "A practical, low-maintenance web presence for handymen, HVAC techs, plumbers, carpenters, remodelers, and general contractors. No bloated CMS, no plugin treadmill, no rebuild cycles — get online, stay online, and keep your focus on the work.",
+    "ctaPrimary": {
+      "label": "Start Your Site",
+      "href": "/contact/"
+    },
+    "ctaSecondary": {
+      "label": "See What's Included",
+      "href": "#services"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "faq",
+  "sectionLabel": "Common questions",
+  "heading": "Things people ask before booking.",
+  "faqs": [
+    {
+      "question": "What does this fix usually cost?",
+      "answer": "Flat-rate on common service calls — branch drain cleaning $189, mainline clear $289, leak detection $189, water heater inspect-and-flush $329, toilet replacement $295 plus parts. Bigger projects (water heater swap, repipe, slab leak) get a free written estimate before any work starts. The number on the quote matches the number on the invoice."
+    },
+    {
+      "question": "How soon can you come out?",
+      "answer": "Non-emergency service calls usually inside 3 to 5 business days, sometimes same-week. Emergency dispatch is 24/7 inside the service area with 30 to 60 minute typical arrival. Estimate visits book at your convenience and the written quote lands in your email by end of business that day."
+    },
+    {
+      "question": "Where do you work?",
+      "answer": "Cedar Mill, Bethany, Beaverton, Hillsboro, and NW Portland — 97225, 97229, 97006, 97005, 97124, 97210, 97231. Outside that radius I usually decline so I can hit my response-time commitments inside it. If you're close to the edge, call and ask."
+    },
+    {
+      "question": "Are you licensed and insured?",
+      "answer": "Yes. Licensed Oregon plumber, Oregon CCB # (placeholder), full general liability, workers' comp, and bonded. Certificates available on request before any work starts. 18 years in the trade, 6 years running Cedar Mill Plumbing as a one-truck shop."
+    },
+    {
+      "question": "Do you warranty your work?",
+      "answer": "1-year workmanship warranty on standard service. 5-year on whole-house repipes. Manufacturer warranty pass-through on water heaters, fixtures, and valves — I file the claim if a covered part fails inside the manufacturer window. If something I installed fails, I come back and make it right."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "dropzone",
+  "assets": {
+    "css": ["dropzone.css"],
+    "js":  ["dropzone.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "input[type='file'][data-aed-dropzone]",
+        "description": "Wrap a native file input in a polished drag-and-drop zone. The native input remains the source of truth, so it works inside any form unmodified.",
+        "fields": {
+          "data-aed-dropzone":      { "type": "boolean", "required": true, "description": "Opt-in marker." },
+          "data-aed-dz-headline":   { "type": "string",  "default": "<strong>Drop files here</strong> or click to select", "description": "Headline HTML (limited markup; <strong> recommended)." },
+          "data-aed-dz-hint":       { "type": "string",                    "description": "Small secondary line under the headline (e.g. 'PDF or PNG, max 10 MB')." },
+          "data-aed-dz-max-size":   { "type": "number",                    "description": "Maximum size per file in bytes. Files exceeding this are rejected." },
+          "data-aed-dz-max-files":  { "type": "number",                    "description": "Maximum total number of files." }
+        }
+      }
+    ]
+  }
+}

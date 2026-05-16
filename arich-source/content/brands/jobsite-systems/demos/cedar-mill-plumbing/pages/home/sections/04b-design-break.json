@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "Got a job in mind?",
+  "heading": "If this is the kind of plumber\nyou were hoping to find —",
+  "subtext": "The next step is a phone call or a contact form. Service calls are usually scheduled inside 3 to 5 business days. Estimate visits for bigger projects book at your convenience and the written quote is in your email by end of business that day.",
+  "backgroundImage": "https://images.pexels.com/photos/11905667/pexels-photo-11905667.jpeg?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+  "cta": { "label": "Request a Service Call", "href": "/demo/cedar-mill-plumbing/contact/" }
+}

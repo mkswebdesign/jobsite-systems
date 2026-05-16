@@ -1,0 +1,105 @@
+{
+  "_comment": "Local-service homepage recipe. Mirrors arich-source/content/brands/_templates/service-business/pages/home.json. Consumed by the /new-brand skill: tokens are substituted from the business description before the file lands in arich-source/content/brands/<id>/pages/home/page.json (or pages/home.json). Section sequence matches the conversion-stack bundle (_examples/bundles/conversion-stack.json). Tokens: {{BUSINESS_NAME}}, {{TRADE}} (capitalised, e.g. Plumbing), {{TRADE_LOWER}} (lowercased, e.g. plumbing), {{CITY}}, {{SERVICE_AREA}}, {{STATE}}, {{YEARS_EXPERIENCE}}, {{DOMAIN}} (no protocol, no trailing slash), {{PHONE}} (display, e.g. (555) 123-4567), {{PHONE_RAW}} (digits only for tel: href).",
+
+  "slug": "home",
+  "path": "/",
+  "seo": {
+    "title": "{{BUSINESS_NAME}} — Trusted {{TRADE}} in {{SERVICE_AREA}}",
+    "description": "Licensed, insured {{TRADE_LOWER}} across {{SERVICE_AREA}}. Fair, upfront pricing. Same-day response. {{YEARS_EXPERIENCE}}+ years serving our community.",
+    "canonical": "https://{{DOMAIN}}/"
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "badge": "Licensed & Insured · Family-Owned",
+      "badgeHref": "/about/",
+      "headline": "{{CITY}}'s Trusted",
+      "headlineAccent": "{{TRADE}}.",
+      "lead": "Fair, upfront pricing. Work done right the first time. Same-day response across {{SERVICE_AREA}} — day, night, or weekend.",
+      "metaParts": [
+        "Licensed & Insured",
+        "{{YEARS_EXPERIENCE}}+ Years Serving {{SERVICE_AREA}}",
+        "Family-Owned"
+      ],
+      "ctaPrimary": { "label": "Get a Free Quote", "href": "/contact/" },
+      "ctaSecondary": { "label": "See Our Services", "href": "/services/" }
+    },
+    {
+      "type": "services",
+      "sectionLabel": "Services",
+      "heading": "Every {{TRADE_LOWER}} need — one trusted team.",
+      "subtext": "From emergency repairs to scheduled maintenance, we handle the full range of residential and commercial {{TRADE_LOWER}} work.",
+      "serviceSlugs": [
+        "emergency-service",
+        "residential-service",
+        "commercial-service",
+        "maintenance-plans",
+        "installation",
+        "inspection"
+      ]
+    },
+    {
+      "type": "why",
+      "sectionLabel": "Why Choose Us",
+      "heading": "Why neighbors call us first.",
+      "subtext": "We built our reputation one honest job at a time. Here's what that means for you.",
+      "cards": [
+        {
+          "iconKey": "check-circle",
+          "title": "Licensed & insured.",
+          "body": "Fully licensed {{TRADE_LOWER}} in {{STATE}} and carrying full liability insurance. Every tech is background-checked and trained in-house."
+        },
+        {
+          "iconKey": "zap",
+          "title": "Upfront, honest pricing.",
+          "body": "We quote the job before we start. No surprise fees, no hidden charges, no pressure upsells. If the price changes, we tell you why — before we proceed."
+        },
+        {
+          "iconKey": "monitor",
+          "title": "Same-day response.",
+          "body": "Most calls get same-day service. True emergencies get our 24/7 line. We show up in the window we promise — or we call ahead."
+        },
+        {
+          "iconKey": "layers",
+          "title": "Work guaranteed.",
+          "body": "Every repair and installation is backed by our workmanship guarantee. If something's not right, we make it right — no questions, no hassle."
+        }
+      ]
+    },
+    {
+      "type": "capabilities",
+      "sectionLabel": "What We Handle",
+      "heading": "Common jobs, big and small.",
+      "subtext": "A quick look at the range of {{TRADE_LOWER}} work we do every week.",
+      "useSkillsCarousel": true
+    },
+    {
+      "type": "testimonials",
+      "sectionLabel": "Customer Reviews",
+      "heading": "Our customers say it best.",
+      "subtext": "Honest reviews from homeowners and business owners across {{SERVICE_AREA}}.",
+      "variant": "carousel"
+    },
+    {
+      "type": "process",
+      "sectionLabel": "How It Works",
+      "heading": "Simple, clear, no runaround.",
+      "subtext": "Four steps from your first call to a job well done.",
+      "steps": [
+        { "number": "01", "title": "Call or Request a Quote", "body": "Tell us what's going on. We'll schedule a visit or, for straightforward jobs, quote right over the phone." },
+        { "number": "02", "title": "On-Site Diagnosis", "body": "A licensed tech shows up on time, diagnoses the problem, and explains your options in plain language." },
+        { "number": "03", "title": "Upfront Quote", "body": "You approve the price before any work begins. No surprise charges. Financing available for larger jobs." },
+        { "number": "04", "title": "Work Done Right", "body": "We complete the job cleanly, test it, and walk you through what we did. Backed by our workmanship guarantee." }
+      ],
+      "ctaLabel": "See Full Process",
+      "ctaHref": "/process/"
+    },
+    {
+      "type": "finalCta",
+      "heading": "Got a {{TRADE_LOWER}} problem? Let's fix it.",
+      "body": "Same-day quotes. Honest advice. Work guaranteed. Call now or request a free estimate online.",
+      "ctaPrimary": { "label": "Get a Free Quote", "href": "/contact/" },
+      "ctaSecondary": { "label": "Call {{PHONE}}", "href": "tel:{{PHONE_RAW}}" }
+    }
+  ]
+}

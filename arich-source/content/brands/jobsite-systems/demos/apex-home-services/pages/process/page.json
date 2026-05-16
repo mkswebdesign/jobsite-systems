@@ -1,0 +1,29 @@
+{
+  "slug": "process",
+  "path": "/process/",
+  "breadcrumbLabel": "How It Works",
+  "seo": {
+    "title": "How It Works — Apex Home Services",
+    "description": "Six steps from a quote request to a finished job. Phone-quote or in-home estimate, written scope, scheduling window, on-site crew, walkthrough, and 1-year warranty.",
+    "canonical": "https://jobsite.systems/demo/apex-home-services/process/"
+  },
+  "header": {
+    "heading": "From quote to finished job.",
+    "lead": "Six steps from a request to the end-of-job walkthrough. Same flow on a one-hour handyman call as on an eight-week basement finish-out — the timeline differs, the standards don't."
+  },
+  "timeline": [
+    { "number": "01", "title": "Quote Request", "duration": "Same business day", "lead": "You request a quote through our form, by phone, or by text. The office reads each request, confirms service area, and routes you to the right crew member or owner.", "items": ["Brief description of the job + photos if you can send them", "City / area in the metro", "Rough timing — urgent, next two weeks, or planning ahead", "Same business day reply, not an auto-responder"], "deliverable": { "title": "What you'll get", "body": "A reply with either a phone-quote (small jobs) or a scheduled window for a free in-home estimate (remodels and bigger electrical work)." } },
+    { "number": "02", "title": "Phone-Quote or In-Home Estimate", "duration": "30–60 minutes for an in-home", "lead": "Small handyman and small electrical jobs are quoted by phone with photos. Anything bigger gets a free in-home estimate — Dave or Tim walk the project with you, take measurements, talk scope, and listen to constraints.", "items": ["Phone-quote includes line items and totals — emailed for review", "In-home estimate includes a walkthrough, measurements, and a list of decisions to make", "We'll be straight about what we won't take — major plumbing, HVAC, re-roofing — and refer you to a partner", "No commitment at the estimate stage; you take the written quote home"], "deliverable": { "title": "What you'll get", "body": "An emailed phone-quote within hours, or a written project scope and price within 3–5 business days for in-home estimates." } },
+    { "number": "03", "title": "Written Quote and Schedule", "duration": "Within a few days of estimate", "lead": "Once you accept the written quote, we schedule. Most handyman work books 1–2 weeks out; remodel projects 4–8 weeks depending on scope and season. Permits pulled where required.", "items": ["Schedule confirmed by email and text — date, arrival window, crew lead's name", "Deposit collected on remodel projects; small jobs paid at end-of-job", "Permits pulled and inspections coordinated where required (panel work, EV chargers, basement finish-outs)", "Pre-job text the day before with reminders and gate codes / dog notes"], "deliverable": { "title": "What you'll get", "body": "A confirmed schedule, a clear understanding of what's included, and the crew lead's name and phone number." } },
+    { "number": "04", "title": "Job Day", "duration": "Varies by scope", "lead": "Crew arrives in a branded Apex truck, in uniform, with the materials listed on the quote. A crew lead manages the day; on multi-day projects an on-site supervisor stays through the end of the project.", "items": ["Text when the truck is on the way; arrival inside the agreed window", "Floor protection, drop cloths, and daily clean-up — you can use the kitchen at night even when we're remodeling it", "Owner check-in by text on day one of any project over a half-day", "Material adjustments happen on a written change-order, signed before the cost changes"], "deliverable": { "title": "What you'll get", "body": "Daily progress visible, daily clean-up, and a single crew lead as your point of contact for the entire job." } },
+    { "number": "05", "title": "End-of-Job Walkthrough", "duration": "30 minutes at completion", "lead": "Every job ends with a walkthrough — crew lead and homeowner together, list any items to address, photos taken of the finished work. Punch-list items are handled before final payment.", "items": ["Walk every room or area touched, item-by-item against the quote", "Punch-list items addressed same week, often same day", "Before-and-after photos sent to your phone", "Final payment collected by card, check, or ACH after the walkthrough"], "deliverable": { "title": "What you'll get", "body": "A finished job that matches the written scope, photos for your records, and a clean handoff." } },
+    { "number": "06", "title": "1-Year Workmanship Warranty", "duration": "Ongoing for 12 months", "lead": "Every job is covered by a 1-year workmanship warranty. If something we did fails in the first year, we come back and fix it on our dime. Manufacturer warranties on parts (fixtures, appliances) are separate and we'll tell you what those look like.", "items": ["Warranty covers our labor on every line of work — handyman through remodel", "Warranty kicks in at end-of-job walkthrough", "Call or text the main number for warranty work — usually scheduled inside a week", "Manufacturer warranties documented on your written quote, with brand info for direct claims"], "deliverable": { "title": "What you'll get", "body": "A clear warranty period, a clear path to use it, and a company that picks up the phone when you call." } }
+  ],
+  "finalCta": {
+    "heading": "Ready to start?",
+    "body": "Send a quick request — or just call (913) 555-0177. The office replies the same business day with a phone-quote or a window for a free in-home estimate.",
+    "ctaPrimary": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" },
+    "ctaSecondary": { "label": "Call (913) 555-0177", "href": "tel:+19135550177" },
+    "headshot": null
+  }
+}

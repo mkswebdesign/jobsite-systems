@@ -1,0 +1,35 @@
+{
+  "slug": "handyman-services",
+  "order": 1,
+  "number": "01",
+  "iconKey": "shield",
+  "heroImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Apex crew member on a handyman service call",
+  "title": "Handyman Services",
+  "headline": "The small jobs most\nhomes need every year.",
+  "shortDescription": "General home repairs, drywall, doors, fixture installs, mounting, and the punch-list work that piles up on a homeowner's weekend — done by a uniformed crew, written quote, branded truck.",
+  "lead": "Most homes have a running list of small jobs that never quite get done — a sticking door, a hole in the drywall, a ceiling fan that needs swapping, a TV that needs mounting. Our handyman service is built for exactly that list. Two-person crews, branded trucks, and a written quote before any work starts. Billed hourly with a one-hour minimum at $95/hr, or $85/hr in 4-hour blocks for bigger punch-list days. Most jobs schedule within 1–2 weeks; urgent fixes sooner where the crew has open slots.",
+  "seo": {
+    "title": "Handyman Services — Apex Home Services · Kansas City Metro",
+    "description": "Licensed and insured handyman work in the Kansas City metro. Drywall, doors, fixture installs, mounting, general repairs. Hourly rates with a written quote before work starts.",
+    "schemaName": "Handyman Services",
+    "schemaDescription": "General home repair services including drywall, door repair, fixture installation, mounting, and small punch-list work performed by a licensed and insured crew."
+  },
+  "sections": [
+    { "type": "list", "variant": "showcase", "heading": "Common handyman jobs", "intro": "A representative — not exhaustive — list of what our crew handles on a typical week.", "items": [
+      { "label": "Drywall repair and patching", "body": "Doorknob holes, anchor pulls, water-damage cuts, and full sections. Texture-matched and ready for paint, or paint included on request" },
+      { "label": "Interior and exterior doors", "body": "Sticking doors, hinge resets, weatherstripping, full slab swaps, and pre-hung replacements. Hardware swaps and lockset installs" },
+      { "label": "Fixture installs", "body": "Ceiling fans, light fixtures, vanity faucets, garbage disposals, smoke and CO detectors. Larger electrical jobs route to our electrical team" },
+      { "label": "Mounting and assembly", "body": "TV mounts, floating shelves, mirror and art hanging, IKEA-style assembly, and child-safety anchoring of furniture" },
+      { "label": "Caulk, grout, and trim", "body": "Re-caulk tubs and showers, grout repair, baseboard and crown work, quarter-round at floors. Small carpentry" },
+      { "label": "Punch-list days", "body": "End-of-renovation cleanup work, move-in punch lists, rental turnover lists. Block-rate pricing makes a long list cheaper than ten small visits" }
+    ]},
+    { "type": "feature", "theme": "white", "heading": "How a handyman job goes", "body": "Most handyman jobs follow the same arc.", "items": [
+      "Phone call or web request — describe the list, send photos if you have them",
+      "Phone-quote for short jobs; on-site walkthrough for anything we can't price by photo",
+      "Two-person crew arrives in a branded Apex truck with the parts and tools listed in the quote",
+      "Walkthrough at the end, photos of completed work, payment by card or check on-site"
+    ]}
+  ],
+  "cta": { "label": "Get a Quote", "href": "/demo/apex-home-services/contact/" }
+}

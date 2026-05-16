@@ -1,0 +1,71 @@
+/*
+ * Segmented Control — drop-in iOS-style toggle group.
+ *
+ * Theme-aware. Pairs with patterns like billing toggles, view
+ * switchers, period filters. See /segmented-control/README.md.
+ */
+
+[data-aed-segmented] {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.3rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 999px;
+  position: relative;
+  font-size: 0.85rem;
+}
+
+[data-aed-segmented] > button {
+  position: relative;
+  z-index: 1;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+[data-aed-segmented] > button:hover { color: var(--text-primary, #fafafa); }
+
+[data-aed-segmented] > button.is-active {
+  color: #ffffff;
+}
+
+[data-aed-segmented] > .aed-seg-thumb {
+  position: absolute;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  background: var(--accent, #6B00FF);
+  border-radius: 999px;
+  z-index: 0;
+  transition:
+    left 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px -4px rgba(var(--accent-rgb, 107, 0, 255), 0.45);
+}
+
+/* Compact + ghost variants */
+[data-aed-segmented][data-aed-variant="compact"] > button { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
+[data-aed-segmented][data-aed-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aed-segmented] > .aed-seg-thumb { transition: none; }
+}
+
+@media print {
+  [data-aed-segmented] > .aed-seg-thumb { display: none; }
+  [data-aed-segmented] > button.is-active {
+    color: var(--text-primary, #18181b);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}

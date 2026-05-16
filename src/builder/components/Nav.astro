@@ -1,0 +1,1671 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { brand, site } from '../lib/brand';
+import Icon from './Icon.astro';
+import BrandMark from './BrandMark.astro';
+
+interface Props {
+  /** Current URL pathname so we can mark the active link. */
+  pathname: string;
+}
+
+const { pathname } = Astro.props;
+
+// ------------------------------------------------------------
+// Mega-menu children. Always loaded (cheap — Astro caches the
+// content collections), but only revealed under Variant G via
+// CSS. Sourced from live content collections / pricing JSON so
+// the dropdown stays in sync with the real pages without any
+// separate nav config to maintain.
+// ------------------------------------------------------------
+const allServices = await getCollection('services').catch(() => []);
+const allWork = await getCollection('work').catch(() => []);
+const pricingEntry = (await getEntry('pages', 'pricing')) ?? null;
+/* Services-page entry — used to drive the mega-menu order when the
+ * brand has authored a curated `grid.serviceSlugs` list, and to mark
+ * the `featuredSlug` row with a small "Featured" eyebrow. Brands that
+ * don't have a services page (or skip these fields) keep the default
+ * collection order unchanged. */
+const servicesPageEntry = (await getEntry('pages', 'services')) ?? null;
+const servicesPageData: any = servicesPageEntry?.data ?? null;
+const curatedServiceOrder: string[] = Array.isArray(servicesPageData?.grid?.serviceSlugs)
+  ? servicesPageData.grid.serviceSlugs.filter((s: any) => typeof s === 'string')
+  : [];
+const featuredServiceSlug: string | null = typeof servicesPageData?.featuredSlug === 'string'
+  ? servicesPageData.featuredSlug
+  : null;
+
+const rawServiceChildren: Array<{ id: string; label: string; href: string; meta?: string; featured?: boolean }> =
+  allServices.map((s: any) => ({
+    id: s.id,
+    label: s.data.title,
+    href: `/services/${s.id}/`,
+    meta: s.data.shortDescription || s.data.tagline || undefined,
+    featured: featuredServiceSlug != null && s.id === featuredServiceSlug,
+  }));
+
+/* Sort to match the curated order on the brand's services page when
+ * present. Anything outside the curated list keeps a stable trailing
+ * order (collection order). */
+const serviceChildren: Array<{ label: string; href: string; meta?: string; featured?: boolean }> =
+  curatedServiceOrder.length
+    ? (() => {
+        const indexFor = (id: string) => {
+          const i = curatedServiceOrder.indexOf(id);
+          return i === -1 ? curatedServiceOrder.length : i;
+        };
+        return rawServiceChildren
+          .slice()
+          .sort((a, b) => indexFor(a.id) - indexFor(b.id))
+          .map(({ id: _id, ...rest }) => rest);
+      })()
+    : rawServiceChildren.map(({ id: _id, ...rest }) => rest);
+/* Work mega: photo-forward cards. Sort by `order` so the brand's
+ * curated lead pieces show first; cap to 6 so the panel stays digestible
+ * (the "View all" link covers the rest). Pulls richer fields than a
+ * plain list — image, category, tags — so the panel renders as a small
+ * portfolio preview rather than a text menu. */
+type WorkChild = {
+  label: string;
+  href: string;
+  meta?: string;
+  image?: string | null;
+  imageAlt?: string;
+  category?: string;
+  tags?: string[];
+  gradient?: string;
+};
+const workChildren: WorkChild[] = allWork
+  .slice()
+  .sort((a: any, b: any) => (a.data.order ?? 999) - (b.data.order ?? 999))
+  .slice(0, 6)
+  .map((w: any) => ({
+    label: w.data.shortTitle || w.data.title,
+    href: `/work/${w.id}/`,
+    meta: w.data.cardSummary || w.data.subtitle || w.data.client || w.data.tagline || undefined,
+    image: w.data.image ?? null,
+    imageAlt: w.data.imageAlt ?? `${w.data.title} preview`,
+    category: w.data.category || w.data.client || undefined,
+    tags: Array.isArray(w.data.tags) ? w.data.tags.slice(0, 3) : [],
+    gradient: w.data.gradientPreset || 'g1',
+  }));
+/* Pricing mega: rather than dumping every tier with a price (noisy in a nav
+ * dropdown), derive two choice cards from the pricing page's tierGroups
+ * (Single-page vs Multi-page). Each card links to /pricing/?type=<group-id>,
+ * which the pricing page's toggle script reads on load to preselect the
+ * right tab. Always yearly — the brand's pricing.json defaults to yearly,
+ * and ?cycle isn't honored anyway on /pricing/ (only on /pricing/[tier]/[cycle]/). */
+const pricingGroups: any[] = ((pricingEntry?.data as any)?.tierGroups?.groups) ?? [];
+const pricingChoices: Array<{ id: string; label: string; href: string; meta?: string; kind: 'single' | 'multi' | 'other' }> = pricingGroups
+  .filter((g: any) => g && g.id)
+  .slice(0, 2)
+  .map((g: any) => {
+    const labelRaw = String(g.label ?? g.id);
+    /* Normalize "Multi Page Website"/"Multi-page" to a concise card title;
+     * leave anything else through unchanged so non-landscape brands that
+     * pick different group labels still get sensible nav copy. */
+    const isSingle = /single/i.test(labelRaw);
+    const isMulti = /multi|brochure/i.test(labelRaw);
+    const label = isSingle ? 'Single-page site' : isMulti ? 'Multi-page site' : labelRaw;
+    const meta = isSingle
+      ? 'One focused page — services, contact, done.'
+      : isMulti
+        ? 'Full brochure — services, about, photos, areas.'
+        : (typeof g.blurb === 'string' ? g.blurb : undefined);
+    const kind: 'single' | 'multi' | 'other' = isSingle ? 'single' : isMulti ? 'multi' : 'other';
+    return { id: g.id, label, href: `/pricing/?type=${encodeURIComponent(g.id)}`, meta, kind };
+  });
+
+type MegaPanel =
+  | { kind: 'list'; items: Array<{ label: string; href: string; meta?: string; featured?: boolean }> }
+  | { kind: 'work'; items: WorkChild[] }
+  | { kind: 'choice'; items: Array<{ id: string; label: string; href: string; meta?: string; kind: 'single' | 'multi' | 'other' }> };
+
+function megaChildrenFor(item: { href: string; children?: Array<{ label: string; href: string; meta?: string; featured?: boolean }> }): MegaPanel | null {
+  // Authored children win — lets a brand attach a curated dropdown to any nav
+  // item (e.g. About → Process / Location / FAQ / Contact). Renders with the
+  // same list-kind treatment as the Services dropdown for visual consistency.
+  if (Array.isArray(item.children) && item.children.length) {
+    return { kind: 'list', items: item.children.map(c => ({ label: c.label, href: c.href, meta: c.meta, featured: c.featured })) };
+  }
+  if (item.href === '/services/' && serviceChildren.length) return { kind: 'list', items: serviceChildren };
+  if (item.href === '/work/' && workChildren.length) return { kind: 'work', items: workChildren };
+  // Pricing is a single nav link — the multi/single toggle lives on /pricing/ itself.
+  // (Removed the auto-generated dropdown; both options previously linked to the same
+  // page with `?type=` query params, which read as duplicate UX in the nav.)
+  return null;
+}
+
+function isActive(href: string): boolean {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+
+/** Best-effort icon picker for nav labels — keeps content JSON icon-free. */
+function iconFor(label: string, href: string): string {
+  const key = `${label} ${href}`.toLowerCase();
+  if (/about|story|team/.test(key)) return 'user';
+  if (/service|offer/.test(key)) return 'layers';
+  if (/work|project|portfolio|example|case/.test(key)) return 'briefcase';
+  if (/process|how|method/.test(key)) return 'settings';
+  if (/pric|cost|plan/.test(key)) return 'tag';
+  if (/faq|question|help/.test(key)) return 'help-circle';
+  if (/contact|reach|talk|call/.test(key)) return 'envelope';
+  if (/blog|writing|insight/.test(key)) return 'grid';
+  if (href === '/' || /home/.test(key)) return 'home';
+  return 'arrow';
+}
+
+const prefix = brand.nameParts?.prefix ?? brand.name;
+const accent = brand.nameParts?.accent ?? '';
+---
+
+<nav class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="/" class="nav-logo">
+      <BrandMark size={34} class="nav-logo-mark" />
+      <span class="nav-logo-text">{prefix} {accent && <span>{accent}</span>}</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks" style={`--nav-link-count:${site.nav.primary.length}`}>
+      {site.nav.primary.map((item, i) => {
+        const kids = megaChildrenFor(item);
+        const panelId = `nav-mega-panel-${i}`;
+        const linkEl = (
+          <a
+            href={item.href}
+            class={(isActive(item.href) ? 'active' : '') + (kids ? ' has-mega' : '')}
+            style={`--nav-stagger:${i}`}
+            aria-haspopup={kids ? 'true' : undefined}
+          >
+            <span class="nav-link-icon" aria-hidden="true"><Icon name={iconFor(item.label, item.href)} size={18} /></span>
+            <span class="nav-link-label">{item.label}</span>
+            <span class="nav-link-chev" aria-hidden="true">›</span>
+          </a>
+        );
+        if (!kids) return linkEl;
+        return (
+          <div class="nav-mega-scope" data-mega-scope style={`--nav-stagger:${i}`}>
+            {linkEl}
+            <button
+              type="button"
+              class="nav-mega-toggle"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls={panelId}
+              aria-label={`Toggle ${item.label} menu`}
+            >
+              <span class="nav-mega-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="nav-mega-panel" id={panelId} role="menu" aria-label={`${item.label} menu`} data-mega-kind={kids.kind}>
+              <div class="nav-mega-inner">
+                <div class="nav-mega-header">
+                  <span class="nav-mega-eyebrow">{item.label}</span>
+                  <a href={item.href} class="nav-mega-all">
+                    View all
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                </div>
+                {kids.kind === 'choice' ? (
+                  <div class="nav-mega-choice-grid">
+                    {kids.items.map((c) => (
+                      <a href={c.href} role="menuitem" class="nav-mega-choice" data-choice-kind={c.kind}>
+                        <span class="nav-mega-choice-icon" aria-hidden="true">
+                          {c.kind === 'single' ? (
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
+                          ) : c.kind === 'multi' ? (
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="12" height="15" rx="2"/><path d="M9 5V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-1"/><line x1="6" y1="10" x2="12" y2="10"/><line x1="6" y1="14" x2="12" y2="14"/></svg>
+                          ) : (
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                          )}
+                        </span>
+                        <span class="nav-mega-choice-body">
+                          <span class="nav-mega-choice-title">{c.label}</span>
+                          {c.meta && <span class="nav-mega-choice-meta">{c.meta}</span>}
+                        </span>
+                        <span class="nav-mega-choice-arrow" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                ) : kids.kind === 'work' ? (
+                  <div class="nav-mega-work-grid">
+                    {kids.items.map((w) => (
+                      <a href={w.href} role="menuitem" class="nav-mega-work-card" data-gradient={w.gradient}>
+                        <span class="nav-mega-work-media" aria-hidden="true">
+                          {w.image ? (
+                            <img src={w.image} alt="" loading="lazy" decoding="async" />
+                          ) : (
+                            <span class="nav-mega-work-fallback" data-gradient={w.gradient}></span>
+                          )}
+                          <span class="nav-mega-work-shade"></span>
+                          {w.category && <span class="nav-mega-work-cat">{w.category}</span>}
+                        </span>
+                        <span class="nav-mega-work-body">
+                          <span class="nav-mega-work-title">{w.label}</span>
+                          {w.meta && <span class="nav-mega-work-meta">{w.meta}</span>}
+                          {w.tags && w.tags.length > 0 && (
+                            <span class="nav-mega-work-tags">
+                              {w.tags.map((t) => <span class="nav-mega-work-tag">{t}</span>)}
+                            </span>
+                          )}
+                        </span>
+                        <span class="nav-mega-work-cta" aria-hidden="true">
+                          <span>View case</span>
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <ul class="nav-mega-list">
+                    {kids.items.map((c) => (
+                      <li>
+                        <a href={c.href} role="menuitem" data-featured={c.featured ? 'true' : undefined}>
+                          <span class="nav-mega-item-label">
+                            {c.label}
+                            {c.featured && <span class="nav-mega-item-badge">Featured</span>}
+                          </span>
+                          {c.meta && <span class="nav-mega-item-meta">{c.meta}</span>}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      <div class="theme-toggle" id="themeToggle" role="radiogroup" aria-label="Site theme">
+        <button class="theme-opt" data-mode="vibrant" data-label="Vibrant" type="button" role="radio" aria-label="Vibrant mode — authored contrasting section rhythm" title="Vibrant mode">
+          <svg class="theme-icon theme-icon-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9l4.4-1.4L12 3z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z"/><path d="M5 15l.6 1.7L7.3 17l-1.7.6L5 19.3l-.6-1.7L2.7 17l1.7-.6L5 15z"/></svg>
+        </button>
+        <button class="theme-opt" data-mode="dark" data-label="Dark" type="button" role="radio" aria-label="Dark mode — uniform dark palette" title="Dark mode">
+          <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="theme-opt" data-mode="light" data-label="Bright" type="button" role="radio" aria-label="Bright mode — uniform light palette" title="Bright mode">
+          <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+      <a href={site.nav.cta.href} class="nav-cta">
+        <span class="nav-cta-label">{site.nav.cta.label}</span>
+        <span class="nav-cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<style is:global>
+  /* ============================================================
+   * Variant B — "Aurora"
+   * Premium full-bleed glass bar. Always overlaps content (the
+   * default page hero already pads for a fixed nav). A faint
+   * accent gradient line lights up under the bar on scroll.
+   * ============================================================ */
+  [data-nav-variant="B"] .nav {
+    padding: 1.4rem 0;
+    transition: padding .25s ease, background .25s ease, backdrop-filter .25s ease, border-color .25s ease;
+  }
+  [data-nav-variant="B"] .nav.scrolled {
+    padding: .8rem 0;
+    background: color-mix(in srgb, var(--bg-primary) 70%, transparent);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    box-shadow: 0 12px 36px -20px rgba(0, 0, 0, .45);
+  }
+  [data-nav-variant="B"] .nav.scrolled::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    width: clamp(120px, 28vw, 360px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: .85;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  [data-nav-variant="B"] .nav-logo {
+    font-weight: 800;
+    letter-spacing: .02em;
+  }
+  @media (min-width: 769px) {
+    [data-nav-variant="B"] .nav-links { gap: 2.4rem; }
+    [data-nav-variant="B"] .nav-links > a:not(.nav-cta) {
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: color .18s ease, transform .18s ease;
+    }
+    [data-nav-variant="B"] .nav-links > a:not(.nav-cta):hover { transform: translateY(-1px); }
+    [data-nav-variant="B"] .nav-cta {
+      padding: .75rem 1.5rem;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover, var(--accent)));
+      box-shadow: 0 8px 22px -6px rgba(var(--accent-rgb), .5), inset 0 1px 0 rgba(255, 255, 255, .18);
+    }
+    [data-nav-variant="B"] .nav-cta:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 32px -8px rgba(var(--accent-rgb), .6), inset 0 1px 0 rgba(255, 255, 255, .25);
+    }
+  }
+
+  /* ============================================================
+   * Variant C — "Drift"
+   * Floating centered pill. Auto-hides on scroll down, reveals
+   * on scroll up. Doesn't push page content (small inset).
+   * ============================================================ */
+  [data-nav-variant="C"] .nav {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(0);
+    width: calc(100% - 2rem);
+    max-width: var(--max-w);
+    padding: 0;
+    background: color-mix(in srgb, var(--bg-primary) 78%, transparent);
+    backdrop-filter: blur(28px) saturate(170%);
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    border: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
+    border-radius: 999px;
+    box-shadow:
+      0 18px 48px -16px rgba(0, 0, 0, .45),
+      0 2px 8px -2px rgba(0, 0, 0, .2),
+      inset 0 1px 0 rgba(255, 255, 255, .07);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1), opacity .35s ease, background .25s ease, border-color .25s ease;
+    z-index: 1000;
+  }
+  [data-nav-variant="C"] .nav.aed-nav-hidden {
+    transform: translateX(-50%) translateY(calc(-100% - 1.25rem));
+    opacity: 0;
+    pointer-events: none;
+  }
+  [data-nav-variant="C"] .nav.scrolled {
+    background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 24%, transparent);
+  }
+  [data-nav-variant="C"] .nav .container {
+    padding: 0;
+    width: 100%;
+    max-width: none;
+  }
+  [data-nav-variant="C"] .nav-inner {
+    padding: .45rem .65rem .45rem 1.25rem;
+    gap: 1rem;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+  [data-nav-variant="C"] .nav-logo {
+    font-size: 1.05rem;
+    white-space: nowrap;
+  }
+  @media (min-width: 769px) {
+    [data-nav-variant="C"] .nav-links {
+      gap: 1.6rem;
+      align-items: center;
+    }
+    [data-nav-variant="C"] .nav-links > a:not(.nav-cta) {
+      font-size: .85rem;
+      padding: .25rem 0;
+    }
+    [data-nav-variant="C"] .nav-links > a:not(.nav-cta)::after { bottom: -2px; }
+    [data-nav-variant="C"] .nav-cta {
+      padding: .55rem 1.15rem;
+      font-size: .8rem;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px -4px rgba(var(--accent-rgb), .45);
+    }
+    [data-nav-variant="C"] .theme-toggle .theme-opt { width: 26px; height: 26px; }
+  }
+  @media (max-width: 768px) {
+    [data-nav-variant="C"] .nav { top: .75rem; width: calc(100% - 1rem); }
+    [data-nav-variant="C"] .nav-inner { padding: .35rem .45rem .35rem 1rem; }
+    [data-nav-variant="C"] .nav-logo { font-size: .95rem; }
+    [data-nav-variant="C"] .nav-toggle { padding: .55rem; }
+  }
+  /* Disable auto-hide while the mobile drawer is open */
+  [data-nav-variant="C"] .nav:has(.nav-links.open) { transform: translateX(-50%) translateY(0) !important; opacity: 1 !important; pointer-events: auto !important; }
+
+  /* ============================================================
+   * Variant D — "Atlas"
+   * Wide sidebar rail (left edge). Horizontal text, real
+   * webapp-sidebar feel. Pushes page content right by 220px.
+   * Mobile (<769px) falls back to the default top bar.
+   * ============================================================ */
+  @media (min-width: 769px) {
+    [data-nav-variant="D"] body { padding-left: 220px; }
+    [data-nav-variant="D"] .nav {
+      top: 0; left: 0; right: auto; bottom: 0;
+      width: 220px;
+      padding: 1.75rem 0;
+      border-right: 1px solid var(--border);
+      background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+    }
+    [data-nav-variant="D"] .nav.scrolled {
+      background: color-mix(in srgb, var(--bg-primary) 97%, transparent);
+      border-right-color: color-mix(in srgb, var(--accent) 22%, var(--border));
+      padding: 1.75rem 0;
+    }
+    [data-nav-variant="D"] .nav .container {
+      padding: 0;
+      width: 100%; max-width: none;
+      height: 100%;
+    }
+    [data-nav-variant="D"] .nav-inner {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      height: 100%;
+      padding: 0 1.25rem;
+      gap: 1.75rem;
+    }
+    [data-nav-variant="D"] .nav-logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      padding: .25rem .5rem .25rem;
+      text-align: left;
+    }
+    [data-nav-variant="D"] .nav-links {
+      flex-direction: column !important;
+      gap: .15rem !important;
+      align-items: stretch !important;
+      flex: 1;
+      justify-content: flex-start;
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      background: transparent !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      border: 0 !important;
+    }
+    [data-nav-variant="D"] .nav-links > a:not(.nav-cta) {
+      position: relative;
+      display: block;
+      padding: .65rem .85rem .65rem 1.1rem;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      transition: background .18s ease, color .18s ease, padding .18s ease;
+      text-align: left;
+    }
+    [data-nav-variant="D"] .nav-links > a:not(.nav-cta)::after { display: none; }
+    [data-nav-variant="D"] .nav-links > a:not(.nav-cta)::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      width: 3px; height: 0;
+      background: var(--accent);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      transition: height .18s ease;
+    }
+    [data-nav-variant="D"] .nav-links > a:not(.nav-cta):hover {
+      background: color-mix(in srgb, var(--text-primary) 4%, transparent);
+      color: var(--text-primary);
+      padding-left: 1.25rem;
+    }
+    [data-nav-variant="D"] .nav-links > a:not(.nav-cta).active {
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      font-weight: 600;
+    }
+    [data-nav-variant="D"] .nav-links > a:not(.nav-cta).active::before { height: 60%; }
+    [data-nav-variant="D"] .theme-toggle {
+      align-self: flex-start;
+      margin-top: .5rem;
+    }
+    [data-nav-variant="D"] .nav-cta {
+      margin-top: auto;
+      padding: .85rem 1.1rem;
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      border-radius: 10px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  /* ============================================================
+   * Variant E — "Reveal"
+   * Minimal: logo + a single trigger always visible. Click the
+   * trigger to open a full-screen overlay with oversized type.
+   * Reuses existing #navToggle / .nav-links.open machinery.
+   * ============================================================ */
+  [data-nav-variant="E"] .nav {
+    background: transparent !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 1.25rem 0;
+  }
+  [data-nav-variant="E"] .nav-toggle { display: flex !important; z-index: 10003; }
+  [data-nav-variant="E"] .nav-links {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    max-width: none !important;
+    top: 0 !important; right: 0 !important; left: 0 !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    padding: 5rem 2rem 2rem !important;
+    background: color-mix(in srgb, var(--bg-primary) 96%, transparent) !important;
+    backdrop-filter: blur(28px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+    border-left: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: opacity .4s ease, visibility .4s ease, clip-path .55s cubic-bezier(.77,0,.18,1) !important;
+    clip-path: circle(0% at calc(100% - 2.25rem) 2.25rem);
+    opacity: 0; visibility: hidden;
+    display: flex !important;
+    z-index: 10001;
+  }
+  [data-nav-variant="E"] .nav-links.open {
+    clip-path: circle(150% at calc(100% - 2.25rem) 2.25rem);
+    opacity: 1; visibility: visible;
+  }
+  [data-nav-variant="E"] .nav-links > a:not(.nav-cta) {
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: var(--text-primary);
+    line-height: 1.05;
+    padding: .25rem 0;
+    border: 0;
+  }
+  [data-nav-variant="E"] .nav-links > a:not(.nav-cta)::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width .25s ease;
+    margin: .25rem auto 0;
+  }
+  [data-nav-variant="E"] .nav-links > a:not(.nav-cta):hover::after { width: 60%; }
+  [data-nav-variant="E"] .nav-links > a.active:not(.nav-cta) { color: var(--accent); }
+  [data-nav-variant="E"] .nav-links .nav-cta {
+    margin-top: 1.5rem;
+    width: auto;
+    padding: 1rem 2rem;
+    font-size: .9rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  [data-nav-variant="E"] .theme-toggle { order: 99; opacity: .7; }
+  /* Hide the dimmed-content overlay since the drawer fills the screen */
+  [data-nav-variant="E"] .nav-overlay { display: none; }
+
+  /* ============================================================
+   * Variant F — "Dock"
+   * Bottom-anchored capsule, mobile-app-style. Sits centered at
+   * the bottom of the viewport. Pushes Contact widget up so they
+   * don't collide.
+   * ============================================================ */
+  [data-nav-variant="F"] .nav {
+    top: auto;
+    bottom: 1.25rem;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: calc(100vw - 1.25rem);
+    padding: 0;
+    background: color-mix(in srgb, var(--bg-primary) 80%, transparent);
+    backdrop-filter: blur(28px) saturate(170%);
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    border: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
+    border-radius: 999px;
+    box-shadow:
+      0 -8px 24px -8px rgba(0, 0, 0, .25),
+      0 18px 48px -16px rgba(0, 0, 0, .45),
+      inset 0 1px 0 rgba(255, 255, 255, .07);
+    z-index: 1000;
+  }
+  [data-nav-variant="F"] .nav.scrolled {
+    background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  [data-nav-variant="F"] .nav-inner {
+    padding: .35rem .55rem .35rem .9rem;
+    gap: 1rem;
+    flex-wrap: nowrap;
+  }
+  [data-nav-variant="F"] .nav-logo { font-size: .9rem; white-space: nowrap; }
+  @media (min-width: 769px) {
+    [data-nav-variant="F"] .nav-links { gap: 1.4rem; align-items: center; }
+    [data-nav-variant="F"] .nav-links > a:not(.nav-cta) { font-size: .82rem; padding: .2rem 0; }
+    [data-nav-variant="F"] .nav-links > a:not(.nav-cta)::after { bottom: -2px; }
+    [data-nav-variant="F"] .nav-cta {
+      padding: .5rem 1.05rem;
+      font-size: .78rem;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px -4px rgba(var(--accent-rgb), .45);
+    }
+    [data-nav-variant="F"] .theme-toggle .theme-opt { width: 26px; height: 26px; }
+  }
+  @media (max-width: 768px) {
+    [data-nav-variant="F"] .nav { bottom: .75rem; max-width: calc(100vw - 1rem); }
+    [data-nav-variant="F"] .nav-inner { padding: .3rem .35rem .3rem .85rem; }
+    [data-nav-variant="F"] .nav-toggle { padding: .55rem; }
+    /* Drawer slides up from bottom on mobile */
+    [data-nav-variant="F"] .nav-links {
+      top: auto !important;
+      bottom: 0 !important;
+      right: 0 !important; left: 0 !important;
+      width: 100% !important; max-width: 100% !important;
+      height: auto !important; max-height: 70vh !important;
+      flex-direction: column !important;
+      padding: 1.5rem 1.25rem 2rem !important;
+      border-left: 0 !important;
+      border-top: 1px solid var(--border) !important;
+      border-radius: 18px 18px 0 0 !important;
+      transform: translateY(100%) !important;
+      transition: transform .35s cubic-bezier(.4, 0, .2, 1) !important;
+    }
+    [data-nav-variant="F"] .nav-links.open { transform: translateY(0) !important; }
+  }
+  /* Push other fixed bottom elements up so they don't collide with Dock */
+  [data-nav-variant="F"] .contact-widget { bottom: 5.25rem; }
+  @media (max-width: 640px) { [data-nav-variant="F"] .contact-widget { bottom: 4.5rem; } }
+
+  /* ============================================================
+   * Variant G — "Mega Menu"
+   * Builds on the default nav chrome and adds multi-column
+   * dropdown panels for Services / Work / Pricing. Children are
+   * auto-sourced from the brand's content collections, so the
+   * menu stays in sync with live pages.
+   *
+   * Mechanism: each mega-capable <a> is wrapped in .nav-mega-scope
+   * (which uses display:contents so it doesn't disturb the base
+   * flex layout used by every other variant). Hover/focus anywhere
+   * within the scope reveals the sibling .nav-mega-panel.
+   *
+   * Default state (visible to all variants, panel always hidden):
+   * ============================================================ */
+  .nav-mega-scope { display: contents; }
+  .nav-mega-panel {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -6px);
+    width: min(760px, calc(100vw - 2rem));
+    margin-top: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 1050;
+    /* Close direction: wait 450ms before fading out so a drifting cursor
+     * doesn't drop the menu on a near-miss. Transition-delay only applies
+     * on close; the hover rule below sets transition-delay:0 on open. */
+    transition:
+      opacity 0.2s ease 0.45s,
+      transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s,
+      visibility 0s linear 0.73s;
+  }
+  .nav-mega-panel::before {
+    /* invisible hover bridge — lets the cursor travel from the
+     * trigger link to the panel without crossing a dead zone. */
+    content: '';
+    position: absolute;
+    top: -16px;
+    left: 0;
+    right: 0;
+    height: 16px;
+  }
+  .nav-mega-inner {
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius-lg) + 4px);
+    padding: 1.1rem 1.1rem 1.25rem;
+    box-shadow:
+      0 30px 70px -28px rgba(0, 0, 0, 0.55),
+      0 10px 24px -14px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+  }
+  .nav-mega-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.15rem 0.5rem 0.75rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    margin-bottom: 0.65rem;
+  }
+  .nav-mega-eyebrow {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .nav-mega-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    transition: background 0.15s ease;
+  }
+  .nav-mega-all:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .nav-mega-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem 0.5rem;
+  }
+  .nav-mega-list > li > a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.7rem 1.6rem 0.7rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, padding 0.18s ease;
+  }
+  .nav-mega-list > li > a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 2px;
+    height: 0;
+    background: var(--accent);
+    border-radius: 2px;
+    transform: translateY(-50%);
+    transition: height 0.2s ease;
+  }
+  /* Hover arrow — sits in the reserved right gutter and slides in from
+     the right edge. Keeps the row clean until focused. */
+  .nav-mega-list > li > a::after {
+    content: '→';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .nav-mega-list > li > a:hover,
+  .nav-mega-list > li > a:focus-visible {
+    background: color-mix(in srgb, var(--accent) 9%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+    padding-left: 1rem;
+    outline: none;
+  }
+  .nav-mega-list > li > a:hover::before,
+  .nav-mega-list > li > a:focus-visible::before {
+    height: 62%;
+  }
+  .nav-mega-list > li > a:hover::after,
+  .nav-mega-list > li > a:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  .nav-mega-item-label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .nav-mega-item-meta {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* Featured row — the brand's flagship service. Subtle accent tint
+   * that reads as "this one first" without shouting; pairs with a small
+   * inline "Featured" badge next to the title. The accent stripe on
+   * the left edge is taller at rest than non-featured rows. */
+  .nav-mega-list > li > a[data-featured="true"] {
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .nav-mega-list > li > a[data-featured="true"]::before {
+    height: 50%;
+  }
+  .nav-mega-list > li > a[data-featured="true"]:hover,
+  .nav-mega-list > li > a[data-featured="true"]:focus-visible {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  .nav-mega-item-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.08rem 0.4rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    color: var(--accent-text, var(--accent));
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    vertical-align: middle;
+    transform: translateY(-1px);
+  }
+
+  /* Choice-card layout for the pricing mega panel — two large cards
+   * in place of a dense tier list. Each card anchors the user to the
+   * pricing page with a ?type= param that preselects the matching
+   * group. Hover reveals the arrow; every color resolves from tokens
+   * so the card style works across vibrant / light / dark.
+   *
+   * Layout: [icon] [title+meta body] [arrow] — grid at desktop,
+   * icon-above at mobile. */
+  .nav-mega-choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .nav-mega-choice {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    column-gap: 0.85rem;
+    row-gap: 0.2rem;
+    padding: 1rem 2.4rem 1.05rem 1rem;
+    background:
+      linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 7%, var(--bg-card)),
+        color-mix(in srgb, var(--accent) 2%, var(--bg-card)));
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .nav-mega-choice:hover,
+  .nav-mega-choice:focus-visible {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent) 48%, var(--border));
+    background:
+      linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 12%, var(--bg-card)),
+        color-mix(in srgb, var(--accent) 4%, var(--bg-card)));
+    box-shadow:
+      0 14px 32px -16px rgba(var(--accent-rgb), 0.38),
+      0 2px 6px -2px rgba(var(--accent-rgb), 0.18);
+    outline: none;
+  }
+  .nav-mega-choice-icon {
+    grid-row: 1 / span 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    color: var(--accent);
+    flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .nav-mega-choice:hover .nav-mega-choice-icon,
+  .nav-mega-choice:focus-visible .nav-mega-choice-icon {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    transform: scale(1.04);
+  }
+  .nav-mega-choice-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    min-width: 0;
+  }
+  .nav-mega-choice-title {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+  .nav-mega-choice-meta {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .nav-mega-choice-arrow {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    margin-top: -7px;
+    color: var(--accent);
+    opacity: 0.55;
+    display: inline-flex;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.18s ease;
+  }
+  .nav-mega-choice:hover .nav-mega-choice-arrow,
+  .nav-mega-choice:focus-visible .nav-mega-choice-arrow {
+    transform: translateX(4px);
+    opacity: 1;
+  }
+  @media (max-width: 900px) {
+    .nav-mega-choice-grid { grid-template-columns: 1fr }
+    .nav-mega-choice {
+      grid-template-columns: auto 1fr;
+      column-gap: 0.75rem;
+      padding: 0.9rem 2.2rem 0.95rem 0.9rem;
+    }
+    .nav-mega-choice-icon { width: 34px; height: 34px; }
+  }
+
+  /* ------------------------------------------------------------
+   * Work mega panel — photo-forward portfolio cards.
+   * Wider panel (the parent override below bumps max-width when
+   * data-mega-kind="work" is set), 2-col grid of project cards.
+   * Each card:
+   *   [media area: image + gradient shade + category eyebrow]
+   *   [body: title + cardSummary + tag chips]
+   *   [hover-revealed CTA strip across the bottom]
+   * Falls back to a gradient-preset square when image is missing,
+   * so brands without portfolio mockups still get a sensible block.
+   * ------------------------------------------------------------ */
+  .nav-mega-panel[data-mega-kind="work"],
+  [data-nav-variant="G"] .nav-mega-panel[data-mega-kind="work"] {
+    width: min(960px, calc(100vw - 2rem));
+    max-width: min(960px, calc(100vw - 2rem));
+  }
+  .nav-mega-work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .nav-mega-work-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 132px 1fr;
+    gap: 0;
+    padding: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.18s ease,
+                box-shadow 0.22s ease;
+  }
+  .nav-mega-work-card:hover,
+  .nav-mega-work-card:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+    box-shadow: 0 18px 40px -22px rgba(var(--accent-rgb), 0.32),
+                0 4px 10px -4px rgba(0, 0, 0, 0.2);
+    outline: none;
+  }
+  .nav-mega-work-media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    aspect-ratio: 4 / 3;
+  }
+  .nav-mega-work-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: block;
+  }
+  .nav-mega-work-card:hover .nav-mega-work-media img,
+  .nav-mega-work-card:focus-visible .nav-mega-work-media img {
+    transform: scale(1.06);
+  }
+  /* Gradient fallbacks — token-driven so each preset stays on-brand
+     across all five sites. The g1-g6 presets vary the angle and
+     accent/surface mix instead of pulling in off-brand hardcoded
+     colors (the prior purple/pink/cyan set fought every brand palette). */
+  .nav-mega-work-fallback {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 25%, rgba(var(--accent-rgb), 0.25), transparent 60%),
+      linear-gradient(135deg,
+        color-mix(in srgb, var(--bg-card) 80%, var(--accent) 20%),
+        var(--bg-secondary));
+  }
+  .nav-mega-work-fallback[data-gradient="g1"] { background:
+      radial-gradient(circle at 20% 20%, rgba(var(--accent-rgb), 0.30), transparent 55%),
+      linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 78%, var(--accent) 22%), var(--bg-secondary)); }
+  .nav-mega-work-fallback[data-gradient="g2"] { background:
+      radial-gradient(circle at 80% 30%, rgba(var(--accent-rgb), 0.28), transparent 55%),
+      linear-gradient(160deg, var(--bg-card), color-mix(in srgb, var(--bg-secondary) 80%, var(--accent) 20%)); }
+  .nav-mega-work-fallback[data-gradient="g3"] { background:
+      radial-gradient(circle at 50% 100%, rgba(var(--accent-rgb), 0.32), transparent 60%),
+      linear-gradient(115deg, var(--bg-secondary), color-mix(in srgb, var(--bg-card) 72%, var(--accent) 28%)); }
+  .nav-mega-work-fallback[data-gradient="g4"] { background:
+      radial-gradient(circle at 30% 80%, rgba(var(--accent-rgb), 0.28), transparent 55%),
+      linear-gradient(200deg, color-mix(in srgb, var(--bg-card) 75%, var(--accent) 25%), var(--bg-secondary)); }
+  .nav-mega-work-fallback[data-gradient="g5"] { background:
+      radial-gradient(circle at 70% 70%, rgba(var(--accent-rgb), 0.34), transparent 55%),
+      linear-gradient(135deg, var(--bg-card), color-mix(in srgb, var(--bg-secondary) 70%, var(--accent) 30%)); }
+  .nav-mega-work-fallback[data-gradient="g6"] { background:
+      radial-gradient(circle at 0% 50%, rgba(var(--accent-rgb), 0.30), transparent 60%),
+      linear-gradient(95deg, color-mix(in srgb, var(--bg-card) 80%, var(--accent) 20%), var(--bg-secondary)); }
+  .nav-mega-work-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0) 35%,
+      rgba(0, 0, 0, 0.55) 100%);
+    pointer-events: none;
+  }
+  .nav-mega-work-cat {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.55rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    padding: 0.22rem 0.5rem;
+    border-radius: 999px;
+    line-height: 1.1;
+    max-width: calc(100% - 1.1rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-mega-work-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.85rem 0.95rem 2.4rem;
+    min-width: 0;
+  }
+  .nav-mega-work-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .nav-mega-work-meta {
+    font-size: 0.76rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .nav-mega-work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.1rem;
+  }
+  .nav-mega-work-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    background: color-mix(in srgb, var(--text-primary) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .nav-mega-work-cta {
+    position: absolute;
+    bottom: 0;
+    left: 132px;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    padding: 0.45rem 0.95rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 9%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 0.18s ease;
+  }
+  .nav-mega-work-card:hover .nav-mega-work-cta,
+  .nav-mega-work-card:focus-visible .nav-mega-work-cta {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .nav-mega-work-cta svg { transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .nav-mega-work-card:hover .nav-mega-work-cta svg,
+  .nav-mega-work-card:focus-visible .nav-mega-work-cta svg {
+    transform: translateX(3px);
+  }
+
+  /* Mobile (≤900px) — work cards stack to a single column with a
+     wider thumbnail-left layout. The hover-CTA strip flattens since
+     touch can't hover. */
+  @media (max-width: 900px) {
+    .nav-mega-panel[data-mega-kind="work"] { width: 100%; max-width: 100%; }
+    .nav-mega-work-grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    .nav-mega-work-card {
+      grid-template-columns: 96px 1fr;
+      border-radius: 12px;
+    }
+    .nav-mega-work-media { aspect-ratio: 1 / 1; }
+    .nav-mega-work-body {
+      padding: 0.6rem 0.75rem;
+      gap: 0.25rem;
+    }
+    .nav-mega-work-cat {
+      font-size: 0.55rem;
+      padding: 0.18rem 0.4rem;
+      top: 0.35rem;
+      left: 0.35rem;
+    }
+    .nav-mega-work-title { font-size: 0.88rem; }
+    .nav-mega-work-meta {
+      font-size: 0.72rem;
+      -webkit-line-clamp: 2;
+    }
+    .nav-mega-work-tags { display: none; }
+    /* On touch the slide-up CTA is unhelpful — hide it; the whole
+       card is the tap target anyway. */
+    .nav-mega-work-cta { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-mega-work-card,
+    .nav-mega-work-media img,
+    .nav-mega-work-cta,
+    .nav-mega-work-cta svg { transition: none !important; }
+    .nav-mega-work-card:hover { transform: none; }
+    .nav-mega-work-card:hover .nav-mega-work-media img,
+    .nav-mega-work-card:focus-visible .nav-mega-work-media img { transform: none; }
+  }
+
+  .nav-mega-caret {
+    font-size: 0.7em;
+    opacity: 0.7;
+    transition: transform 0.18s ease;
+    display: inline-block;
+    line-height: 1;
+  }
+  /* Default: the toggle button is only used under Variant G. For A–F
+     it's present in the DOM (so markup stays shared) but hidden. */
+  .nav-mega-toggle { display: none; }
+
+  /* ------------------------------------------------------------
+     Variant G — Mega Menu
+     Reveals via :hover / :focus-within OR [data-expanded="true"]
+     (set by the toggle button for touch + keyboard users).
+     ------------------------------------------------------------ */
+  @media (min-width: 901px) {
+    /* Give the scope a real box so the panel can anchor to the
+       trigger link rather than the entire nav bar. A-F variants keep
+       display:contents (unchanged) so only G pays the layout cost. */
+    [data-nav-variant="G"] .nav-mega-scope {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      gap: 0.15rem;
+    }
+    [data-nav-variant="G"] .nav-mega-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 0.3rem;
+      background: transparent;
+      border: 0;
+      color: var(--text-secondary);
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.18s ease;
+    }
+    [data-nav-variant="G"] .nav-mega-toggle:hover,
+    [data-nav-variant="G"] .nav-mega-scope:hover .nav-mega-toggle {
+      color: var(--text-primary);
+    }
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-toggle,
+    [data-nav-variant="G"] .nav-mega-toggle:focus-visible {
+      color: var(--accent);
+    }
+    [data-nav-variant="G"] .nav-mega-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Panel is anchored to the scope (trigger). Clamp to the viewport
+       using max-width + translate so near-edge triggers don't clip. */
+    [data-nav-variant="G"] .nav-mega-panel {
+      left: 50%;
+      max-width: min(760px, calc(100vw - 2rem));
+    }
+
+    /* Open on hover, keyboard-focus, OR explicit click/tap toggle */
+    [data-nav-variant="G"] .nav-mega-scope:hover .nav-mega-panel,
+    [data-nav-variant="G"] .nav-mega-scope:focus-within .nav-mega-panel,
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translate(-50%, 0);
+      transition-delay: 0s;
+    }
+    [data-nav-variant="G"] .nav-mega-scope:hover .nav-mega-caret,
+    [data-nav-variant="G"] .nav-mega-scope:focus-within .nav-mega-caret,
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-caret {
+      transform: rotate(180deg);
+    }
+
+    [data-nav-variant="G"] .nav-links { gap: 2rem; }
+    [data-nav-variant="G"] .nav-links > a:not(.nav-cta),
+    [data-nav-variant="G"] .nav-mega-scope > a:not(.nav-cta) {
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0.35rem 0;
+      color: var(--text-secondary);
+      transition: color 0.18s ease;
+    }
+    [data-nav-variant="G"] .nav-links > a:not(.nav-cta):hover,
+    [data-nav-variant="G"] .nav-mega-scope > a:not(.nav-cta):hover,
+    [data-nav-variant="G"] .nav-mega-scope:hover > a:not(.nav-cta) {
+      color: var(--text-primary);
+    }
+    [data-nav-variant="G"] .nav-cta {
+      padding: 0.55rem 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px -8px rgba(var(--accent-rgb), 0.45);
+    }
+  }
+
+  /* ------------------------------------------------------------
+     Mobile (≤900px) — drawer accordion
+     Panels are hidden by default; tapping the caret button expands
+     the children inline inside the drawer. Tapping the link label
+     still navigates (and closes the drawer via main.js).
+     ------------------------------------------------------------ */
+  @media (max-width: 900px) {
+    [data-nav-variant="G"] .nav-mega-scope {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      row-gap: 0;
+      column-gap: 0.35rem;
+      width: 100%;
+      /* Fade/slide in like sibling <a> rows */
+      opacity: 0;
+      transform: translateX(18px);
+      transition: opacity 0.4s ease, transform 0.2s ease;
+    }
+    [data-nav-variant="G"] .nav-links.open .nav-mega-scope {
+      opacity: 1;
+      transform: translateX(0);
+      transition-delay: calc(120ms + var(--nav-stagger, 0) * 55ms);
+    }
+    [data-nav-variant="G"] .nav-mega-scope > a {
+      flex: 1 1 auto;
+      min-width: 0;
+      /* The scope wrapper now owns the stagger fade-in; keep the link
+         itself steady so we don't double-animate. */
+      opacity: 1;
+      transform: none;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    [data-nav-variant="G"] .nav-mega-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      padding: 0.6rem;
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    [data-nav-variant="G"] .nav-mega-toggle:hover {
+      background: rgba(var(--accent-rgb), 0.06);
+      color: var(--text-primary);
+    }
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-toggle {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-caret {
+      transform: rotate(180deg);
+    }
+    [data-nav-variant="G"] .nav-mega-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    [data-nav-variant="G"] .nav-mega-toggle .nav-mega-caret {
+      font-size: 0.95rem;
+    }
+
+    /* Panel collapsed by default (accordion). max-height transition
+       gives a smooth open/close without needing JS height measurement. */
+    [data-nav-variant="G"] .nav-mega-panel {
+      flex: 0 0 100%;
+      position: static;
+      transform: none;
+      width: 100%;
+      max-width: 100%;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      max-height: 0;
+      overflow: hidden;
+      margin: 0;
+      transition: max-height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  margin-top 0.25s ease,
+                  margin-bottom 0.25s ease;
+    }
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-panel {
+      max-height: 1200px; /* large enough for any realistic child list */
+      margin-top: 0.4rem;
+      margin-bottom: 0.25rem;
+    }
+    [data-nav-variant="G"] .nav-mega-panel::before { display: none; }
+    [data-nav-variant="G"] .nav-mega-inner {
+      padding: 0.75rem 0.85rem 0.9rem;
+      background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    [data-nav-variant="G"] .nav-mega-list { grid-template-columns: 1fr; }
+
+    /* base.css gives every .nav-links descendant anchor opacity:0 +
+       translateX(18px) for the drawer stagger, but the reveal rule
+       (.nav-links.open > a) only matches direct children. Mega-panel
+       child links/cards are deeper, so without this override they
+       render permanently invisible on mobile. */
+    [data-nav-variant="G"] .nav-mega-panel a {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    /* Panel inner — visually nested inside the drawer. Slightly softer
+       bg than the drawer row so subpages read as a grouped submenu. */
+    [data-nav-variant="G"] .nav-mega-inner {
+      padding: 0.55rem 0.6rem 0.7rem;
+      background: color-mix(in srgb, var(--bg-primary) 55%, transparent);
+      border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+      border-radius: 10px;
+    }
+
+    /* Header — eyebrow + "View all" button */
+    [data-nav-variant="G"] .nav-mega-header {
+      padding: 0.1rem 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+      border-bottom-color: color-mix(in srgb, var(--border) 55%, transparent);
+    }
+    [data-nav-variant="G"] .nav-mega-eyebrow {
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+    }
+    [data-nav-variant="G"] .nav-mega-all {
+      font-size: 0.74rem;
+      padding: 0.25rem 0.55rem;
+      gap: 0.3rem;
+    }
+
+    /* Sub-page rows — stack label above blurb. Override drawer-row font
+       weight so meta reads as secondary; raise meta line-clamp from 1
+       (desktop default) to 2 so the useful one-liner is actually
+       legible instead of cut mid-sentence. */
+    [data-nav-variant="G"] .nav-mega-list { gap: 0.2rem; }
+    [data-nav-variant="G"] .nav-mega-list > li > a {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.2rem;
+      padding: 0.55rem 0.7rem !important;
+      font-size: 0.9rem !important;
+      font-weight: 400 !important;
+      line-height: 1.25;
+      border-radius: 8px;
+    }
+    /* Suppress the desktop hover-arrow on mobile — :hover sticks after a
+       tap on touch devices, leaving a weird arrow frozen next to the
+       row. The accordion panel is always expanded when the user sees
+       these rows anyway, so the hover affordance isn't useful here. */
+    [data-nav-variant="G"] .nav-mega-list > li > a::after { display: none; }
+    [data-nav-variant="G"] .nav-mega-list > li > a:active {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+    }
+    [data-nav-variant="G"] .nav-mega-item-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--text-primary);
+    }
+    [data-nav-variant="G"] .nav-mega-item-meta {
+      font-size: 0.74rem;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--text-muted);
+      -webkit-line-clamp: 2;
+    }
+
+    /* Pricing choice cards — single column at ≤900px already; tighten
+       vertical rhythm and reserve right padding for the absolute arrow
+       so the title/meta never collide with it on narrow xs widths. */
+    [data-nav-variant="G"] .nav-mega-choice-grid { gap: 0.5rem; }
+    [data-nav-variant="G"] .nav-mega-choice {
+      padding: 0.7rem 2.1rem 0.75rem 0.85rem !important;
+      gap: 0.3rem;
+      border-radius: 10px;
+    }
+    [data-nav-variant="G"] .nav-mega-choice-title {
+      font-size: 0.92rem;
+      line-height: 1.2;
+    }
+    [data-nav-variant="G"] .nav-mega-choice-meta {
+      font-size: 0.76rem;
+      line-height: 1.4;
+      -webkit-line-clamp: 3;
+    }
+    [data-nav-variant="G"] .nav-mega-choice-arrow {
+      top: 0.7rem;
+      right: 0.7rem;
+    }
+
+    /* Align the caret toggle to the compact row — 44px was sized for
+       the default drawer row height; 40px matches the scope anchor's
+       padded height more closely and leaves room on narrow xs. */
+    [data-nav-variant="G"] .nav-mega-toggle {
+      width: 40px;
+      height: 40px;
+      padding: 0.5rem;
+    }
+  }
+
+  /* xs tighten (≤480px) — squeeze side padding further so the meta
+     blurb has room to show two lines without wrapping awkwardly. */
+  @media (max-width: 480px) {
+    [data-nav-variant="G"] .nav-mega-inner {
+      padding: 0.5rem 0.5rem 0.6rem;
+    }
+    [data-nav-variant="G"] .nav-mega-list > li > a {
+      padding: 0.5rem 0.55rem !important;
+    }
+    [data-nav-variant="G"] .nav-mega-choice {
+      padding: 0.65rem 1.85rem 0.7rem 0.7rem !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-mega-panel {
+      transition: opacity 0.12s ease, visibility 0s linear 0.12s;
+      transform: translateX(-50%);
+    }
+    [data-nav-variant="G"] .nav-mega-scope:hover .nav-mega-panel,
+    [data-nav-variant="G"] .nav-mega-scope:focus-within .nav-mega-panel,
+    [data-nav-variant="G"] .nav-mega-scope[data-expanded="true"] .nav-mega-panel {
+      transform: translateX(-50%);
+    }
+    .nav-mega-caret { transition: none; }
+    @media (max-width: 900px) {
+      [data-nav-variant="G"] .nav-mega-panel { transition: none; }
+      [data-nav-variant="G"] .nav-mega-scope { transition: none; }
+    }
+  }
+</style>
+
+<script is:inline>
+  /* ------------------------------------------------------------
+   * Mega-menu toggle (Variant G)
+   * - Desktop: hover + focus-within already open the panel via CSS.
+   *   The toggle button adds click/tap support (touch laptops, tablets)
+   *   and lets a user "pin" the panel open.
+   * - Mobile: the CSS keeps the panel collapsed until data-expanded.
+   *   The toggle button is the only way to open it in the drawer.
+   * ------------------------------------------------------------ */
+  (function () {
+    var toggles = document.querySelectorAll('.nav-mega-toggle');
+    if (!toggles.length) return;
+
+    function setExpanded(scope, btn, expanded) {
+      if (!scope || !btn) return;
+      scope.setAttribute('data-expanded', expanded ? 'true' : 'false');
+      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    }
+
+    function closeAll(exceptScope) {
+      document.querySelectorAll('.nav-mega-scope[data-expanded="true"]').forEach(function (s) {
+        if (s === exceptScope) return;
+        var b = s.querySelector('.nav-mega-toggle');
+        setExpanded(s, b, false);
+      });
+    }
+
+    toggles.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var scope = btn.closest('.nav-mega-scope');
+        if (!scope) return;
+        var isOpen = scope.getAttribute('data-expanded') === 'true';
+        closeAll(scope);
+        setExpanded(scope, btn, !isOpen);
+      });
+    });
+
+    // Click outside any scope → close all
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('.nav-mega-scope')) return;
+      closeAll(null);
+    });
+
+    // Escape closes every open panel + returns focus to the first toggle that was open
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var open = document.querySelector('.nav-mega-scope[data-expanded="true"]');
+      if (!open) return;
+      var btn = open.querySelector('.nav-mega-toggle');
+      closeAll(null);
+      if (btn) btn.focus();
+    });
+
+    // When the mobile drawer closes, collapse any expanded accordions so
+    // they don't silently stay open the next time the drawer is opened.
+    var navLinks = document.getElementById('navLinks');
+    if (navLinks) {
+      var observer = new MutationObserver(function () {
+        if (!navLinks.classList.contains('open')) closeAll(null);
+      });
+      observer.observe(navLinks, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
+
+  (function () {
+    var nav = document.querySelector('nav.nav');
+    if (!nav) return;
+    var lastY = window.scrollY;
+    var ticking = false;
+    function isCapsule() { return document.documentElement.getAttribute('data-nav-variant') === 'C'; }
+    function onScroll() {
+      var y = window.scrollY;
+      if (!isCapsule()) { nav.classList.remove('aed-nav-hidden'); lastY = y; ticking = false; return; }
+      var delta = y - lastY;
+      if (y < 40) {
+        nav.classList.remove('aed-nav-hidden');
+      } else if (delta > 6) {
+        nav.classList.add('aed-nav-hidden');
+      } else if (delta < -6) {
+        nav.classList.remove('aed-nav-hidden');
+      }
+      lastY = y;
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { window.requestAnimationFrame(onScroll); ticking = true; }
+    }, { passive: true });
+  })();
+</script>

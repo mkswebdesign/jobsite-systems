@@ -1,0 +1,77 @@
+/*
+ * Chips Input — drop-in tag/chip multi-value field.
+ *
+ * Wraps any <input type="text" data-aed-chips> in a chip-aware
+ * container. Theme-aware. See /chips-input/README.md.
+ */
+
+.aed-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 10px;
+  min-height: 44px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.aed-chips:focus-within {
+  border-color: var(--accent, #6B00FF);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #6B00FF) 18%, transparent);
+}
+
+.aed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.7rem;
+  background: color-mix(in srgb, var(--accent, #6B00FF) 12%, transparent);
+  color: var(--text-primary, #fafafa);
+  border: 1px solid color-mix(in srgb, var(--accent, #6B00FF) 30%, var(--border, #27272a));
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.aed-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--text-muted, #9a9aa2);
+  cursor: pointer;
+  border-radius: 50%;
+}
+.aed-chip-remove:hover { color: #ef4444; background: color-mix(in srgb, #ef4444 14%, transparent); }
+.aed-chip-remove svg { width: 11px; height: 11px; }
+
+.aed-chips-entry {
+  flex: 1;
+  min-width: 100px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 0.3rem 0.25rem;
+  color: var(--text-primary, #fafafa);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.aed-chips-error {
+  flex-basis: 100%;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+.aed-chips-error[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aed-chips { transition: none; }
+}

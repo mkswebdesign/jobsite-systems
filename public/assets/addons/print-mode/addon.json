@@ -1,0 +1,32 @@
+{
+  "name": "print-mode",
+  "assets": {
+    "css": ["print.css"],
+    "js":  ["print.js"]
+  },
+  "cssAttrs": { "media": "print" },
+  "config": {
+    "meta": [
+      {
+        "name": "(URL query parameter, not a meta tag)",
+        "description": "Activate the print-preview view by adding `?print=preview` to any URL (`?print=normal` exits). Preview mode persists in sessionStorage so internal links keep the styling. Useful for QAing the print stylesheet without spawning the browser print dialog.",
+        "enum": ["preview", "normal"]
+      }
+    ],
+    "data": [
+      {
+        "selector": "[data-print-button]",
+        "description": "Placeholder element that becomes a 'Print page' button.",
+        "fields": {
+          "data-print-button":       { "type": "boolean", "required": true,                "description": "Opt-in marker." },
+          "data-print-button-label": { "type": "string",  "default": "Print page",         "description": "Button label." }
+        }
+      },
+      {
+        "selector": ".print-stamp-date",
+        "description": "Empty element auto-filled with today's date when the print stylesheet loads. Useful for stamping printed pages.",
+        "fields": {}
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { brand } from '../../builder/lib/brand';
+import { getAllVisiblePosts } from '../../builder/lib/posts';
+
+/* Dynamic route: only emit /post/ when the active brand has at least one post.
+ * Sibling brands without a posts collection skip this route entirely so
+ * /post/index.html isn't generated and prune-dist has nothing to clean up. */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getAllVisiblePosts();
+  return posts.length > 0 ? [{ params: {} }] : [];
+};
+
+const archiveUrl = brand.url.replace(/\/$/, '') + '/archive/';
+---
+<!doctype html>
+<html lang={brand.locale ?? 'en'}>
+<head>
+  <meta charset="utf-8" />
+  <title>Redirecting to /archive/ — {brand.name}</title>
+  <link rel="canonical" href={archiveUrl} />
+  <meta http-equiv="refresh" content="0; url=/archive/" />
+  <meta name="robots" content="noindex" />
+</head>
+<body>
+  <p>Redirecting to <a href="/archive/">/archive/</a>…</p>
+</body>
+</html>

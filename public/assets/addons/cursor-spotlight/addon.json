@@ -1,0 +1,22 @@
+{
+  "name": "cursor-spotlight",
+  "assets": {
+    "css": ["cursor-spotlight.css"],
+    "js":  ["cursor-spotlight.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-cursor-spotlight]",
+        "description": "Per-section radial-glow that follows the cursor. Tune via CSS variables on the same element.",
+        "fields": {
+          "data-aed-cursor-spotlight": { "type": "boolean", "required": true, "description": "Opt-in marker." }
+        },
+        "cssVars": {
+          "--aed-cs-size":    { "type": "string", "default": "320px", "description": "Spotlight diameter (CSS length)." },
+          "--aed-cs-opacity": { "type": "number", "default": 0.4,     "description": "Spotlight max opacity (0–1)." }
+        }
+      }
+    ]
+  }
+}

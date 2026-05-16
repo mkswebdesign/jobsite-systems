@@ -1,0 +1,22 @@
+{
+  "name": "timezone-converter",
+  "assets": {
+    "css": ["timezone-converter.css"],
+    "js":  ["timezone-converter.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-tz]",
+        "description": "Per-element timezone converter. Renders the source time + the visitor's local equivalent. Detects the visitor's timezone via Intl.DateTimeFormat. Hides the local label automatically when source and visitor zones match.",
+        "fields": {
+          "data-aed-tz":             { "type": "string", "required": true,            "description": "Source time. Accepts ISO with offset (e.g. '2026-05-15T14:00-05:00'), ISO local datetime, or 'HH:MM' time-only (interpreted in `tz-from` for today's date)." },
+          "data-aed-tz-from":        { "type": "string", "required": true,            "description": "Source IANA timezone (e.g. 'America/Chicago')." },
+          "data-aed-tz-variant":     { "type": "string", "enum": ["card"],            "description": "Boxed card variant. Default is inline." },
+          "data-aed-tz-local-label": { "type": "string", "default": "your time",      "description": "Label shown next to the visitor's local time." },
+          "data-aed-tz-show-date":   { "type": "boolean","default": false,            "description": "Include the date alongside the time." }
+        }
+      }
+    ]
+  }
+}

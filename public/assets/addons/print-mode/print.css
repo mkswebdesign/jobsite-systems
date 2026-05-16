@@ -1,0 +1,212 @@
+/*
+ * Print mode — drop-in print stylesheet
+ *
+ * Loaded with media="print" so it only applies at print time. To preview
+ * on-screen without invoking the print dialog, visit the page with
+ * ?print=preview — print.js swaps the link's media attribute to "all".
+ *
+ * See /print-mode/README.md for full integration notes.
+ */
+
+@media print {
+
+  /* -- Reset palette to ink-friendly values ---------------------------- */
+  :root,
+  :root[data-theme="light"],
+  :root[data-theme="dark"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #ffffff;
+    --bg-primary-rgb: 255, 255, 255;
+    --bg-secondary-rgb: 255, 255, 255;
+    --text-primary: #18181b;
+    --text-secondary: #3f3f46;
+    --text-muted: #52525b;
+    --border: #d4d4d8;
+    --border-light: #e4e4e7;
+    --accent-glow: transparent;
+    /* --accent intentionally preserved so brand identity survives in
+       headings, CTAs, and link color. */
+  }
+
+  @page {
+    margin: 0.6in 0.5in;
+    size: auto;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #18181b !important;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  /* -- Hide chrome that doesn't belong on paper ------------------------ */
+  .skip-to-content,
+  .nav,
+  .nav-overlay,
+  .nav-toggle,
+  .nav-links,
+  .nav-cta,
+  .theme-toggle,
+  .page-transition,
+  .footer,
+  footer.footer,
+  .contact-widget,
+  #contact-widget,
+  [class^="aed-"],
+  [data-aed-panel],
+  [data-footer-edit],
+  [data-print-button],
+  .billing-toggle,
+  .pricing-badge,
+  iframe,
+  video,
+  audio {
+    display: none !important;
+  }
+
+  /* -- Strip decorative backgrounds ----------------------------------- */
+  [class*="bg-image"],
+  .hero-bg,
+  .hero,
+  section[style*="background-image"],
+  .section[style*="background-image"] {
+    background-image: none !important;
+    background-color: #ffffff !important;
+  }
+
+  /* -- Disarm reveal animations --------------------------------------- */
+  .reveal,
+  .reveal-up,
+  [class*="reveal"] {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  /* -- Show every billing variant in print ---------------------------- */
+  [data-billing-only] {
+    display: block !important;
+    visibility: visible !important;
+  }
+  [data-billing-only="annual"]::before,
+  [data-billing-only="monthly"]::before {
+    content: attr(data-billing-only) " plan — ";
+    text-transform: capitalize;
+    font-weight: 600;
+    color: #52525b;
+    font-size: 0.85em;
+    margin-right: 0.25em;
+  }
+
+  /* -- Layout: full-width, tighten section padding -------------------- */
+  .container { max-width: 100% !important; padding: 0 0.25in !important; }
+  .section, section.section { padding: 0.4rem 0 !important; }
+
+  /* -- Typography: avoid orphaned headings, scale for paper ----------- */
+  h1, h2, h3, h4, h5, h6 {
+    color: #0a0a0b !important;
+    page-break-after: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  h1 { font-size: 22pt; margin-top: 0; }
+  h2 { font-size: 16pt; margin-top: 1.1em; }
+  h3 { font-size: 13pt; }
+  p, li, dd { color: #27272a !important; orphans: 3; widows: 3; }
+
+  /* -- Cards: keep intact across page breaks -------------------------- */
+  .pricing-card,
+  .pricing-feature,
+  .work-card,
+  .testimonial-card,
+  .service-card,
+  .faq-item,
+  figure,
+  blockquote {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    background: #ffffff !important;
+    border: 1px solid #d4d4d8 !important;
+    box-shadow: none !important;
+    color: #18181b !important;
+  }
+
+  /* -- Links: brand color, annotate external URLs --------------------- */
+  a {
+    color: var(--accent, #18181b) !important;
+    text-decoration: none !important;
+  }
+  a[href^="http"]:not([href*="gomks.com"])::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #71717a;
+    word-break: break-all;
+  }
+  a[href^="mailto:"]::after,
+  a[href^="tel:"]::after { content: none !important; }
+
+  /* -- Buttons: outlined, never filled (saves toner) ------------------ */
+  .btn, .btn-primary, .btn-secondary, .btn-ghost {
+    background: transparent !important;
+    color: var(--accent, #18181b) !important;
+    border: 1px solid currentColor !important;
+    padding: 0.2em 0.6em !important;
+    box-shadow: none !important;
+  }
+
+  /* -- CTA section (full-bleed accent on screen) — neutralize --------- */
+  .cta-section, section.cta-section {
+    background: #ffffff !important;
+    color: #18181b !important;
+    border-top: 1px solid #d4d4d8 !important;
+    padding: 0.75rem 0 !important;
+  }
+  .cta-section h2, .cta-section p { color: #18181b !important; }
+
+  /* -- Print stamp: brand identification at top of first page --------- */
+  .print-stamp {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid #d4d4d8;
+    padding-bottom: 0.4rem;
+    margin: 0 0 0.75rem;
+    font-size: 9pt;
+    color: #71717a;
+  }
+  .print-stamp-brand {
+    font-weight: 700;
+    color: var(--accent, #18181b);
+    letter-spacing: 0.02em;
+  }
+  .print-stamp-url { font-family: ui-monospace, Menlo, monospace; font-size: 8.5pt; }
+  .print-stamp-date { font-size: 8.5pt; }
+}
+
+/* On screen — print-only elements stay hidden ------------------------- */
+.print-stamp { display: none; }
+
+/* Preview mode — visual hint that you're in a print preview ----------- */
+body.print-preview { background: #e4e4e7 !important; }
+body.print-preview::before {
+  content: 'Print preview — add ?print=normal to exit';
+  position: fixed;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 6px 14px;
+  font: 700 11px ui-monospace, Menlo, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: #18181b;
+  color: #fafafa;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  pointer-events: none;
+}

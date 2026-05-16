@@ -1,0 +1,14 @@
+{
+  "type": "finalCta",
+  "heading": "Ready for a site\nthat stays out of your way?",
+  "body": "Tell us about your business. We'll tell you exactly what your site would include and what it costs. No pitch deck, no pressure — just a conversation.",
+  "ctaPrimary": {
+    "label": "Start Your Site",
+    "href": "/start/"
+  },
+  "ctaSecondary": {
+    "label": "See a Sample Site",
+    "href": "/work/"
+  },
+  "headshot": null
+}

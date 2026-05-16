@@ -1,0 +1,29 @@
+{
+  "type": "why",
+  "sectionLabel": "Why Cedar Mill",
+  "heading": "Why homeowners keep our number.",
+  "subtext": "Most calls come from a referral or a repeat customer. Here's the short list of why people switch and stay.",
+  "variant": "C",
+  "cards": [
+    {
+      "iconKey": "check-circle",
+      "title": "Same plumber every visit",
+      "body": "You get Mike — every time. No rotating techs, no \"a colleague will follow up,\" no commission-driven upsell. Knowing the house is half the work."
+    },
+    {
+      "iconKey": "zap",
+      "title": "Honest, transparent pricing",
+      "body": "Flat-rate on common service calls. Free written estimates on projects $500+. The number on the quote matches the number on the invoice. No diagnostic fee on top of repair."
+    },
+    {
+      "iconKey": "layers",
+      "title": "Real photos, real documentation",
+      "body": "Every job, every fitting, every drain run — photographed before drywall closes. Written invoice, photo report, and warranty terms in writing. Property managers love this part."
+    },
+    {
+      "iconKey": "monitor",
+      "title": "Direct line, real human",
+      "body": "Phone goes straight to me. After-hours and weekends too. If I can't talk in the moment, you get a real text-back inside 15 minutes — not a call-center holding pattern."
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "slug": "hosting-care",
+  "variants": {
+    "service-section": "A"
+  },
+  "order": 5,
+  "number": "05",
+  "iconKey": "shield",
+  "inclusionLabel": "Included with every site",
+  "heroImage": "https://images.pexels.com/photos/36453960/pexels-photo-36453960.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "heroImageAlt": "Server room — the visual metaphor for always-on hosting and care",
+  "title": "Hosting, Security & Backups",
+  "headline": "Your Site,\nQuietly Running.",
+  "shortDescription": "Managed hosting, free SSL, daily backups, and 24/7 uptime monitoring. Every plan includes it — no separate hosting bill, and nothing for hackers to break into.",
+  "lead": "The boring stuff that determines whether your site is still up when someone searches for you at 11pm on a Sunday with a leaking water heater. Managed hosting, SSL, daily backups, and 24/7 uptime monitoring are included in every plan. Static sites have no database, no admin login, and no plugins — which means almost nothing for hackers to break into compared to a typical WordPress contractor site. No separate hosting bill, no plugin updates, no surprises.",
+  "pricingCallout": "Included with every site — no separate hosting bill",
+  "anchorNav": [
+    { "label": "Overview", "href": "#main" },
+    { "label": "What's Included", "href": "#whats-included" },
+    { "label": "Why Static", "href": "#why-static" },
+    { "label": "Pricing", "href": "/pricing/" },
+    { "label": "FAQ", "href": "#faq" }
+  ],
+  "inlineTestimonial": {
+    "id": "kyle-m",
+    "placeAfter": 0
+  },
+  "seo": {
+    "title": "Managed Hosting & Security for Trade-Business Websites",
+    "description": "Managed hosting, SSL, daily backups, and 24/7 uptime monitoring for trade-business websites — with almost nothing for hackers to break into. Included in every plan.",
+    "schemaName": "Managed Hosting & Security",
+    "schemaDescription": "Managed static hosting, SSL, backups, and uptime monitoring for trade-business websites — with no admin login, no plugins, and almost nothing for hackers to break into."
+  },
+  "sections": [
+    {
+      "type": "list",
+      "id": "whats-included",
+      "variant": "showcase",
+      "heading": "What's Included",
+      "intro": "Everything a website needs to stay online, every day — with almost nothing for hackers to break into. No add-ons, no upsells.",
+      "items": [
+        { "label": "Managed static hosting", "body": "Served from a network close to your customers — fast loading from anywhere" },
+        { "label": "SSL certificate", "body": "HTTPS always on, auto-renewed, no expiry scares" },
+        { "label": "Daily backups", "body": "We can restore the site quickly if anything goes sideways" },
+        { "label": "24/7 uptime monitoring", "body": "We know before you do if the site goes down — and it almost never does" },
+        { "label": "No plugin updates", "body": "Static sites don't have a WordPress admin to patch — nothing to hack into" },
+        { "label": "DDoS protection", "body": "The host's network absorbs attack traffic automatically" }
+      ]
+    },
+    {
+      "type": "feature",
+      "id": "why-static",
+      "theme": "white",
+      "heading": "Why Static Beats WordPress Here",
+      "body": "WordPress is powerful, but for a trade-business website, it's overkill, creates maintenance debt, and adds attack surface that doesn't earn its keep. Static sites eliminate that:",
+      "items": [
+        "No PHP version to upgrade",
+        "No plugins to update or conflict — and no third-party code touching your customer-facing surface",
+        "No admin panel to get compromised",
+        "No database to leak — there's literally nothing for an attacker to query",
+        "Loads in under a second, globally",
+        "No hosting tier to outgrow"
+      ]
+    },
+    {
+      "type": "list",
+      "heading": "Perfect For",
+      "intro": "If any of these are familiar, the boring infrastructure layer is exactly what's costing you sleep — and we take it off your plate entirely.",
+      "variant": "grid",
+      "cols": 2,
+      "items": [
+        {
+          "label": "Hacked or held hostage by WordPress",
+          "body": "Your site got compromised, defaced, or quietly turned into a spam farm — and your \"web person\" couldn't tell you what went wrong or guarantee it won't happen again.",
+          "iconKey": "shield"
+        },
+        {
+          "label": "Stacking $30+/mo plugin bills",
+          "body": "Hosting is $15, the contact-form plugin is $9, the SEO plugin is $12, the security plugin is $20, and somehow you're paying $80/mo just to keep a brochure site online.",
+          "iconKey": "tag"
+        },
+        {
+          "label": "No time for updates, ever",
+          "body": "You don't want a login. You don't want to remember to patch anything. You want to pay one bill and have it work for the next three years without thinking about it.",
+          "iconKey": "clock"
+        },
+        {
+          "label": "Site down when homeowners are looking",
+          "body": "It went down on a Sunday evening when someone googled \"emergency plumber near me,\" and you didn't notice until Monday. Uptime monitoring with someone who actually responds is non-negotiable.",
+          "iconKey": "zap"
+        },
+        {
+          "label": "Inherited a hosting mess",
+          "body": "The previous owner / partner / friend-with-tech-skills set up hosting in their account, and nobody quite knows where the domain is registered or whose credit card is on file.",
+          "iconKey": "tool"
+        }
+      ]
+    }
+  ],
+  "serviceFaq": {
+    "sectionLabel": "FAQ",
+    "heading": "Common Questions about Hosting & Care",
+    "faqs": [
+      {
+        "question": "What uptime can you actually guarantee?",
+        "answer": "Our hosting stack has tracked ~100% uptime across the sites we've launched. We don't sell a contractual SLA — small trade businesses don't need one — but our monitoring fires the second a site goes down and we respond fast."
+      },
+      {
+        "question": "How long are backups kept?",
+        "answer": "Daily backups are retained for 30 days. Recovery from any backup point in that window takes minutes, not hours. We've never had to use one in production, but it's there."
+      },
+      {
+        "question": "What happens if my site does go down?",
+        "answer": "We get the alert before you do. In most cases the issue is auto-resolved before it would even surface to a visitor. If we need to roll back to a backup, we do — and you get an email afterwards explaining what happened."
+      },
+      {
+        "question": "Can I move my existing domain?",
+        "answer": "Yes. Your domain stays in your own registrar account — we never take ownership. We coordinate the DNS cutover at launch so there's no downtime, and your old site stays up until you're ready to switch."
+      },
+      {
+        "question": "Why don't I just use WordPress hosting?",
+        "answer": "You can — but you're paying for a CMS layer your site doesn't need, and accepting attack surface a trade business doesn't want. WordPress hosting also means PHP version upgrades, plugin patches, and a login that needs protecting. Static sites have none of that surface area."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Done with WordPress maintenance?",
+    "body": "Hosting, security, backups, and uptime monitoring are all included with every plan.",
+    "label": "See Plans",
+    "href": "/pricing/",
+    "actions": [
+      { "label": "Start Your Site", "href": "/contact/", "variant": "primary" },
+      { "label": "See Pricing", "href": "/pricing/", "variant": "secondary" },
+      { "label": "See Examples", "href": "/work/", "variant": "tertiary" }
+    ]
+  }
+}

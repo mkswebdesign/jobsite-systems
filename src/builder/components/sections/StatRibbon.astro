@@ -1,0 +1,64 @@
+---
+/**
+ * StatRibbon
+ *
+ * A horizontal strip of proof points — number + label pairs. Use when
+ * the page needs a beat of measurable substance (years in business,
+ * projects shipped, plugins required, response time). Distinct from:
+ *   - DesignBreak (atmospheric visual breath)
+ *   - ContentSection (editorial prose)
+ *
+ * Three brand-styled variants:
+ *   A "Compact"  — single horizontal row, modest sizing, brand surface
+ *   B "Display"  — large oversized numbers, more vertical breathing room
+ *   C "Bordered" — bordered grid cells, 2-up on mobile, 4-up desktop
+ *
+ * Theme-aware via brand tokens and the per-section override system
+ * (data-sec-theme: primary / light / white / dark / black). Stats are
+ * required (1-6 items); heading + sectionLabel + cta are all optional.
+ */
+export interface Props {
+  sectionLabel?: string;
+  heading?: string;
+  stats: Array<{
+    value: string;
+    label: string;
+    sublabel?: string;
+  }>;
+  cta?: { label: string; href: string };
+  variant?: 'A' | 'B' | 'C';
+}
+
+const { sectionLabel, heading, stats, cta } = Astro.props;
+const items = Array.isArray(stats) ? stats.filter((s) => s && s.value && s.label) : [];
+---
+
+<section
+  class="stat-ribbon"
+  data-section-type="stat-ribbon"
+  data-section-label="Stat ribbon"
+  data-section-variants="A:Compact,B:Display,C:Bordered"
+>
+  <div class="stat-ribbon__inner">
+    {(sectionLabel || heading) && (
+      <div class="stat-ribbon__head">
+        {sectionLabel && <p class="stat-ribbon__eyebrow">{sectionLabel}</p>}
+        {heading && <h2 class="stat-ribbon__heading">{heading}</h2>}
+      </div>
+    )}
+    {items.length > 0 && (
+      <ul class="stat-ribbon__body" role="list">
+        {items.map((s) => (
+          <li class="stat-ribbon__item">
+            <span class="stat-ribbon__value">{s.value}</span>
+            <span class="stat-ribbon__label">{s.label}</span>
+            {s.sublabel && <span class="stat-ribbon__sublabel">{s.sublabel}</span>}
+          </li>
+        ))}
+      </ul>
+    )}
+    {cta && (
+      <a class="stat-ribbon__cta" href={cta.href}>{cta.label}</a>
+    )}
+  </div>
+</section>

@@ -1,0 +1,24 @@
+{
+  "name": "typewriter",
+  "assets": {
+    "css": ["typewriter.css"],
+    "js":  ["typewriter.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-typewriter]",
+        "description": "Per-element rotating-text effect. Cycles through phrases with a typing/erasing animation.",
+        "fields": {
+          "data-aed-typewriter": { "type": "string[]","required": true,   "description": "Phrases to cycle. Either a JSON array (e.g. '[\"design\",\"launch\"]') or a separator-delimited string." },
+          "data-aed-tw-sep":     { "type": "string",  "default": ",",     "description": "Separator used to split a non-JSON `data-aed-typewriter` value." },
+          "data-aed-tw-type":    { "type": "number",  "default": 70,      "description": "Milliseconds between typed characters." },
+          "data-aed-tw-erase":   { "type": "number",  "default": 35,      "description": "Milliseconds between erased characters." },
+          "data-aed-tw-hold":    { "type": "number",  "default": 1800,    "description": "Milliseconds to hold a fully-typed phrase before erasing." },
+          "data-aed-tw-loop":    { "type": "boolean", "default": false,   "description": "Loop forever. If false the effect stops on the last phrase." },
+          "data-aed-tw-no-caret":{ "type": "boolean", "default": false,   "description": "Hide the blinking caret." }
+        }
+      }
+    ]
+  }
+}

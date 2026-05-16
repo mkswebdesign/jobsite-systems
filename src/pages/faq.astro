@@ -1,0 +1,95 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import SiteCta from '../builder/components/sections/SiteCta.astro';
+import DividerSlot from '../builder/components/DividerSlot.astro';
+import { faqFile } from '../builder/lib/brand';
+
+const entry = await getEntry('pages', 'faq');
+if (!entry) throw new Error('pages/faq entry not found');
+const d: any = entry.data;
+
+const groupIds: string[] = d.groupIds ?? faqFile.groups.map(g => g.id);
+const groups = groupIds
+  .map(id => faqFile.groups.find(g => g.id === id))
+  .filter((g): g is NonNullable<typeof g> => !!g);
+
+// FAQPage JSON-LD schema — generated from the rendered groups so it
+// stays in sync with the actual on-page content. Each FAQ entry maps
+// to a Question/Answer pair; the answer text is HTML-stripped to a
+// plain-text excerpt for the schema (Google's FAQPage rich-result
+// guidelines accept plain or HTML — plain travels better across
+// answer engines that aggregate).
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: groups.flatMap(g => g.faqs.map(f => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: typeof f.answer === 'string' ? f.answer.replace(/<[^>]+>/g, '').trim() : '',
+    },
+  }))),
+};
+---
+
+<Base title={d.seo.title} description={d.seo.description} canonical={d.seo.canonical} variants={d.variants} skipTarget="#main">
+  <PageHeader
+    crumbs={[{ label: d.breadcrumbLabel ?? 'FAQ' }]}
+    heading={d.header?.heading ?? 'FAQ'}
+    lead={d.header?.lead}
+  />
+
+  <DividerSlot dividers={d.dividers} after="header" />
+
+  <section
+    class="faq-section"
+    id="main"
+    data-section-type="faq"
+    data-section-label="FAQ"
+    data-section-variants="a:Default,B:Minimal,C:Narrow,D:Columns,E:Editorial,F:List,G:Featured"
+  >
+    <div class="container">
+      <div class="faq-list">
+        {groups.map((group, gi) => (
+          <div class="faq-group reveal" data-reveal-delay={gi * 100} id={group.id}>
+            <div class="faq-group-title">{group.title}</div>
+            {group.faqs.map(f => (
+              <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                  <span>{f.question}</span>
+                  <span class="faq-icon" aria-hidden="true">
+                    <svg class="faq-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <rect class="faq-icon-stroke faq-icon-stroke--h" x="5" y="11" width="14" height="2" rx="1"></rect>
+                      <rect class="faq-icon-stroke faq-icon-stroke--v" x="11" y="5" width="2" height="14" rx="1"></rect>
+                    </svg>
+                  </span>
+                </button>
+                <div class="faq-answer"><div class="faq-answer-inner">{f.answer}</div></div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <DividerSlot dividers={d.dividers} after="faq" />
+
+  {d.cta && (
+    <SiteCta
+      heading={d.cta.heading}
+      body={d.cta.body}
+      sectionLabel={d.cta.sectionLabel}
+      ctaPrimary={d.cta.ctaPrimary}
+      ctaSecondary={d.cta.ctaSecondary}
+    />
+  )}
+
+  {/* FAQPage JSON-LD — gives Google + AI answer engines a structured
+      list of Q/A pairs to surface in rich results. Schema generated
+      from the rendered groups so it stays in sync with on-page text. */}
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)}></script>
+</Base>

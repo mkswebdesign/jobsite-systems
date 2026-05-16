@@ -1,0 +1,45 @@
+/*
+ * Timezone Converter — drop-in "your local time" annotator.
+ *
+ * Hydrates [data-aed-tz] elements with a source-time + your-local-time
+ * pair. Theme-aware. See /timezone-converter/README.md.
+ */
+
+[data-aed-tz] {
+  font-variant-numeric: tabular-nums;
+}
+
+.aed-tz {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.aed-tz-source { color: var(--text-primary, #fafafa); font-weight: 600; }
+.aed-tz-local {
+  color: var(--text-muted, #9a9aa2);
+  font-size: 0.88em;
+}
+.aed-tz-local::before {
+  content: '· ';
+  margin-right: 0.1em;
+  opacity: 0.6;
+}
+.aed-tz-same .aed-tz-local { display: none; }
+
+/* Block / card variant */
+.aed-tz[data-aed-tz-variant="card"] {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.55rem 0.85rem;
+  background: var(--bg-card, #18181b);
+  border: 1px solid var(--border, #27272a);
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+.aed-tz[data-aed-tz-variant="card"] .aed-tz-local::before { content: ''; }
+.aed-tz[data-aed-tz-variant="card"] .aed-tz-local {
+  font-size: 0.78rem;
+}

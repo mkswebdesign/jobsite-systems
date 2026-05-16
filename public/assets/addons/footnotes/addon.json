@@ -1,0 +1,25 @@
+{
+  "name": "footnotes",
+  "assets": {
+    "css": ["footnotes.css"],
+    "js":  ["footnotes.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "sup[data-aed-fn]",
+        "description": "Inline footnote marker. The number links down to the corresponding <li id='fn-N'> in the footnotes list.",
+        "fields": {
+          "data-aed-fn": { "type": "number", "required": true, "description": "Footnote index (1-based). Must match the id 'fn-N' on the corresponding <li>." }
+        }
+      },
+      {
+        "selector": "ol[data-aed-footnotes]",
+        "description": "Container ordered-list holding the footnote bodies. Each <li> needs id='fn-N' matching an inline marker.",
+        "fields": {
+          "data-aed-footnotes": { "type": "boolean", "required": true, "description": "Opt-in marker on the <ol>." }
+        }
+      }
+    ]
+  }
+}

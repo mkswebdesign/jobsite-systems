@@ -1,0 +1,67 @@
+---
+/**
+ * Site-wide CTA block used at the bottom of /services, /work, /pricing, /faq.
+ *
+ * Accepts both the "simple" shape (heading/body/label/href — legacy inline
+ * usage) and the "rich" shape (ctaPrimary/ctaSecondary + optional
+ * sectionLabel — used on /faq). The component normalizes them.
+ *
+ * Variants (picked site-wide via site.cta.variant in site.json):
+ *   A:Default — centered block on the muted secondary background
+ *   B:Framed  — card-style accent-framed CTA with a subtle backdrop
+ */
+import { site } from '../../lib/brand';
+import Cta from '../Cta.astro';
+
+interface Props {
+  heading: string;
+  body?: string;
+  sectionLabel?: string;
+  label?: string;       // legacy simple shape
+  href?: string;        // legacy simple shape
+  ctaPrimary?: { label: string; href: string } | null;
+  ctaSecondary?: { label: string; href: string } | null;
+  variant?: string;     // override site default if needed
+  reveal?: boolean;
+}
+
+const {
+  heading,
+  body,
+  sectionLabel,
+  label,
+  href,
+  ctaPrimary,
+  ctaSecondary,
+  variant,
+  reveal = true,
+} = Astro.props;
+
+const variantKey = (variant || (site as any)?.cta?.variant || 'A').toString().toUpperCase();
+
+const primary = ctaPrimary ?? (label && href ? { label, href } : null);
+const secondary = ctaSecondary ?? null;
+const wrapClass = reveal ? 'cta-section reveal' : 'cta-section';
+---
+
+<section
+  class={wrapClass}
+  data-cta-variant={variantKey}
+  data-section-type="cta"
+  data-section-label="Site CTA"
+  data-section-variants="A:Default,B:Framed"
+>
+  <div class="container">
+    <div class="cta-inner">
+      {sectionLabel && <span class="section-label">{sectionLabel}</span>}
+      <h2>{heading}</h2>
+      {body && <p>{body}</p>}
+      {(primary || secondary) && (
+        <div class="cta-actions">
+          <Cta cta={primary} variant="primary" />
+          <Cta cta={secondary} variant="secondary" />
+        </div>
+      )}
+    </div>
+  </div>
+</section>

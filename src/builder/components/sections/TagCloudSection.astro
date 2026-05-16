@@ -1,0 +1,24 @@
+---
+/**
+ * TagCloudSection (Pass 4) — homepage section wrapper around <TagCloud>.
+ * Reads getAllTags(), shows top N by usage.
+ */
+import TagCloud from '../TagCloud.astro';
+import { getAllTags } from '../../lib/posts';
+
+interface Props { eyebrow?: string; heading: string; limit?: number; }
+const { eyebrow, heading, limit = 20 } = Astro.props;
+const tags = (await getAllTags()).slice(0, limit);
+---
+<section
+  class="section tag-cloud-section"
+  data-section-type="tag-cloud"
+  data-section-label="Tag cloud"
+  data-section-variants="A:Default"
+>
+  <div class="container">
+    {eyebrow && <span class="tag-cloud-section__eyebrow">{eyebrow}</span>}
+    <h2 class="tag-cloud-section__heading">{heading}</h2>
+    <TagCloud tags={tags} />
+  </div>
+</section>

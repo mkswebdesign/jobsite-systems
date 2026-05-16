@@ -1,0 +1,63 @@
+/*
+ * Grain Overlay — drop-in lo-fi noise texture.
+ *
+ * Pure CSS, no JS. Inline SVG noise filter as a fixed full-viewport
+ * overlay. Adds film-grain texture for a lo-fi / premium / editorial
+ * vibe. Works on dark and light themes (mix-blend-mode adapts).
+ *
+ * See /grain-overlay/README.md.
+ */
+
+:root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: var(--aed-grain-opacity, 0.08);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>\
+<filter id='n'>\
+<feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/>\
+<feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.95 0'/>\
+</filter>\
+<rect width='100%' height='100%' filter='url(%23n)'/>\
+</svg>");
+  background-size: 200px 200px;
+}
+
+/* Light theme: switch blend mode for visibility */
+:root[data-theme="light"]::after {
+  mix-blend-mode: multiply;
+  opacity: var(--aed-grain-opacity, 0.06);
+}
+
+/* Animation variant — shifts the noise pattern slowly for organic motion */
+:root[data-aed-grain-animated]::after {
+  animation: aed-grain-shift 8s steps(8) infinite;
+}
+@keyframes aed-grain-shift {
+  0%   { background-position: 0 0; }
+  10%  { background-position: -10px -5px; }
+  20%  { background-position: 5px -15px; }
+  30%  { background-position: -15px 10px; }
+  40%  { background-position: 12px 4px; }
+  50%  { background-position: -8px -12px; }
+  60%  { background-position: 4px 16px; }
+  70%  { background-position: -16px 8px; }
+  80%  { background-position: 14px -8px; }
+  90%  { background-position: -4px 14px; }
+  100% { background-position: 0 0; }
+}
+
+/* Off / disable */
+:root[data-aed-grain="off"]::after { display: none !important; }
+
+@media print {
+  :root::after { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-aed-grain-animated]::after { animation: none; }
+}

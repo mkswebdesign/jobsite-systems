@@ -1,0 +1,24 @@
+{
+  "name": "gauge",
+  "assets": {
+    "css": ["gauge.css"],
+    "js":  ["gauge.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-gauge]",
+        "description": "Per-element half-circle SVG gauge. Animates from 0 to the supplied value when scrolled into view.",
+        "fields": {
+          "data-aed-gauge":        { "type": "number", "required": true, "description": "Current value (0 to `data-aed-gauge-max`)." },
+          "data-aed-gauge-max":    { "type": "number", "default": 100,   "description": "Upper bound used to compute the percentage filled." },
+          "data-aed-gauge-size":   { "type": "number", "default": 100,   "description": "Outer width in pixels (height is roughly half)." },
+          "data-aed-gauge-stroke": { "type": "number", "default": 8,     "description": "Stroke width in pixels." },
+          "data-aed-gauge-label":  { "type": "string",                    "description": "Center label override. Defaults to the value." },
+          "data-aed-gauge-suffix": { "type": "string",                    "description": "String appended to the value (e.g. '%', '/100')." },
+          "data-aed-trend":        { "type": "string", "enum": ["up", "down", "warn"], "description": "Override accent color to signal direction or status." }
+        }
+      }
+    ]
+  }
+}

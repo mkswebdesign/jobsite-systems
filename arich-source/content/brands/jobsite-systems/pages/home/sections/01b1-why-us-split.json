@@ -1,0 +1,13 @@
+{
+  "type": "aboutSplit",
+  "sectionLabel": "Why owners pick us",
+  "heading": "We're not a template shop with a contractor package — we only do this.",
+  "body": [
+    "Every Jobsite Systems site is shaped around how a real trade business runs: homeowners searching at midnight for a leak, owners checking estimate requests between jobs, multi-crew shops keeping a roster of crews and trades accurate. We don't sell a generic theme with a hard-hat skin on top.",
+    "And because we host and quietly maintain every site we ship, the platform stays solid long after launch. No surprise plugin failures, no \"your contact form is broken\" scramble after an estimate request quietly stops coming through."
+  ],
+  "image": "https://images.pexels.com/photos/9658236/pexels-photo-9658236.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "imageAlt": "Trade-business owner reviewing a job on a tablet at a jobsite",
+  "cta": { "label": "See how we work", "href": "/process/" },
+  "variant": "A"
+}

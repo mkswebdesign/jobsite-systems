@@ -1,0 +1,22 @@
+---
+import Base from '../../builder/layouts/Base.astro';
+import PageHeader from '../../builder/components/PageHeader.astro';
+import NextSteps from '../../builder/components/sections/NextSteps.astro';
+import { brand } from '../../builder/lib/brand';
+
+const seo = {
+  title: `Support Request Received — ${brand.name}`,
+  description: "Thanks for the support request. We'll triage and reply — urgent issues get a same-day response during business hours.",
+};
+---
+
+<Base title={seo.title} description={seo.description} skipTarget="#main" indexable={false}>
+  <PageHeader
+    crumbs={[{ label: 'Support', href: '/support/' }, { label: 'Received' }]}
+    sectionLabel="On it."
+    heading={"Support request received."}
+    lead="Thanks. We'll triage and reply — urgent issues get a same-day response during business hours, everything else lands within one business day."
+  />
+
+  <NextSteps tightTop={false} />
+</Base>

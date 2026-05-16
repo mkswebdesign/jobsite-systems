@@ -1,0 +1,21 @@
+{
+  "type": "partnership",
+  "sectionLabel": "What's included",
+  "heading": "What customers can expect.",
+  "subtext": "Same operational standard across every trade. Written quotes, branded crew, on-site supervisor, photos at end-of-job, and a 1-year workmanship warranty on every line of work.",
+  "cardTitle": "The standard Apex job experience",
+  "cardLead": "Same backbone whether it's a one-hour handyman call or a six-week basement finish-out — the trade and timeline differ, the standards don't.",
+  "benefits": [
+    "Free phone-quote or in-home estimate before any work starts — no commitment",
+    "Written scope and price emailed before scheduling, so you know exactly what's included",
+    "Branded Apex truck, uniformed crew, and an on-site supervisor for any job over half a day",
+    "Text the day before with arrival window; text again when the truck is on the way",
+    "Daily clean-up on remodel projects — you can use the kitchen at night even when we're remodeling it",
+    "End-of-job walkthrough with the crew lead, before-and-after photos sent to your phone",
+    "Same-day invoicing by email; pay by card, check, or ACH on small jobs, milestones on remodels",
+    "1-year workmanship warranty on every job, handyman through remodel"
+  ],
+  "ctaLabel": "Get a Quote",
+  "ctaHref": "/demo/apex-home-services/contact/",
+  "note": "We're not licensed for major plumbing or HVAC work — for those we refer to two trusted partners we've used for years. We're also not a re-roofer or a full siding contractor; small repairs yes, full replacements we'll point you elsewhere. We'd rather be honest about scope up front than be three weeks into a job we shouldn't have taken."
+}

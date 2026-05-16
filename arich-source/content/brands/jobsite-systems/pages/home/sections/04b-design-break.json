@@ -1,0 +1,8 @@
+{
+  "type": "designBreak",
+  "sectionLabel": "When you're ready",
+  "heading": "Less to manage.\nMore time on the job.",
+  "subtext": "Quick conversation, real numbers. We'll walk you through the package and what it would cost for your business.",
+  "backgroundImage": "https://images.pexels.com/photos/5463575/pexels-photo-5463575.jpeg?auto=compress&cs=tinysrgb&w=1920",
+  "cta": { "label": "Schedule a Call", "href": "/contact/" }
+}

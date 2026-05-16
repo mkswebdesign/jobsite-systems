@@ -1,0 +1,14 @@
+{
+  "type": "testimonials",
+  "sectionLabel": "Owner & Operator Feedback",
+  "heading": "What owners and\noperators have to say.",
+  "subtext": "Short notes from trade-business owners and operators we've worked with.",
+  "variant": "carousel",
+  "testimonialIds": [
+    "kyle-m",
+    "amanda-r",
+    "dave-t",
+    "maria-s",
+    "jim-w"
+  ]
+}

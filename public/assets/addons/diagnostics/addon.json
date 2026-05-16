@@ -1,0 +1,14 @@
+{
+  "name": "diagnostics",
+  "assets": {
+    "css": ["diagnostics.css"],
+    "js":  ["diagnostics.js"]
+  },
+  "config": {
+    "api": {
+      "global": "Ctrl+Shift+D (Cmd+Shift+D on macOS)",
+      "description": "Dev-only overlay. No markup or per-page config — toggle the panel with the global hotkey. Reports Core Web Vitals (LCP, CLS, INP, TTFB), connection type, devicePixelRatio, viewport, DOM node count, and JS heap size.",
+      "fields": {}
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "section-divider",
+  "assets": {
+    "css": ["section-divider.css"],
+    "js":  ["section-divider.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-divider]",
+        "description": "Inline SVG divider rendered between sections. Set the value to choose a shape; tune via CSS variables on the same element.",
+        "fields": {
+          "data-aed-divider": { "type": "string",  "required": true, "enum": ["wave", "tilt", "arch", "peaks", "curve"], "description": "Shape preset." },
+          "data-aed-flip-x":  { "type": "boolean",                    "description": "Mirror the shape horizontally." }
+        },
+        "cssVars": {
+          "--aed-divider-h":    { "type": "string", "default": "80px", "description": "Divider height (CSS length)." },
+          "--aed-divider-fill": { "type": "string",                     "description": "Fill color (defaults to surface token)." }
+        }
+      }
+    ]
+  }
+}

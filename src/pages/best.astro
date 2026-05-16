@@ -1,0 +1,99 @@
+---
+import { getEntry, getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../builder/layouts/Base.astro';
+import PageHeader from '../builder/components/PageHeader.astro';
+import BestTeamCard from '../builder/components/BestTeamCard.astro';
+import SectionHeading from '../builder/components/SectionHeading.astro';
+
+type BestYearEntry = CollectionEntry<'bestByYear'>;
+
+const entry = await getEntry('pages', 'best');
+let picks: BestYearEntry[] = [];
+if (entry) {
+  try {
+    const all = await getCollection('bestByYear');
+    picks = all.filter(t => t.id && !t.id.startsWith('_'));
+  } catch {
+    picks = [];
+  }
+}
+const sorted = entry
+  ? [...picks].sort((a, b) => b.data.year - a.data.year)
+  : [];
+const d: any = entry?.data;
+---
+{
+  d && (
+    <Base
+      title={d.seo?.title}
+      description={d.seo?.description}
+      canonical={d.seo?.canonical}
+      skipTarget="#main"
+    >
+      <PageHeader
+        crumbs={[{ label: d.breadcrumbLabel ?? 'Best in history' }]}
+        heading={d.header.heading}
+        lead={d.header.lead}
+      />
+
+      {d.methodology && (
+        <section
+          class="section best-hub-intro"
+          data-section-type="best-hub"
+          data-section-label="Methodology"
+          id="main"
+        >
+          <div class="container">
+            <div class="best-hub-method reveal">
+              <h2>How this list is built</h2>
+              <p>{d.methodology}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section
+        class="section"
+        data-section-type="best-by-year"
+        data-section-label="Years"
+        data-aed-cursor-spotlight
+      >
+        <div class="container">
+          <SectionHeading
+            label="2000–2025"
+            heading="One team per year"
+            subtext="Each deep link uses the year and club slug in the path (see URL bar). The side we highlight for that calendar year comes from one JSON file per year in the best-by-year content folder."
+          />
+          <div class="work-index-grid best-by-year-grid stagger-container">
+            {sorted.map(t => (
+              <BestTeamCard
+                year={t.data.year}
+                slug={t.data.slug}
+                title={t.data.name}
+                shortTitle={t.data.shortName ?? t.data.name}
+                cardSummary={t.data.cardSummary}
+                tags={t.data.tags}
+                gradientPreset={t.data.gradientPreset ?? 'g1'}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    </Base>
+  )
+}
+
+<style is:global>
+  .best-hub-method {
+    max-width: 70ch;
+  }
+  .best-hub-method h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    color: var(--text-secondary);
+  }
+  .best-by-year-grid {
+    margin-top: 1.5rem;
+  }
+</style>

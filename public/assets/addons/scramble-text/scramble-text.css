@@ -1,0 +1,22 @@
+/*
+ * Scramble Text — drop-in cipher-decode reveal effect.
+ *
+ * Theme-aware. The scrambled-character pass uses a slightly muted
+ * accent color so it reads as "decoding" rather than "garbled."
+ *
+ * See /scramble-text/README.md.
+ */
+
+[data-aed-scramble] {
+  display: inline-block;
+  font-variant-ligatures: none;
+}
+
+.aed-scr-pending {
+  color: color-mix(in srgb, var(--accent, #6B00FF) 70%, transparent);
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced-motion path bypasses the scramble entirely (set in JS). */
+}

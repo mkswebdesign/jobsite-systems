@@ -1,0 +1,22 @@
+---
+import Base from '../../builder/layouts/Base.astro';
+import PageHeader from '../../builder/components/PageHeader.astro';
+import NextSteps from '../../builder/components/sections/NextSteps.astro';
+import { brand } from '../../builder/lib/brand';
+
+const seo = {
+  title: `Onboarding Received — ${brand.name}`,
+  description: "Thanks for completing onboarding. We'll review everything and reply within one business day.",
+};
+---
+
+<Base title={seo.title} description={seo.description} skipTarget="#main" indexable={false}>
+  <PageHeader
+    crumbs={[{ label: 'Onboarding', href: '/onboard/' }, { label: 'Received' }]}
+    sectionLabel="Got it."
+    heading={"Onboarding details are in."}
+    lead="Thanks! We'll read through everything you shared and reply within one business day — a real, considered response, not an auto-reply."
+  />
+
+  <NextSteps tightTop={false} />
+</Base>

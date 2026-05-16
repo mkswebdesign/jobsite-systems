@@ -1,0 +1,18 @@
+---
+/**
+ * RssLink — small icon link to an RSS feed.
+ * Props: href, label?. Inline SVG with accessible label.
+ * Pass 2 ships this component but does NOT mount it anywhere — feed routes
+ * land in Pass 3, and live <a> to a 404'd feed file would ding SEO crawls.
+ */
+interface Props { href: string; label?: string; }
+const { href, label = 'Subscribe via RSS' } = Astro.props;
+---
+<a class="rss-link" href={href} aria-label={label}>
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+    <circle cx="6" cy="18" r="2.5"/>
+    <path d="M3.5 11.5a9 9 0 0 1 9 9h-3a6 6 0 0 0-6-6v-3z"/>
+    <path d="M3.5 4.5a16 16 0 0 1 16 16h-3a13 13 0 0 0-13-13v-3z"/>
+  </svg>
+  <span class="rss-link__label">RSS</span>
+</a>

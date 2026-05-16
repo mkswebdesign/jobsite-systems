@@ -1,0 +1,35 @@
+{
+  "slug": "light-remodel",
+  "order": 3,
+  "number": "03",
+  "iconKey": "user",
+  "heroImage": "https://images.pexels.com/photos/34670925/pexels-photo-34670925.jpeg?fm=jpg&q=80&w=1600&auto=format&fit=crop",
+  "heroImageAlt": "Mid-renovation kitchen with new cabinets and countertops staged",
+  "title": "Light Remodel",
+  "headline": "Kitchens, bathrooms,\nand finished basements.",
+  "shortDescription": "Kitchen, bath, and basement remodels in the $5k–$60k project range — design and build managed in-house with a single on-site supervisor from demo to walkthrough.",
+  "lead": "Light remodel is the bigger end of what Apex does — full kitchen refreshes, bathroom remodels, and basement finish-outs in the $5k–$60k project range. We're a small crew, so we're not the right call for whole-house gut renovations or new builds. What we do well: well-managed mid-size projects where one supervisor stays on-site daily, the same crew shows up every morning, and the homeowner has one number to call. Free in-home estimate, written scope and price before any demo, and a 1-year workmanship warranty on every project.",
+  "seo": {
+    "title": "Light Remodel — Apex Home Services · Kansas City Metro",
+    "description": "Kitchen, bathroom, and basement remodels in the Kansas City metro. $5k–$60k project range, in-house design and build, free in-home estimate. Licensed and insured.",
+    "schemaName": "Light Remodel Services",
+    "schemaDescription": "Light remodeling services including kitchen, bathroom, and basement remodels in the $5,000–$60,000 project range, with in-house design and build management."
+  },
+  "sections": [
+    { "type": "list", "variant": "showcase", "heading": "Common remodel projects", "intro": "A representative — not exhaustive — list of the projects we run end-to-end.", "items": [
+      { "label": "Kitchen refresh", "body": "Cabinet refacing or replacement, countertop swaps (quartz, butcher block, granite), backsplash, sink and faucet swap, new lighting. Typical range $12k–$35k" },
+      { "label": "Full kitchen remodel", "body": "Layout-preserving full remodels with new cabinets, counters, appliances, flooring, and lighting. Typical range $35k–$60k. Layout changes that move plumbing or gas route to a partner plumber" },
+      { "label": "Bathroom remodel", "body": "Tub-to-shower conversions, full bath rebuilds with tile work, vanity and toilet swaps, exhaust fans. Typical range $8k–$25k for a hall bath; $15k–$40k for a primary bath" },
+      { "label": "Basement finish-out", "body": "Framing, drywall, flooring, lighting, and trim for unfinished basements. Egress windows and bathroom rough-ins coordinated with permitted partners. Typical range $20k–$60k" },
+      { "label": "Mudroom and built-ins", "body": "Custom built-in benches, lockers, pantry shelving, and closet organization. Typical range $5k–$15k" },
+      { "label": "Trim and finish carpentry", "body": "Wainscoting, accent walls, crown and base upgrades, custom shelving. Often added inside a larger remodel; also stand-alone" }
+    ]},
+    { "type": "feature", "theme": "white", "heading": "How a remodel project goes", "body": "Same arc on every project from a $5k built-in to a $60k basement.", "items": [
+      "Free in-home estimate — owner Dave or his brother Tim walk the project with you, talk scope, and take measurements",
+      "Written scope and price within 3–5 business days; we don't email a number without seeing the space",
+      "Scheduling window typically 4–8 weeks out; longer in spring and fall when remodel demand peaks",
+      "On-site supervisor on every workday, daily clean-up, end-of-job walkthrough with photos and a 1-year workmanship warranty"
+    ]}
+  ],
+  "cta": { "label": "Book a Free Estimate", "href": "/demo/apex-home-services/contact/" }
+}

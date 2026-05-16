@@ -1,0 +1,35 @@
+{
+  "name": "exit-intent",
+  "assets": {
+    "css": ["exit-intent.css"],
+    "js":  ["exit-intent.js"]
+  },
+  "config": {
+    "meta": [
+      {
+        "name": "aed:exit-intent",
+        "default": "on",
+        "required": true,
+        "description": "Master switch. Set content to 'on' to arm the modal. Without this meta tag exit intent never fires."
+      }
+    ],
+    "json": [
+      {
+        "id": "aed-exit-intent-config",
+        "description": "Copy and trigger thresholds for the exit-intent modal. All fields optional.",
+        "fields": {
+          "eyebrow":           { "type": "string",   "default": "Wait",                                          "description": "Small label above the headline. Empty string to hide." },
+          "headline":          { "type": "string",   "default": "Before you go…",                                "description": "Modal headline." },
+          "body":              { "type": "string",   "default": "Got 30 seconds? See if we'd be a fit — no pitch, no pressure.", "description": "Body copy." },
+          "primary.label":     { "type": "string",   "default": "Learn more",                                    "description": "Primary action button label." },
+          "primary.href":      { "type": "string",   "default": "/",                                             "description": "Primary action URL. May be a 'javascript:' bridge to other addons (e.g. void(__booking.open()))." },
+          "secondary.label":   { "type": "string",   "default": "No thanks",                                     "description": "Secondary action label (typically a dismiss)." },
+          "secondary.dismiss": { "type": "string",   "default": "session", "enum": ["session", "permanent"],     "description": "How a secondary click is remembered. 'session' re-arms next visit; 'permanent' suppresses forever." },
+          "dwellMs":           { "type": "number",   "default": 4000,                                            "description": "Milliseconds after page load before the modal can fire (engagement window)." },
+          "minScrollPercent":  { "type": "number",   "default": 0,                                               "description": "Minimum scroll depth (0–100) required before arming. 0 = no scroll required." },
+          "hideOnPaths":       { "type": "string[]", "default": ["/contact/", "/thanks/", "/start/"],            "description": "Paths where the modal must never fire." }
+        }
+      }
+    ]
+  }
+}

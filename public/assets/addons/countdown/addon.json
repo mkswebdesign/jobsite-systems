@@ -1,0 +1,21 @@
+{
+  "name": "countdown",
+  "assets": {
+    "css": ["countdown.css"],
+    "js":  ["countdown.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-countdown]",
+        "description": "Per-element countdown timer. Renders a ticking days/hours/minutes/seconds display targeting the supplied datetime.",
+        "fields": {
+          "data-aed-countdown":         { "type": "string",  "required": true,         "description": "ISO 8601 target datetime (e.g. '2026-12-31T23:59:00Z')." },
+          "data-aed-cd-card":           { "type": "boolean", "default": false,         "description": "Render the boxed card layout (separate cells per unit) instead of inline text." },
+          "data-aed-cd-expired":        { "type": "string",  "default": "Now",         "description": "Text shown after the target datetime passes." },
+          "data-aed-cd-hide-on-expire": { "type": "boolean", "default": false,         "description": "Remove the element from the page after expiry instead of swapping the text." }
+        }
+      }
+    ]
+  }
+}

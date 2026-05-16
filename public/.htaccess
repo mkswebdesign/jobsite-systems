@@ -1,0 +1,23 @@
+# Apache rewrite rules for the static deploy.
+# Honoured automatically on Apache / cPanel hosts. Silently ignored on
+# Nginx, Cloudflare Pages, S3, etc. — those need their own config.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. Force trailing slash on directory-like paths.
+  #    Skip files that exist on disk and paths that already have a file
+  #    extension (assets, sitemap.xml, robots.txt, llms.txt, etc).
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]+$
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteRule ^(.*)$ /$1/ [R=301,L]
+
+  # 2. Legacy alias: /faqs/ -> /faq/.
+  RewriteRule ^faqs/?$ /faq/ [R=301,L]
+</IfModule>
+
+# Send a 404 if a directory doesn't have an index.html — prevents Apache
+# from rendering a default directory listing of the site assets.
+Options -Indexes

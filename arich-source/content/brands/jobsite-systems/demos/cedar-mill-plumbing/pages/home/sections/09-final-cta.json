@@ -1,0 +1,14 @@
+{
+  "type": "finalCta",
+  "heading": "Ready to book?\nA phone call or a quick form is all it takes.",
+  "body": "Tell me what's going on — slow drain, no hot water, a project you're planning, a leak you can't quite find. I'll let you know honestly whether it's a flat-rate service call or worth an estimate visit, and I'll have you on the calendar fast.",
+  "ctaPrimary": {
+    "label": "Request a Service Call",
+    "href": "/demo/cedar-mill-plumbing/contact/"
+  },
+  "ctaSecondary": {
+    "label": "How a job goes",
+    "href": "/demo/cedar-mill-plumbing/process/"
+  },
+  "headshot": null
+}

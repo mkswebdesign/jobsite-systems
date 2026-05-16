@@ -1,0 +1,23 @@
+{
+  "name": "sparkline",
+  "assets": {
+    "css": ["sparkline.css"],
+    "js":  ["sparkline.js"]
+  },
+  "config": {
+    "data": [
+      {
+        "selector": "[data-aed-sparkline]",
+        "description": "Per-element tiny inline chart. Renders a smoothed line from a comma-separated number series.",
+        "fields": {
+          "data-aed-sparkline":      { "type": "string[]","required": true, "description": "Comma-separated numeric values (e.g. '3,7,12,8,15')." },
+          "data-aed-sparkline-w":    { "type": "number",  "default": 80,    "description": "Width in pixels." },
+          "data-aed-sparkline-h":    { "type": "number",  "default": 20,    "description": "Height in pixels." },
+          "data-aed-sparkline-area": { "type": "boolean", "default": false, "description": "Fill the area beneath the line." },
+          "data-aed-sparkline-dot":  { "type": "boolean", "default": false, "description": "Draw a dot at the last data point." },
+          "data-aed-trend":          { "type": "string",  "enum": ["up", "down", "flat"], "description": "Manually set trend color. Auto-detected from first/last slope if omitted." }
+        }
+      }
+    ]
+  }
+}
