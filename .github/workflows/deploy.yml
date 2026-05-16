@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Trigger xCloud deployment
         run: |
-          curl -X POST "${{ secrets.XCLOUD_DEPLOY_URL }}" \
+          curl -X POST "https://app.xcloud.host/api/git/N5RAGj9Qd82Zp73L0vE3zeYObmgXko0BM1yq/deploy" \
             -H "Content-Type: application/json" \
             --max-time 30 \
             --retry 3 \
