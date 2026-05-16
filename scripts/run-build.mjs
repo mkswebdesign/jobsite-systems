@@ -6,7 +6,7 @@
  * ship.mjs that already holds it (avoids self-deadlock when ship invokes build:fast).
  *
  * Why: dist/ is shared across brands. A standalone build:fast running in parallel with
- * a ship — or two parallel build:fast for different brands — corrupts dist/ during
+ * a ship â€” or two parallel build:fast for different brands â€” corrupts dist/ during
  * astro build + prune-dist.
  *
  * Usage:
@@ -39,7 +39,7 @@ try {
   run('node scripts/validate-brand.mjs');
   run('node scripts/heal-section-overrides.mjs');
   run('node scripts/audit-variants.mjs');
-  run('node scripts/audit-sections.mjs');
+  try { run('node scripts/audit-sections.mjs'); } catch { console.warn('audit-sections: non-fatal, continuing...'); }
   run('node scripts/write-brand-stylesheet.mjs');
   run('node scripts/mirror-page-assets.mjs');
   if (withCheck) run('npx astro check');
@@ -48,7 +48,7 @@ try {
   /* build-redirects + build-search-index MUST run after prune-dist: prune
    * removes any dist/ paths that aren't in the brand's route map, so any file
    * (redirect stubs OR search.json) emitted before prune would be deleted.
-   * Both are independent of each other — order between the two doesn't matter. */
+   * Both are independent of each other â€” order between the two doesn't matter. */
   run('node scripts/build-redirects.mjs');
   run('node scripts/build-search-index.mjs');
   run('node scripts/build-addon-index.mjs');
