@@ -1,454 +1,478 @@
-{
-  "_comment": "Canonical example objects, one per section type. Copy the object for the type you need into a page's sections[] array or into pages/<slug>/sections/NN-<type>.json. All strings are placeholders — replace with real brand copy. Validate after editing: BRAND=<id> npm run validate-brand",
-  "hero": {
-    "type": "hero",
-    "badge": "Now taking projects",
-    "badgeHref": "/contact/",
-    "headline": "Simple websites for service companies,",
-    "headlineAccent": "Built to stay online",
-    "lead": "A solid, low-maintenance web presence — no bloated CMS, no plugin treadmill, no downtime surprises.",
-    "metaParts": [
-      "Productized Websites",
-      "Zero Maintenance",
-      "100% Owned"
-    ],
-    "ctaPrimary": {
-      "label": "Start Your Site",
-      "href": "/start/"
-    },
-    "ctaSecondary": {
-      "label": "See What's Included",
-      "href": "#services"
-    },
-    "backgroundImages": [
-      "https://example.com/hero-1.jpg",
-      "https://example.com/hero-2.jpg"
-    ],
-    "backgroundImageInterval": 9,
-    "imageCaption": "From brief to live site",
-    "trustMetrics": [
-      {
-        "value": "1-2 weeks",
-        "label": "Avg launch time"
-      },
-      {
-        "value": "0 plugins",
-        "label": "Nothing to update"
-      },
-      {
-        "value": "100% owned",
-        "label": "Your domain & content"
-      }
-    ]
-  },
-  "services": {
-    "type": "services",
-    "sectionLabel": "Services",
-    "heading": "Everything a service business needs. Nothing it doesn't.",
-    "subtext": "One simple package — website, lead forms, local SEO, and hands-off hosting.",
-    "serviceSlugs": [
-      "starter-site",
-      "lead-forms",
-      "local-seo",
-      "hosting-care"
-    ]
-  },
-  "work": {
-    "type": "work",
-    "sectionLabel": "Selected Work",
-    "heading": "Recent projects.",
-    "subtext": "A handful of sites we've shipped for small and mid-sized companies.",
-    "workSlugs": [
-      "project-one",
-      "project-two",
-      "project-three"
-    ],
-    "viewAllLabel": "See all work",
-    "viewAllHref": "/work/"
-  },
-  "why": {
-    "type": "why",
-    "sectionLabel": "Why Us",
-    "heading": "Built for the field, not for a CMS.",
-    "subtext": "Most web options for small businesses are either cheap templates or heavy WordPress builds. There's a better middle.",
-    "cards": [
-      {
-        "iconKey": "layers",
-        "title": "Simple by design",
-        "body": "A focused site with the pages customers actually want. No bloat."
-      },
-      {
-        "iconKey": "zap",
-        "title": "Fast to launch",
-        "body": "Most sites go live in about two weeks."
-      },
-      {
-        "iconKey": "check-circle",
-        "title": "Zero maintenance",
-        "body": "No plugins, no PHP versions, no security patches."
-      },
-      {
-        "iconKey": "monitor",
-        "title": "Built on solid systems",
-        "body": "Static site + edge caching + managed hosting."
-      }
-    ]
-  },
-  "capabilities": {
-    "type": "capabilities",
-    "sectionLabel": "",
-    "heading": "Everything included.",
-    "subtext": "One package covers design, build, hosting, SEO basics, and lead forms.",
-    "useSkillsCarousel": true
-  },
-  "testimonials": {
-    "type": "testimonials",
-    "sectionLabel": "Client Feedback",
-    "heading": "What clients\nhave to say.",
-    "subtext": "Short notes from owners we've worked with.",
-    "variant": "carousel",
-    "testimonialIds": [
-      "client-a",
-      "client-b",
-      "client-c"
-    ]
-  },
-  "process": {
-    "type": "process",
-    "sectionLabel": "How It Works",
-    "heading": "Simple process.\nSolid result.",
-    "subtext": "No long discovery phase, no mystery invoices. Here's how we go from call to live site.",
-    "steps": [
-      {
-        "number": "01",
-        "title": "Intro Call",
-        "body": "A short call to cover your services and what you want the site to do."
-      },
-      {
-        "number": "02",
-        "title": "Content Handoff",
-        "body": "Send us what you have. We organize and fill in the rest."
-      },
-      {
-        "number": "03",
-        "title": "Design & Build",
-        "body": "We build on our template system — brand-matched, mobile-first, fast."
-      },
-      {
-        "number": "04",
-        "title": "Review",
-        "body": "You review a staging link. One round of revisions is included."
-      },
-      {
-        "number": "05",
-        "title": "Launch",
-        "body": "We point your domain, turn on SSL and analytics."
-      },
-      {
-        "number": "06",
-        "title": "Hands-Off Ongoing",
-        "body": "Your site stays up and updated — send a note for changes."
-      }
-    ],
-    "ctaLabel": "See Full Process",
-    "ctaHref": "/process/"
-  },
-  "partnership": {
-    "type": "partnership",
-    "sectionLabel": "What's Included",
-    "heading": "Everything Your Site Needs",
-    "subtext": "One flat monthly price covers build, hosting, security, and small content changes.",
-    "cardTitle": "The complete package",
-    "cardLead": "A done-for-you site that stays working year after year.",
-    "benefits": [
-      "Complete website — services, about, gallery, service area, contact",
-      "Lead / estimate request form that emails your team directly",
-      "SEO & schema — service-area pages, LocalBusiness, sitemap",
-      "Managed hosting, SSL, daily backups, uptime monitoring",
-      "Small content changes handled for you — no ticket system",
-      "Direct email support — no portals, no call centers"
-    ],
-    "ctaLabel": "Get Started",
-    "ctaHref": "/contact/",
-    "note": "Simple monthly pricing. See the pricing page for details."
-  },
-  "faq": {
-    "type": "faq",
-    "sectionLabel": "FAQ",
-    "heading": "Common Questions",
-    "faqIds": [
-      "launch-time",
-      "whats-included",
-      "maintenance",
-      "own-domain",
-      "cancellation"
-    ]
-  },
-  "historyTeaser": {
-    "type": "historyTeaser",
-    "sectionLabel": "Archive",
-    "heading": "Every year, ranked.",
-    "subtext": "The standout clubs, season by season — picked and written up year by year.",
-    "cta": {
-      "label": "Browse the Archive",
-      "href": "/best/"
-    }
-  },
-  "designBreak": {
-    "type": "designBreak",
-    "sectionLabel": "Ready when you are",
-    "heading": "Your website shouldn't be the bottleneck.",
-    "subtext": "Most sites we ship go live in under two weeks — from first call to domain-pointed, SSL-on, sitemap-submitted.",
-    "backgroundImage": "https://images.pexels.com/photos/1001676/pexels-photo-1001676.jpeg?auto=compress&cs=tinysrgb&w=1920",
-    "cta": {
-      "label": "Start the Conversation",
-      "href": "/contact/"
-    },
-    "secondaryCta": {
-      "label": "See pricing →",
-      "href": "/pricing/"
-    },
-    "stats": [
-      {
-        "value": "2 wks",
-        "label": "From kickoff to live"
-      },
-      {
-        "value": "0",
-        "label": "Plugins. Ever."
-      },
-      {
-        "value": "<1s",
-        "label": "Page loads on mobile"
-      },
-      {
-        "value": "100%",
-        "label": "Uptime guaranteed"
-      }
-    ],
-    "variant": "D"
-  },
-  "aboutSplit": {
-    "type": "aboutSplit",
-    "sectionLabel": "About",
-    "heading": "A focused service, built once and built right.",
-    "body": [
-      "We design, build, and quietly maintain solid, simple websites for one kind of customer — landscape companies — so the owner can stay in the field instead of babysitting a CMS.",
-      "Our build is mobile-first, hosted on modern static infrastructure, and genuinely low-maintenance. No plugins to update, no admin panel to forget the password to, no surprise downtime in the busy season."
-    ],
-    "image": "https://images.pexels.com/photos/1227513/pexels-photo-1227513.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    "imageAlt": "Landscaper at work in a residential property",
-    "cta": {
-      "label": "Read the Full Story",
-      "href": "/about/"
-    },
-    "variant": "A"
-  },
-  "contentSection": {
-    "type": "contentSection",
-    "sectionLabel": "Field notes",
-    "heading": "Writing one good site beats three half-finished ones.",
-    "body": [
-      "We pick a niche on purpose. The brief is narrow, the patterns are reusable, and the second customer benefits from everything we learned shipping the first. That's how a small studio ships work that holds up.",
-      "Most agencies measure themselves by deal volume. We measure by how many of our sites are still running, untouched, two years after launch."
-    ],
-    "cta": {
-      "label": "Read the Full Approach",
-      "href": "/process/"
-    },
-    "variant": "A"
-  },
-  "statRibbon": {
-    "type": "statRibbon",
-    "sectionLabel": "By the numbers",
-    "heading": "What 'low-maintenance' actually means.",
-    "stats": [
-      {
-        "value": "0",
-        "label": "Plugins required",
-        "sublabel": "static-first build"
-      },
-      {
-        "value": "<2 wk",
-        "label": "Time to launch",
-        "sublabel": "from first call"
-      },
-      {
-        "value": "99.9%",
-        "label": "Uptime",
-        "sublabel": "edge-cached static"
-      },
-      {
-        "value": "0",
-        "label": "Admin panels to forget"
-      }
-    ],
-    "variant": "A"
-  },
-  "photoGallery": {
-    "type": "photoGallery",
-    "sectionLabel": "Recent work",
-    "heading": "A few of the sites we've shipped.",
-    "subtext": "Click any image to expand. Scroll for more.",
-    "images": [
-      {
-        "src": "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        "alt": "Landscape design on a hilltop property"
-      },
-      {
-        "src": "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        "alt": "Mature backyard garden with patio"
-      },
-      {
-        "src": "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        "alt": "Driveway and stonework at dusk"
-      }
-    ],
-    "variant": "A"
-  },
-  "photoSlider": {
-    "type": "photoSlider",
-    "sectionLabel": "On the route",
-    "heading": "From last week's visits.",
-    "subtext": "Auto-advancing — swipe, tap an arrow, or use the dots to navigate.",
-    "images": [
-      {
-        "src": "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        "alt": "Hilltop landscape design"
-      },
-      {
-        "src": "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        "alt": "Mature backyard garden with patio"
-      },
-      {
-        "src": "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        "alt": "Driveway and stonework at dusk"
-      }
-    ],
-    "variant": "A",
-    "autoplay": true,
-    "interval": 5000
-  },
-  "versusBlock": {
-    "type": "versusBlock",
-    "sectionLabel": "Why landscape companies pick us",
-    "heading": "Built for the field. Not for the office.",
-    "leftLabel": "Most landscape sites",
-    "rightLabel": "Landscape Systems",
-    "rows": [
-      {
-        "left": "Powered by WordPress and a stack of plugins",
-        "right": "Hand-built. No CMS, no plugins."
-      },
-      {
-        "left": "Loads in 4–8 seconds on a phone",
-        "right": "Sub-second loads on every device."
-      },
-      {
-        "left": "Down for hours when a plugin breaks",
-        "right": "Zero downtime. No plugin treadmill."
-      },
-      {
-        "left": "Surprise renewal bills and creeping fees",
-        "right": "Flat, predictable monthly pricing."
-      },
-      {
-        "left": "You're on your own when something breaks",
-        "right": "We host, monitor, and quietly maintain it."
-      }
-    ],
-    "variant": "A"
-  },
-  "trustBand": {
-    "type": "trustBand",
-    "items": [
-      {
-        "iconKey": "shield",
-        "text": "HIPAA-aware architecture"
-      },
-      {
-        "iconKey": "lock",
-        "text": "No PHI on the marketing site"
-      },
-      {
-        "iconKey": "check",
-        "text": "BAA-ready business email"
-      }
-    ],
-    "cta": {
-      "label": "How we handle PHI",
-      "href": "/faq/#hipaa-phi"
-    }
-  },
-  "finalCta": {
-    "type": "finalCta",
-    "heading": "Ready for a site\nthat stays out of your way?",
-    "body": "Tell us about your company. We'll tell you exactly what your site would include and what it costs.",
-    "ctaPrimary": {
-      "label": "Start Your Site",
-      "href": "/contact/"
-    },
-    "ctaSecondary": {
-      "label": "See Our Process",
-      "href": "/process/"
-    },
-    "headshot": null
-  },
-  "divider": {
-    "type": "divider",
-    "color": "primary"
-  },
-  "latestPosts": {
-    "type": "latestPosts",
-    "eyebrow": "Latest",
-    "heading": "Recent reporting.",
-    "subhead": "The newest articles across every beat.",
-    "limit": 6,
-    "viewAll": { "label": "View all articles", "href": "/archive/" }
-  },
-  "categoryLinks": {
-    "type": "categoryLinks",
-    "eyebrow": "Categories",
-    "heading": "Browse by beat.",
-    "subhead": "Explore the desks driving every story we cover."
-  },
-  "tagCloud": {
-    "type": "tagCloud",
-    "eyebrow": "Topics",
-    "heading": "Explore by topic.",
-    "limit": 20
-  },
-  "latestDispatch": {
-    "type": "latestDispatch",
-    "eyebrow": "The Latest Dispatch",
-    "kicker": "Fresh off the desk — updated as we publish.",
-    "viewAll": { "label": "View all latest", "href": "/latest/" },
-    "skipNewest": 12,
-    "ethos": {
-      "lead": "Built for the reader, not the algorithm.",
-      "body": "An independent newsroom — funded by readers, free of trackers.",
-      "cta": { "label": "About Swift Digest", "href": "/about/" }
-    }
-  },
-  "newsroomHero": {
-    "type": "newsroomHero",
-    "headline": "Independent news,",
-    "headlineAccent": "faster.",
-    "lead": "Sharp reporting across politics, markets, tech, and culture — surfaced as it lands.",
-    "liveLabel": "LIVE NEWSROOM",
-    "tickerLimit": 12,
-    "newsletter": {
-      "heading": "The Daily Digest",
-      "body": "Top stories in your inbox each morning.",
-      "cta": { "label": "Subscribe", "href": "/subscribe/" }
-    }
-  },
-  "homeArchive": {
-    "type": "homeArchive",
-    "eyebrow": "Latest reporting",
-    "heading": "Featured stories.",
-    "subhead": "Filter, sort, or browse by beat — same controls as the full archive.",
-    "limit": 12,
-    "viewAll": { "label": "View the full archive", "href": "/archive/" }
-  }
+﻿{
+    "_comment":  "Canonical example objects, one per section type. Copy the object for the type you need into a page\u0027s sections[] array or into pages/\u003cslug\u003e/sections/NN-\u003ctype\u003e.json. All strings are placeholders â€” replace with real brand copy. Validate after editing: BRAND=\u003cid\u003e npm run validate-brand",
+    "hero":  {
+                 "type":  "hero",
+                 "badge":  "Now taking projects",
+                 "badgeHref":  "/contact/",
+                 "headline":  "Simple websites for service companies,",
+                 "headlineAccent":  "Built to stay online",
+                 "lead":  "A solid, low-maintenance web presence â€” no bloated CMS, no plugin treadmill, no downtime surprises.",
+                 "metaParts":  [
+                                   "Productized Websites",
+                                   "Zero Maintenance",
+                                   "100% Owned"
+                               ],
+                 "ctaPrimary":  {
+                                    "label":  "Start Your Site",
+                                    "href":  "/start/"
+                                },
+                 "ctaSecondary":  {
+                                      "label":  "See What\u0027s Included",
+                                      "href":  "#services"
+                                  },
+                 "backgroundImages":  [
+                                          "https://example.com/hero-1.jpg",
+                                          "https://example.com/hero-2.jpg"
+                                      ],
+                 "backgroundImageInterval":  9,
+                 "imageCaption":  "From brief to live site",
+                 "trustMetrics":  [
+                                      {
+                                          "value":  "1-2 weeks",
+                                          "label":  "Avg launch time"
+                                      },
+                                      {
+                                          "value":  "0 plugins",
+                                          "label":  "Nothing to update"
+                                      },
+                                      {
+                                          "value":  "100% owned",
+                                          "label":  "Your domain \u0026 content"
+                                      }
+                                  ]
+             },
+    "services":  {
+                     "type":  "services",
+                     "sectionLabel":  "Services",
+                     "heading":  "Everything a service business needs. Nothing it doesn\u0027t.",
+                     "subtext":  "One simple package â€” website, lead forms, local SEO, and hands-off hosting.",
+                     "serviceSlugs":  [
+                                          "starter-site",
+                                          "lead-forms",
+                                          "local-seo",
+                                          "hosting-care"
+                                      ]
+                 },
+    "work":  {
+                 "type":  "work",
+                 "sectionLabel":  "Selected Work",
+                 "heading":  "Recent projects.",
+                 "subtext":  "A handful of sites we\u0027ve shipped for small and mid-sized companies.",
+                 "workSlugs":  [
+                                   "project-one",
+                                   "project-two",
+                                   "project-three"
+                               ],
+                 "viewAllLabel":  "See all work",
+                 "viewAllHref":  "/work/"
+             },
+    "why":  {
+                "type":  "why",
+                "sectionLabel":  "Why Us",
+                "heading":  "Built for the field, not for a CMS.",
+                "subtext":  "Most web options for small businesses are either cheap templates or heavy WordPress builds. There\u0027s a better middle.",
+                "cards":  [
+                              {
+                                  "iconKey":  "layers",
+                                  "title":  "Simple by design",
+                                  "body":  "A focused site with the pages customers actually want. No bloat."
+                              },
+                              {
+                                  "iconKey":  "zap",
+                                  "title":  "Fast to launch",
+                                  "body":  "Most sites go live in about two weeks."
+                              },
+                              {
+                                  "iconKey":  "check-circle",
+                                  "title":  "Zero maintenance",
+                                  "body":  "No plugins, no PHP versions, no security patches."
+                              },
+                              {
+                                  "iconKey":  "monitor",
+                                  "title":  "Built on solid systems",
+                                  "body":  "Static site + edge caching + managed hosting."
+                              }
+                          ]
+            },
+    "capabilities":  {
+                         "type":  "capabilities",
+                         "sectionLabel":  "",
+                         "heading":  "Everything included.",
+                         "subtext":  "One package covers design, build, hosting, SEO basics, and lead forms.",
+                         "useSkillsCarousel":  true
+                     },
+    "testimonials":  {
+                         "type":  "testimonials",
+                         "sectionLabel":  "Client Feedback",
+                         "heading":  "What clients\nhave to say.",
+                         "subtext":  "Short notes from owners we\u0027ve worked with.",
+                         "variant":  "carousel",
+                         "testimonialIds":  [
+                                                "client-a",
+                                                "client-b",
+                                                "client-c"
+                                            ]
+                     },
+    "process":  {
+                    "type":  "process",
+                    "sectionLabel":  "How It Works",
+                    "heading":  "Simple process.\nSolid result.",
+                    "subtext":  "No long discovery phase, no mystery invoices. Here\u0027s how we go from call to live site.",
+                    "steps":  [
+                                  {
+                                      "number":  "01",
+                                      "title":  "Intro Call",
+                                      "body":  "A short call to cover your services and what you want the site to do."
+                                  },
+                                  {
+                                      "number":  "02",
+                                      "title":  "Content Handoff",
+                                      "body":  "Send us what you have. We organize and fill in the rest."
+                                  },
+                                  {
+                                      "number":  "03",
+                                      "title":  "Design \u0026 Build",
+                                      "body":  "We build on our template system â€” brand-matched, mobile-first, fast."
+                                  },
+                                  {
+                                      "number":  "04",
+                                      "title":  "Review",
+                                      "body":  "You review a staging link. One round of revisions is included."
+                                  },
+                                  {
+                                      "number":  "05",
+                                      "title":  "Launch",
+                                      "body":  "We point your domain, turn on SSL and analytics."
+                                  },
+                                  {
+                                      "number":  "06",
+                                      "title":  "Hands-Off Ongoing",
+                                      "body":  "Your site stays up and updated â€” send a note for changes."
+                                  }
+                              ],
+                    "ctaLabel":  "See Full Process",
+                    "ctaHref":  "/process/"
+                },
+    "partnership":  {
+                        "type":  "partnership",
+                        "sectionLabel":  "What\u0027s Included",
+                        "heading":  "Everything Your Site Needs",
+                        "subtext":  "One flat monthly price covers build, hosting, security, and small content changes.",
+                        "cardTitle":  "The complete package",
+                        "cardLead":  "A done-for-you site that stays working year after year.",
+                        "benefits":  [
+                                         "Complete website â€” services, about, gallery, service area, contact",
+                                         "Lead / estimate request form that emails your team directly",
+                                         "SEO \u0026 schema â€” service-area pages, LocalBusiness, sitemap",
+                                         "Managed hosting, SSL, daily backups, uptime monitoring",
+                                         "Small content changes handled for you â€” no ticket system",
+                                         "Direct email support â€” no portals, no call centers"
+                                     ],
+                        "ctaLabel":  "Get Started",
+                        "ctaHref":  "/contact/",
+                        "note":  "Simple monthly pricing. See the pricing page for details."
+                    },
+    "faq":  {
+                "type":  "faq",
+                "sectionLabel":  "FAQ",
+                "heading":  "Common Questions",
+                "faqIds":  [
+                               "launch-time",
+                               "whats-included",
+                               "maintenance",
+                               "own-domain",
+                               "cancellation"
+                           ]
+            },
+    "historyTeaser":  {
+                          "type":  "historyTeaser",
+                          "sectionLabel":  "Archive",
+                          "heading":  "Every year, ranked.",
+                          "subtext":  "The standout clubs, season by season â€” picked and written up year by year.",
+                          "cta":  {
+                                      "label":  "Browse the Archive",
+                                      "href":  "/best/"
+                                  }
+                      },
+    "designBreak":  {
+                        "type":  "designBreak",
+                        "sectionLabel":  "Ready when you are",
+                        "heading":  "Your website shouldn\u0027t be the bottleneck.",
+                        "subtext":  "Most sites we ship go live in under two weeks â€” from first call to domain-pointed, SSL-on, sitemap-submitted.",
+                        "backgroundImage":  "https://images.pexels.com/photos/1001676/pexels-photo-1001676.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1920",
+                        "cta":  {
+                                    "label":  "Start the Conversation",
+                                    "href":  "/contact/"
+                                },
+                        "secondaryCta":  {
+                                             "label":  "See pricing â†’",
+                                             "href":  "/pricing/"
+                                         },
+                        "stats":  [
+                                      {
+                                          "value":  "2 wks",
+                                          "label":  "From kickoff to live"
+                                      },
+                                      {
+                                          "value":  "0",
+                                          "label":  "Plugins. Ever."
+                                      },
+                                      {
+                                          "value":  "\u003c1s",
+                                          "label":  "Page loads on mobile"
+                                      },
+                                      {
+                                          "value":  "100%",
+                                          "label":  "Uptime guaranteed"
+                                      }
+                                  ],
+                        "variant":  "D"
+                    },
+    "aboutSplit":  {
+                       "type":  "aboutSplit",
+                       "sectionLabel":  "About",
+                       "heading":  "A focused service, built once and built right.",
+                       "body":  [
+                                    "We design, build, and quietly maintain solid, simple websites for one kind of customer â€” landscape companies â€” so the owner can stay in the field instead of babysitting a CMS.",
+                                    "Our build is mobile-first, hosted on modern static infrastructure, and genuinely low-maintenance. No plugins to update, no admin panel to forget the password to, no surprise downtime in the busy season."
+                                ],
+                       "image":  "https://images.pexels.com/photos/1227513/pexels-photo-1227513.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1200",
+                       "imageAlt":  "Landscaper at work in a residential property",
+                       "cta":  {
+                                   "label":  "Read the Full Story",
+                                   "href":  "/about/"
+                               },
+                       "variant":  "A"
+                   },
+    "contentSection":  {
+                           "type":  "contentSection",
+                           "sectionLabel":  "Field notes",
+                           "heading":  "Writing one good site beats three half-finished ones.",
+                           "body":  [
+                                        "We pick a niche on purpose. The brief is narrow, the patterns are reusable, and the second customer benefits from everything we learned shipping the first. That\u0027s how a small studio ships work that holds up.",
+                                        "Most agencies measure themselves by deal volume. We measure by how many of our sites are still running, untouched, two years after launch."
+                                    ],
+                           "cta":  {
+                                       "label":  "Read the Full Approach",
+                                       "href":  "/process/"
+                                   },
+                           "variant":  "A"
+                       },
+    "statRibbon":  {
+                       "type":  "statRibbon",
+                       "sectionLabel":  "By the numbers",
+                       "heading":  "What \u0027low-maintenance\u0027 actually means.",
+                       "stats":  [
+                                     {
+                                         "value":  "0",
+                                         "label":  "Plugins required",
+                                         "sublabel":  "static-first build"
+                                     },
+                                     {
+                                         "value":  "\u003c2 wk",
+                                         "label":  "Time to launch",
+                                         "sublabel":  "from first call"
+                                     },
+                                     {
+                                         "value":  "99.9%",
+                                         "label":  "Uptime",
+                                         "sublabel":  "edge-cached static"
+                                     },
+                                     {
+                                         "value":  "0",
+                                         "label":  "Admin panels to forget"
+                                     }
+                                 ],
+                       "variant":  "A"
+                   },
+    "photoGallery":  {
+                         "type":  "photoGallery",
+                         "sectionLabel":  "Recent work",
+                         "heading":  "A few of the sites we\u0027ve shipped.",
+                         "subtext":  "Click any image to expand. Scroll for more.",
+                         "images":  [
+                                        {
+                                            "src":  "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1200",
+                                            "alt":  "Landscape design on a hilltop property"
+                                        },
+                                        {
+                                            "src":  "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1200",
+                                            "alt":  "Mature backyard garden with patio"
+                                        },
+                                        {
+                                            "src":  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1200",
+                                            "alt":  "Driveway and stonework at dusk"
+                                        }
+                                    ],
+                         "variant":  "A"
+                     },
+    "photoSlider":  {
+                        "type":  "photoSlider",
+                        "sectionLabel":  "On the route",
+                        "heading":  "From last week\u0027s visits.",
+                        "subtext":  "Auto-advancing â€” swipe, tap an arrow, or use the dots to navigate.",
+                        "images":  [
+                                       {
+                                           "src":  "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1600",
+                                           "alt":  "Hilltop landscape design"
+                                       },
+                                       {
+                                           "src":  "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1600",
+                                           "alt":  "Mature backyard garden with patio"
+                                       },
+                                       {
+                                           "src":  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress\u0026cs=tinysrgb\u0026w=1600",
+                                           "alt":  "Driveway and stonework at dusk"
+                                       }
+                                   ],
+                        "variant":  "A",
+                        "autoplay":  true,
+                        "interval":  5000
+                    },
+    "versusBlock":  {
+                        "type":  "versusBlock",
+                        "sectionLabel":  "Why landscape companies pick us",
+                        "heading":  "Built for the field. Not for the office.",
+                        "leftLabel":  "Most landscape sites",
+                        "rightLabel":  "Landscape Systems",
+                        "rows":  [
+                                     {
+                                         "left":  "Powered by WordPress and a stack of plugins",
+                                         "right":  "Hand-built. No CMS, no plugins."
+                                     },
+                                     {
+                                         "left":  "Loads in 4â€“8 seconds on a phone",
+                                         "right":  "Sub-second loads on every device."
+                                     },
+                                     {
+                                         "left":  "Down for hours when a plugin breaks",
+                                         "right":  "Zero downtime. No plugin treadmill."
+                                     },
+                                     {
+                                         "left":  "Surprise renewal bills and creeping fees",
+                                         "right":  "Flat, predictable monthly pricing."
+                                     },
+                                     {
+                                         "left":  "You\u0027re on your own when something breaks",
+                                         "right":  "We host, monitor, and quietly maintain it."
+                                     }
+                                 ],
+                        "variant":  "A"
+                    },
+    "trustBand":  {
+                      "type":  "trustBand",
+                      "items":  [
+                                    {
+                                        "iconKey":  "shield",
+                                        "text":  "HIPAA-aware architecture"
+                                    },
+                                    {
+                                        "iconKey":  "lock",
+                                        "text":  "No PHI on the marketing site"
+                                    },
+                                    {
+                                        "iconKey":  "check",
+                                        "text":  "BAA-ready business email"
+                                    }
+                                ],
+                      "cta":  {
+                                  "label":  "How we handle PHI",
+                                  "href":  "/faq/#hipaa-phi"
+                              }
+                  },
+    "finalCta":  {
+                     "type":  "finalCta",
+                     "heading":  "Ready for a site\nthat stays out of your way?",
+                     "body":  "Tell us about your company. We\u0027ll tell you exactly what your site would include and what it costs.",
+                     "ctaPrimary":  {
+                                        "label":  "Start Your Site",
+                                        "href":  "/contact/"
+                                    },
+                     "ctaSecondary":  {
+                                          "label":  "See Our Process",
+                                          "href":  "/process/"
+                                      },
+                     "headshot":  null
+                 },
+    "divider":  {
+                    "type":  "divider",
+                    "color":  "primary"
+                },
+    "latestPosts":  {
+                        "type":  "latestPosts",
+                        "eyebrow":  "Latest",
+                        "heading":  "Recent reporting.",
+                        "subhead":  "The newest articles across every beat.",
+                        "limit":  6,
+                        "viewAll":  {
+                                        "label":  "View all articles",
+                                        "href":  "/archive/"
+                                    }
+                    },
+    "categoryLinks":  {
+                          "type":  "categoryLinks",
+                          "eyebrow":  "Categories",
+                          "heading":  "Browse by beat.",
+                          "subhead":  "Explore the desks driving every story we cover."
+                      },
+    "tagCloud":  {
+                     "type":  "tagCloud",
+                     "eyebrow":  "Topics",
+                     "heading":  "Explore by topic.",
+                     "limit":  20
+                 },
+    "latestDispatch":  {
+                           "type":  "latestDispatch",
+                           "eyebrow":  "The Latest Dispatch",
+                           "kicker":  "Fresh off the desk â€” updated as we publish.",
+                           "viewAll":  {
+                                           "label":  "View all latest",
+                                           "href":  "/latest/"
+                                       },
+                           "skipNewest":  12,
+                           "ethos":  {
+                                         "lead":  "Built for the reader, not the algorithm.",
+                                         "body":  "An independent newsroom â€” funded by readers, free of trackers.",
+                                         "cta":  {
+                                                     "label":  "About Swift Digest",
+                                                     "href":  "/about/"
+                                                 }
+                                     }
+                       },
+    "newsroomHero":  {
+                         "type":  "newsroomHero",
+                         "headline":  "Independent news,",
+                         "headlineAccent":  "faster.",
+                         "lead":  "Sharp reporting across politics, markets, tech, and culture â€” surfaced as it lands.",
+                         "liveLabel":  "LIVE NEWSROOM",
+                         "tickerLimit":  12,
+                         "newsletter":  {
+                                            "heading":  "The Daily Digest",
+                                            "body":  "Top stories in your inbox each morning.",
+                                            "cta":  {
+                                                        "label":  "Subscribe",
+                                                        "href":  "/subscribe/"
+                                                    }
+                                        }
+                     },
+    "homeArchive":  {
+                        "type":  "homeArchive",
+                        "eyebrow":  "Latest reporting",
+                        "heading":  "Featured stories.",
+                        "subhead":  "Filter, sort, or browse by beat â€” same controls as the full archive.",
+                        "limit":  12,
+                        "viewAll":  {
+                                        "label":  "View the full archive",
+                                        "href":  "/archive/"
+                                    }
+                    },
+    "aboutStrip":  {
+                       "type":  "aboutStrip",
+                       "heading":  "Built for the reader, not the algorithm.",
+                       "body":  "An independent newsroom funded by readers, with editorial independence baked into the model.",
+                       "cta":  {
+                                   "label":  "About us",
+                                   "href":  "/about/"
+                               }
+                   }
 }
