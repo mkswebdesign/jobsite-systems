@@ -1,4 +1,4 @@
-﻿{
+{
     "_comment":  "Canonical example objects, one per section type. Copy the object for the type you need into a page\u0027s sections[] array or into pages/\u003cslug\u003e/sections/NN-\u003ctype\u003e.json. All strings are placeholders â€” replace with real brand copy. Validate after editing: BRAND=\u003cid\u003e npm run validate-brand",
     "hero":  {
                  "type":  "hero",
