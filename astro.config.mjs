@@ -24,7 +24,39 @@ const BOOTSTRAP_HASH = fileHash('public/assets/builder/editor/bootstrap.js');
 const MAIN_HASH = fileHash('public/assets/builder/main.js');
 const THEME_HASH = fileHash('public/assets/builder/theme/theme.js');
 
+/* Post-build index generators (theme palette, addons, search, redirects) live
+ * in scripts/ and are normally run by run-build.mjs AFTER `astro build`. But
+ * the live host (xCloud) invokes `astro build` directly, so those steps never
+ * ran on deploy — the in-page editor's Theme panel had no /assets/theme/
+ * index.json to load (and search.json / addons index were likewise missing).
+ * Running them in `astro:build:done` makes them part of the build itself, so
+ * they ship regardless of the invoking command. Each is isolated in try/catch
+ * so a generator hiccup can never fail the deploy. (Under `npm run build` they
+ * also run again afterward — harmless, idempotent regeneration.) */
+function postBuildIndexes() {
+  return {
+    name: 'post-build-indexes',
+    hooks: {
+      'astro:build:done': async ({ logger }) => {
+        const { execFileSync } = await import('node:child_process');
+        const scripts = ['build-redirects.mjs', 'build-search-index.mjs', 'build-addon-index.mjs', 'build-theme-index.mjs'];
+        for (const s of scripts) {
+          try {
+            execFileSync(process.execPath, [join(__dirname, 'scripts', s)], {
+              stdio: 'inherit',
+              env: { ...process.env, BRAND: brand },
+            });
+          } catch (err) {
+            (logger?.warn ?? console.warn)(`[post-build-indexes] ${s} failed: ${err.message}`);
+          }
+        }
+      },
+    },
+  };
+}
+
 export default defineConfig({
+  integrations: [postBuildIndexes()],
   site: brandData.url,
   trailingSlash: 'always',
   build: {

@@ -30,9 +30,14 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, '..');
+// Prefer a nested arich-source (deploy repos ship brand content bundled on
+// xCloud, where there is no sibling); else fall back to the sibling checkout.
+const arichSource = existsSync(join(projectRoot, 'arich-source'))
+  ? join(projectRoot, 'arich-source')
+  : join(projectRoot, '..', 'arich-source');
 const brand = process.env.BRAND || 'arich';
 const addonsDir = join(projectRoot, 'public', 'assets', 'addons');
-const brandSiteJson = join(projectRoot, '..', 'arich-source', 'content', 'brands', brand, 'site.json');
+const brandSiteJson = join(arichSource, 'content', 'brands', brand, 'site.json');
 const outDir = join(projectRoot, 'dist', 'assets', 'addons');
 const outFile = join(outDir, 'index.json');
 

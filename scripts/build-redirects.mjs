@@ -23,6 +23,11 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, '..');
+// Prefer a nested arich-source (deploy repos ship brand content bundled on
+// xCloud, where there is no sibling); else fall back to the sibling checkout.
+const arichSource = existsSync(join(projectRoot, 'arich-source'))
+  ? join(projectRoot, 'arich-source')
+  : join(projectRoot, '..', 'arich-source');
 
 const brand = process.env.BRAND;
 if (!brand) {
@@ -30,7 +35,7 @@ if (!brand) {
   process.exit(1);
 }
 
-const redirectsPath = join(projectRoot, '..', 'arich-source', 'content', 'brands', brand, 'redirects.json');
+const redirectsPath = join(arichSource, 'content', 'brands', brand, 'redirects.json');
 const distRoot = join(projectRoot, 'dist');
 
 if (!existsSync(redirectsPath)) {
@@ -61,7 +66,7 @@ if (!existsSync(distRoot)) {
 let brandUrl = '';
 try {
   const brandJson = JSON.parse(readFileSync(
-    join(projectRoot, '..', 'arich-source', 'content', 'brands', brand, 'brand.json'),
+    join(arichSource, 'content', 'brands', brand, 'brand.json'),
     'utf-8',
   ));
   brandUrl = (brandJson.url ?? '').replace(/\/$/, '');
