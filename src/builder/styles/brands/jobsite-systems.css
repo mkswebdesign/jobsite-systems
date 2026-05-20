@@ -16363,3 +16363,18 @@ h1, h2, h3, h4,
   background: var(--js-safety-orange) !important;
   box-shadow: 0 0 0 4px rgba(var(--js-safety-orange-rgb), 0.18);
 }
+
+/* "Included" check chips (service-detail.css base uses var(--accent), i.e.
+   steel). The brand spec calls for orange on "included highlights / check
+   icons", so retune these to the safety accent. The ✓ glyph and the 1.5px
+   ring are informational, so they use --js-safety-burnt (#b8500a) — 5.01:1
+   on the near-white chip fill and on the white card behind, clearing the
+   3:1 floor. The fill stays a soft safety-orange wash. Bright #f28c28 is
+   only 2.45:1 on white, so it is deliberately NOT used for the glyph/ring.
+   Rendered on the pricing and start pages. Vibrant-mode white/primary
+   sections keep their existing higher-specificity pairings above. */
+.service-check-list li::before {
+  background: rgba(var(--js-safety-orange-rgb), 0.12);
+  border-color: var(--js-safety-burnt);
+  color: var(--js-safety-burnt);
+}
