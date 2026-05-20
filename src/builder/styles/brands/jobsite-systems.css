@@ -16258,3 +16258,49 @@ html[data-services-variant="a"] .service-card,
     grid-template-columns: 1fr !important;
   }
 }
+
+/* #12a — Calm the variant-A base motion for the homepage Services cards.
+   Base variant A runs a perpetual cardFloat bob + a pulsing subtleGlow
+   overlay on every card. For a trade-business site the cards should sit
+   still and react only to hover/focus, so kill the looping keyframes here
+   (brand-scoped: this file loads only for jobsite-systems). Hover lift and
+   the arrow nudge are transition-driven and remain intact. A faint resting
+   shadow gives the contained-card read on the cream surface. */
+#services .service-card {
+  animation: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+#services .service-card::after {
+  animation: none;
+  opacity: 0.5;
+}
+
+/* Make the WHOLE card clickable without changing the shared component's
+   markup: stretch the existing "Learn more" anchor over the card via an
+   absolutely-positioned ::after. The card is already position:relative
+   (set above), and it has no other interactive children, so this is safe.
+   Keyboard focus lands on the anchor → surface the focus ring on the card
+   itself (via :focus-within) and drop the inner anchor outline so there's
+   one clear, card-level indicator. */
+#services .service-card .service-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+#services .service-card:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+#services .service-card .service-link:focus,
+#services .service-card .service-link:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #services .service-card,
+  #services .service-card:hover,
+  #services .service-card:focus-within {
+    transform: none;
+  }
+}
