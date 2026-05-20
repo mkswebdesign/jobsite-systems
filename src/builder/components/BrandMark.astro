@@ -1,5 +1,6 @@
 ---
 import { brand } from '../lib/brand';
+import { publicAssetUrl } from '../lib/asset-hash';
 
 interface Props {
   size?: number;
@@ -8,7 +9,11 @@ interface Props {
 }
 
 const { size = 28, variant = 'mark', class: klass = '' } = Astro.props;
-const logo = brand.assets.logo;
+// Route the logo through publicAssetUrl so its URL carries a content-hash
+// query (?v=…). Without it the bare /assets/.../logo.svg is served with a
+// 10-year immutable Cache-Control, so a rebranded logo never reaches anyone
+// behind the CDN/browser cache — exactly what stranded the old mark live.
+const logo = publicAssetUrl(brand.assets.logo);
 const motif = (brand.assets as any).motifKind as string | undefined;
 const label = brand.name;
 const classes = ['brand-mark', klass].filter(Boolean).join(' ');
