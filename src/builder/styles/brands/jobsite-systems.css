@@ -87,21 +87,31 @@
      pairing and feeds rgba(var(--brand-on-surface-rgb), …) ramps which
      can't be derived in CSS. Sites that want the on-surface text to roll
      too read --accent-text or color-mix on var(--accent) directly. */
-  --brand-surface:           var(--accent, #b3d855);
-  /* jobsite-systems re-tunes these tokens for the work-orange palette.
-   * Inherited clinician values were #07182a (steel-blue-tinted near-black) /
-   * #1d5b8d (steel-blue-darkened) tuned for steel-blue accent #6aa6d8 at
-   * MID-DARK L=0.353. Jobsite work-orange accent-dark #f97316 sits at
-   * MID-DARK L=0.325 with a warm hue, so the on-surface dark text
-   * tracks orange-burnt near-black and the readable sibling tracks
-   * burnt-orange hue. Ratios per /contrast-audit jobsite-systems
-   * (computed 2026-05-03) against accent-dark #f97316 and
-   * accent-light #ea580c (light-mode surface). */
-  --brand-on-surface:        #1a0a02;  /* orange-burnt near-black; on accent-dark 6.88:1, on accent-light 5.42:1 */
-  --brand-on-surface-rgb:    26, 10, 2; /* RGB triple of --brand-on-surface, for rgba() ramps */
-  --brand-accent-on-dark:    var(--accent, #b3d855);  /* tracks rolled accent on dark surfaces (#f97316 on #0b0e12 = 6.90:1) */
-  --brand-accent-readable:   color-mix(in oklab, var(--accent, #b3d855) 35%, #1a0a02);  /* darkened sibling derived from rolled accent for light-bg readability */
-  --brand-accent-readable-rgb: 194, 65, 12; /* static RGB fallback (#c2410c, burnt-orange) — on white 5.18:1, on #fafaf7 4.95:1 */
+  --brand-surface:           var(--accent, #1f3a4a);
+  /* jobsite-systems re-tuned for the steel-blue palette (2026-05-20 rebrand).
+   * Accent steel #1f3a4a is DARK (L=0.038), so the on-surface text flips to
+   * near-white and the readable sibling is the accent itself — steel on white
+   * is 11.92:1, on #f5f8fa 11.17:1, no darkening needed. Safety-orange
+   * (#f28c28, MID-DARK L=0.378) is deliberately NOT an --accent value; it
+   * lives in the --js-safety-* tokens below and is used only as a decorative
+   * marker (badges, check icons, active underline, hovers), never as small
+   * text/icons on white (orange-on-white is 2.45:1 — fails the 3:1 floor).
+   * Ratios per /contrast-audit jobsite-systems (computed 2026-05-20). */
+  --brand-on-surface:        #fafaf7;  /* near-white on steel accent — 11.43:1 */
+  --brand-on-surface-rgb:    250, 250, 247; /* RGB triple of --brand-on-surface, for rgba() ramps */
+  --brand-accent-on-dark:    #7ea9c2;  /* lightened steel sibling for accent-as-text on dark surfaces; on #0c1a22 = 7.03:1 (raw steel is dark-on-dark) */
+  --brand-accent-readable:   var(--accent, #1f3a4a);  /* steel is already dark — readable as-is on light: white 11.92:1, #f5f8fa 11.17:1 */
+  --brand-accent-readable-rgb: 31, 58, 74; /* RGB of steel accent — on white 11.92:1, on #f5f8fa 11.17:1 */
+
+  /* Safety-orange accent — decorative marker ONLY, per brand spec.
+     #f28c28 on white is 2.45:1 (fails the 3:1 icon/text floor) so it is
+     reserved for tinted fills, badge backgrounds, hover states and the active
+     nav underline. When orange must read as an icon stroke or text on a light
+     surface, use --js-safety-burnt (#b8500a on white 5.01:1). On steel/dark
+     surfaces the bright orange reads fine (on #1f3a4a 4.86:1, AA large). */
+  --js-safety-orange:        #f28c28;
+  --js-safety-orange-rgb:    242, 140, 40;
+  --js-safety-burnt:         #b8500a;  /* darker sibling for orange-as-icon/text on light — on white 4.69:1 */
 
   /* Theme-switched accent-as-text alias (default = dark palette) */
   --accent-text:             var(--brand-accent-on-dark);
@@ -112,7 +122,7 @@
 
 @supports not (color: color-mix(in oklab, red 50%, blue)) {
   :root {
-    --brand-accent-readable: #c2410c;  /* burnt-orange static fallback; on white 5.18:1, on #fafaf7 4.95:1 */
+    --brand-accent-readable: #1f3a4a;  /* steel static fallback — on white 11.92:1, on #f5f8fa 11.17:1 */
   }
 }
 
@@ -16303,4 +16313,53 @@ html[data-services-variant="a"] .service-card,
   #services .service-card:focus-within {
     transform: none;
   }
+}
+
+
+/* === Typography: Manrope display headings (2026-05-20 rebrand) ===
+   Body stays on Inter (brand.json typography.fontFamily → --font-family).
+   Headings move to Manrope for the sturdier, service-business display feel
+   called for in the brand spec. Self-hosted variable woff2 (weights 400–800)
+   sits alongside the Inter faces; assets/builder/ is template-owned and
+   syncs to every deploy repo, but only this brand opts into Manrope here.
+   This file is imported last, so the heading rule wins over base.css. */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(/assets/builder/fonts/manrope-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(/assets/builder/fonts/manrope-latin.woff2) format('woff2');
+}
+
+:root {
+  --js-font-heading: 'Manrope', 'Inter Tight', var(--font-family);
+}
+
+h1, h2, h3, h4,
+.site-title,
+.logo-text {
+  font-family: var(--js-font-heading);
+  letter-spacing: -0.035em;
+}
+
+
+/* === Safety-orange marker (2026-05-20 rebrand) ===
+   Per the brand spec, orange is a sparse "safety marker," not a primary
+   color. The steel-blue accent now carries every CTA, link and eyebrow; the
+   single deliberate orange pop is the hero status dot, signalling the live
+   "Now onboarding" badge. The dot is decorative (no 3:1 text obligation), so
+   it can use the bright #f28c28 directly; its glow halo reinforces the
+   marker without painting any text orange. Anything that needs orange as a
+   readable icon/text on light should use --js-safety-burnt instead. */
+.hero-badge-dot {
+  background: var(--js-safety-orange) !important;
+  box-shadow: 0 0 0 4px rgba(var(--js-safety-orange-rgb), 0.18);
 }
