@@ -111,7 +111,17 @@
      surfaces the bright orange reads fine (on #1f3a4a 4.86:1, AA large). */
   --js-safety-orange:        #f28c28;
   --js-safety-orange-rgb:    242, 140, 40;
-  --js-safety-burnt:         #b8500a;  /* darker sibling for orange-as-icon/text on light — on white 4.69:1 */
+  --js-safety-burnt:         #b8500a;  /* darker sibling for orange-as-icon/text on light — on white 5.01:1 */
+
+  /* Fork-inherited aliases the token system never emits. Several live
+     sections (about-split, photo-gallery, stat-ribbon, pricing) reference
+     --bg-light / --bg-dark / --ink with green/warm fallbacks left over from
+     the landscape/clinician origin (#faf9f5 warm-white, #0e1411 green-black,
+     #0d1f15 green ink). Undefined → those fallbacks were rendering a warm/
+     green tint on the steel-blue site. Pin them to the steel palette. */
+  --bg-light:                #f5f8fa;   /* concrete light surface (matches bg-secondary) */
+  --bg-dark:                 #0c1a22;   /* deep steel surface (matches dark bgPrimary) */
+  --ink:                     var(--text-primary, #111827);
 
   /* Theme-switched accent-as-text alias (default = dark palette) */
   --accent-text:             var(--brand-accent-on-dark);
@@ -16377,4 +16387,21 @@ h1, h2, h3, h4,
   background: rgba(var(--js-safety-orange-rgb), 0.12);
   border-color: var(--js-safety-burnt);
   color: var(--js-safety-burnt);
+}
+
+/* Final-CTA logo motif shape fix.
+   sections.css `.final-cta img` styles every final-cta image as a circle
+   (border-radius:50% + 3px accent ring; 48px in cta variant F, 80px
+   otherwise) — designed for headshot/avatar brands. Jobsite's mark is a
+   rounded-square app-icon tile whose white "J" gets cropped by the circular
+   mask, which is what made the logo look broken. The SVG already carries its
+   own rounded-square silhouette, so drop the circular clip + ring and let it
+   render as the tile. Size is left to the engine (inline 48px in variant F).
+   Specificity: `.final-cta img.final-cta-motif` (0,2,1) beats `.final-cta
+   img` (0,1,1); the variant-F selector covers the grid-scoped rule. */
+.final-cta img.final-cta-motif,
+[data-cta-variant="F"] .final-cta > .container > img.final-cta-motif {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
 }
