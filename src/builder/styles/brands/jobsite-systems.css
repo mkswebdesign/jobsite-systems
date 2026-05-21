@@ -16402,3 +16402,68 @@ h1, h2, h3, h4,
   border: none;
   box-shadow: none;
 }
+
+
+/* === Uniform Dark / Bright toggle modes (2026-05-20, owner request) ====
+   The toggle now has three modes: Vibrant (default, authored section
+   rhythm — left untouched here), Dark (everything dark), Bright (everything
+   light). The shared theme/section-overrides.css fires each section's
+   data-sec-theme in EVERY mode (its selectors are unscoped, 0,1,0), so
+   light-pinned sections stayed bright in Dark and primary/secondary accent
+   bands stayed colored in both — i.e. Dark/Bright weren't uniform. Re-assert
+   the active mode's base palette on every themed section. The
+   `html:root[data-theme=…] [data-sec-theme]` prefix is (0,3,1) — it beats
+   both the unscoped shared overrides and brand.ts's emitted blocks. Parallax
+   photo backdrops are exempted so hero/section imagery survives. Pattern per
+   the arich / helping-systems uniform-mode work. ===================== */
+
+/* ---- DARK: every themed section → steel dark ---- */
+html:root[data-theme="dark"] [data-sec-theme]:not([data-sec-parallax-bg="on"]) {
+  background: #0c1a22 !important;
+  background-image: none !important;
+  color: #f5f8fa;
+  --bg-primary: #0c1a22; --bg-primary-rgb: 12, 26, 34;
+  --bg-secondary: #0f2029; --bg-secondary-rgb: 15, 32, 41;
+  --bg-card: #142a35; --bg-card-hover: #1b3340;
+  --text-primary: #f5f8fa; --text-secondary: #b6c7d1; --text-muted: #8fa6b2;
+  --border: #23404e; --border-light: #345262;
+  --bg-light: #0c1a22; --bg-dark: #0c1a22;
+}
+/* ---- BRIGHT: every themed section → white/steel light ---- */
+html:root[data-theme="light"] [data-sec-theme]:not([data-sec-parallax-bg="on"]) {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #111827;
+  --bg-primary: #ffffff; --bg-primary-rgb: 255, 255, 255;
+  --bg-secondary: #f5f8fa; --bg-secondary-rgb: 245, 248, 250;
+  --bg-card: #ffffff; --bg-card-hover: #eef3f6;
+  --text-primary: #111827; --text-secondary: #475467; --text-muted: #667085;
+  --border: #d9e2e7; --border-light: #e7ecef;
+  --bg-light: #f5f8fa; --bg-dark: #ffffff;
+}
+/* Drop the primary-band highlight overlay in both uniform modes. */
+html:root[data-theme="dark"] [data-sec-theme]::before,
+html:root[data-theme="light"] [data-sec-theme]::before { display: none !important; }
+/* Reset the primary/secondary descendant --accent flip (shared CSS sets it to
+   #fff on `> *`) back to the steel accent so links/eyebrows/numerics resolve
+   on-brand against the now-neutral surface. */
+html:root[data-theme="dark"] [data-sec-theme] > *,
+html:root[data-theme="light"] [data-sec-theme] > * {
+  --accent: #1f3a4a; --accent-hover: #162b38;
+  --accent-rgb: 31, 58, 74; --accent-hover-rgb: 22, 43, 56;
+  --accent-glow: rgba(31, 58, 74, 0.15);
+}
+/* Eyebrows/labels: shared CSS pinned them white-on-accent; restore the
+   readable steel sibling per mode (white would vanish on the Bright surface). */
+html:root[data-theme="dark"] [data-sec-theme] .section-label,
+html:root[data-theme="dark"] [data-sec-theme] [class*="-eyebrow"],
+html:root[data-theme="dark"] [data-sec-theme] [class*="section-eyebrow"] { color: var(--brand-accent-on-dark) !important; }
+html:root[data-theme="light"] [data-sec-theme] .section-label,
+html:root[data-theme="light"] [data-sec-theme] [class*="-eyebrow"],
+html:root[data-theme="light"] [data-sec-theme] [class*="section-eyebrow"] { color: var(--brand-accent-readable) !important; }
+/* Primary/secondary buttons: shared CSS made them white-fill/dark-violet-text;
+   restore the brand's steel-fill / white-text primary button. */
+html:root[data-theme="dark"] [data-sec-theme] .btn-primary,
+html:root[data-theme="light"] [data-sec-theme] .btn-primary {
+  background: var(--accent); color: var(--brand-on-surface); border-color: var(--accent);
+}
