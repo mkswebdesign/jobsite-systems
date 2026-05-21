@@ -15735,10 +15735,24 @@ html[data-theme='vibrant'] .design-break[data-design-break-variant='K'][data-sec
    above the fold on a 13" laptop (≈800px viewport). Targets the shared
    .page-header component used by About, Process, Services, Pricing, and
    Work — the homepage Hero (.hero) is unaffected. The breadcrumb stays
-   inline above the H1 with reduced top spacing. */
+   inline above the H1 with reduced top spacing.
+
+   FIX 2026-05-20: the original `padding-block: clamp(2rem,5vw,3.5rem)`
+   compressed the TOP too, dropping the breadcrumb (and the top of the H1)
+   UNDER the position:fixed nav (~91px tall + announcement bar). Restore an
+   explicit top clearance that always sits below the fixed header while
+   keeping the compact bottom. Measured nav height ≈91px → ≥7rem top clears
+   it with breathing room. */
 .page-header {
-  padding-block: clamp(2rem, 5vw, 3.5rem);
+  padding-top: clamp(7rem, 4vw + 5rem, 8.5rem);
+  padding-bottom: clamp(2rem, 5vw, 3.5rem);
   min-height: auto;
+}
+@media (max-width: 720px) {
+  .page-header {
+    padding-top: clamp(6rem, 14vw, 7rem);
+    padding-bottom: clamp(1.25rem, 6vw, 2rem);
+  }
 }
 .page-header .container {
   max-width: 64rem;
@@ -15764,7 +15778,9 @@ html[data-theme='vibrant'] .design-break[data-design-break-variant='K'][data-sec
 }
 @media (max-width: 720px) {
   .page-header {
-    padding-block: clamp(1.25rem, 6vw, 2rem);
+    /* top clearance is set in the mobile block above; only trim the bottom
+       here so the breadcrumb still clears the fixed nav on phones. */
+    padding-bottom: clamp(1.25rem, 6vw, 2rem);
   }
   .page-header h1 {
     font-size: clamp(1.65rem, 6vw, 2.1rem);
