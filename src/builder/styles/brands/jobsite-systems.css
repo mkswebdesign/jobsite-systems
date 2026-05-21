@@ -15652,14 +15652,11 @@ html[data-theme='vibrant'] .design-break[data-design-break-variant='K'][data-sec
    Dark mode — the default rules paint the dark surface and Dark
    mode keeps it (no override needed). */
 
-/* Hide the Vibrant/Dark/Bright theme picker for trade-business
-   visitors — it's a developer affordance, not a customer one, and
-   adds decision fatigue at the top of every page. The picker is
-   still rendered so brand previews / dev work can re-enable it via
-   a userland CSS override; it's just invisible by default. */
-.theme-toggle {
-  display: none !important;
-}
+/* Vibrant/Dark/Bright theme picker — SHOWN per brand owner's request
+   (2026-05-20). The original scaffold hid it as a dev-only affordance;
+   it's now a customer-facing control so visitors can switch between the
+   vibrant section rhythm (default), uniform dark, and uniform bright.
+   Layout/appearance falls through to the base + nav-variant styles. */
 
 /* ============================================================
    site-improvements-2026-q1 — batch fixes
