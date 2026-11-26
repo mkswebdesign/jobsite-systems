@@ -87,28 +87,30 @@
      pairing and feeds rgba(var(--brand-on-surface-rgb), …) ramps which
      can't be derived in CSS. Sites that want the on-surface text to roll
      too read --accent-text or color-mix on var(--accent) directly. */
-  --brand-surface:           var(--accent, #1f3a4a);
-  /* jobsite-systems re-tuned for the steel-blue palette (2026-05-20 rebrand).
-   * Accent steel #1f3a4a is DARK (L=0.038), so the on-surface text flips to
-   * near-white and the readable sibling is the accent itself — steel on white
-   * is 11.92:1, on #f5f8fa 11.17:1, no darkening needed. Safety-orange
-   * (#f28c28, MID-DARK L=0.378) is deliberately NOT an --accent value; it
-   * lives in the --js-safety-* tokens below and is used only as a decorative
-   * marker (badges, check icons, active underline, hovers), never as small
-   * text/icons on white (orange-on-white is 2.45:1 — fails the 3:1 floor).
-   * Ratios per /contrast-audit jobsite-systems (computed 2026-05-20). */
-  --brand-on-surface:        #fafaf7;  /* near-white on steel accent — 11.43:1 */
+  --brand-surface:           var(--accent, #B8500A);
+  /* jobsite-systems accent re-tuned 2026-11-25 (fix/jobsite-1-3 pass).
+   * History: the 2026-05-20 rebrand set the accent to steel #1f3a4a — the
+   * same hue family as the dark backgrounds (#0c1a22 / #142a35), so CTAs,
+   * icons and checkmarks had no visual pop. The accent is now the brand's
+   * own pre-audited burnt safety-orange #B8500A (formerly --js-safety-burnt):
+   * on white 5.01:1, on #f5f8fa 4.70:1, near-white text on it 4.79:1, and
+   * 3.53:1 against the dark #0c1a22 background (surface/graphic role) — it
+   * passes AA in every role this token system assigns to --accent, which
+   * the brighter #EA580C family does not (3.56:1 — fails button/small text).
+   * Accent-as-text on DARK surfaces uses the bright safety-orange sibling
+   * --brand-accent-on-dark (#f28c28, 7.21:1 on #0c1a22); #f28c28 is never
+   * used as text on light surfaces (2.45:1 on white — fails the 3:1 floor).
+   * Ratios computed 2026-11-25 (WCAG relative-luminance formula). */
+  --brand-on-surface:        #fafaf7;  /* near-white on burnt-orange accent — 4.79:1 */
   --brand-on-surface-rgb:    250, 250, 247; /* RGB triple of --brand-on-surface, for rgba() ramps */
-  --brand-accent-on-dark:    #7ea9c2;  /* lightened steel sibling for accent-as-text on dark surfaces; on #0c1a22 = 7.03:1 (raw steel is dark-on-dark) */
-  --brand-accent-readable:   var(--accent, #1f3a4a);  /* steel is already dark — readable as-is on light: white 11.92:1, #f5f8fa 11.17:1 */
-  --brand-accent-readable-rgb: 31, 58, 74; /* RGB of steel accent — on white 11.92:1, on #f5f8fa 11.17:1 */
+  --brand-accent-on-dark:    #f28c28;  /* bright safety-orange sibling for accent-as-text on dark surfaces; on #0c1a22 = 7.21:1 (raw burnt orange is 3.53:1 there — surface/graphic only) */
+  --brand-accent-readable:   var(--accent, #B8500A);  /* burnt orange is already dark enough — readable as-is on light: white 5.01:1, #f5f8fa 4.70:1 */
+  --brand-accent-readable-rgb: 184, 80, 10; /* RGB of burnt-orange accent — on white 5.01:1, on #f5f8fa 4.70:1 */
 
-  /* Safety-orange accent — decorative marker ONLY, per brand spec.
-     #f28c28 on white is 2.45:1 (fails the 3:1 icon/text floor) so it is
-     reserved for tinted fills, badge backgrounds, hover states and the active
-     nav underline. When orange must read as an icon stroke or text on a light
-     surface, use --js-safety-burnt (#b8500a on white 5.01:1). On steel/dark
-     surfaces the bright orange reads fine (on #1f3a4a 4.86:1, AA large). */
+  /* Safety-orange tokens — #f28c28 is the bright sibling used for
+     accent-as-text on dark surfaces (via --brand-accent-on-dark above) and
+     decorative markers; --js-safety-burnt is kept as an alias of the accent
+     now that #b8500a IS the --accent value. */
   --js-safety-orange:        #f28c28;
   --js-safety-orange-rgb:    242, 140, 40;
   --js-safety-burnt:         #b8500a;  /* darker sibling for orange-as-icon/text on light — on white 5.01:1 */
@@ -132,7 +134,7 @@
 
 @supports not (color: color-mix(in oklab, red 50%, blue)) {
   :root {
-    --brand-accent-readable: #1f3a4a;  /* steel static fallback — on white 11.92:1, on #f5f8fa 11.17:1 */
+    --brand-accent-readable: #B8500A;  /* burnt-orange static fallback — on white 5.01:1, on #f5f8fa 4.70:1 */
   }
 }
 
@@ -16461,13 +16463,13 @@ html:root[data-theme="light"] [data-sec-theme]:not([data-sec-parallax-bg="on"]) 
 html:root[data-theme="dark"] [data-sec-theme]::before,
 html:root[data-theme="light"] [data-sec-theme]::before { display: none !important; }
 /* Reset the primary/secondary descendant --accent flip (shared CSS sets it to
-   #fff on `> *`) back to the steel accent so links/eyebrows/numerics resolve
+   #fff on `> *`) back to the brand accent so links/eyebrows/numerics resolve
    on-brand against the now-neutral surface. */
 html:root[data-theme="dark"] [data-sec-theme] > *,
 html:root[data-theme="light"] [data-sec-theme] > * {
-  --accent: #1f3a4a; --accent-hover: #162b38;
-  --accent-rgb: 31, 58, 74; --accent-hover-rgb: 22, 43, 56;
-  --accent-glow: rgba(31, 58, 74, 0.15);
+  --accent: #B8500A; --accent-hover: #96420A;
+  --accent-rgb: 184, 80, 10; --accent-hover-rgb: 150, 66, 10;
+  --accent-glow: rgba(184, 80, 10, 0.15);
 }
 /* Eyebrows/labels: shared CSS pinned them white-on-accent; restore the
    readable steel sibling per mode (white would vanish on the Bright surface). */
@@ -16478,7 +16480,7 @@ html:root[data-theme="light"] [data-sec-theme] .section-label,
 html:root[data-theme="light"] [data-sec-theme] [class*="-eyebrow"],
 html:root[data-theme="light"] [data-sec-theme] [class*="section-eyebrow"] { color: var(--brand-accent-readable) !important; }
 /* Primary/secondary buttons: shared CSS made them white-fill/dark-violet-text;
-   restore the brand's steel-fill / white-text primary button. */
+   restore the brand's accent-fill / white-text primary button. */
 html:root[data-theme="dark"] [data-sec-theme] .btn-primary,
 html:root[data-theme="light"] [data-sec-theme] .btn-primary {
   background: var(--accent); color: var(--brand-on-surface); border-color: var(--accent);

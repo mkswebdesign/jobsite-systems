@@ -31,7 +31,7 @@ const headingLines = heading.split('\n');
       </nav>
     )}
     {sectionLabel && <span class="section-label reveal">{sectionLabel}</span>}
-    <h1>{headingLines.map((line, i) => <>{i > 0 && <br class="page-header-break" />}{line}</>)}</h1>
+    <h1>{headingLines.map((line, i) => <>{i > 0 && <>{' '}<br class="page-header-break" /></>}{line}</>)}</h1>
     {lead && <p class="lead">{lead}</p>}
   </div>
 </header>

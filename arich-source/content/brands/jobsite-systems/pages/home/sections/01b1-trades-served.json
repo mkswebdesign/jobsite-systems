@@ -1,5 +1,5 @@
 {
-  "_TODO": "P2 #11 — replaces the prior 'We're not a template shop' aboutSplit (kept on disk as 01b1-why-us-split.json for reference). Trade icons currently link to '#' placeholders. WIRE-UP: when trade-specific landing pages exist, replace each href with /trades/<slug>/. ALSO TODO: build a dedicated `tradesStrip` section type so this isn't shoehorned into trustBand items.",
+  "_TODO": "P2 #11 — replaces the prior 'We're not a template shop' aboutSplit (kept on disk as 01b1-why-us-split.json for reference). The trade pills are non-interactive labels (trustBand items carry no href). The strip CTA previously pointed at a '#' placeholder; it now links to /services/. WIRE-UP: when trade-specific landing pages exist, point the CTA (or per-trade links) at /trades/<slug>/. ALSO TODO: build a dedicated `tradesStrip` section type so this isn't shoehorned into trustBand items.",
   "type": "trustBand",
   "items": [
     { "iconKey": "settings", "text": "HVAC" },
@@ -13,6 +13,6 @@
   ],
   "cta": {
     "label": "See all trades we serve",
-    "href": "#"
+    "href": "/services/"
   }
 }

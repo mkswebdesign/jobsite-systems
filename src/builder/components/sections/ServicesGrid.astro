@@ -31,9 +31,9 @@ const services = serviceSlugs
     <div class="services-grid stagger-container reveal">
       {services.map((s, i) => (
         <div class="service-card stagger-item">
-          {i === 0 && s.heroImage && (
-            <div class="service-feature-image" aria-hidden="true">
-              <img src={s.heroImage} alt={s.heroImageAlt ?? ''} loading="lazy" decoding="async" />
+          {s.heroImage && (
+            <div class="service-card-image" aria-hidden="true">
+              <img src={s.heroImage} alt={s.heroImageAlt ?? ''} width="800" height="450" loading="lazy" decoding="async" />
             </div>
           )}
           <div class="service-card-head">

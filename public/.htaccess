@@ -2,8 +2,22 @@
 # Honoured automatically on Apache / cPanel hosts. Silently ignored on
 # Nginx, Cloudflare Pages, S3, etc. — those need their own config.
 
+# Custom 404 page (Astro emits dist/404.html from src/pages/404.astro).
+# Without this, hosts with an SPA-style fallback serve the homepage with a
+# 200 status for missing paths (soft-404).
+ErrorDocument 404 /404.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # 0. Routes that do not exist for this brand (jobsite-systems has no blog,
+  #    no posts, and no team page) must return a genuine 404 — never the
+  #    homepage fallback and never an empty shell. The Astro routes behind
+  #    these paths are already build-gated off (no posts/categories/team
+  #    content for this brand); these rules make the 404 hold at the host
+  #    layer as well, including for stale stubs left by older deploys
+  #    (e.g. the /post/ -> /archive/ redirect stub).
+  RewriteRule ^(archive|category|post|tag|author|team)(/.*)?$ - [R=404,L]
 
   # 1. Force trailing slash on directory-like paths.
   #    Skip files that exist on disk and paths that already have a file
