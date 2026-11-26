@@ -1461,6 +1461,9 @@ a.hero-badge:hover, a.hero-badge:focus { background: rgba(var(--accent-rgb),0.14
 .service-card:hover .service-link { gap: 0.75rem; color: var(--accent-hover) }
 .service-card:hover .service-link .arrow { transform: translateX(4px) }
 /* Default (variant A): icon + title on one row, number pinned to top-right corner */
+.service-card-image { margin: -2rem -2rem 1.25rem; height: 180px; overflow: hidden; border-top-left-radius: inherit; border-top-right-radius: inherit }
+.service-card-image img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.02); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) }
+.service-card:hover .service-card-image img { transform: scale(1.06) }
 .service-card-head { display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1rem; padding-right: 2.75rem }
 .service-card-head .service-num { position: absolute; top: 1.25rem; right: 1.25rem; margin: 0; z-index: 1 }
 .service-card .service-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: var(--radius-sm); background: var(--accent-glow); color: var(--accent); margin-bottom: 0; transition: transform var(--transition), background var(--transition) }
